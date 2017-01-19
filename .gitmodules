@@ -1,3 +1,6 @@
 [submodule "cmake/cmakeBuildTools"]
 	path = cmake/cmakeBuildTools
 	url = https://github.com/mensinda/cmakeBuildTools.git
+[submodule "external/EPL_DataCollect"]
+	path = external/EPL_DataCollect
+	url = https://github.com/epl-viz/EPL_DataCollect.git

@@ -28,6 +28,7 @@ project( EPL-Viz )
 
 message( STATUS "Using CMake version: ${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}.${CMAKE_PATCH_VERSION}\n" )
 include( ${PROJECT_SOURCE_DIR}/cmake/cmakeScripLoader.cmake )
+include( CMakePackageConfigHelpers )
 
 ######################
 # Set some variables #
@@ -85,10 +86,6 @@ set( EPL_VIZ_QT_COMPONENTS Core Widgets )
 
 find_package( Qt5 5.7 COMPONENTS ${EPL_VIZ_QT_COMPONENTS} REQUIRED )
 
-####################
-# Generate subdirs #
-####################
-
 # Generate link target list
 set( EPL_VIZ_QT_DEP_LIST "" )
 foreach( I IN LISTS EPL_VIZ_QT_COMPONENTS )
@@ -106,11 +103,26 @@ foreach( I IN LISTS EPL_VIZ_QT_COMPONENTS )
   list( APPEND EPL_VIZ_QT_DEP_LIST "Qt5::${I}" )
 endforeach( I IN LISTS EPL_VIZ_QT_COMPONENTS )
 
+
+#############################
+# Add internal dependencies #
+#############################
+
+if( USE_SYSTEM_PACKETS )
+  find_package( EPL_DataCollect REQUIRED )
+else( USE_SYSTEM_PACKETS )
+  add_subdirectory( external/EPL_DataCollect )
+endif( USE_SYSTEM_PACKETS )
+
+####################
+# Generate subdirs #
+####################
+
 new_project_library(
   PATH         "${PROJECT_SOURCE_DIR}/libEPLViz"
   NAME         "libEPLViz"
   TEMPLATE     "${EPL_VIZ_TEMPLATES_DIR}/CMakeLists.lib.txt"
-  DEPENDENCIES ${EPL_VIZ_QT_DEP_LIST}
+  DEPENDENCIES ${EPL_VIZ_QT_DEP_LIST} epl_DataCollect_shared
 )
 
 new_project_executable(
@@ -139,7 +151,24 @@ endif( NOT EXISTS ${PROJECT_SOURCE_DIR}/include )
 
 configure_file( ${EPL_VIZ_TEMPLATES_DIR}/defines.in.hpp ${PROJECT_SOURCE_DIR}/include/defines.hpp @ONLY )
 
-generate_format_command( format 3.9.1 )
+if( USE_SYSTEM_PACKETS )
+  write_basic_package_version_file(
+    ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}Version.cmake
+      VERSION       ${CM_VERSION_MAJOR}.${CM_VERSION_MINOR}.${CM_VERSION_SUBMINOR}
+      COMPATIBILITY SameMajorVersion
+  )
+
+  install(
+    FILES
+      ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}Version.cmake
+      ${PROJECT_SOURCE_DIR}/cmake/${PROJECT_NAME}Config.cmake
+    DESTINATION lib/cmake/${PROJECT_NAME}
+  )
+
+  install( EXPORT ${PROJECT_NAME}Targets DESTINATION lib/cmake/${PROJECT_NAME} )
+endif( USE_SYSTEM_PACKETS )
+
+generate_format_command( formatViz 3.9.1 )
 
 ######################
 # Add subdirectories #

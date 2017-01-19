@@ -1,0 +1,18 @@
+<RCC>
+    <qresource prefix="/icons">
+        <file>resources/application-exit.svg</file>
+        <file>resources/document-close.svg</file>
+        <file>resources/document-new.svg</file>
+        <file>resources/document-open.svg</file>
+        <file>resources/document-save.svg</file>
+        <file>resources/folder-new.svg</file>
+        <file>resources/help-about.svg</file>
+        <file>resources/view-filter.svg</file>
+        <file>resources/document-revert.svg</file>
+        <file>resources/document-save-all.svg</file>
+        <file>resources/document-save-as.svg</file>
+        <file>resources/window-close.svg</file>
+        <file>resources/Screen_Shot.png</file>
+        <file>resources/logo3.svg</file>
+    </qresource>
+</RCC>

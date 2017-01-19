@@ -1,0 +1,39 @@
+language: cpp
+
+dist: trusty
+sudo: false
+
+
+compiler:
+  - gcc
+  - clang
+
+addons:
+  apt:
+    sources:
+      - ubuntu-sdk-team
+      - ubuntu-toolchain-r-test
+      - llvm-toolchain-trusty-3.9
+
+    packages:
+      - g++-6
+      - gcc-6
+      - clang-3.9
+      - clang-format-3.9
+      - qt5-default
+      - qtbase5-dev
+      - qttools5-dev-tools
+
+install:
+  - git clone https://github.com/epl-viz/travisDependencies
+  - tar -xf ./travisDependencies/cmake-3.7.2-Linux-x86_64.tar.gz
+  - CMAKE_EXEC="$PWD/cmake-3.7.2-Linux-x86_64/bin/cmake"
+  - if [[ "$CXX" == "clang++" ]]; then export CXX=clang++-3.9; export CC=clang-3.9; fi
+  - if [[ "$CXX" == "g++"     ]]; then export CXX=g++-6;       export CC=gcc-6;     fi
+  - export CLANG_FORMAT_CMD="clang-format-3.9"
+
+script:
+  - ./checkFormat.sh --only-check
+  - mkdir build; cd build
+  - $CMAKE_EXEC ..
+  - make

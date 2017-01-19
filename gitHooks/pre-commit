@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 #
 # An example hook script to verify what is about to be committed.
 # Called by "git commit" with no arguments.  The hook should
@@ -47,6 +47,13 @@ fi
 
 # Run the code format checker
 SCRIPT="$(git rev-parse --show-toplevel)/checkFormat.sh"
+CUSTOM_SCRIPT="$(git rev-parse --show-toplevel)/customPreComit.sh"
+
+if [ -x "$CUSTOM_SCRIPT" ]; then
+  $CUSTOM_SCRIPT
+  ERROR=$?
+  (( ERROR != 0 )) && exit $ERROR
+fi
 
 if [ ! -x "$SCRIPT" ]; then
   echo -e '        \x1b[1;31m _____    _______     _________________ ___________  \x1b[0m'

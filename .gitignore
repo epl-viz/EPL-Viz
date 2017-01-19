@@ -2,3 +2,5 @@
 /*build*
 /include
 /*/CMakeLists.txt
+customPreComit.sh
+*.user

@@ -147,7 +147,6 @@ else( USE_SYSTEM_PACKETS )
   ExternalProject_Add( EPL_DataCollect
     SOURCE_DIR        "${PROJECT_SOURCE_DIR}/external/EPL_DataCollect"
     PREFIX            "${EPL_DC_PREFIX}"
-    UPDATE_COMMAND    ${GIT_EXECUTABLE} pull
     CMAKE_ARGS
       "-DCMAKE_C_COMPILER=${CMAKE_C_COMPILER}"
       "-DCMAKE_C_FLAGS=${CMAKE_C_FLAGS}"

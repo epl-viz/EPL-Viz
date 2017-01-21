@@ -72,7 +72,7 @@ run_git()
 
 add_compiler(
   GNU MIN_VERSION "6.2"
-  ALL        "-Wall -Wextra -Wno-comment"
+  ALL        "-Wall -Wextra -Wfloat-equal -Wshadow"
   DEBUG      "-O0 -Werror" ${COVERAGE_COMPILER_FLAG}
   RELEASE    "-O3"
   SANITIZE   "-fsanitize=${SANITIZERS}"
@@ -81,7 +81,7 @@ add_compiler(
 add_compiler(
   Clang MIN_VERSION 3.9
   ALL        "-Weverything -ftemplate-backtrace-limit=0"
-             "-Wno-c++98-compat -Wno-c++98-compat-pedantic -Wno-padded -Wno-float-equal"
+             "-Wno-c++98-compat -Wno-c++98-compat-pedantic -Wno-padded"
              "-Wno-gnu-anonymous-struct -Wno-nested-anon-types -Wno-exit-time-destructors"
              "-Wno-global-constructors -Wno-switch-enum -Wno-reserved-id-macro"
              "-Wno-documentation-unknown-command"
@@ -103,14 +103,14 @@ set( EPL_VIZ_QT_DEP_LIST "" )
 foreach( I IN LISTS EPL_VIZ_QT_COMPONENTS )
 
   # Fix Qt compiler warnings (mark qt include dirs as system)
-  if( CMAKE_CXX_COMPILER_ID STREQUAL Clang )
+  if( CMAKE_CXX_COMPILER_ID STREQUAL Clang OR CMAKE_CXX_COMPILER_ID STREQUAL GNU )
     foreach( J IN LISTS Qt5${I}_INCLUDE_DIRS )
       if( NOT "${J}" MATCHES "[qQ][tT]" )
         continue()
       endif( NOT "${J}" MATCHES "[qQ][tT]" )
       string( APPEND CMAKE_CXX_FLAGS " -isystem ${J}" )
     endforeach( J IN LISTS Qt5${I}_INCLUDE_DIRS )
-  endif( CMAKE_CXX_COMPILER_ID STREQUAL Clang )
+  endif( CMAKE_CXX_COMPILER_ID STREQUAL Clang OR CMAKE_CXX_COMPILER_ID STREQUAL GNU  )
 
   list( APPEND EPL_VIZ_QT_DEP_LIST "Qt5::${I}" )
 endforeach( I IN LISTS EPL_VIZ_QT_COMPONENTS )

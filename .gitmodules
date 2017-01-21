@@ -4,3 +4,6 @@
 [submodule "external/EPL_DataCollect"]
 	path = external/EPL_DataCollect
 	url = https://github.com/epl-viz/EPL_DataCollect.git
+[submodule "cmake/coveralls-cmake"]
+	path = cmake/coveralls-cmake
+	url = https://github.com/JoakimSoderberg/coveralls-cmake.git

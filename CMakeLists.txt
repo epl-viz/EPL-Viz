@@ -28,7 +28,9 @@ project( EPL-Viz )
 
 message( STATUS "Using CMake version: ${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}.${CMAKE_PATCH_VERSION}\n" )
 include( ${PROJECT_SOURCE_DIR}/cmake/cmakeScripLoader.cmake )
+
 include( CMakePackageConfigHelpers )
+include( ExternalProject )
 
 ######################
 # Set some variables #
@@ -49,19 +51,29 @@ set( CMAKE_C_STANDARD_REQUIRED   ON )
 set( CMAKE_INCLUDE_CURRENT_DIR       ON )
 set( CMAKE_POSITION_INDEPENDENT_CODE ON )
 
+option( DISABLE_TESTS        "Disables all tests"          OFF )
+option( ENABLE_CODE_COVERAGE "Enables code coverage tests" OFF )
+
+list( APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake" )
+
 # Some useful variables
-set( EPL_VIZ_TEMPLATES_DIR ${PROJECT_SOURCE_DIR}/cmake/templates )
+set( EPL_VIZ_TEMPLATES_DIR "${PROJECT_SOURCE_DIR}/cmake/templates" )
+set( EPL_VIZ_INCLUDES_DIR  "${PROJECT_SOURCE_DIR}/include" )
 
 ################################
 # Set up the build environment #
 ################################
+
+if( ENABLE_CODE_COVERAGE )
+  set( COVERAGE_COMPILER_FLAG "--coverage" )
+endif( ENABLE_CODE_COVERAGE )
 
 run_git()
 
 add_compiler(
   GNU MIN_VERSION "6.2"
   ALL        "-Wall -Wextra -Wno-comment"
-  DEBUG      "-Werror"
+  DEBUG      "-O0 -Werror" ${COVERAGE_COMPILER_FLAG}
   RELEASE    "-O3"
   SANITIZE   "-fsanitize=${SANITIZERS}"
 )
@@ -104,6 +116,21 @@ foreach( I IN LISTS EPL_VIZ_QT_COMPONENTS )
 endforeach( I IN LISTS EPL_VIZ_QT_COMPONENTS )
 
 
+find_package( Git REQUIRED )
+
+ExternalProject_Add( catch
+  PREFIX            ${CMAKE_BINARY_DIR}/catch
+  GIT_REPOSITORY    https://github.com/philsquared/Catch.git
+  UPDATE_COMMAND    ${GIT_EXECUTABLE} pull
+  CONFIGURE_COMMAND ""
+  BUILD_COMMAND     ""
+  INSTALL_COMMAND   ""
+)
+
+ExternalProject_Get_Property( catch source_dir )
+set( CATCH_INCLUDE_DIR "${source_dir}/include" )
+
+
 #############################
 # Add internal dependencies #
 #############################
@@ -111,7 +138,38 @@ endforeach( I IN LISTS EPL_VIZ_QT_COMPONENTS )
 if( USE_SYSTEM_PACKETS )
   find_package( EPL_DataCollect REQUIRED )
 else( USE_SYSTEM_PACKETS )
-  add_subdirectory( external/EPL_DataCollect )
+  set( EPL_DC_PREFIX "${PROJECT_BINARY_DIR}/EPL_DataCollect" )
+  set( EPL_DC_INSTALL_DIR "${EPL_DC_PREFIX}/install_dir" )
+  set( EPL_DC_LIB_DIR     "${EPL_DC_INSTALL_DIR}/lib" )
+
+  set( EPL_DataCollect_INCLUDE_DIRS "${EPL_DC_INSTALL_DIR}/include/eplViz" )
+
+  ExternalProject_Add( EPL_DataCollect
+    SOURCE_DIR        "${PROJECT_SOURCE_DIR}/external/EPL_DataCollect"
+    PREFIX            "${EPL_DC_PREFIX}"
+    UPDATE_COMMAND    ${GIT_EXECUTABLE} pull
+    CMAKE_ARGS
+      "-DCMAKE_C_COMPILER=${CMAKE_C_COMPILER}"
+      "-DCMAKE_C_FLAGS=${CMAKE_C_FLAGS}"
+      "-DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}"
+      "-DCMAKE_CXX_FLAGS=${CMAKE_CXX_FLAGS}"
+      "-DCMAKE_INSTALL_PREFIX=${EPL_DC_INSTALL_DIR}"
+      -DDISABLE_TESTS=ON
+      -DENABLE_CODE_COVERAGE=OFF
+  )
+
+  add_library( epl_DataCollect_shared SHARED IMPORTED )
+  add_library( epl_DataCollect_static STATIC IMPORTED )
+  add_library( epl_disector_shared    SHARED IMPORTED )
+  add_library( epl_disector_static    STATIC IMPORTED )
+  add_library( epl_edsParser_shared   SHARED IMPORTED )
+  add_library( epl_edsParser_static   STATIC IMPORTED )
+  set_target_properties( epl_DataCollect_shared PROPERTIES IMPORTED_LOCATION "${EPL_DC_LIB_DIR}/${CMAKE_SHARED_LIBRARY_PREFIX}epl_DataCollect${CMAKE_SHARED_LIBRARY_SUFFIX}" )
+  set_target_properties( epl_DataCollect_static PROPERTIES IMPORTED_LOCATION "${EPL_DC_LIB_DIR}/${CMAKE_STATIC_LIBRARY_PREFIX}epl_DataCollect${CMAKE_STATIC_LIBRARY_SUFFIX}" )
+  set_target_properties( epl_disector_shared    PROPERTIES IMPORTED_LOCATION "${EPL_DC_LIB_DIR}/${CMAKE_SHARED_LIBRARY_PREFIX}epl_disector${CMAKE_SHARED_LIBRARY_SUFFIX}" )
+  set_target_properties( epl_disector_static    PROPERTIES IMPORTED_LOCATION "${EPL_DC_LIB_DIR}/${CMAKE_STATIC_LIBRARY_PREFIX}epl_disector${CMAKE_STATIC_LIBRARY_SUFFIX}" )
+  set_target_properties( epl_edsParser_shared   PROPERTIES IMPORTED_LOCATION "${EPL_DC_LIB_DIR}/${CMAKE_SHARED_LIBRARY_PREFIX}epl_edsParser${CMAKE_SHARED_LIBRARY_SUFFIX}" )
+  set_target_properties( epl_edsParser_static   PROPERTIES IMPORTED_LOCATION "${EPL_DC_LIB_DIR}/${CMAKE_STATIC_LIBRARY_PREFIX}epl_edsParser${CMAKE_STATIC_LIBRARY_SUFFIX}" )
 endif( USE_SYSTEM_PACKETS )
 
 ####################
@@ -129,27 +187,50 @@ new_project_executable(
   PATH         "${PROJECT_SOURCE_DIR}/epl-viz"
   NAME         "EPLViz"
   TEMPLATE     "${EPL_VIZ_TEMPLATES_DIR}/CMakeLists.exe.txt"
-  DEPENDENCIES libEPLViz_static
+  DEPENDENCIES libEPLViz_shared
 )
 
+if( NOT DISABLE_TESTS )
+  new_project_executable(
+    PATH         "${PROJECT_SOURCE_DIR}/tests"
+    NAME         "tests"
+    TEMPLATE     "${EPL_VIZ_TEMPLATES_DIR}/CMakeLists.exe.txt"
+    DEPENDENCIES libEPLViz_shared epl_DataCollect_shared
+  )
+endif( NOT DISABLE_TESTS )
 
-##################
-# Generate Files #
-##################
+##############################
+# Update include directories #
+##############################
 
-include_directories( ${EPL-Viz_LIB_INCLUDE_DIRECTORIES} )
+include_directories( ${EPL-Viz_LIB_INCLUDE_DIRECTORIES} ${CATCH_INCLUDE_DIR} ${EPL_VIZ_INCLUDES_DIR} ${EPL_DataCollect_INCLUDE_DIRS} )
 
 # Add Ot5 include dirs
 foreach( I IN LISTS EPL_VIZ_QT_COMPONENTS )
   include_directories( ${Qt5${I}_INCLUDE_DIRS} )
 endforeach( I IN LISTS EPL_VIZ_QT_COMPONENTS )
 
+if( NOT EXISTS "${EPL_VIZ_INCLUDES_DIR}" )
+  file( MAKE_DIRECTORY "${EPL_VIZ_INCLUDES_DIR}" )
+endif( NOT EXISTS "${EPL_VIZ_INCLUDES_DIR}" )
 
-if( NOT EXISTS ${PROJECT_SOURCE_DIR}/include )
-  file( MAKE_DIRECTORY ${PROJECT_SOURCE_DIR}/include )
-endif( NOT EXISTS ${PROJECT_SOURCE_DIR}/include )
+######################
+# Add subdirectories #
+######################
 
-configure_file( ${EPL_VIZ_TEMPLATES_DIR}/defines.in.hpp ${PROJECT_SOURCE_DIR}/include/defines.hpp @ONLY )
+foreach( I IN LISTS EPL-Viz_SUBDIR_LIST )
+  add_subdirectory( "${I}" )
+endforeach( I IN LISTS EPL-Viz_SUBDIR_LIST )
+
+if( NOT DISABLE_TESTS )
+  add_custom_target( check COMMAND tests )
+endif( NOT DISABLE_TESTS )
+
+##################
+# Generate Files #
+##################
+
+configure_file( "${EPL_VIZ_TEMPLATES_DIR}/defines.in.hpp" "${EPL_VIZ_INCLUDES_DIR}/defines.hpp" @ONLY )
 
 if( USE_SYSTEM_PACKETS )
   write_basic_package_version_file(
@@ -168,12 +249,4 @@ if( USE_SYSTEM_PACKETS )
   install( EXPORT ${PROJECT_NAME}Targets DESTINATION lib/cmake/${PROJECT_NAME} )
 endif( USE_SYSTEM_PACKETS )
 
-generate_format_command( formatViz 3.9.1 )
-
-######################
-# Add subdirectories #
-######################
-
-foreach( I IN LISTS EPL-Viz_SUBDIR_LIST )
-  add_subdirectory( "${I}" )
-endforeach( I IN LISTS EPL-Viz_SUBDIR_LIST )
+generate_format_command( format 3.9.1 )

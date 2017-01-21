@@ -19,6 +19,7 @@ addons:
       - gcc-6
       - clang-3.9
       - clang-format-3.9
+      - curl
 
 install:
   - sudo add-apt-repository --yes ppa:beineri/opt-qt57-trusty
@@ -27,14 +28,28 @@ install:
   - git clone https://github.com/epl-viz/travisDependencies
   - tar -xf ./travisDependencies/cmake-3.7.2-Linux-x86_64.tar.gz
   - CMAKE_EXEC="$PWD/cmake-3.7.2-Linux-x86_64/bin/cmake"
+  - git clone https://github.com/linux-test-project/lcov.git
+  - LCOV_EXEC="$PWD/lcov/bin/lcov"
   - if [[ "$CXX" == "clang++" ]]; then export CXX=clang++-3.9; export CC=clang-3.9; fi
   - if [[ "$CXX" == "g++"     ]]; then export CXX=g++-6;       export CC=gcc-6;     fi
   - export CLANG_FORMAT_CMD="clang-format-3.9"
+  - export COVERALLS_SERVICE_NAME=travis-ci
+  - export COVERALLS_REPO_TOKEN=abc12345
+  - gem install coveralls-lcov
+  - $LCOV_EXEC --version
 
 script:
   - QT_ENV_SCRIPT=$(find /opt -name 'qt*-env.sh')
   - source $QT_ENV_SCRIPT
   - ./checkFormat.sh --only-check
   - mkdir build; cd build
-  - $CMAKE_EXEC ..
+  - $CMAKE_EXEC -DENABLE_CODE_COVERAGE=ON -DCMAKE_BUILD_TYPE=Debug ..
   - make
+  - make check
+
+after_success:
+  - cd ${TRAVIS_BUILD_DIR}
+  - $LCOV_EXEC --directory . --capture --output-file coverage.info --gcov-tool gcov-6
+  - $LCOV_EXEC --remove coverage.info '/usr/*' '/opt/*' '*catch*.h*' '*/EPL_DataCollect/*' '/ui_*.h' '/moc_*.cpp' '/qrc_*.cpp' --output-file coverage.info
+  - $LCOV_EXEC --list coverage.info
+  - coveralls-lcov --source-encoding=ISO-8859-1 coverage.info

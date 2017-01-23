@@ -2,5 +2,10 @@
 /*build*
 /include
 /*/CMakeLists.txt
-customPreCommit.sh
+<<<<<<< HEAD
+customPreComit.sh
 *.user
+*.pyc
+*.sw*
+.DS_Store
+customPreCommit.sh

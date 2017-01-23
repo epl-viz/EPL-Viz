@@ -2,7 +2,6 @@
 /*build*
 /include
 /*/CMakeLists.txt
-<<<<<<< HEAD
 customPreComit.sh
 *.user
 *.pyc

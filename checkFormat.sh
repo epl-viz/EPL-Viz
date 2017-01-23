@@ -6,7 +6,7 @@
 # BEGIN CONFIG SECTION #
 ########################
 
-CLANG_FORMAT_VERSION="3.9.1"
+CLANG_FORMAT_VERSIONS=( "3.9.1" "4.0.0" )
 CLANG_FORMAT_DEFAULT_CMD="clang-format"
 EXTENSIONS=( cpp hpp )
 SOURCE_DIRS=( epl-viz libEPLViz )
@@ -61,8 +61,14 @@ verbose "clang-format command: $CLANG_FORMAT_EXEC"
 # Check the version
 CURRENT_VERSION="$($CLANG_FORMAT_EXEC --version | sed 's/^[^0-9]*//g')"
 CURRENT_VERSION="$(echo "$CURRENT_VERSION" | sed 's/^\([0-9.]*\).*/\1/g')"
-if [[ "$CLANG_FORMAT_VERSION" != "$CURRENT_VERSION" ]]; then
-  error "Invalid clang-format version! $CLANG_FORMAT_VERSION required but $CURRENT_VERSION provided"
+FOUND_VERSION=0
+
+for I in "${CLANG_FORMAT_VERSIONS[@]}"; do
+  [[ "$I" == "$CURRENT_VERSION" ]] && (( FOUND_VERSION++ ))
+done
+
+if (( FOUND_VERSION == 0 )); then
+  error "Invalid clang-format version! ${CLANG_FORMAT_VERSIONS[@]} versions required but $CURRENT_VERSION provided"
   exit 2
 fi
 

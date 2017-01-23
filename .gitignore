@@ -2,8 +2,10 @@
 /*build*
 /include
 /*/CMakeLists.txt
+<<<<<<< HEAD
 customPreComit.sh
 *.user
 *.pyc
 *.sw*
 .DS_Store
+customPreCommit.sh

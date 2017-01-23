@@ -5,7 +5,11 @@ EPL-Viz is a visualizer for an ethernetPOWERLINK setup.
 ## Initial Setup
 ```bash
     git clone https://github.com/epl-viz/EPL-Viz.git --recursive
-    ./EPL-Viz/setupHooks.sh
+    cd EPL-Viz
+    ./setupHooks.sh
+    mkdir build && cd build
+    cmake ..
+    make
 ```
 
 ## CMake options

@@ -51,10 +51,10 @@ ForEachMacros: [ foreach, Q_FOREACH, BOOST_FOREACH ]
 IncludeCategories:
  - Regex: 'defines'
    Priority: -1
- - Regex: '[a-zA-Z0-9]*\.hpp'
+ - Regex: '[A-Z][a-zA-Z0-9]*\.hpp'
    Priority: 10
  - Regex: '.*'
-   Priority: 1
+   Priority: 20
 
 IndentCaseLabels:                   true
 IndentWrappedFunctionNames:         false
@@ -83,7 +83,7 @@ SpacesBeforeTrailingComments:   1
 SpacesInAngles:                 false
 SpacesInCStyleCastParentheses:  false
 SpacesInContainerLiterals:      true
-SpacesInParentheses:            true
+SpacesInParentheses:            false
 SpacesInSquareBrackets:         false
 
 DisableFormat:   false

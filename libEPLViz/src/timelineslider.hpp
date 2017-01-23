@@ -11,8 +11,8 @@ class TimelineSlider : public QAbstractSlider {
   Q_OBJECT
 
  public:
-  TimelineSlider( QWidget *parent = nullptr ) : QAbstractSlider( parent ) {} //!\todo fix
-  ~TimelineSlider()               = default;                                 //!\todo fix
+  TimelineSlider(QWidget *parent = nullptr) : QAbstractSlider(parent) {} //!\todo fix
+  ~TimelineSlider()              = default;                              //!\todo fix
 };
 
 #endif // QTIMELINESLIDER_H

@@ -22,7 +22,7 @@ addons:
       - curl
 
 install:
-  - sudo add-apt-repository --yes ppa:beineri/opt-qt57-trusty
+  - sudo add-apt-repository --yes ppa:beineri/opt-qt571-trusty
   - sudo apt-get update
   - sudo apt-get install -qq qt57base qt57tools qt57location qt57translations qt57svg
   - git clone https://github.com/epl-viz/travisDependencies

@@ -159,14 +159,14 @@ else( USE_SYSTEM_PACKETS )
 
   add_library( epl_DataCollect_shared SHARED IMPORTED )
   add_library( epl_DataCollect_static STATIC IMPORTED )
-  add_library( epl_disector_shared    SHARED IMPORTED )
-  add_library( epl_disector_static    STATIC IMPORTED )
+  add_library( epl_dissector_shared    SHARED IMPORTED )
+  add_library( epl_dissector_static    STATIC IMPORTED )
   add_library( epl_edsParser_shared   SHARED IMPORTED )
   add_library( epl_edsParser_static   STATIC IMPORTED )
   set_target_properties( epl_DataCollect_shared PROPERTIES IMPORTED_LOCATION "${EPL_DC_LIB_DIR}/${CMAKE_SHARED_LIBRARY_PREFIX}epl_DataCollect${CMAKE_SHARED_LIBRARY_SUFFIX}" )
   set_target_properties( epl_DataCollect_static PROPERTIES IMPORTED_LOCATION "${EPL_DC_LIB_DIR}/${CMAKE_STATIC_LIBRARY_PREFIX}epl_DataCollect${CMAKE_STATIC_LIBRARY_SUFFIX}" )
-  set_target_properties( epl_disector_shared    PROPERTIES IMPORTED_LOCATION "${EPL_DC_LIB_DIR}/${CMAKE_SHARED_LIBRARY_PREFIX}epl_disector${CMAKE_SHARED_LIBRARY_SUFFIX}" )
-  set_target_properties( epl_disector_static    PROPERTIES IMPORTED_LOCATION "${EPL_DC_LIB_DIR}/${CMAKE_STATIC_LIBRARY_PREFIX}epl_disector${CMAKE_STATIC_LIBRARY_SUFFIX}" )
+  set_target_properties( epl_dissector_shared    PROPERTIES IMPORTED_LOCATION "${EPL_DC_LIB_DIR}/${CMAKE_SHARED_LIBRARY_PREFIX}epl_dissector${CMAKE_SHARED_LIBRARY_SUFFIX}" )
+  set_target_properties( epl_dissector_static    PROPERTIES IMPORTED_LOCATION "${EPL_DC_LIB_DIR}/${CMAKE_STATIC_LIBRARY_PREFIX}epl_dissector${CMAKE_STATIC_LIBRARY_SUFFIX}" )
   set_target_properties( epl_edsParser_shared   PROPERTIES IMPORTED_LOCATION "${EPL_DC_LIB_DIR}/${CMAKE_SHARED_LIBRARY_PREFIX}epl_edsParser${CMAKE_SHARED_LIBRARY_SUFFIX}" )
   set_target_properties( epl_edsParser_static   PROPERTIES IMPORTED_LOCATION "${EPL_DC_LIB_DIR}/${CMAKE_STATIC_LIBRARY_PREFIX}epl_edsParser${CMAKE_STATIC_LIBRARY_SUFFIX}" )
 endif( USE_SYSTEM_PACKETS )
@@ -179,7 +179,7 @@ new_project_library(
   PATH         "${PROJECT_SOURCE_DIR}/libEPLViz"
   NAME         "libEPLViz"
   TEMPLATE     "${EPL_VIZ_TEMPLATES_DIR}/CMakeLists.lib.txt"
-  DEPENDENCIES ${EPL_VIZ_QT_DEP_LIST} epl_DataCollect_shared
+  DEPENDENCIES ${EPL_VIZ_QT_DEP_LIST} epl_DataCollect_shared epl_dissector_shared epl_edsParser_shared
 )
 
 new_project_executable(
@@ -194,7 +194,7 @@ if( NOT DISABLE_TESTS )
     PATH         "${PROJECT_SOURCE_DIR}/tests"
     NAME         "tests"
     TEMPLATE     "${EPL_VIZ_TEMPLATES_DIR}/CMakeLists.exe.txt"
-    DEPENDENCIES libEPLViz_shared epl_DataCollect_shared
+    DEPENDENCIES libEPLViz_shared epl_DataCollect_shared epl_dissector_shared epl_edsParser_shared
   )
 endif( NOT DISABLE_TESTS )
 

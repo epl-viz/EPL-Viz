@@ -1,13 +1,13 @@
 #!/bin/bash
 
-# Test clang-format formating
+# Test clang-format formatting
 
 ########################
 # BEGIN CONFIG SECTION #
 ########################
 
-CLANG_FORMAT_VERSION="3.9.1"
-CALNG_FORMAT_DEFAULT_CMD="clang-format"
+CLANG_FORMAT_VERSIONS=( "3.9.1" "4.0.0" )
+CLANG_FORMAT_DEFAULT_CMD="clang-format"
 EXTENSIONS=( cpp hpp )
 SOURCE_DIRS=( epl-viz libEPLViz )
 
@@ -46,7 +46,7 @@ verbose() {
 
 cd "$(dirname "$0")"
 
-[ -z "$CLANG_FORMAT_CMD" ] && CLANG_FORMAT_CMD="$CALNG_FORMAT_DEFAULT_CMD"
+[ -z "$CLANG_FORMAT_CMD" ] && CLANG_FORMAT_CMD="$CLANG_FORMAT_DEFAULT_CMD"
 
 # Check if the command exists
 CLANG_FORMAT_EXEC=$(which "$CLANG_FORMAT_CMD" 2> /dev/null)
@@ -59,14 +59,20 @@ verbose "clang-format command: $CLANG_FORMAT_EXEC"
 
 
 # Check the version
-CURENT_VERSION="$($CLANG_FORMAT_EXEC --version | sed 's/^[^0-9]*//g')"
-CURENT_VERSION="$(echo "$CURENT_VERSION" | sed 's/^\([0-9.]*\).*/\1/g')"
-if [[ "$CLANG_FORMAT_VERSION" != "$CURENT_VERSION" ]]; then
-  error "Invalid clang-format version! $CLANG_FORMAT_VERSION required but $CURENT_VERSION provided"
+CURRENT_VERSION="$($CLANG_FORMAT_EXEC --version | sed 's/^[^0-9]*//g')"
+CURRENT_VERSION="$(echo "$CURRENT_VERSION" | sed 's/^\([0-9.]*\).*/\1/g')"
+FOUND_VERSION=0
+
+for I in "${CLANG_FORMAT_VERSIONS[@]}"; do
+  [[ "$I" == "$CURRENT_VERSION" ]] && (( FOUND_VERSION++ ))
+done
+
+if (( FOUND_VERSION == 0 )); then
+  error "Invalid clang-format version! ${CLANG_FORMAT_VERSIONS[@]} versions required but $CURRENT_VERSION provided"
   exit 2
 fi
 
-verbose "clang-froamt version: $CURENT_VERSION\n"
+verbose "clang-format version: $CURRENT_VERSION\n"
 
 
 #########################
@@ -77,7 +83,7 @@ ERROR=0
 NUM_FILES=0
 TO_GIT_ADD=()
 
-checkFromat() {
+checkFormat() {
   local I J
   NUM_FILES=0
   ERROR=0
@@ -125,19 +131,19 @@ checkFromat() {
   done
 }
 
-checkFromat check
+checkFormat check
 
 if (( ERROR != 0 )); then
-  error "$ERROR out of $NUM_FILES files are not formated"
+  error "$ERROR out of $NUM_FILES files are not formatted"
   (( ONLY_CHECK == 1 )) && exit $ERROR
 
-  read -p "  ==> Try formating source files [Y/n]? " -n 1 INPUT
+  read -p "  ==> Try formatting source files [Y/n]? " -n 1 INPUT
   [ -z "$INPUT" ] && INPUT=y || echo ""
 
   if [[ "$INPUT" == "Y" || "$INPUT" == "y" ]]; then
-    checkFromat format
+    checkFormat format
     if (( ERROR != 0 )); then
-      error "$ERROR out of $NUM_FILES files are not formated -- CLANG FORMAT FAIL"
+      error "$ERROR out of $NUM_FILES files are not formatted -- CLANG FORMAT FAIL"
       exit $ERROR
     fi
 

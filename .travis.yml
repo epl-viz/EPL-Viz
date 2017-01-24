@@ -15,7 +15,7 @@ install:
   - gem install coveralls-lcov
 
 script:
-  - docker run -p 127.0.0.1:80:4567 -t --name builder -v "$PWD":"$PWD" -w "$PWD" eplviz/archlinux_base ./travisRun.sh $CXX
+  - docker run -p 127.0.0.1:80:4567 -t --name builder -v "$PWD":"$PWD" -w "$PWD" eplviz/archlinux_qt5 ./travisRun.sh $CXX
 
 after_success:
   - docker cp builder:coverage.info .

@@ -14,11 +14,11 @@ class MainWindow : public QMainWindow {
   Ui::MainWindow *ui;
 
  public:
-  explicit MainWindow( QWidget *parent = nullptr );
+  explicit MainWindow(QWidget *parent = nullptr);
   ~MainWindow();
 
  public slots:
-  void mySetFullscreen( bool makeFullscreen );
+  void mySetFullscreen(bool makeFullscreen);
   void myOpenPluginEditor();
   void save();
   void saveAs();

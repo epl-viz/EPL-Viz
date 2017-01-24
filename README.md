@@ -1,6 +1,17 @@
 # EPL-Viz [![Build Status](https://travis-ci.org/epl-viz/EPL-Viz.svg?branch=master)](https://travis-ci.org/epl-viz/EPL-Viz) [![Coverage Status](https://coveralls.io/repos/github/epl-viz/EPL-Viz/badge.svg?branch=master)](https://coveralls.io/github/epl-viz/EPL-Viz?branch=master)
 
-EPL-Viz is a visualizer for an ethernetPOWERLINK setup.
+EPL-Viz is a visualizer for ethernetPOWERLINK setups.
+<!-- Discord bot #1 -->
+
+## Initial Setup
+```bash
+    git clone https://github.com/epl-viz/EPL-Viz.git --recursive
+    cd EPL-Viz
+    ./setupHooks.sh
+    mkdir build && cd build
+    cmake ..
+    make
+```
 
 ## CMake options
 

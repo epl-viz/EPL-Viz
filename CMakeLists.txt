@@ -229,7 +229,7 @@ endif( NOT DISABLE_TESTS )
 # Generate Files #
 ##################
 
-configure_file( "${EPL_VIZ_TEMPLATES_DIR}/defines.in.hpp" "${EPL_VIZ_INCLUDES_DIR}/defines.hpp" @ONLY )
+configure_file( "${EPL_VIZ_TEMPLATES_DIR}/defines.in.hpp" "${EPL_VIZ_INCLUDES_DIR}/EPLVizDefines.hpp" @ONLY )
 
 if( USE_SYSTEM_PACKETS )
   write_basic_package_version_file(
@@ -247,5 +247,10 @@ if( USE_SYSTEM_PACKETS )
 
   install( EXPORT ${PROJECT_NAME}Targets DESTINATION lib/cmake/${PROJECT_NAME} )
 endif( USE_SYSTEM_PACKETS )
+
+install(
+  FILES "${EPL_VIZ_INCLUDES_DIR}/EPLVizDefines.hpp"
+  DESTINATION include/eplViz
+)
 
 generate_format_command( format 3.9.1 )

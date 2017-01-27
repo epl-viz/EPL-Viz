@@ -97,6 +97,10 @@ add_compiler(
 set( EPL_VIZ_QT_COMPONENTS Core Widgets )
 
 find_package( Qt5 5.7 COMPONENTS ${EPL_VIZ_QT_COMPONENTS} REQUIRED )
+find_package( PythonInterp 3.6 REQUIRED ) # Exec python with PYTHON_EXECUTABLE
+find_package( PythonLibs   3.6 REQUIRED )
+find_package( PkgConfig        REQUIRED )
+pkg_search_module( LIBWIRESHARK REQUIRED wireshark )
 
 # Generate link target list
 set( EPL_VIZ_QT_DEP_LIST "" )
@@ -118,17 +122,45 @@ endforeach( I IN LISTS EPL_VIZ_QT_COMPONENTS )
 
 find_package( Git REQUIRED )
 
-ExternalProject_Add( catch
-  PREFIX            ${CMAKE_BINARY_DIR}/catch
-  GIT_REPOSITORY    https://github.com/philsquared/Catch.git
-  UPDATE_COMMAND    ${GIT_EXECUTABLE} pull
-  CONFIGURE_COMMAND ""
-  BUILD_COMMAND     ""
-  INSTALL_COMMAND   ""
-)
+set( CM_ENABLE_MOCKING 0 )
 
-ExternalProject_Get_Property( catch source_dir )
-set( CATCH_INCLUDE_DIR "${source_dir}/include" )
+if( NOT DISABLE_TESTS )
+  set( FUNC_RED_PREFIX "${PROJECT_BINARY_DIR}/funcRedirect" )
+  set( FUNC_RED_INSTALL_DIR "${FUNC_RED_PREFIX}/install_dir" )
+  set( FUNC_RED_LIB_DIR     "${FUNC_RED_INSTALL_DIR}/lib" )
+
+  set( FUNC_RED_INCLUDE_DIRS "${FUNC_RED_INSTALL_DIR}/include/funcRedirect" )
+
+  ExternalProject_Add( catch
+    PREFIX            ${CMAKE_BINARY_DIR}/catch
+    GIT_REPOSITORY    https://github.com/philsquared/Catch.git
+    UPDATE_COMMAND    ${GIT_EXECUTABLE} pull
+    CONFIGURE_COMMAND ""
+    BUILD_COMMAND     ""
+    INSTALL_COMMAND   ""
+  )
+
+  ExternalProject_Add( FakeIt
+    PREFIX            ${CMAKE_BINARY_DIR}/FakeIt
+    GIT_REPOSITORY    https://github.com/eranpeer/FakeIt.git
+    UPDATE_COMMAND    ${GIT_EXECUTABLE} pull
+    CONFIGURE_COMMAND ""
+    BUILD_COMMAND     ""
+    INSTALL_COMMAND   ""
+  )
+
+  ExternalProject_Get_Property( catch source_dir )
+  set( CATCH_INCLUDE_DIR "${source_dir}/include" )
+
+  ExternalProject_Get_Property( FakeIt source_dir )
+  set( FAKE_IT_INCLUDE_DIR "${source_dir}/single_header/standalone" )
+
+  if( CMAKE_CXX_COMPILER_ID STREQUAL Clang OR CMAKE_CXX_COMPILER_ID STREQUAL GNU )
+    string( APPEND CMAKE_CXX_FLAGS " -isystem ${FAKE_IT_INCLUDE_DIR} " )
+  endif( CMAKE_CXX_COMPILER_ID STREQUAL Clang OR CMAKE_CXX_COMPILER_ID STREQUAL GNU )
+
+  set( CM_ENABLE_MOCKING 1 )
+endif( NOT DISABLE_TESTS )
 
 
 #############################
@@ -202,7 +234,15 @@ endif( NOT DISABLE_TESTS )
 # Update include directories #
 ##############################
 
-include_directories( ${EPL-Viz_LIB_INCLUDE_DIRECTORIES} ${CATCH_INCLUDE_DIR} ${EPL_VIZ_INCLUDES_DIR} ${EPL_DataCollect_INCLUDE_DIRS} )
+include_directories(
+  ${EPL-Viz_LIB_INCLUDE_DIRECTORIES}
+  ${CATCH_INCLUDE_DIR}
+  ${FAKE_IT_INCLUDE_DIR}
+  ${EPL_VIZ_INCLUDES_DIR}
+  ${EPL_DataCollect_INCLUDE_DIRS}
+  ${PYTHON_INCLUDE_DIRS}
+  ${LIBWIRESHARK_INCLUDE_DIRS}
+)
 
 # Add Ot5 include dirs
 foreach( I IN LISTS EPL_VIZ_QT_COMPONENTS )

@@ -31,6 +31,16 @@
 
 #pragma once
 
+#define EPL_VIZ_ENABLE_MOCKING @CM_ENABLE_MOCKING@
+
+#ifndef mockable
+#if EPL_VIZ_ENABLE_MOCKING
+#define mockable virtual
+#else
+#define mockable
+#endif
+#endif
+
 namespace EPL_Viz {
 
 namespace constants {

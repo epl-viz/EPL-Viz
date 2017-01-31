@@ -1,4 +1,5 @@
 #include "mainwindow.hpp"
+#include "interfacepicker.hpp"
 #include "pluginswindow.hpp"
 #include "ui_mainwindow.h"
 #include <QAction>
@@ -7,6 +8,7 @@
 #include <iostream>
 #include <utils.hpp>
 #include <vector>
+using namespace EPL_Viz;
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow) {
   Q_INIT_RESOURCE(resources);
@@ -44,9 +46,14 @@ void MainWindow::mySetFullscreen(bool makeFullscreen) {
   }
 }
 
-void MainWindow::myOpenPluginEditor() {
+void MainWindow::openPluginEditor() {
   PluginsWindow *win = new PluginsWindow();
   win->show();
+}
+
+void MainWindow::openInterfacePicker() {
+  InterfacePicker *picker = new InterfacePicker();
+  picker->show();
 }
 
 void MainWindow::save() {

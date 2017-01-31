@@ -357,6 +357,7 @@
     </property>
     <addaction name="actionSettings"/>
     <addaction name="actionPlugins"/>
+    <addaction name="actionInterfaces"/>
    </widget>
    <widget class="QMenu" name="menuView">
     <property name="title">
@@ -1042,7 +1043,7 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>255</width>
+          <width>330</width>
           <height>210</height>
          </rect>
         </property>
@@ -1189,6 +1190,14 @@
     <string>&amp;Best</string>
    </property>
   </action>
+  <action name="actionInterfaces">
+   <property name="text">
+    <string>&amp;Interfaces</string>
+   </property>
+   <property name="toolTip">
+    <string>Setup Interfaces</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
@@ -1287,7 +1296,7 @@
    <sender>actionPlugins</sender>
    <signal>triggered()</signal>
    <receiver>MainWindow</receiver>
-   <slot>myOpenPluginEditor()</slot>
+   <slot>openPluginEditor()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>-1</x>
@@ -1331,9 +1340,26 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>actionInterfaces</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>openInterfacePicker()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>767</x>
+     <y>464</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>mySetFullscreen(bool)</slot>
-  <slot>myOpenPluginEditor()</slot>
+  <slot>openPluginEditor()</slot>
+  <slot>openInterfacePicker()</slot>
  </slots>
 </ui>

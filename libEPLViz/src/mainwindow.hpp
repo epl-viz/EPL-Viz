@@ -19,7 +19,8 @@ class MainWindow : public QMainWindow {
 
  public slots:
   void mySetFullscreen(bool makeFullscreen);
-  void myOpenPluginEditor();
+  void openPluginEditor();
+  void openInterfacePicker();
   void save();
   void saveAs();
   void open();

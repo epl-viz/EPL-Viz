@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1210</width>
-    <height>762</height>
+    <width>1535</width>
+    <height>930</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -26,7 +26,7 @@
    <string>openPOWERViz</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="resources.qrc">
+   <iconset>
     <normaloff>:/icons/resources/logo2_NOTTF.svg</normaloff>:/icons/resources/logo2_NOTTF.svg</iconset>
   </property>
   <widget class="QWidget" name="centralWidget">
@@ -66,8 +66,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>606</width>
-             <height>276</height>
+             <width>931</width>
+             <height>410</height>
             </rect>
            </property>
            <widget class="QWidget" name="widgetNode1" native="true">
@@ -307,8 +307,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>620</width>
-             <height>276</height>
+             <width>945</width>
+             <height>410</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_17">
@@ -334,7 +334,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1210</width>
+     <width>1535</width>
      <height>20</height>
     </rect>
    </property>
@@ -357,6 +357,7 @@
     </property>
     <addaction name="actionSettings"/>
     <addaction name="actionPlugins"/>
+    <addaction name="actionInterfaces"/>
    </widget>
    <widget class="QMenu" name="menuView">
     <property name="title">
@@ -414,7 +415,7 @@
    <addaction name="separator"/>
    <addaction name="actionOD_Filter_2"/>
   </widget>
-  <widget class="QDockWidget" name="dockTime">
+  <widget class="TimelineWidget" name="dockTime">
    <property name="baseSize">
     <size>
      <width>0</width>
@@ -460,7 +461,7 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>1190</width>
+          <width>1515</width>
           <height>55</height>
          </rect>
         </property>
@@ -485,7 +486,7 @@
     </layout>
    </widget>
   </widget>
-  <widget class="QDockWidget" name="dockPlugins">
+  <widget class="TimelineWidget" name="dockPlugins">
    <property name="windowTitle">
     <string>Pl&amp;ugins</string>
    </property>
@@ -539,7 +540,7 @@
     </layout>
    </widget>
   </widget>
-  <widget class="QDockWidget" name="dockCycle">
+  <widget class="CycleViewerWidget" name="dockCycle">
    <property name="windowTitle">
     <string>&amp;Cycle Viewer (Wunschkriterium)</string>
    </property>
@@ -650,7 +651,7 @@
     </layout>
    </widget>
   </widget>
-  <widget class="QDockWidget" name="dockCurrent">
+  <widget class="CurrentODWidget" name="dockCurrent">
    <property name="windowTitle">
     <string>Current &amp;Node OD</string>
    </property>
@@ -695,7 +696,7 @@
     </layout>
    </widget>
   </widget>
-  <widget class="QDockWidget" name="dockOD">
+  <widget class="ODDescriptionWidget" name="dockOD">
    <property name="windowTitle">
     <string>OD Desc&amp;riptions</string>
    </property>
@@ -745,7 +746,7 @@
     </layout>
    </widget>
   </widget>
-  <widget class="QDockWidget" name="dockEvents">
+  <widget class="EventViewerWidget" name="dockEvents">
    <property name="windowTitle">
     <string>Events</string>
    </property>
@@ -854,7 +855,7 @@
     </layout>
    </widget>
   </widget>
-  <widget class="QDockWidget" name="dockPaketView">
+  <widget class="CycleCommandsWidget" name="dockPaketView">
    <property name="toolTip">
     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Zeigt die commands des ausgwaehlten Cycles an&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
    </property>
@@ -935,7 +936,7 @@
     </layout>
    </widget>
   </widget>
-  <widget class="QDockWidget" name="dockNetTree">
+  <widget class="NetworkGraphWidget" name="dockNetTree">
    <property name="windowTitle">
     <string>Networ&amp;k</string>
    </property>
@@ -1004,7 +1005,7 @@
     </layout>
    </widget>
   </widget>
-  <widget class="QDockWidget" name="dockPLog">
+  <widget class="PythonLogWidget" name="dockPLog">
    <property name="windowTitle">
     <string>Python Lo&amp;g</string>
    </property>
@@ -1023,7 +1024,7 @@
     </layout>
    </widget>
   </widget>
-  <widget class="QDockWidget" name="dockPText">
+  <widget class="PacketHistoryWidget" name="dockPText">
    <property name="windowTitle">
     <string>Package Te&amp;xt</string>
    </property>
@@ -1042,8 +1043,8 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>196</width>
-          <height>176</height>
+          <width>330</width>
+          <height>210</height>
          </rect>
         </property>
         <layout class="QGridLayout" name="gridLayout_22">
@@ -1079,7 +1080,7 @@
   </action>
   <action name="actionLoad">
    <property name="icon">
-    <iconset resource="resources.qrc">
+    <iconset resource="../resources.qrc">
      <normaloff>:/icons/resources/document-open.svg</normaloff>:/icons/resources/document-open.svg</iconset>
    </property>
    <property name="text">
@@ -1172,7 +1173,7 @@
   </action>
   <action name="actionOD_Filter_2">
    <property name="icon">
-    <iconset resource="resources.qrc">
+    <iconset resource="../resources.qrc">
      <normaloff>:/icons/resources/view-filter.svg</normaloff>:/icons/resources/view-filter.svg</iconset>
    </property>
    <property name="text">
@@ -1189,10 +1190,74 @@
     <string>&amp;Best</string>
    </property>
   </action>
+  <action name="actionInterfaces">
+   <property name="text">
+    <string>&amp;Interfaces</string>
+   </property>
+   <property name="toolTip">
+    <string>Setup Interfaces</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
+ <customwidgets>
+  <customwidget>
+   <class>PythonLogWidget</class>
+   <extends>QDockWidget</extends>
+   <header>src/pythonlogwidget.hpp</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>TimelineWidget</class>
+   <extends>QDockWidget</extends>
+   <header>src/timelinewidget.hpp</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>CycleViewerWidget</class>
+   <extends>QDockWidget</extends>
+   <header>src/cycleviewerwidget.hpp</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>CurrentODWidget</class>
+   <extends>QDockWidget</extends>
+   <header>src/currentodwidget.hpp</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>ODDescriptionWidget</class>
+   <extends>QDockWidget</extends>
+   <header>src/oddescriptionwidget.hpp</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>EventViewerWidget</class>
+   <extends>QDockWidget</extends>
+   <header>src/eventviewerwidget.hpp</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>CycleCommandsWidget</class>
+   <extends>QDockWidget</extends>
+   <header>src/cyclecommandswidget.hpp</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>NetworkGraphWidget</class>
+   <extends>QDockWidget</extends>
+   <header>src/networkgraphwidget.hpp</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>PacketHistoryWidget</class>
+   <extends>QDockWidget</extends>
+   <header>src/packethistorywidget.hpp</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources>
-  <include location="resources.qrc"/>
+  <include location="../resources.qrc"/>
  </resources>
  <connections>
   <connection>
@@ -1231,7 +1296,7 @@
    <sender>actionPlugins</sender>
    <signal>triggered()</signal>
    <receiver>MainWindow</receiver>
-   <slot>myOpenPluginEditor()</slot>
+   <slot>openPluginEditor()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>-1</x>
@@ -1275,9 +1340,26 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>actionInterfaces</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>openInterfacePicker()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>767</x>
+     <y>464</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>mySetFullscreen(bool)</slot>
-  <slot>myOpenPluginEditor()</slot>
+  <slot>openPluginEditor()</slot>
+  <slot>openInterfacePicker()</slot>
  </slots>
 </ui>

@@ -97,7 +97,7 @@ add_compiler(
 set( EPL_VIZ_QT_COMPONENTS Core Widgets )
 
 find_package( Qt5 5.7 COMPONENTS ${EPL_VIZ_QT_COMPONENTS} REQUIRED )
-find_package( Qwt5             REQUIRED )
+find_package( Qwt              REQUIRED )
 find_package( PythonInterp 3.5 REQUIRED ) # Exec python with PYTHON_EXECUTABLE
 find_package( PythonLibs   3.5 REQUIRED )
 
@@ -202,14 +202,14 @@ new_project_library(
   PATH         "${PROJECT_SOURCE_DIR}/libEPLViz"
   NAME         "libEPLViz"
   TEMPLATE     "${EPL_VIZ_TEMPLATES_DIR}/CMakeLists.lib.txt"
-  DEPENDENCIES ${EPL_VIZ_QT_DEP_LIST} epl_DataCollect_shared Qwt5::Qwt5
+  DEPENDENCIES ${EPL_VIZ_QT_DEP_LIST} epl_DataCollect_shared Qwt::Qwt
 )
 
 new_project_executable(
   PATH         "${PROJECT_SOURCE_DIR}/epl-viz"
   NAME         "EPLViz"
   TEMPLATE     "${EPL_VIZ_TEMPLATES_DIR}/CMakeLists.exe.txt"
-  DEPENDENCIES libEPLViz_shared Qwt5::Qwt5
+  DEPENDENCIES libEPLViz_shared Qwt::Qwt
 )
 
 if( NOT DISABLE_TESTS )
@@ -217,7 +217,7 @@ if( NOT DISABLE_TESTS )
     PATH         "${PROJECT_SOURCE_DIR}/tests"
     NAME         "tests"
     TEMPLATE     "${EPL_VIZ_TEMPLATES_DIR}/CMakeLists.exe.txt"
-    DEPENDENCIES libEPLViz_shared epl_DataCollect_shared Qwt5::Qwt5
+    DEPENDENCIES libEPLViz_shared epl_DataCollect_shared Qwt::Qwt
   )
 endif( NOT DISABLE_TESTS )
 
@@ -235,7 +235,7 @@ include_directories( SYSTEM
   ${FAKE_IT_INCLUDE_DIR}
   ${EPL_DataCollect_INCLUDE_DIRS}
   ${PYTHON_INCLUDE_DIRS}
-  ${QWT5_LIBRARIES}
+  ${QWT_INCLUDE_DIRS}
 )
 
 # Add Qt5 include dirs

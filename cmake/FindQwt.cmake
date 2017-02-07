@@ -23,28 +23,28 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-# QWT5_FOUND
-# QWT5_INCLUDE_DIRS
-# QWT5_LIBRARIES
+# QWT_FOUND
+# QWT_INCLUDE_DIRS
+# QWT_LIBRARIES
 
 include( FindPackageHandleStandardArgs )
 
 find_path(
-  QWT5_INCLUDE_DIRS
+  QWT_INCLUDE_DIRS
     NAMES qwt.h
     HINTS
-      /usr/include/qwt5
-      /usr/local/include/qwt5
+      /usr/include/qwt
+      /usr/local/include/qwt
 )
 
-find_library( QWT5_LIBRARIES qwt5 )
+find_library( QWT_LIBRARIES qwt )
 
-find_package_handle_standard_args(QWT5 REQUIRED_VARS QWT5_LIBRARIES QWT5_INCLUDE_DIRS)
+find_package_handle_standard_args(QWT REQUIRED_VARS QWT_LIBRARIES QWT_INCLUDE_DIRS)
 
-if( QWT5_FOUND )
-  if( NOT TARGET Qwt5::Qwt5 )
-    add_library( Qwt5::Qwt5 UNKNOWN IMPORTED )
-    set_target_properties( Qwt5::Qwt5 PROPERTIES INTERFACE_INCLUDE_DIRECTORIES "${QWT5_INCLUDE_DIRS}" )
-    set_target_properties( Qwt5::Qwt5 PROPERTIES IMPORTED_LOCATION "${QWT5_LIBRARIES}" )
-  endif( NOT TARGET Qwt5::Qwt5 )
-endif( QWT5_FOUND )
+if( QWT_FOUND )
+  if( NOT TARGET Qwt::Qwt )
+    add_library( Qwt::Qwt UNKNOWN IMPORTED )
+    set_target_properties( Qwt::Qwt PROPERTIES INTERFACE_INCLUDE_DIRECTORIES "${QWT_INCLUDE_DIRS}" )
+    set_target_properties( Qwt::Qwt PROPERTIES IMPORTED_LOCATION "${QWT_LIBRARIES}" )
+  endif( NOT TARGET Qwt::Qwt )
+endif( QWT_FOUND )

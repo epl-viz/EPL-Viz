@@ -64,11 +64,15 @@ print_version clang
 print_version qt5-base
 
 msg "Updating wireshark disector"
-testExec cd /opt/wireshark/build
+testExec pushd /opt/wireshark/build
 testExec git pull
 testExec git submodule update --init --recursive
 testExec make install
-testExec cd -
+testExec pushd ..
+testExec mkdir -p "/usr/include/wireshark"
+testExec find . -name "*.h" ! -path "*build*" -exec cp --parents {} "/usr/include/wireshark" \;
+testExec popd
+testExec popd
 
 msg "Setting up the build env"
 testExec lcov --directory . --zerocounters

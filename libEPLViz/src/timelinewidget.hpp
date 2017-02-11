@@ -34,14 +34,14 @@
 class TimelineWidget : public QDockWidget {
   Q_OBJECT
 
-private:
- QwtPlotPicker *picker;
+ private:
+  QwtPlotPicker *picker;
 
-public:
+ public:
   TimelineWidget(QWidget *parent = nullptr);
   ~TimelineWidget();
   bool event(QEvent *event);
 
-public slots:
+ public slots:
   void pointSelected(const QPointF &pa);
 };

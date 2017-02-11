@@ -27,19 +27,16 @@
  * \file timelinewidget.cpp
  */
 #include "timelinewidget.hpp"
-#include <qwt_plot.h>
-#include <qwt_picker_machine.h>
-#include <qwt_event_pattern.h>
-#include <QEvent>
-#include <stdio.h>
 #include <QDebug>
+#include <QEvent>
+#include <qwt_event_pattern.h>
+#include <qwt_picker_machine.h>
+#include <qwt_plot.h>
+#include <stdio.h>
 
-TimelineWidget::TimelineWidget(QWidget *parent) : QDockWidget(parent) {
-}
+TimelineWidget::TimelineWidget(QWidget *parent) : QDockWidget(parent) {}
 
-TimelineWidget::~TimelineWidget() {
-  delete(picker);
-}
+TimelineWidget::~TimelineWidget() { delete (picker); }
 
 bool TimelineWidget::event(QEvent *event) {
   // Only handling Polish events, call parent in any other case

@@ -27,10 +27,10 @@
  * \file mainwindow.hpp
  */
 #pragma once
-#include <QMainWindow>
-#include "profilemanager.hpp"
-#include "guistate.hpp"
 #include "EPLVizDefines.hpp"
+#include "guistate.hpp"
+#include "profilemanager.hpp"
+#include <QMainWindow>
 using namespace EPL_Viz;
 
 namespace Ui {
@@ -43,8 +43,8 @@ class MainWindow : public QMainWindow {
  private:
   Ui::MainWindow *ui;
   ProfileManager *profileManager;
-  GUIState machineState;
-  int curCycle;
+  GUIState        machineState;
+  int             curCycle;
 
  private:
   /*!

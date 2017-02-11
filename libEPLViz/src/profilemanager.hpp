@@ -28,18 +28,18 @@
  */
 #pragma once
 
-#include <QSettings>
 #include "profile.hpp"
-#include <QString>
 #include <QMap>
+#include <QSettings>
+#include <QString>
 
 namespace EPL_Viz {
 
 class ProfileManager {
-private:
+ private:
   QSettings appSettings;
 
-public:
+ public:
   ProfileManager() = default;
 
   Profile getDefaultProfile(QString profile);

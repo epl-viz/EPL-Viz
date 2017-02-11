@@ -30,11 +30,11 @@
  */
 
 namespace EPL_Viz {
-  class Profile;
+class Profile;
 }
 
 class Profile {
-public:
+ public:
   Profile() = default;
 };
 

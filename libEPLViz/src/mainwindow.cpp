@@ -68,7 +68,7 @@ MainWindow::~MainWindow() {
 
 bool MainWindow::changeTime(double t) {
   // TODO convert to cycle
-  (void) t;
+  (void)t;
   return false;
 }
 
@@ -85,11 +85,9 @@ bool MainWindow::changeCycle(int cycle) {
   }
 }
 
-GUIState MainWindow::getState() {
-  return machineState;
-}
+GUIState MainWindow::getState() { return machineState; }
 
-bool MainWindow:: startLoop() {
+bool MainWindow::startLoop() {
   if (machineState != GUIState::UNINIT)
     return false;
   // TODO create thread
@@ -97,26 +95,25 @@ bool MainWindow:: startLoop() {
 }
 
 void MainWindow::loop() {
-  while(true) {
+  while (true) {
     switch (machineState) {
-    case GUIState::PAUSED:
-      // TODO
-      break;
-    case GUIState::PLAYING:
-      // TODO
-      break;
-    case GUIState::RECORDING:
-      // TODO
-      break;
-    case GUIState::STOPPED:
-      // TODO
-      break;
-    case GUIState::UNINIT:
-      // TODO
-      break;
+      case GUIState::PAUSED:
+        // TODO
+        break;
+      case GUIState::PLAYING:
+        // TODO
+        break;
+      case GUIState::RECORDING:
+        // TODO
+        break;
+      case GUIState::STOPPED:
+        // TODO
+        break;
+      case GUIState::UNINIT:
+        // TODO
+        break;
     }
   }
-
 }
 
 void MainWindow::setFullscreen(bool makeFullscreen) {

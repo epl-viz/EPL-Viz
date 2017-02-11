@@ -35,3 +35,4 @@ namespace EPL_Viz {
     STOPPED = 3,
     PLAYING = 4
 };
+}

@@ -44,5 +44,4 @@ public:
 
 public slots:
   void pointSelected(const QPointF &pa);
-  void
 };

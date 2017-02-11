@@ -28,6 +28,9 @@
  */
 #pragma once
 #include <QMainWindow>
+#include "profilemanager.hpp"
+#include "guistate.hpp"
+using namespace EPL_Viz;
 
 namespace Ui {
 class MainWindow;
@@ -38,6 +41,8 @@ class MainWindow : public QMainWindow {
 
  private:
   Ui::MainWindow *ui;
+  ProfileManager *profileManager;
+  GUIState machineState;
 
  public:
   explicit MainWindow(QWidget *parent = nullptr);

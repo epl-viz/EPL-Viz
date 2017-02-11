@@ -1,5 +1,3 @@
-#ifndef PROFILEMANAGER_HPP
-#define PROFILEMANAGER_HPP
 /* Copyright (c) 2017, EPL-Vizards
  * All rights reserved.
  *
@@ -28,6 +26,7 @@
 /*!
  * \file profilemanager.hpp
  */
+#pragma once
 
 #include <QSettings>
 #include "profile.hpp"
@@ -35,8 +34,6 @@
 #include <QMap>
 
 namespace EPL_Viz {
- class ProfileManager;
-}
 
 class ProfileManager {
 private:
@@ -50,5 +47,4 @@ public:
 
   void setDefaultProfile(Profile *profile);
 };
-
-#endif // PROFILEMANAGER_HPP
+}

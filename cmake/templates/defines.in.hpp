@@ -45,11 +45,11 @@ namespace EPL_Viz {
 
 namespace constants {
 
-static const int   EPL_VIZ_VERSION_MAJOR     = @CM_VERSION_MAJOR@;
-static const int   EPL_VIZ_VERSION_MINOR     = @CM_VERSION_MINOR@;
-static const int   EPL_VIZ_VERSION_SUBMINOR  = @CM_VERSION_SUBMINOR@;
-static const int   EPL_VIZ_GIT_LAST_TAG_DIFF = @CM_TAG_DIFF@;
-static const char *EPL_VIZ_VERSION_GIT       = "@CM_VERSION_GIT@";
-static const char *EPL_VIZ_INSTALL_PREFIX    = "@CMAKE_INSTALL_PREFIX@";
+const int   EPL_VIZ_VERSION_MAJOR     = @CM_VERSION_MAJOR@;
+const int   EPL_VIZ_VERSION_MINOR     = @CM_VERSION_MINOR@;
+const int   EPL_VIZ_VERSION_SUBMINOR  = @CM_VERSION_SUBMINOR@;
+const int   EPL_VIZ_GIT_LAST_TAG_DIFF = @CM_TAG_DIFF@;
+const char * const EPL_VIZ_VERSION_GIT       = "@CM_VERSION_GIT@";
+const char * const EPL_VIZ_INSTALL_PREFIX    = "@CMAKE_INSTALL_PREFIX@";
 }
 }

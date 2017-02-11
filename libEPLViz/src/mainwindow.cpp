@@ -66,11 +66,13 @@ MainWindow::~MainWindow() {
   delete ui;
 }
 
-mockable bool MainWindow::changeTime(double t) {
+bool MainWindow::changeTime(double t) {
   // TODO convert to cycle
+  (void) t;
+  return false;
 }
 
-mockable bool MainWindow::changeCycle(int cycle) {
+bool MainWindow::changeCycle(int cycle) {
   // TODO Maybe check upper bounds? Or just ignore it and let the update method deal with it.
   //      Or if >max just use the last cycle.
   if (cycle < 0)

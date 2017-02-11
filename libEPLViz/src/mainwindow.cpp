@@ -66,7 +66,24 @@ MainWindow::~MainWindow() {
   delete ui;
 }
 
-void MainWindow::mySetFullscreen(bool makeFullscreen) {
+mockable bool MainWindow::changeTime(double t) {
+  // TODO convert to cycle
+}
+
+mockable bool MainWindow::changeCycle(int cycle) {
+  // TODO Maybe check upper bounds? Or just ignore it and let the update method deal with it.
+  //      Or if >max just use the last cycle.
+  if (cycle < 0)
+    return false;
+  if (machineState == GUIState::STOPPED) {
+    curCycle = cycle;
+    return true;
+  } else {
+    return false;
+  }
+}
+
+void MainWindow::setFullscreen(bool makeFullscreen) {
   if (makeFullscreen) {
     showFullScreen();
   } else {

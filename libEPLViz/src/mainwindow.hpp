@@ -30,6 +30,7 @@
 #include <QMainWindow>
 #include "profilemanager.hpp"
 #include "guistate.hpp"
+#include "EPLVizDefines.hpp"
 using namespace EPL_Viz;
 
 namespace Ui {
@@ -43,13 +44,28 @@ class MainWindow : public QMainWindow {
   Ui::MainWindow *ui;
   ProfileManager *profileManager;
   GUIState machineState;
+  int curCycle;
 
  public:
   explicit MainWindow(QWidget *parent = nullptr);
   ~MainWindow();
+  /*!
+   * \brief Changes the cycle to the one before the timestamp
+   * Tries to change the time, if the current state does not allow it, nothing happens.
+   * \param t Time in seconds
+   * \return whether or not the change was a success
+   */
+  mockable bool changeTime(double t);
+  /*!
+   * \brief Changes the cycle
+   * Tries to change the cycle, if the current state does not allow it, nothing happens.
+   * \param cycle Cycle number
+   * \return whether or not the  change was a success
+   */
+  mockable bool changeCycle(int cycle);
 
  public slots:
-  void mySetFullscreen(bool makeFullscreen);
+  void setFullscreen(bool makeFullscreen);
   void openPluginEditor();
   void openInterfacePicker();
   void save();

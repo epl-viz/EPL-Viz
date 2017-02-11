@@ -85,6 +85,40 @@ bool MainWindow::changeCycle(int cycle) {
   }
 }
 
+GUIState MainWindow::getState() {
+  return machineState;
+}
+
+bool MainWindow:: startLoop() {
+  if (machineState != GUIState::UNINIT)
+    return false;
+  // TODO create thread
+  return false;
+}
+
+void MainWindow::loop() {
+  while(true) {
+    switch (machineState) {
+    case GUIState::PAUSED:
+      // TODO
+      break;
+    case GUIState::PLAYING:
+      // TODO
+      break;
+    case GUIState::RECORDING:
+      // TODO
+      break;
+    case GUIState::STOPPED:
+      // TODO
+      break;
+    case GUIState::UNINIT:
+      // TODO
+      break;
+    }
+  }
+
+}
+
 void MainWindow::setFullscreen(bool makeFullscreen) {
   if (makeFullscreen) {
     showFullScreen();

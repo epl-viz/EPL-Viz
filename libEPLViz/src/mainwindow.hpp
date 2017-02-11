@@ -46,6 +46,12 @@ class MainWindow : public QMainWindow {
   GUIState machineState;
   int curCycle;
 
+ private:
+  /*!
+   * \brief main loop
+   */
+  mockable void loop();
+
  public:
   explicit MainWindow(QWidget *parent = nullptr);
   ~MainWindow();
@@ -63,6 +69,17 @@ class MainWindow : public QMainWindow {
    * \return whether or not the  change was a success
    */
   mockable bool changeCycle(int cycle);
+  /*!
+   * \brief Returns the current state
+   * \return the current state
+   */
+  mockable GUIState getState();
+
+  /*!
+   * \brief Starts the main loop
+   * \return true if it succeeded
+   */
+  mockable bool startLoop();
 
  public slots:
   void setFullscreen(bool makeFullscreen);

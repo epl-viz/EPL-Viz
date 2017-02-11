@@ -43,12 +43,12 @@ private:
   QSettings appSettings;
 
 public:
-  void                    ProfileManager() = default;
+  ProfileManager() = default;
 
-  Profile                 getDefaultProfile(QString profile);
-  QMap<QString, Profile>  getProfiles();
+  Profile getDefaultProfile(QString profile);
+  QMap<QString, Profile> getProfiles();
 
-  void                    setDefaultProfile(Profile *profile);
+  void setDefaultProfile(Profile *profile);
 };
 
 #endif // PROFILEMANAGER_HPP

@@ -31,7 +31,6 @@
 #include "guistate.hpp"
 #include "profilemanager.hpp"
 #include <QMainWindow>
-using namespace EPL_Viz;
 
 namespace Ui {
 class MainWindow;
@@ -41,10 +40,10 @@ class MainWindow : public QMainWindow {
   Q_OBJECT
 
  private:
-  Ui::MainWindow *ui;
-  ProfileManager *profileManager;
-  GUIState        machineState;
-  int             curCycle;
+  Ui::MainWindow *         ui;
+  EPL_Viz::ProfileManager *profileManager;
+  EPL_Viz::GUIState        machineState;
+  int                      curCycle;
 
  private:
   /*!
@@ -73,7 +72,7 @@ class MainWindow : public QMainWindow {
    * \brief Returns the current state
    * \return the current state
    */
-  mockable GUIState getState();
+  mockable EPL_Viz::GUIState getState();
 
   /*!
    * \brief Starts the main loop

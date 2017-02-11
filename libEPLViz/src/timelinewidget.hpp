@@ -26,18 +26,23 @@
 /*!
  * \file timelinewidget.cpp
  */
-#ifndef TIMELINEWIDGET_HPP
-#define TIMELINEWIDGET_HPP
+#pragma once
 
 #include <QDockWidget>
+#include <qwt_plot_picker.h>
 
 class TimelineWidget : public QDockWidget {
   Q_OBJECT
 
- public:
-  TimelineWidget(QWidget *parent = nullptr);
-  ~TimelineWidget()              = default;
-  bool event(QEvent *event);
-};
+private:
+ QwtPlotPicker *picker;
 
-#endif // TIMELINEWIDGET_HPP
+public:
+  TimelineWidget(QWidget *parent = nullptr);
+  ~TimelineWidget();
+  bool event(QEvent *event);
+
+public slots:
+  void pointSelected(const QPointF &pa);
+  void
+};

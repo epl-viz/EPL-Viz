@@ -24,24 +24,41 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 /*!
- * \file timelinewidget.hpp
+ * \file timelinewidget.cpp
  */
 #include "timelinewidget.hpp"
-#include "qwt_plot.h"
+#include <qwt_plot.h>
+#include <qwt_picker_machine.h>
+#include <qwt_event_pattern.h>
 #include <QEvent>
 #include <stdio.h>
 #include <QDebug>
 
-TimelineWidget::TimelineWidget(QWidget *parent) : QDockWidget(parent) {}
+TimelineWidget::TimelineWidget(QWidget *parent) : QDockWidget(parent) {
+}
+
+TimelineWidget::~TimelineWidget() {
+  delete(picker);
+}
 
 bool TimelineWidget::event(QEvent *event) {
   // Only handling Polish events, call parent in any other case
   if (event->type() == QEvent::Polish) {
+    qDebug() << "Polish event thrown";
     QwtPlot *plot = this->findChild<QwtPlot *>("qwtPlotTimeline");
     // Event gets thrown multiple times, even when not all children have been created
     if (plot) {
+      // Configure axis
       plot->enableAxis(QwtPlot::yLeft, false);
       plot->enableAxis(QwtPlot::xBottom, false);
+      plot->enableAxis(QwtPlot::xTop, true);
+
+      // Configure PlotPicker
+      picker = new QwtPlotPicker(plot->canvas());
+      picker->setStateMachine(new QwtPickerClickPointMachine());
+      picker->setMousePattern(QwtEventPattern::MousePatternCode::MouseSelect1, Qt::MouseButton::LeftButton);
+      connect(picker, SIGNAL(selected(QPointF)), this, SLOT(pointSelected(QPointF)));
+
     } else {
       qDebug() << "PlotTimeline not found, this is ok";
     }
@@ -49,4 +66,9 @@ bool TimelineWidget::event(QEvent *event) {
     return QWidget::event(event);
   }
   return true;
+}
+
+void TimelineWidget::pointSelected(const QPointF &pa) {
+  qDebug() << "Clicked on Timeline at point " << pa.x();
+  // TODO (try to) jump to selected time
 }

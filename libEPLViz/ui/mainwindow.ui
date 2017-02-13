@@ -1172,6 +1172,11 @@
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
   <customwidget>
+   <class>QwtPlot</class>
+   <extends>QFrame</extends>
+   <header>qwt_plot.h</header>
+  </customwidget>
+  <customwidget>
    <class>PythonLogWidget</class>
    <extends>QDockWidget</extends>
    <header>src/pythonlogwidget.hpp</header>
@@ -1225,11 +1230,6 @@
    <header>src/packethistorywidget.hpp</header>
    <container>1</container>
   </customwidget>
-  <customwidget>
-   <class>QwtPlot</class>
-   <extends>QFrame</extends>
-   <header>qwt_plot.h</header>
-  </customwidget>
  </customwidgets>
  <resources>
   <include location="../resources.qrc"/>
@@ -1255,7 +1255,7 @@
    <sender>actionFullscreen</sender>
    <signal>toggled(bool)</signal>
    <receiver>MainWindow</receiver>
-   <slot>mySetFullscreen(bool)</slot>
+   <slot>setFullscreen(bool)</slot>
    <hints>
     <hint type="sourcelabel">
      <x>-1</x>
@@ -1287,7 +1287,7 @@
    <sender>pushButton</sender>
    <signal>clicked()</signal>
    <receiver>MainWindow</receiver>
-   <slot>myOpenPluginEditor()</slot>
+   <slot>openPluginEditor()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>135</x>
@@ -1333,8 +1333,8 @@
   </connection>
  </connections>
  <slots>
-  <slot>mySetFullscreen(bool)</slot>
   <slot>openPluginEditor()</slot>
   <slot>openInterfacePicker()</slot>
+  <slot>setFullscreen(bool)</slot>
  </slots>
 </ui>

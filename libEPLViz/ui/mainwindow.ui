@@ -34,7 +34,7 @@
     <item row="0" column="0">
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
-       <number>0</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="tabNet">
        <attribute name="title">
@@ -996,7 +996,7 @@
   </widget>
   <widget class="PacketHistoryWidget" name="dockPText">
    <property name="windowTitle">
-    <string>Package Te&amp;xt</string>
+    <string>PacketHistory</string>
    </property>
    <attribute name="dockWidgetArea">
     <number>8</number>
@@ -1019,9 +1019,9 @@
         </property>
         <layout class="QGridLayout" name="gridLayout_22">
          <item row="0" column="0">
-          <widget class="QTextBrowser" name="textBrowser">
-           <property name="placeholderText">
-            <string>Package list goes here</string>
+          <widget class="QTextEdit" name="textEdit">
+           <property name="readOnly">
+            <bool>true</bool>
            </property>
           </widget>
          </item>

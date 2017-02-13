@@ -31,16 +31,18 @@
 
 #include "EPLVizDefines.hpp"
 #include "Cycle.hpp"
-#include <QVector>
+#include <QLinkedList>
 
 namespace EPL_Viz {
 class BaseModel {
  private:
-  static QVector<BaseModel> registeredModels;
+  static QLinkedList<BaseModel *> registeredModels = new QLinkedList<BaseModel *>();
 
  public:
   BaseModel();
   ~BaseModel();
+
+  inline bool operator==(const X& lhs, const X& rhs) { return &lhs == &rhs };
 
  protected:
   virtual void update(Cycle cycle);
@@ -49,5 +51,5 @@ class BaseModel {
   mockable static void updateAll(Cycle *cycle);
   mockable static void reg(BaseModel *model);
   mockable static void dereg(BaseModel *model);
-}
+};
 }

@@ -40,13 +40,19 @@ BaseModel::~BaseModel() {
 }
 
 BaseModel::updateAll(Cycle *cycle) {
-  // TODO
+  QLinkedListIterator<BaseModel *> iterator(registeredModels);
+  while (iterator.hasNext()) {
+    iterator.next()->update(cycle);
+  }
 }
 
 BaseModel::reg(BaseModel *model) {
-  // TODO
+  if (registeredModels.contains(model))
+    registeredModels.append(model);
+  else
+    throw std::runtime_error("Cannot add a model twice!");
 }
 
 BaseModel::dereg(BaseModel *model) {
-  // TODO
+  registeredModels.removeOne(model);
 }

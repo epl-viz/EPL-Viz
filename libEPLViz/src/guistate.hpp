@@ -27,6 +27,8 @@
  * \file GUIState.hpp
  */
 
+#pragma once
+
 namespace EPL_Viz {
 enum class GUIState { UNINIT = 0, RECORDING = 1, PAUSED = 2, STOPPED = 3, PLAYING = 4 };
 }

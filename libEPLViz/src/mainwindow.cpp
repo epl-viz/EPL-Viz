@@ -34,7 +34,6 @@
 #include <QLabel>
 #include <QToolButton>
 #include <iostream>
-#include <utils.hpp>
 #include <vector>
 using namespace EPL_Viz;
 
@@ -51,7 +50,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
   std::vector<QAction *> btns;
   btns.emplace_back(ui->actionOD_Filter_2);
-  Utils::fixQToolButtons(btns, ui->toolBar);
+  fixQToolButtons(btns, ui->toolBar);
 
   //   QPixmap pm;
   //   pm.load( ":/icons/resources/Screen_Shot.png" );
@@ -64,6 +63,25 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 MainWindow::~MainWindow() {
   Q_CLEANUP_RESOURCE(resources);
   delete ui;
+}
+
+void MainWindow::fixQToolButtons(std::vector<QToolButton *> &btns) {
+  for (auto i : btns) {
+    if (!i)
+      continue;
+    i->setPopupMode(QToolButton::InstantPopup);
+  }
+}
+
+void MainWindow::fixQToolButtons(std::vector<QAction *> &actions, QToolBar *bar) {
+  std::vector<QToolButton *> btns;
+  btns.reserve(actions.size());
+  for (auto i : actions) {
+    if (!i)
+      continue;
+    btns.emplace_back(dynamic_cast<QToolButton *>(bar->widgetForAction(i)));
+  }
+  fixQToolButtons(btns);
 }
 
 bool MainWindow::changeTime(double t) {

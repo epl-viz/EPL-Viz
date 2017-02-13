@@ -31,6 +31,9 @@
 #include "guistate.hpp"
 #include "profilemanager.hpp"
 #include <QMainWindow>
+#include <QAction>
+#include <QToolBar>
+#include <QToolButton>
 
 namespace Ui {
 class MainWindow;
@@ -79,6 +82,9 @@ class MainWindow : public QMainWindow {
    * \return true if it succeeded
    */
   mockable bool startLoop();
+
+  static void fixQToolButtons(std::vector<QToolButton *> &btns);
+  static void fixQToolButtons(std::vector<QAction *> &actions, QToolBar *bar);
 
  public slots:
   void setFullscreen(bool makeFullscreen);

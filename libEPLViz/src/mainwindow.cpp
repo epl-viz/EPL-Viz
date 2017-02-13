@@ -26,6 +26,7 @@
 /*!
  * \file mainwindow.cpp
  */
+
 #include "mainwindow.hpp"
 #include "interfacepicker.hpp"
 #include "pluginswindow.hpp"
@@ -35,6 +36,7 @@
 #include <QToolButton>
 #include <iostream>
 #include <vector>
+#include <QDebug>
 using namespace EPL_Viz;
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow) {
@@ -52,12 +54,10 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
   btns.emplace_back(ui->actionOD_Filter_2);
   fixQToolButtons(btns, ui->toolBar);
 
-  //   QPixmap pm;
-  //   pm.load( ":/icons/resources/Screen_Shot.png" );
-  //   QPixmap newPm = pm.scaledToHeight( 400 );
-  //   ui->labelIMG->setPixmap( newPm );
-  //   ui->labelIMG->resize( newPm.size() );
-  //   ui->labelIMG->show();
+  modelThread = new ModelThread(this, &machineState);
+  connect(modelThread, &ModelThread::resultReady, this, &MainWindow::handleResults);
+  connect(modelThread, &ModelThread::finished, modelThread, &QObject::deleteLater);
+  modelThread->start();
 }
 
 MainWindow::~MainWindow() {
@@ -105,35 +105,6 @@ bool MainWindow::changeCycle(int cycle) {
 
 GUIState MainWindow::getState() { return machineState; }
 
-bool MainWindow::startLoop() {
-  if (machineState != GUIState::UNINIT)
-    return false;
-  // TODO create thread
-  return false;
-}
-
-void MainWindow::loop() {
-  while (true) {
-    switch (machineState) {
-      case GUIState::PAUSED:
-        // TODO
-        break;
-      case GUIState::PLAYING:
-        // TODO
-        break;
-      case GUIState::RECORDING:
-        // TODO
-        break;
-      case GUIState::STOPPED:
-        // TODO
-        break;
-      case GUIState::UNINIT:
-        // TODO
-        break;
-    }
-  }
-}
-
 void MainWindow::setFullscreen(bool makeFullscreen) {
   if (makeFullscreen) {
     showFullScreen();
@@ -160,4 +131,8 @@ void MainWindow::saveAs() {
 }
 void MainWindow::open() {
   // TODO
+}
+
+void MainWindow::handleResults(const QString &result) {
+  qDebug() << "The result is\"" << result << "\"";
 }

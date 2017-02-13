@@ -24,68 +24,32 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 /*!
- * \file mainwindow.hpp
+ * \file modelthread.hpp
  */
+
 #pragma once
+
 #include "EPLVizDefines.hpp"
-#include "guistate.hpp"
-#include "profilemanager.hpp"
-#include <QMainWindow>
-#include <QAction>
-#include <QToolBar>
-#include <QToolButton>
 #include <QThread>
-#include "modelthread.hpp"
+#include "guistate.hpp"
 
-namespace Ui {
-class MainWindow;
+namespace EPL_Viz {
+  class ModelThread : public QThread {
+    Q_OBJECT
+
+  private:
+    EPL_Viz::GUIState *state;
+
+  public:
+    ModelThread(QObject *parent, GUIState *machineState);
+    ModelThread() = delete;
+    ~ModelThread();
+  protected:
+    void run() Q_DECL_OVERRIDE;
+  private:
+    mockable void loop();
+
+  signals:
+    void resultReady(const QString &result);
+  };
 }
-
-class MainWindow : public QMainWindow {
-  Q_OBJECT
-
- private:
-  Ui::MainWindow *         ui;
-  EPL_Viz::ProfileManager *profileManager;
-  EPL_Viz::GUIState        machineState;
-  int                      curCycle;
-  EPL_Viz::ModelThread     *modelThread;
-
- public:
-  explicit MainWindow(QWidget *parent = nullptr);
-  ~MainWindow();
-  /*!
-   * \brief Changes the cycle to the one before the timestamp
-   * Tries to change the time, if the current state does not allow it, nothing happens.
-   * \param t Time in seconds
-   * \return whether or not the change was a success
-   */
-  mockable bool changeTime(double t);
-  /*!
-   * \brief Changes the cycle
-   * Tries to change the cycle, if the current state does not allow it, nothing happens.
-   * \param cycle Cycle number
-   * \return whether or not the  change was a success
-   */
-  mockable bool changeCycle(int cycle);
-  /*!
-   * \brief Returns the current state
-   * \return the current state
-   */
-  mockable EPL_Viz::GUIState getState();
-
-  static void fixQToolButtons(std::vector<QToolButton *> &btns);
-  static void fixQToolButtons(std::vector<QAction *> &actions, QToolBar *bar);
-
- public slots:
-  void setFullscreen(bool makeFullscreen);
-  void openPluginEditor();
-  void openInterfacePicker();
-  void save();
-  void saveAs();
-  void open();
-  void handleResults(const QString &);
-
- signals:
-  void operate(const QString &);
-};

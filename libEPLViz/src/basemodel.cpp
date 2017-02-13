@@ -24,30 +24,29 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 /*!
- * \file basemodel.hpp
+ * \file basemodel.cpp
  */
 
-#pragma once
+#include "basemodel.hpp"
+using namespace EPL_Viz;
 
-#include "EPLVizDefines.hpp"
-#include "Cycle.hpp"
-#include <QVector>
-
-namespace EPL_Viz {
-class BaseModel {
- private:
-  static QVector<BaseModel> registeredModels;
-
- public:
-  BaseModel();
-  ~BaseModel();
-
- protected:
-  virtual void update(Cycle cycle);
-
- public:
-  mockable static void updateAll(Cycle *cycle);
-  mockable static void reg(BaseModel *model);
-  mockable static void dereg(BaseModel *model);
+BaseModel::BaseModel() {
+  // TODO Does this work? casting?
+  reg(this);
 }
+
+BaseModel::~BaseModel() {
+  dereg(this);
+}
+
+BaseModel::updateAll(Cycle *cycle) {
+  // TODO
+}
+
+BaseModel::reg(BaseModel *model) {
+  // TODO
+}
+
+BaseModel::dereg(BaseModel *model) {
+  // TODO
 }

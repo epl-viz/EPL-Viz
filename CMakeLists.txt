@@ -96,7 +96,12 @@ add_compiler(
 
 set( EPL_VIZ_QT_COMPONENTS Core Widgets )
 
+find_package( ECM 1.1.0 REQUIRED NO_MODULE )
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${ECM_MODULE_PATH} ${ECM_KDE_MODULE_DIR} )
+
 find_package( Qt5 5.7 COMPONENTS ${EPL_VIZ_QT_COMPONENTS} REQUIRED )
+find_package( KF5    REQUIRED COMPONENTS
+    TextEditor)
 find_package( Qwt              REQUIRED )
 find_package( PythonInterp 3.5 REQUIRED ) # Exec python with PYTHON_EXECUTABLE
 find_package( PythonLibs   3.5 REQUIRED )
@@ -202,14 +207,14 @@ new_project_library(
   PATH         "${PROJECT_SOURCE_DIR}/libEPLViz"
   NAME         "libEPLViz"
   TEMPLATE     "${EPL_VIZ_TEMPLATES_DIR}/CMakeLists.lib.txt"
-  DEPENDENCIES ${EPL_VIZ_QT_DEP_LIST} epl_DataCollect_shared Qwt::Qwt
+  DEPENDENCIES ${EPL_VIZ_QT_DEP_LIST} epl_DataCollect_shared Qwt::Qwt KF5::TextEditor
 )
 
 new_project_executable(
   PATH         "${PROJECT_SOURCE_DIR}/epl-viz"
   NAME         "EPLViz"
   TEMPLATE     "${EPL_VIZ_TEMPLATES_DIR}/CMakeLists.exe.txt"
-  DEPENDENCIES libEPLViz_shared Qwt::Qwt
+  DEPENDENCIES libEPLViz_shared Qwt::Qwt KF5::TextEditor
 )
 
 if( NOT DISABLE_TESTS )
@@ -217,7 +222,7 @@ if( NOT DISABLE_TESTS )
     PATH         "${PROJECT_SOURCE_DIR}/tests"
     NAME         "tests"
     TEMPLATE     "${EPL_VIZ_TEMPLATES_DIR}/CMakeLists.exe.txt"
-    DEPENDENCIES libEPLViz_shared epl_DataCollect_shared Qwt::Qwt
+    DEPENDENCIES libEPLViz_shared epl_DataCollect_shared Qwt::Qwt KF5::TextEditor
   )
 endif( NOT DISABLE_TESTS )
 
@@ -236,6 +241,7 @@ include_directories( SYSTEM
   ${EPL_DataCollect_INCLUDE_DIRS}
   ${PYTHON_INCLUDE_DIRS}
   ${QWT_INCLUDE_DIRS}
+  ${CMAKE_INCLUDE_PATH}
 )
 
 # Add Qt5 include dirs

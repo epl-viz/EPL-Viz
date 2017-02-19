@@ -53,7 +53,7 @@ endif( NOT EXISTS "${RESOURCES_FILE}" )
 # Generate UI files
 @CM_GENERATE_UI_CMD@
 
-add_library( @CM_CURRENT_LIB_LC@_shared SHARED ${@CM_CURRENT_LIB_SRC@} ${@CM_CURRENT_LIB_INC@} ${@CM_CURRENT_LIB_INC@_UI})
+add_library( @CM_CURRENT_LIB_LC@_shared SHARED ${@CM_CURRENT_LIB_SRC@} ${@CM_CURRENT_LIB_INC@} ${@CM_CURRENT_LIB_INC@_UI} ${RESOURCES_FILE})
 
 target_link_libraries( @CM_CURRENT_LIB_LC@_shared @CM_CURRENT_LIB_DEP@ )
 

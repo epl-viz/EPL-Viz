@@ -171,7 +171,7 @@ if( USE_SYSTEM_PACKETS )
 else( USE_SYSTEM_PACKETS )
   set( EPL_DC_PREFIX "${PROJECT_BINARY_DIR}/EPL_DataCollect" )
   set( EPL_DC_INSTALL_DIR "${EPL_DC_PREFIX}/install_dir" )
-  set( EPL_DC_LIB_DIR     "${EPL_DC_INSTALL_DIR}/lib" )
+  set( EPL_DC_LIB_DIR     "${EPL_DC_INSTALL_DIR}/lib/eplViz" )
 
   set( EPL_DataCollect_INCLUDE_DIRS "${EPL_DC_INSTALL_DIR}/include/eplViz" )
 

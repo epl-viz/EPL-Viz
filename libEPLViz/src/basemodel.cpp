@@ -29,6 +29,9 @@
 
 #include "basemodel.hpp"
 using namespace EPL_Viz;
+using namespace EPL_DataCollect;
+
+QLinkedList<BaseModel *> *BaseModel::registeredModels = new QLinkedList<BaseModel *>;
 
 BaseModel::BaseModel() {
   // TODO Does this work? casting?
@@ -39,20 +42,24 @@ BaseModel::~BaseModel() {
   dereg(this);
 }
 
-BaseModel::updateAll(Cycle *cycle) {
-  QLinkedListIterator<BaseModel *> iterator(registeredModels);
+void BaseModel::updateAll(Cycle *cycle) {
+  QLinkedListIterator<BaseModel *> iterator(*registeredModels);
   while (iterator.hasNext()) {
     iterator.next()->update(cycle);
-  }
+ }
 }
 
-BaseModel::reg(BaseModel *model) {
-  if (registeredModels.contains(model))
-    registeredModels.append(model);
+void BaseModel::reg(BaseModel *model) {
+  if (registeredModels->contains(model))
+    registeredModels->append(model);
   else
     throw std::runtime_error("Cannot add a model twice!");
 }
 
-BaseModel::dereg(BaseModel *model) {
-  registeredModels.removeOne(model);
+void BaseModel::dereg(BaseModel *model) {
+  registeredModels->removeOne(model);
+}
+
+bool BaseModel::operator==(const BaseModel &other) {
+  return this == &other;
 }

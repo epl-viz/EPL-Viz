@@ -36,20 +36,19 @@
 namespace EPL_Viz {
 class BaseModel {
  private:
-  static QLinkedList<BaseModel *> registeredModels = new QLinkedList<BaseModel *>();
-
+  static QLinkedList<BaseModel *> *registeredModels;
  public:
   BaseModel();
   ~BaseModel();
 
-  inline bool operator==(const X& lhs, const X& rhs) { return &lhs == &rhs };
+  inline bool operator==(const BaseModel &other);
 
  protected:
-  virtual void update(Cycle cycle);
+  virtual void update(EPL_DataCollect::Cycle *cycle);
 
  public:
-  mockable static void updateAll(Cycle *cycle);
-  mockable static void reg(BaseModel *model);
-  mockable static void dereg(BaseModel *model);
+  static void updateAll(EPL_DataCollect::Cycle *cycle);
+  static void reg(BaseModel *model);
+  static void dereg(BaseModel *model);
 };
 }

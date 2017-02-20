@@ -37,6 +37,7 @@
 #include <QToolButton>
 #include <iostream>
 #include <vector>
+#include "packethistorymodel.hpp"
 using namespace EPL_Viz;
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow) {
@@ -54,6 +55,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
   btns.emplace_back(ui->actionOD_Filter_2);
   fixQToolButtons(btns, ui->toolBar);
 
+  createModels();
+
   modelThread = new ModelThread(this, &machineState);
   connect(modelThread, &ModelThread::resultReady, this, &MainWindow::handleResults);
   connect(modelThread, &ModelThread::finished, modelThread, &QObject::deleteLater);
@@ -62,7 +65,19 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
 MainWindow::~MainWindow() {
   Q_CLEANUP_RESOURCE(resources);
+  destroyModels();
   delete ui;
+}
+
+void MainWindow::createModels() {
+  // Create and add Models here
+  models.append(new PacketHistoryModel());
+}
+
+void MainWindow::destroyModels() {
+  while(!models.isEmpty()) {
+    delete models.takeFirst();
+  }
 }
 
 void MainWindow::fixQToolButtons(std::vector<QToolButton *> &btns) {

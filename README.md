@@ -18,3 +18,4 @@ EPL-Viz is a visualizer for ethernetPOWERLINK setups.
   - `-DUSE_SYSTEM_PACKETS=<ON/OFF>` Looks for dependencies in the system, don't use the submodules
   - `-DDISABLE_TESTS=<ON/OFF>` Flag to disable all tests
   - `-DENABLE_CODE_COVERAGE=<ON/OFF>` Enables / Disables code coverage with gcov
+  - `-DWireshark_DIR=<path/to/custom/wireshark/lib/wireshark> Needed for globals.h, dir should contain cmake files

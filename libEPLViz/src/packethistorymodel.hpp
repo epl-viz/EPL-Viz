@@ -30,9 +30,12 @@
 #pragma once
 
 #include "basemodel.hpp"
+#include "Cycle.hpp"
 
 class PacketHistoryModel : EPL_Viz::BaseModel {
  public:
   PacketHistoryModel() : BaseModel() {}
-  ~PacketHistoryModel() : ~BaseModel() {}
+
+ protected:
+  mockable void update(EPL_DataCollect::Cycle *cycle);
 };

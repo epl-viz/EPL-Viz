@@ -28,10 +28,15 @@
  */
 
 #include "packethistorymodel.hpp"
+#include "Cycle.hpp"
+#include <QDebug>
 using namespace EPL_Viz;
+using namespace EPL_DataCollect;
 
 // PacketHistoryModel::PacketHistoryModel() : BaseModel() {}
 
-PacketHistoryModel::update(Cycle cycle) {
+void PacketHistoryModel::update(Cycle *cycle) {
   // TODO
+  (void) cycle;
+  qDebug() << "updating PacketHistoryModel";
 }

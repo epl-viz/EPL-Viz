@@ -45,7 +45,7 @@ class BaseModel {
   inline bool operator==(const BaseModel &other);
 
  protected:
-  virtual void update(EPL_DataCollect::Cycle *cycle);
+  virtual void update(EPL_DataCollect::Cycle *cycle) = 0;
 
  public:
   static void updateAll(EPL_DataCollect::Cycle *cycle);

@@ -53,18 +53,15 @@ endif( NOT EXISTS "${RESOURCES_FILE}" )
 # Generate UI files
 @CM_GENERATE_UI_CMD@
 
-add_library( @CM_CURRENT_LIB_LC@_obj    OBJECT ${@CM_CURRENT_LIB_SRC@} ${@CM_CURRENT_LIB_INC@} ${@CM_CURRENT_LIB_INC@_UI} )
-add_library( @CM_CURRENT_LIB_LC@_shared SHARED $<TARGET_OBJECTS:@CM_CURRENT_LIB_LC@_obj> ${RESOURCES_FILE})
-add_library( @CM_CURRENT_LIB_LC@_static STATIC $<TARGET_OBJECTS:@CM_CURRENT_LIB_LC@_obj> ${RESOURCES_FILE})
+add_library( @CM_CURRENT_LIB_LC@_shared SHARED ${@CM_CURRENT_LIB_SRC@} ${@CM_CURRENT_LIB_INC@} ${@CM_CURRENT_LIB_INC@_UI} ${RESOURCES_FILE})
 
 target_link_libraries( @CM_CURRENT_LIB_LC@_shared @CM_CURRENT_LIB_DEP@ )
-target_link_libraries( @CM_CURRENT_LIB_LC@_static @CM_CURRENT_LIB_DEP@ )
 
 string( REGEX REPLACE "^[^:]+::" "" OUT_LIB_NAME "@CM_CURRENT_LIB_LC@" )
 string( REGEX REPLACE "^lib"     "" OUT_LIB_NAME "${OUT_LIB_NAME}" )
 
 set_target_properties(
-  @CM_CURRENT_LIB_LC@_shared @CM_CURRENT_LIB_LC@_static
+  @CM_CURRENT_LIB_LC@_shared
   PROPERTIES
     VERSION        @CM_VERSION_MAJOR@.@CM_VERSION_MINOR@.@CM_VERSION_SUBMINOR@
     SOVERSION      @CM_VERSION_MAJOR@
@@ -75,7 +72,7 @@ set_target_properties(
 )
 
 install(
-  TARGETS       @CM_CURRENT_LIB_LC@_shared @CM_CURRENT_LIB_LC@_static
+  TARGETS       @CM_CURRENT_LIB_LC@_shared
   EXPORT        @PROJECT_NAME@Targets
   RUNTIME       DESTINATION bin
   LIBRARY       DESTINATION lib

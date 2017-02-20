@@ -1,5 +1,3 @@
-#ifndef PROFILE_HPP
-#define PROFILE_HPP
 /* Copyright (c) 2017, EPL-Vizards
  * All rights reserved.
  *
@@ -27,7 +25,10 @@
  */
 /*!
  * \file profile.hpp
+ * \todo Implement
  */
+
+#pragma once
 
 namespace EPL_Viz {
 class Profile;
@@ -37,5 +38,3 @@ class Profile {
  public:
   Profile() = default;
 };
-
-#endif // PROFILE_HPP

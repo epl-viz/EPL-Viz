@@ -26,6 +26,7 @@
 /*!
  * \file timelinewidget.cpp
  */
+
 #pragma once
 
 #include <QDockWidget>

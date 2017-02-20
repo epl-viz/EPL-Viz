@@ -24,18 +24,18 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 /*!
- * \file currentodwidget.hpp
+ * \file plugineditorwidget.cpp
  * \todo Implement
  */
 
-#pragma once
+#include "plugineditorwidget.hpp"
 
-#include <QDockWidget>
+PluginEditorWidget::PluginEditorWidget(QWidget *parent) : QWidget(parent) {
+  KTextEditor::Editor *editor = KTextEditor::Editor::instance();
+  // create a new document
+  KTextEditor::Document *doc = editor->createDocument(this);
+  // create a widget to display the document
+  KTextEditor::View *view = doc->createView(this);
 
-class CurrentODWidget : public QDockWidget {
-  Q_OBJECT
-
- public:
-  CurrentODWidget(QWidget *parent = nullptr);
-  ~CurrentODWidget()              = default;
-};
+  view->insertText("Test");
+}

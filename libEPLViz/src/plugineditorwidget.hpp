@@ -1,5 +1,4 @@
 /* Copyright (c) 2017, EPL-Vizards
- * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
@@ -24,18 +23,20 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 /*!
- * \file currentodwidget.hpp
+ * \file plugineditorwidget.hpp
  * \todo Implement
  */
 
 #pragma once
+#include <KTextEditor/Document>
+#include <KTextEditor/Editor>
+#include <KTextEditor/View>
+#include <QWidget>
 
-#include <QDockWidget>
-
-class CurrentODWidget : public QDockWidget {
+class PluginEditorWidget : public QWidget {
   Q_OBJECT
 
  public:
-  CurrentODWidget(QWidget *parent = nullptr);
-  ~CurrentODWidget()              = default;
+  PluginEditorWidget(QWidget *parent = nullptr);
+  ~PluginEditorWidget()              = default;
 };

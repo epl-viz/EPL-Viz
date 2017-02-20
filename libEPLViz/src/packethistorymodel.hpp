@@ -32,7 +32,7 @@
 #include "basemodel.hpp"
 #include "Cycle.hpp"
 
-class PacketHistoryModel : EPL_Viz::BaseModel {
+class PacketHistoryModel : public EPL_Viz::BaseModel {
  public:
   PacketHistoryModel() : BaseModel() {}
 

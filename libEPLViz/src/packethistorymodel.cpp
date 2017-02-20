@@ -33,9 +33,17 @@
 using namespace EPL_Viz;
 using namespace EPL_DataCollect;
 
+<<<<<<< Updated upstream
 // PacketHistoryModel::PacketHistoryModel() : BaseModel() {}
 
+<<<<<<< Updated upstream
 void PacketHistoryModel::update(Cycle *cycle) {
+=======
+PacketHistoryModel::update(Cycle cycle) {
+=======
+void PacketHistoryModel::update(Cycle *cycle) {
+>>>>>>> Stashed changes
+>>>>>>> Stashed changes
   // TODO
   (void) cycle;
   qDebug() << "updating PacketHistoryModel";

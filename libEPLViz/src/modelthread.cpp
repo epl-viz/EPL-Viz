@@ -28,6 +28,7 @@
  */
 
 #include "modelthread.hpp"
+#include "basemodel.hpp"
 #include <QDebug>
 using namespace EPL_Viz;
 
@@ -45,25 +46,8 @@ ModelThread::~ModelThread() {
 void ModelThread::loop() {
   qDebug() << "Starting loop";
   while (true) {
-    switch (*state) {
-      case GUIState::PAUSED:
-        // TODO
-        break;
-      case GUIState::PLAYING:
-        // TODO
-        break;
-      case GUIState::RECORDING:
-        // TODO
-        break;
-      case GUIState::STOPPED:
-        // TODO
-        break;
-      case GUIState::UNINIT:
-        // Do nothig
-        yieldCurrentThread();
-        break;
-    }
-    qDebug() << "Hey! Listen!";
+    BaseModel::updateAll(state);
+    // TODO Constant update time or something else?
     sleep(1);
   }
   emit resultReady("Thread is done");

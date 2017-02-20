@@ -32,6 +32,8 @@
 #include "Cycle.hpp"
 #include "EPLVizDefines.hpp"
 #include <QLinkedList>
+#include "guistate.hpp"
+#include <QDebug>
 
 namespace EPL_Viz {
 class BaseModel {
@@ -40,7 +42,7 @@ class BaseModel {
 
  public:
   BaseModel();
-  ~BaseModel();
+  virtual ~BaseModel();
 
   inline bool operator==(const BaseModel &other);
 
@@ -48,7 +50,7 @@ class BaseModel {
   virtual void update(EPL_DataCollect::Cycle *cycle) = 0;
 
  public:
-  static void updateAll(EPL_DataCollect::Cycle *cycle);
+  static void updateAll(GUIState *state);
   static void reg(BaseModel *model);
   static void dereg(BaseModel *model);
 };

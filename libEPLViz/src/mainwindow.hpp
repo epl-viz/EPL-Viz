@@ -36,6 +36,8 @@
 #include <QThread>
 #include <QToolBar>
 #include <QToolButton>
+#include <QLinkedList>
+#include "basemodel.hpp"
 
 namespace Ui {
 class MainWindow;
@@ -50,6 +52,7 @@ class MainWindow : public QMainWindow {
   EPL_Viz::GUIState        machineState;
   int                      curCycle;
   EPL_Viz::ModelThread *   modelThread;
+  QLinkedList<EPL_Viz::BaseModel *> models;
 
  public:
   explicit MainWindow(QWidget *parent = nullptr);
@@ -76,6 +79,10 @@ class MainWindow : public QMainWindow {
 
   static void fixQToolButtons(std::vector<QToolButton *> &btns);
   static void fixQToolButtons(std::vector<QAction *> &actions, QToolBar *bar);
+
+ private:
+  mockable void createModels();
+  mockable void destroyModels();
 
  public slots:
   void setFullscreen(bool makeFullscreen);

@@ -91,6 +91,8 @@ add_compiler(
   SANITIZE "-fsanitize=${SANITIZERS}"
 )
 
+add_definitions(-DWS_NORETURN=) # For some reason wireshark needs this
+
 ######################
 # Check Dependencies #
 ######################
@@ -101,11 +103,13 @@ find_package( ECM 1.1.0 REQUIRED NO_MODULE )
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${ECM_MODULE_PATH} ${ECM_KDE_MODULE_DIR} )
 
 find_package( Qt5 5.7 COMPONENTS ${EPL_VIZ_QT_COMPONENTS} REQUIRED )
-find_package( KF5    REQUIRED COMPONENTS
-    TextEditor)
+find_package( KF5    REQUIRED COMPONENTS TextEditor)
 find_package( Qwt              REQUIRED )
 find_package( PythonInterp 3.5 REQUIRED ) # Exec python with PYTHON_EXECUTABLE
 find_package( PythonLibs   3.5 REQUIRED )
+find_package( Wireshark        REQUIRED )
+find_package( PkgConfig        REQUIRED )
+pkg_search_module(GLIB REQUIRED glib-2.0)
 
 # Generate link target list
 set( EPL_VIZ_QT_DEP_LIST "" )
@@ -192,6 +196,7 @@ else( USE_SYSTEM_PACKETS )
       "-DCMAKE_INSTALL_PREFIX=${EPL_DC_INSTALL_DIR}"
       -DDISABLE_TESTS=ON
       -DENABLE_CODE_COVERAGE=OFF
+      "-DWireshark_DIR=${Wireshark_DIR}"
   )
 
   add_library( epl_DataCollect_shared SHARED IMPORTED )
@@ -240,7 +245,9 @@ include_directories( SYSTEM
   ${CATCH_INCLUDE_DIR}
   ${FAKE_IT_INCLUDE_DIR}
   ${EPL_DataCollect_INCLUDE_DIRS}
+  ${Wireshark_INCLUDE_DIR}
   ${PYTHON_INCLUDE_DIRS}
+  ${GLIB_INCLUDE_DIRS}
   ${QWT_INCLUDE_DIRS}
   ${PLF_COLONY_DIR}
 )

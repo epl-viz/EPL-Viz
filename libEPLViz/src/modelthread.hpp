@@ -30,26 +30,28 @@
 #pragma once
 
 #include "EPLVizDefines.hpp"
-#include <QThread>
 #include "guistate.hpp"
+#include <QThread>
 
 namespace EPL_Viz {
-  class ModelThread : public QThread {
-    Q_OBJECT
+class ModelThread : public QThread {
+  Q_OBJECT
 
-  private:
-    EPL_Viz::GUIState *state;
+ private:
+  EPL_Viz::GUIState *state;
 
-  public:
-    ModelThread(QObject *parent, GUIState *machineState);
-    ModelThread() = delete;
-    ~ModelThread();
-  protected:
-    void run() Q_DECL_OVERRIDE;
-  private:
-    mockable void loop();
+ public:
+  ModelThread(QObject *parent, GUIState *machineState);
+  ModelThread() = delete;
+  ~ModelThread();
 
-  signals:
-    void resultReady(const QString &result);
-  };
+ protected:
+  void run() Q_DECL_OVERRIDE;
+
+ private:
+  mockable void loop();
+
+ signals:
+  void resultReady(const QString &result);
+};
 }

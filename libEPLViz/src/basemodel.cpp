@@ -38,15 +38,13 @@ BaseModel::BaseModel() {
   reg(this);
 }
 
-BaseModel::~BaseModel() {
-  dereg(this);
-}
+BaseModel::~BaseModel() { dereg(this); }
 
 void BaseModel::updateAll(Cycle *cycle) {
   QLinkedListIterator<BaseModel *> iterator(*registeredModels);
   while (iterator.hasNext()) {
     iterator.next()->update(cycle);
- }
+  }
 }
 
 void BaseModel::reg(BaseModel *model) {
@@ -56,10 +54,6 @@ void BaseModel::reg(BaseModel *model) {
     throw std::runtime_error("Cannot add a model twice!");
 }
 
-void BaseModel::dereg(BaseModel *model) {
-  registeredModels->removeOne(model);
-}
+void BaseModel::dereg(BaseModel *model) { registeredModels->removeOne(model); }
 
-bool BaseModel::operator==(const BaseModel &other) {
-  return this == &other;
-}
+bool BaseModel::operator==(const BaseModel &other) { return this == &other; }

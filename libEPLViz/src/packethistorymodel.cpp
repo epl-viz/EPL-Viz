@@ -30,7 +30,7 @@
 #include "packethistorymodel.hpp"
 using namespace EPL_Viz;
 
-//PacketHistoryModel::PacketHistoryModel() : BaseModel() {}
+// PacketHistoryModel::PacketHistoryModel() : BaseModel() {}
 
 PacketHistoryModel::update(Cycle cycle) {
   // TODO

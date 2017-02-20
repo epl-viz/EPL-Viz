@@ -32,11 +32,11 @@
 #include "pluginswindow.hpp"
 #include "ui_mainwindow.h"
 #include <QAction>
+#include <QDebug>
 #include <QLabel>
 #include <QToolButton>
 #include <iostream>
 #include <vector>
-#include <QDebug>
 using namespace EPL_Viz;
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow) {
@@ -133,6 +133,4 @@ void MainWindow::open() {
   // TODO
 }
 
-void MainWindow::handleResults(const QString &result) {
-  qDebug() << "The result is\"" << result << "\"";
-}
+void MainWindow::handleResults(const QString &result) { qDebug() << "The result is\"" << result << "\""; }

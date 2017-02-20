@@ -69,6 +69,4 @@ void ModelThread::loop() {
   emit resultReady("Thread is done");
 }
 
-void ModelThread::run() {
-  ModelThread::loop();
-}
+void ModelThread::run() { ModelThread::loop(); }

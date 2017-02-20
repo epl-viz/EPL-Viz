@@ -29,13 +29,13 @@
 #pragma once
 #include "EPLVizDefines.hpp"
 #include "guistate.hpp"
+#include "modelthread.hpp"
 #include "profilemanager.hpp"
-#include <QMainWindow>
 #include <QAction>
+#include <QMainWindow>
+#include <QThread>
 #include <QToolBar>
 #include <QToolButton>
-#include <QThread>
-#include "modelthread.hpp"
 
 namespace Ui {
 class MainWindow;
@@ -49,7 +49,7 @@ class MainWindow : public QMainWindow {
   EPL_Viz::ProfileManager *profileManager;
   EPL_Viz::GUIState        machineState;
   int                      curCycle;
-  EPL_Viz::ModelThread     *modelThread;
+  EPL_Viz::ModelThread *   modelThread;
 
  public:
   explicit MainWindow(QWidget *parent = nullptr);

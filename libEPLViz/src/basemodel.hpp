@@ -29,14 +29,15 @@
 
 #pragma once
 
-#include "EPLVizDefines.hpp"
 #include "Cycle.hpp"
+#include "EPLVizDefines.hpp"
 #include <QLinkedList>
 
 namespace EPL_Viz {
 class BaseModel {
  private:
   static QLinkedList<BaseModel *> *registeredModels;
+
  public:
   BaseModel();
   ~BaseModel();

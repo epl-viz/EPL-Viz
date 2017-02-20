@@ -59,6 +59,7 @@ list( APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake" )
 # Some useful variables
 set( EPL_VIZ_TEMPLATES_DIR "${PROJECT_SOURCE_DIR}/cmake/templates" )
 set( EPL_VIZ_INCLUDES_DIR  "${PROJECT_SOURCE_DIR}/include" )
+set( PLF_COLONY_DIR        "${PROJECT_SOURCE_DIR}/external/EPL_DataCollect/external/plf_colony/" )
 
 ################################
 # Set up the build environment #
@@ -236,6 +237,7 @@ include_directories( SYSTEM
   ${EPL_DataCollect_INCLUDE_DIRS}
   ${PYTHON_INCLUDE_DIRS}
   ${QWT_INCLUDE_DIRS}
+  ${PLF_COLONY_DIR}
 )
 
 # Add Qt5 include dirs

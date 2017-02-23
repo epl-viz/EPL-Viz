@@ -40,15 +40,19 @@
 #include "packethistorymodel.hpp"
 using namespace EPL_Viz;
 
+MainWindow *MainWindow::mainWindow = nullptr;
+
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow) {
   Q_INIT_RESOURCE(resources);
+
+  mainWindow = this;
 
   ui->setupUi(this);
   tabifyDockWidget(ui->dockCurrent, ui->dockOD);
   tabifyDockWidget(ui->dockPlugins, ui->dockEvents);
   tabifyDockWidget(ui->dockPlugins, ui->dockNetTree);
-  tabifyDockWidget(ui->dockCycle, ui->dockPLog);
-  tabifyDockWidget(ui->dockCycle, ui->dockPText);
+  tabifyDockWidget(ui->dockCycle, ui->dockPythonLog);
+  tabifyDockWidget(ui->dockCycle, ui->dockPacketHistory);
   ui->actionOD_Filter_2->setMenu(ui->menuOD_Filter);
 
   std::vector<QAction *> btns;
@@ -71,7 +75,8 @@ MainWindow::~MainWindow() {
 
 void MainWindow::createModels() {
   // Create and add Models here
-  models.append(new PacketHistoryModel());
+  // TODO disabled because of unfinished Cycle generation/getting
+  //models.append(new PacketHistoryModel());
 }
 
 void MainWindow::destroyModels() {

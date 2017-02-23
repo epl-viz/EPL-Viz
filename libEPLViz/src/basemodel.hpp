@@ -34,6 +34,9 @@
 #include <QLinkedList>
 #include "guistate.hpp"
 #include <QDebug>
+#include <QWidget>
+#include <QTextEdit>
+#include <QMainWindow>
 
 namespace EPL_Viz {
 class BaseModel {
@@ -53,5 +56,7 @@ class BaseModel {
   static void updateAll(GUIState *state);
   static void reg(BaseModel *model);
   static void dereg(BaseModel *model);
+
+  virtual void init() = 0;
 };
 }

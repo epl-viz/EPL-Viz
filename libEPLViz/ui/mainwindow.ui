@@ -975,7 +975,7 @@
     </layout>
    </widget>
   </widget>
-  <widget class="PythonLogWidget" name="dockPLog">
+  <widget class="PythonLogWidget" name="dockPythonLog">
    <property name="windowTitle">
     <string>Python Lo&amp;g</string>
    </property>
@@ -994,9 +994,9 @@
     </layout>
    </widget>
   </widget>
-  <widget class="PacketHistoryWidget" name="dockPText">
+  <widget class="PacketHistoryWidget" name="dockPacketHistory">
    <property name="windowTitle">
-    <string>PacketHistory</string>
+    <string>&amp;PacketHistory</string>
    </property>
    <attribute name="dockWidgetArea">
     <number>8</number>
@@ -1019,7 +1019,7 @@
         </property>
         <layout class="QGridLayout" name="gridLayout_22">
          <item row="0" column="0">
-          <widget class="QTextEdit" name="textEdit">
+          <widget class="QTextEdit" name="packetHistoryTextEdit">
            <property name="readOnly">
             <bool>true</bool>
            </property>

@@ -65,5 +65,4 @@ void BaseModel::dereg(BaseModel *model) {
   qDebug() << "Deregistered a model";
 }
 
-
 bool BaseModel::operator==(const BaseModel &other) { return this == &other; }

@@ -31,10 +31,17 @@
 
 #include "basemodel.hpp"
 #include "Cycle.hpp"
+#include "Packet.hpp"
+#include "mainwindow.hpp"
 
 class PacketHistoryModel : public EPL_Viz::BaseModel {
+private:
+  QTextEdit *textWindow;
+
  public:
   PacketHistoryModel() : BaseModel() {}
+
+  void init();
 
  protected:
   mockable void update(EPL_DataCollect::Cycle *cycle);

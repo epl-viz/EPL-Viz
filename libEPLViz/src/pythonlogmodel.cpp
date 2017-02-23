@@ -30,14 +30,9 @@
 using namespace EPL_Viz;
 using namespace EPL_DataCollect;
 
-PythonLogModel::PythonLogModel() : BaseModel()
-{
-  appid = EventLog.getAppID();
-}
+PythonLogModel::PythonLogModel() : BaseModel() { appid = EventLog.getAppID(); }
 
-void PythonLogModel::init() {
-
-}
+void PythonLogModel::init() {}
 
 void PythonLogModel::update(Cycle *cycle) {
   // TODO How should the text be shown?
@@ -45,6 +40,6 @@ void PythonLogModel::update(Cycle *cycle) {
 
   for (int i = 0; i < events.size(); i++) {
     if (events[i].getType() == EvType::PLUGIN_EV_TEXT)
-      //((EvPluginText)events[i])->getText();
+    //((EvPluginText)events[i])->getText();
   }
 }

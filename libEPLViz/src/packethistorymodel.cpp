@@ -30,8 +30,8 @@
 #include "packethistorymodel.hpp"
 #include "Cycle.hpp"
 #include <QDebug>
-#include <vector>
 #include <string>
+#include <vector>
 using namespace EPL_Viz;
 using namespace EPL_DataCollect;
 using namespace std;
@@ -43,7 +43,7 @@ void PacketHistoryModel::update(Cycle *cycle) {
     return;
   }
   vector<Packet> packets = cycle->getPackets();
-  string text;
+  string         text;
   for (unsigned int i = 0; i < packets.size(); i++) {
     string temp = packets[i].getWiresharkString();
     text.append(temp);
@@ -53,5 +53,5 @@ void PacketHistoryModel::update(Cycle *cycle) {
 }
 
 void PacketHistoryModel::init() {
-    textWindow = MainWindow::mainWindow->findChild<QTextEdit *>("packetHistoryTextEdit");
+  textWindow = MainWindow::mainWindow->findChild<QTextEdit *>("packetHistoryTextEdit");
 }

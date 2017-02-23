@@ -29,23 +29,23 @@
 
 #pragma once
 
-#include "basemodel.hpp"
-#include "EventLog.hpp"
 #include "Cycle.hpp"
-#include "vector"
 #include "EvPluginText.hpp"
+#include "EventLog.hpp"
+#include "basemodel.hpp"
+#include "vector"
 
 namespace EPL_Viz {
-class PythonLogModel : public BaseModel
-{
-private:
+class PythonLogModel : public BaseModel {
+ private:
   unsigned int appid;
 
-public:
+ public:
   PythonLogModel();
 
   void init();
-protected:
+
+ protected:
   mockable void update(EPL_DataCollect::Cycle *cycle);
 };
 }

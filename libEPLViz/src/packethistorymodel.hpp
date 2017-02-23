@@ -29,13 +29,13 @@
 
 #pragma once
 
-#include "basemodel.hpp"
 #include "Cycle.hpp"
 #include "Packet.hpp"
+#include "basemodel.hpp"
 #include "mainwindow.hpp"
 
 class PacketHistoryModel : public EPL_Viz::BaseModel {
-private:
+ private:
   QTextEdit *textWindow;
 
  public:

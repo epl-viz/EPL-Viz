@@ -31,12 +31,12 @@
 
 #include "Cycle.hpp"
 #include "EPLVizDefines.hpp"
-#include <QLinkedList>
 #include "guistate.hpp"
 #include <QDebug>
-#include <QWidget>
-#include <QTextEdit>
+#include <QLinkedList>
 #include <QMainWindow>
+#include <QTextEdit>
+#include <QWidget>
 
 namespace EPL_Viz {
 class BaseModel {

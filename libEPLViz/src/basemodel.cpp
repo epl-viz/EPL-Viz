@@ -33,18 +33,14 @@ using namespace EPL_DataCollect;
 
 QLinkedList<BaseModel *> *BaseModel::registeredModels = new QLinkedList<BaseModel *>;
 
-BaseModel::BaseModel() {
-  reg(this);
-}
+BaseModel::BaseModel() { reg(this); }
 
-BaseModel::~BaseModel() {
-  dereg(this);
-}
+BaseModel::~BaseModel() { dereg(this); }
 
 void BaseModel::updateAll(GUIState *state) {
-  (void) state;
+  (void)state;
   // TODO get current Cycle
-  Cycle *c = nullptr;
+  Cycle *                          c = nullptr;
   QLinkedListIterator<BaseModel *> iterator(*registeredModels);
   while (iterator.hasNext()) {
     iterator.next()->update(c);
@@ -55,8 +51,7 @@ void BaseModel::reg(BaseModel *model) {
   if (!registeredModels->contains(model)) {
     qDebug() << "Registered a model";
     registeredModels->append(model);
-  }
-  else
+  } else
     throw std::runtime_error("Cannot add a model twice!");
 }
 

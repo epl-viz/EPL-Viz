@@ -29,7 +29,9 @@
 
 #include "mainwindow.hpp"
 #include "interfacepicker.hpp"
+#include "packethistorymodel.hpp"
 #include "pluginswindow.hpp"
+#include "pythonlogmodel.hpp"
 #include "ui_mainwindow.h"
 #include <QAction>
 #include <QDebug>
@@ -37,8 +39,6 @@
 #include <QToolButton>
 #include <iostream>
 #include <vector>
-#include "packethistorymodel.hpp"
-#include "pythonlogmodel.hpp"
 using namespace EPL_Viz;
 
 MainWindow *MainWindow::mainWindow = nullptr;
@@ -77,12 +77,12 @@ MainWindow::~MainWindow() {
 void MainWindow::createModels() {
   // Create and add Models here
   // TODO disabled because of unfinished Cycle generation/getting
-  //models.append(new PacketHistoryModel());
-  //models.append(new PythonLogModel());
+  // models.append(new PacketHistoryModel());
+  // models.append(new PythonLogModel());
 }
 
 void MainWindow::destroyModels() {
-  while(!models.isEmpty()) {
+  while (!models.isEmpty()) {
     delete models.takeFirst();
   }
 }

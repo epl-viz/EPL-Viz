@@ -28,16 +28,16 @@
  */
 #pragma once
 #include "EPLVizDefines.hpp"
+#include "basemodel.hpp"
 #include "guistate.hpp"
 #include "modelthread.hpp"
 #include "profilemanager.hpp"
 #include <QAction>
+#include <QLinkedList>
 #include <QMainWindow>
 #include <QThread>
 #include <QToolBar>
 #include <QToolButton>
-#include <QLinkedList>
-#include "basemodel.hpp"
 
 namespace Ui {
 class MainWindow;
@@ -46,14 +46,15 @@ class MainWindow;
 class MainWindow : public QMainWindow {
   Q_OBJECT
 
-public:
-  static MainWindow       *mainWindow;
+ public:
+  static MainWindow *mainWindow;
+
  private:
-  Ui::MainWindow *         ui;
-  EPL_Viz::ProfileManager *profileManager;
-  EPL_Viz::GUIState        machineState;
-  int                      curCycle;
-  EPL_Viz::ModelThread *   modelThread;
+  Ui::MainWindow *                  ui;
+  EPL_Viz::ProfileManager *         profileManager;
+  EPL_Viz::GUIState                 machineState;
+  int                               curCycle;
+  EPL_Viz::ModelThread *            modelThread;
   QLinkedList<EPL_Viz::BaseModel *> models;
 
  public:

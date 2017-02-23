@@ -38,6 +38,7 @@
 #include <iostream>
 #include <vector>
 #include "packethistorymodel.hpp"
+#include "pythonlogmodel.hpp"
 using namespace EPL_Viz;
 
 MainWindow *MainWindow::mainWindow = nullptr;
@@ -77,6 +78,7 @@ void MainWindow::createModels() {
   // Create and add Models here
   // TODO disabled because of unfinished Cycle generation/getting
   //models.append(new PacketHistoryModel());
+  //models.append(new PythonLogModel());
 }
 
 void MainWindow::destroyModels() {

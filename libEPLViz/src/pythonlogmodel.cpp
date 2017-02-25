@@ -30,16 +30,19 @@
 using namespace EPL_Viz;
 using namespace EPL_DataCollect;
 
-PythonLogModel::PythonLogModel() : BaseModel() { appid = EventLog.getAppID(); }
+PythonLogModel::PythonLogModel() : BaseModel() {}
 
-void PythonLogModel::init() {}
+void PythonLogModel::init() {
+  log = MainWindow::mainWindow->getCaptureInstance()->getEventLog();
+  appid = log->getAppID();
+}
 
 void PythonLogModel::update(Cycle *cycle) {
+  (void) cycle;
   // TODO How should the text be shown?
-  std::vector<EventBase *> events = EventLog.pollEvents(appid);
+  std::vector<EventBase *> events = log->pollEvents(appid);
 
-  for (int i = 0; i < events.size(); i++) {
-    if (events[i].getType() == EvType::PLUGIN_EV_TEXT)
-    //((EvPluginText)events[i])->getText();
+  for (unsigned int i = 0; i < events.size(); i++) {
+    // TODO write to output
   }
 }

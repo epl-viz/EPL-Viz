@@ -39,11 +39,31 @@ BaseModel::~BaseModel() { dereg(this); }
 
 void BaseModel::updateAll(GUIState *state) {
   (void)state;
-  // TODO get current Cycle
-  Cycle *                          c = nullptr;
+
+  // Get Cycle
+  int cycleNum = MainWindow::mainWindow->getCycle();
+  Cycle *c = nullptr;
+  CycleContainer *container = MainWindow::mainWindow->getCaptureInstance()->getCycleContainer();
+  (void) cycleNum;
+  (void) container;
+  // get newest if <0
+  /* TODO Disabled because segfault
+  if (cycleNum < 0)
+    *c = container->pollCycle();
+  else
+    *c = container->getCycle(cycleNum);
+*/
+  // Update models
   QLinkedListIterator<BaseModel *> iterator(*registeredModels);
   while (iterator.hasNext()) {
     iterator.next()->update(c);
+  }
+}
+
+void BaseModel::initAll() {
+  QLinkedListIterator<BaseModel *> iterator(*registeredModels);
+  while (iterator.hasNext()) {
+    iterator.next()->init();
   }
 }
 

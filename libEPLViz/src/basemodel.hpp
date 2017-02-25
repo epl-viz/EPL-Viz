@@ -35,8 +35,10 @@
 #include <QDebug>
 #include <QLinkedList>
 #include <QMainWindow>
+#include "mainwindow.hpp"
 #include <QTextEdit>
 #include <QWidget>
+#include "CycleContainer.hpp"
 
 namespace EPL_Viz {
 class BaseModel {
@@ -51,12 +53,12 @@ class BaseModel {
 
  protected:
   virtual void update(EPL_DataCollect::Cycle *cycle) = 0;
+  virtual void init() = 0;
 
  public:
   static void updateAll(GUIState *state);
+  static void initAll();
   static void reg(BaseModel *model);
   static void dereg(BaseModel *model);
-
-  virtual void init() = 0;
 };
 }

@@ -40,6 +40,7 @@
 #include <iostream>
 #include <vector>
 using namespace EPL_Viz;
+using namespace EPL_DataCollect;
 
 MainWindow *MainWindow::mainWindow = nullptr;
 
@@ -61,6 +62,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
   std::vector<QAction *> btns;
   btns.emplace_back(ui->actionOD_Filter_2);
   fixQToolButtons(btns, ui->toolBar);
+
+  // TODO create here?
+  captureInstance = new CaptureInstance();
 
   createModels();
 
@@ -145,6 +149,14 @@ void MainWindow::openPluginEditor() {
 void MainWindow::openInterfacePicker() {
   InterfacePicker *picker = new InterfacePicker();
   picker->show();
+}
+
+int MainWindow::getCycle() {
+  return curCycle;
+}
+
+CaptureInstance* MainWindow::getCaptureInstance() {
+  return captureInstance;
 }
 
 void MainWindow::save() {

@@ -41,11 +41,11 @@ void BaseModel::updateAll(GUIState *state) {
   (void)state;
 
   // Get Cycle
-  int cycleNum = MainWindow::mainWindow->getCycle();
-  Cycle *c = nullptr;
+  int             cycleNum  = MainWindow::mainWindow->getCycle();
+  Cycle *         c         = nullptr;
   CycleContainer *container = MainWindow::mainWindow->getCaptureInstance()->getCycleContainer();
-  (void) cycleNum;
-  (void) container;
+  (void)cycleNum;
+  (void)container;
   // get newest if <0
   /* TODO Disabled because segfault
   if (cycleNum < 0)

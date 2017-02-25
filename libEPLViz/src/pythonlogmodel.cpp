@@ -33,12 +33,12 @@ using namespace EPL_DataCollect;
 PythonLogModel::PythonLogModel() : BaseModel() {}
 
 void PythonLogModel::init() {
-  log = MainWindow::mainWindow->getCaptureInstance()->getEventLog();
+  log   = MainWindow::mainWindow->getCaptureInstance()->getEventLog();
   appid = log->getAppID();
 }
 
 void PythonLogModel::update(Cycle *cycle) {
-  (void) cycle;
+  (void)cycle;
   // TODO How should the text be shown?
   std::vector<EventBase *> events = log->pollEvents(appid);
 

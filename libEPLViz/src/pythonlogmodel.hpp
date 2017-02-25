@@ -33,13 +33,13 @@
 #include "EvPluginText.hpp"
 #include "EventLog.hpp"
 #include "basemodel.hpp"
-#include "vector"
 #include "mainwindow.hpp"
+#include "vector"
 
 namespace EPL_Viz {
 class PythonLogModel : public BaseModel {
  private:
-  unsigned int appid;
+  unsigned int               appid;
   EPL_DataCollect::EventLog *log;
 
  public:

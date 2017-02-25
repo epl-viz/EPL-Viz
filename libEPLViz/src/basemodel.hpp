@@ -30,15 +30,15 @@
 #pragma once
 
 #include "Cycle.hpp"
+#include "CycleContainer.hpp"
 #include "EPLVizDefines.hpp"
 #include "guistate.hpp"
+#include "mainwindow.hpp"
 #include <QDebug>
 #include <QLinkedList>
 #include <QMainWindow>
-#include "mainwindow.hpp"
 #include <QTextEdit>
 #include <QWidget>
-#include "CycleContainer.hpp"
 
 namespace EPL_Viz {
 class BaseModel {
@@ -53,7 +53,7 @@ class BaseModel {
 
  protected:
   virtual void update(EPL_DataCollect::Cycle *cycle) = 0;
-  virtual void init() = 0;
+  virtual void init()                                = 0;
 
  public:
   static void updateAll(GUIState *state);

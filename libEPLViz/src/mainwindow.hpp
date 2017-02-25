@@ -27,26 +27,26 @@
  * \file mainwindow.hpp
  */
 #pragma once
+#include "CaptureInstance.hpp"
 #include "EPLVizDefines.hpp"
 #include "basemodel.hpp"
 #include "guistate.hpp"
 #include "modelthread.hpp"
 #include "profilemanager.hpp"
-#include "CaptureInstance.hpp"
+#include <QAction>
 #include <QAction>
 #include <QLinkedList>
 #include <QMainWindow>
 #include <QThread>
 #include <QToolBar>
 #include <QToolButton>
-#include <QAction>
 
 namespace Ui {
 class MainWindow;
 }
 
 namespace EPL_Viz {
- class BaseModel;
+class BaseModel;
 }
 
 class MainWindow : public QMainWindow {
@@ -56,11 +56,11 @@ class MainWindow : public QMainWindow {
   static MainWindow *mainWindow;
 
  private:
-  Ui::MainWindow                   *ui;
-  EPL_Viz::ProfileManager          *profileManager;
+  Ui::MainWindow *                  ui;
+  EPL_Viz::ProfileManager *         profileManager;
   EPL_Viz::GUIState                 machineState;
   int                               curCycle;
-  EPL_Viz::ModelThread             *modelThread;
+  EPL_Viz::ModelThread *            modelThread;
   QLinkedList<EPL_Viz::BaseModel *> models;
   EPL_DataCollect::CaptureInstance *captureInstance;
 
@@ -88,7 +88,7 @@ class MainWindow : public QMainWindow {
   mockable EPL_Viz::GUIState getState();
 
   mockable int getCycle();
-  mockable EPL_DataCollect::CaptureInstance* getCaptureInstance();
+  mockable EPL_DataCollect::CaptureInstance *getCaptureInstance();
 
   static void fixQToolButtons(std::vector<QToolButton *> &btns);
   static void fixQToolButtons(std::vector<QAction *> &actions, QToolBar *bar);

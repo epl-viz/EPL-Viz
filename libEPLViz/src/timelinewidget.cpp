@@ -39,7 +39,7 @@ TimelineWidget::TimelineWidget(QWidget *parent) : QDockWidget(parent) {}
 TimelineWidget::~TimelineWidget() { delete (picker); }
 
 bool TimelineWidget::event(QEvent *event) {
-  // Only handling Polish events, call parent in any other case
+  // Only handling Polish events
   if (event->type() == QEvent::Polish) {
     qDebug() << "Polish event thrown";
     QwtPlot *plot = this->findChild<QwtPlot *>("qwtPlotTimeline");
@@ -59,10 +59,8 @@ bool TimelineWidget::event(QEvent *event) {
     } else {
       qDebug() << "PlotTimeline not found, this is ok";
     }
-  } else {
-    return QWidget::event(event);
   }
-  return true;
+  return QWidget::event(event);
 }
 
 void TimelineWidget::pointSelected(const QPointF &pa) {

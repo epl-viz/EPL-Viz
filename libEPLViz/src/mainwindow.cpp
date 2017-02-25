@@ -48,6 +48,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
   mainWindow = this;
 
+  machineState = GUIState::UNINIT;
+
   ui->setupUi(this);
   tabifyDockWidget(ui->dockCurrent, ui->dockOD);
   tabifyDockWidget(ui->dockPlugins, ui->dockEvents);

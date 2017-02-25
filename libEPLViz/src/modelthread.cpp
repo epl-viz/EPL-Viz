@@ -44,6 +44,14 @@ ModelThread::~ModelThread() {
 }
 
 void ModelThread::loop() {
+  qDebug() << "Waiting for state";
+  while (*state == GUIState::UNINIT) {
+    yieldCurrentThread();
+  }
+  // initializing all Models
+  qDebug() << "Initalizing models";
+  BaseModel::initAll();
+
   qDebug() << "Starting loop";
   while (true) {
     BaseModel::updateAll(state);

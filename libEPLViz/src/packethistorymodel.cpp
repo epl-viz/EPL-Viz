@@ -37,11 +37,6 @@ using namespace EPL_DataCollect;
 using namespace std;
 
 void PacketHistoryModel::update(Cycle *cycle) {
-  // TODO
-  if (textWindow == nullptr) {
-    init();
-    return;
-  }
   vector<Packet> packets = cycle->getPackets();
   string         text;
   for (unsigned int i = 0; i < packets.size(); i++) {

@@ -1327,10 +1327,44 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>actionStart_Recording</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>startRecording()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>767</x>
+     <y>464</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionStop_Recording</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>stopRecording()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>767</x>
+     <y>464</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>767</x>
+     <y>464</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>openPluginEditor()</slot>
   <slot>openInterfacePicker()</slot>
   <slot>setFullscreen(bool)</slot>
+  <slot>startRecording()</slot>
+  <slot>stopRecording()</slot>
  </slots>
 </ui>

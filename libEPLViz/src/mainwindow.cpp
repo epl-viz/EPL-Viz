@@ -155,4 +155,17 @@ void MainWindow::open() {
   // TODO
 }
 
+void MainWindow::startRecording() {
+  // Set other Actions enabled/disabled
+  ((QAction *) sender())->setEnabled(false);
+  findChild<QAction *>("actionStart_Recording")->setEnabled(true);
+  machineState = GUIState::RECORDING;
+}
+
+void MainWindow::stopRecording() {
+  ((QAction *) sender())->setEnabled(false);
+  findChild<QAction *>("actionStop_Recording")->setEnabled(true);
+  machineState = GUIState::STOPPED;
+}
+
 void MainWindow::handleResults(const QString &result) { qDebug() << "The result is\"" << result << "\""; }

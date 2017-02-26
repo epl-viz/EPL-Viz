@@ -58,7 +58,7 @@ void ModelThread::loop() {
     // TODO Constant update time or something else?
     sleep(1);
   }
-  emit resultReady("Thread is done");
+  //   emit resultReady("Thread is done"); // Unreachable-code
 }
 
 void ModelThread::run() { ModelThread::loop(); }

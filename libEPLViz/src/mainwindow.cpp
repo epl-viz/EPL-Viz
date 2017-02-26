@@ -167,13 +167,13 @@ void MainWindow::open() {
 
 void MainWindow::startRecording() {
   // Set other Actions enabled/disabled
-  ((QAction *)sender())->setEnabled(false);
+  dynamic_cast<QAction *>(sender())->setEnabled(false);
   findChild<QAction *>("actionStart_Recording")->setEnabled(true);
   machineState = GUIState::RECORDING;
 }
 
 void MainWindow::stopRecording() {
-  ((QAction *)sender())->setEnabled(false);
+  dynamic_cast<QAction *>(sender())->setEnabled(false);
   findChild<QAction *>("actionStop_Recording")->setEnabled(true);
   machineState = GUIState::STOPPED;
 }

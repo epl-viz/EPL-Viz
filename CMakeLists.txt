@@ -86,6 +86,7 @@ add_compiler(
              "-Wno-gnu-anonymous-struct -Wno-nested-anon-types -Wno-exit-time-destructors"
              "-Wno-global-constructors -Wno-switch-enum -Wno-reserved-id-macro"
              "-Wno-documentation-unknown-command"
+             "-Wno-undefined-reinterpret-cast" # For some reason QMOC produces code generating this warning
   DEBUG      "-Werror"
   RELEASE    "-O2"
   SANITIZE "-fsanitize=${SANITIZERS}"
@@ -196,6 +197,7 @@ else( USE_SYSTEM_PACKETS )
       "-DCMAKE_INSTALL_PREFIX=${EPL_DC_INSTALL_DIR}"
       -DDISABLE_TESTS=ON
       -DENABLE_CODE_COVERAGE=OFF
+      -DCMAKE_INSTALL_MESSAGE=NEVER
       "-DWireshark_DIR=${Wireshark_DIR}"
   )
 
@@ -251,6 +253,8 @@ include_directories( SYSTEM
   ${QWT_INCLUDE_DIRS}
   ${PLF_COLONY_DIR}
 )
+
+link_directories( ${Wireshark_LIB_DIR} )
 
 # Add Qt5 include dirs
 foreach( I IN LISTS EPL_VIZ_QT_COMPONENTS )

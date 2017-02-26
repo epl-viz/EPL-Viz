@@ -40,4 +40,5 @@ void QWTPlotModel::init() {
 
 void QWTPlotModel::update(EPL_DataCollect::Cycle *cycle) {
   // TODO Image Event?
+  (void)cycle;
 }

@@ -32,12 +32,12 @@ using namespace EPL_Viz;
 
 QWTPlotModel::QWTPlotModel() : BaseModel() {}
 
-QWTPlotModel::init() {
+void QWTPlotModel::init() {
   plot  = MainWindow::mainWindow->findChild<QwtPlot *>("plotCanvas");
   log   = MainWindow::mainWindow->getCaptureInstance()->getEventLog();
   appid = log->getAppID();
 }
 
-QWTPlotModel::update(EPL_DataCollect::Cycle *cycle) {
+void QWTPlotModel::update(EPL_DataCollect::Cycle *cycle) {
   // TODO Image Event?
 }

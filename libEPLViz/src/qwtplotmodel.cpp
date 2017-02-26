@@ -33,9 +33,9 @@ using namespace EPL_Viz;
 QWTPlotModel::QWTPlotModel() : BaseModel() {}
 
 void QWTPlotModel::init() {
-  plot  = MainWindow::mainWindow->findChild<QwtPlot *>("plotCanvas");
-  log   = MainWindow::mainWindow->getCaptureInstance()->getEventLog();
-  appid = log->getAppID();
+  canvas = MainWindow::mainWindow->findChild<QLabel *>("plotCanvas");
+  log    = MainWindow::mainWindow->getCaptureInstance()->getEventLog();
+  appid  = log->getAppID();
 }
 
 void QWTPlotModel::update(EPL_DataCollect::Cycle *cycle) {

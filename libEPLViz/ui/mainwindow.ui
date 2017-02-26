@@ -313,9 +313,12 @@
            </property>
            <layout class="QGridLayout" name="gridLayout_17">
             <item row="0" column="0">
-             <widget class="QWidget" name="widget_8" native="true">
-              <property name="toolTip">
-               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Hier werden dann Die Graphen eingezeichnet&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             <widget class="QLabel" name="plotCanvas">
+              <property name="text">
+               <string>No plot given by a python plugin</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignCenter</set>
               </property>
              </widget>
             </item>

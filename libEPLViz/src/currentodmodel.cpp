@@ -24,59 +24,37 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 /*!
- * \file basemodel.cpp
+ * \file currentodmodel.cpp
  */
-
-#include "basemodel.hpp"
+#include "currentodmodel.hpp"
 using namespace EPL_Viz;
-using namespace EPL_DataCollect;
 
-QLinkedList<BaseModel *> *BaseModel::registeredModels = new QLinkedList<BaseModel *>;
+CurrentODModel::CurrentODModel(QMainWindow *window) : BaseModel() {
+  window->findChild<QTableView *>("curNodeODView")->setModel(this);
+}
 
-BaseModel::BaseModel() { reg(this); }
+void CurrentODModel::init() {}
 
-BaseModel::~BaseModel() { dereg(this); }
+int CurrentODModel::rowCount(const QModelIndex &parent) const {
+  // TODO
+  (void)parent;
+  return 1;
+}
 
-void BaseModel::updateAll(GUIState *state, CaptureInstance *instance, int cycleNum) {
-  (void)state;
+int CurrentODModel::columnCount(const QModelIndex &parent) const {
+  (void)parent;
+  return 3;
+}
 
-  // Get Cycle
-  Cycle *         c         = nullptr;
-  CycleContainer *container = instance->getCycleContainer();
-  (void)cycleNum;
-  (void)container;
-  // get newest if <0
-  /* TODO Disabled because segfault
-  if (cycleNum < 0)
-    *c = container->pollCycle();
-  else
-    *c = container->getCycle(cycleNum);
-*/
-  // Update models
-  QLinkedListIterator<BaseModel *> iterator(*registeredModels);
-  while (iterator.hasNext()) {
-    iterator.next()->update(c);
+QVariant CurrentODModel::data(const QModelIndex &index, int role) const {
+  // TODO
+  if (role == Qt::DisplayRole) {
+    return QString("Row%1, Column%2").arg(index.row() + 1).arg(index.column() + 1);
   }
+  return QVariant();
 }
 
-void BaseModel::initAll() {
-  QLinkedListIterator<BaseModel *> iterator(*registeredModels);
-  while (iterator.hasNext()) {
-    iterator.next()->init();
-  }
+void CurrentODModel::update(EPL_DataCollect::Cycle *cycle) {
+  (void)cycle;
+  // TODO
 }
-
-void BaseModel::reg(BaseModel *model) {
-  if (!registeredModels->contains(model)) {
-    qDebug() << "Registered a model";
-    registeredModels->append(model);
-  } else
-    throw std::runtime_error("Cannot add a model twice!");
-}
-
-void BaseModel::dereg(BaseModel *model) {
-  registeredModels->removeOne(model);
-  qDebug() << "Deregistered a model";
-}
-
-bool BaseModel::operator==(const BaseModel &other) { return this == &other; }

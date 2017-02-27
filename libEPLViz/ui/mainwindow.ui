@@ -66,7 +66,7 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>931</width>
+             <width>445</width>
              <height>361</height>
             </rect>
            </property>
@@ -307,7 +307,7 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>945</width>
+             <width>459</width>
              <height>361</height>
             </rect>
            </property>
@@ -634,37 +634,7 @@
    <widget class="QWidget" name="dockWidgetContents_4">
     <layout class="QGridLayout" name="gridLayout">
      <item row="0" column="0">
-      <widget class="QTreeWidget" name="treeWidget_2">
-       <property name="toolTip">
-        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Eintraege koennen mit &lt;span style=&quot; font-style:italic;&quot;&gt;rechtsklick&lt;/span&gt; zum Graphen und/oder der Timeline hinzugefuegt werden&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-       </property>
-       <column>
-        <property name="text">
-         <string>Index</string>
-        </property>
-       </column>
-       <column>
-        <property name="text">
-         <string>Name</string>
-        </property>
-       </column>
-       <column>
-        <property name="text">
-         <string>Value</string>
-        </property>
-       </column>
-       <item>
-        <property name="text">
-         <string>0x0000</string>
-        </property>
-        <property name="text">
-         <string>NAME</string>
-        </property>
-        <property name="text">
-         <string>Something</string>
-        </property>
-       </item>
-      </widget>
+      <widget class="QTableView" name="curNodeODView"/>
      </item>
     </layout>
    </widget>

@@ -30,24 +30,28 @@
 #include "CaptureInstance.hpp"
 #include "EPLVizDefines.hpp"
 #include "basemodel.hpp"
+#include "currentodmodel.hpp"
 #include "guistate.hpp"
 #include "modelthread.hpp"
+#include "packethistorymodel.hpp"
 #include "profilemanager.hpp"
+#include "pythonlogmodel.hpp"
+#include "qwtplotmodel.hpp"
 #include <QAction>
-#include <QAction>
+#include <QDebug>
+#include <QLabel>
 #include <QLinkedList>
 #include <QMainWindow>
 #include <QThread>
 #include <QToolBar>
 #include <QToolButton>
+#include <iostream>
+#include <vector>
 
 namespace Ui {
 class MainWindow;
 }
 
-namespace EPL_Viz {
-class BaseModel;
-}
 
 class MainWindow : public QMainWindow {
   Q_OBJECT
@@ -87,7 +91,7 @@ class MainWindow : public QMainWindow {
    */
   mockable EPL_Viz::GUIState getState();
 
-  mockable int getCycle();
+  mockable int getCycleNum();
   mockable EPL_DataCollect::CaptureInstance *getCaptureInstance();
 
   static void fixQToolButtons(std::vector<QToolButton *> &btns);
@@ -96,6 +100,7 @@ class MainWindow : public QMainWindow {
  private:
   mockable void createModels();
   mockable void destroyModels();
+  mockable bool event(QEvent *event);
 
  public slots:
   void setFullscreen(bool makeFullscreen);

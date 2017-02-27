@@ -28,13 +28,14 @@
  */
 
 #include "qwtplotmodel.hpp"
+#include "mainwindow.hpp"
 using namespace EPL_Viz;
 
-QWTPlotModel::QWTPlotModel() : BaseModel() {}
+QWTPlotModel::QWTPlotModel(MainWindow *win) : BaseModel() { window = win; }
 
 void QWTPlotModel::init() {
-  canvas = MainWindow::mainWindow->findChild<QLabel *>("plotCanvas");
-  log    = MainWindow::mainWindow->getCaptureInstance()->getEventLog();
+  canvas = window->findChild<QLabel *>("plotCanvas");
+  log    = window->getCaptureInstance()->getEventLog();
   appid  = log->getAppID();
 }
 

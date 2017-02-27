@@ -24,27 +24,28 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 /*!
- * \file qwtplotmodel.cpp
+ * \file qwtplotmodel.hpp
  */
 #pragma once
 
 #include "EPLVizDefines.hpp"
 #include "EventLog.hpp"
 #include "basemodel.hpp"
-#include "mainwindow.hpp"
 
 #include <QLabel>
 
+class MainWindow;
 
 namespace EPL_Viz {
-class QWTPlotModel : public BaseModel {
+class QWTPlotModel : public EPL_Viz::BaseModel {
  private:
+  MainWindow *               window;
   QLabel *                   canvas;
   EPL_DataCollect::EventLog *log;
   unsigned int               appid;
 
  public:
-  QWTPlotModel();
+  QWTPlotModel(MainWindow *win);
   void init();
 
  protected:

@@ -24,59 +24,30 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 /*!
- * \file basemodel.cpp
+ * \file currentodmodel.hpp
  */
+#pragma once
 
+#include "Cycle.hpp"
+#include "EPLVizDefines.hpp"
+#include "Packet.hpp"
 #include "basemodel.hpp"
-using namespace EPL_Viz;
-using namespace EPL_DataCollect;
 
-QLinkedList<BaseModel *> *BaseModel::registeredModels = new QLinkedList<BaseModel *>;
+#include <QAbstractTableModel>
+#include <QTableView>
 
-BaseModel::BaseModel() { reg(this); }
+namespace EPL_Viz {
+class CurrentODModel : public QAbstractTableModel, public BaseModel {
+  Q_OBJECT
+ public:
+  CurrentODModel(QMainWindow *window);
+  void init() override;
 
-BaseModel::~BaseModel() { dereg(this); }
+  int rowCount(const QModelIndex &parent) const override;
+  int columnCount(const QModelIndex &parent) const override;
+  QVariant data(const QModelIndex &index, int role) const override;
 
-void BaseModel::updateAll(GUIState *state, CaptureInstance *instance, int cycleNum) {
-  (void)state;
-
-  // Get Cycle
-  Cycle *         c         = nullptr;
-  CycleContainer *container = instance->getCycleContainer();
-  (void)cycleNum;
-  (void)container;
-  // get newest if <0
-  /* TODO Disabled because segfault
-  if (cycleNum < 0)
-    *c = container->pollCycle();
-  else
-    *c = container->getCycle(cycleNum);
-*/
-  // Update models
-  QLinkedListIterator<BaseModel *> iterator(*registeredModels);
-  while (iterator.hasNext()) {
-    iterator.next()->update(c);
-  }
+ protected:
+  mockable void update(EPL_DataCollect::Cycle *cycle) override;
+};
 }
-
-void BaseModel::initAll() {
-  QLinkedListIterator<BaseModel *> iterator(*registeredModels);
-  while (iterator.hasNext()) {
-    iterator.next()->init();
-  }
-}
-
-void BaseModel::reg(BaseModel *model) {
-  if (!registeredModels->contains(model)) {
-    qDebug() << "Registered a model";
-    registeredModels->append(model);
-  } else
-    throw std::runtime_error("Cannot add a model twice!");
-}
-
-void BaseModel::dereg(BaseModel *model) {
-  registeredModels->removeOne(model);
-  qDebug() << "Deregistered a model";
-}
-
-bool BaseModel::operator==(const BaseModel &other) { return this == &other; }

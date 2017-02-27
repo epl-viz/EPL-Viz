@@ -26,19 +26,10 @@
 /*!
  * \file mainwindow.cpp
  */
-
 #include "mainwindow.hpp"
 #include "interfacepicker.hpp"
-#include "packethistorymodel.hpp"
 #include "pluginswindow.hpp"
-#include "pythonlogmodel.hpp"
 #include "ui_mainwindow.h"
-#include <QAction>
-#include <QDebug>
-#include <QLabel>
-#include <QToolButton>
-#include <iostream>
-#include <vector>
 using namespace EPL_Viz;
 using namespace EPL_DataCollect;
 
@@ -66,9 +57,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
   // TODO create here?
   captureInstance = new CaptureInstance();
 
-  createModels();
 
-  modelThread = new ModelThread(this, &machineState);
+  modelThread = new ModelThread(this, &machineState, this);
   connect(modelThread, &ModelThread::resultReady, this, &MainWindow::handleResults);
   connect(modelThread, &ModelThread::finished, modelThread, &QObject::deleteLater);
   modelThread->start();
@@ -83,8 +73,10 @@ MainWindow::~MainWindow() {
 void MainWindow::createModels() {
   // Create and add Models here
   // TODO disabled because of unfinished Cycle generation/getting
-  // models.append(new PacketHistoryModel());
-  // models.append(new PythonLogModel());
+  // models.append(new PacketHistoryModel(this));
+  // models.append(new PythonLogModel(this));
+  // models.append(new QWTPlotModel(this));
+  models.append(new CurrentODModel(this));
 }
 
 void MainWindow::destroyModels() {
@@ -151,7 +143,16 @@ void MainWindow::openInterfacePicker() {
   picker->show();
 }
 
-int MainWindow::getCycle() { return curCycle; }
+bool MainWindow::event(QEvent *event) {
+  // init stuff
+  if (event->type() == QEvent::Polish) {
+    qDebug() << "Polish in main";
+    createModels();
+  }
+  return QMainWindow::event(event);
+}
+
+int MainWindow::getCycleNum() { return curCycle; }
 
 CaptureInstance *MainWindow::getCaptureInstance() { return captureInstance; }
 

@@ -29,11 +29,13 @@
 
 #include "modelthread.hpp"
 #include "basemodel.hpp"
+#include "mainwindow.hpp"
 #include <QDebug>
 using namespace EPL_Viz;
 
-ModelThread::ModelThread(QObject *parent, GUIState *machineState) : QThread(parent) {
+ModelThread::ModelThread(QObject *parent, GUIState *machineState, MainWindow *win) : QThread(parent) {
   ModelThread::state = machineState;
+  window             = win;
 }
 
 ModelThread::~ModelThread() {
@@ -54,7 +56,7 @@ void ModelThread::loop() {
 
   qDebug() << "Starting loop";
   while (true) {
-    BaseModel::updateAll(state);
+    BaseModel::updateAll(state, window->getCaptureInstance(), window->getCycleNum());
     // TODO Constant update time or something else?
     sleep(1);
   }

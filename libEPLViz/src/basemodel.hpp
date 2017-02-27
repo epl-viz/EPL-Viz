@@ -29,11 +29,11 @@
 
 #pragma once
 
+#include "CaptureInstance.hpp"
 #include "Cycle.hpp"
 #include "CycleContainer.hpp"
 #include "EPLVizDefines.hpp"
 #include "guistate.hpp"
-#include "mainwindow.hpp"
 #include <QDebug>
 #include <QLinkedList>
 #include <QMainWindow>
@@ -56,7 +56,7 @@ class BaseModel {
   virtual void init()                                = 0;
 
  public:
-  static void updateAll(GUIState *state);
+  static void updateAll(GUIState *state, EPL_DataCollect::CaptureInstance *instance, int cycleNum);
   static void initAll();
   static void reg(BaseModel *model);
   static void dereg(BaseModel *model);

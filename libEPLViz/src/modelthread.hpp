@@ -33,15 +33,18 @@
 #include "guistate.hpp"
 #include <QThread>
 
+class MainWindow;
+
 namespace EPL_Viz {
 class ModelThread : public QThread {
   Q_OBJECT
 
  private:
   EPL_Viz::GUIState *state;
+  MainWindow *       window;
 
  public:
-  ModelThread(QObject *parent, GUIState *machineState);
+  ModelThread(QObject *parent, GUIState *machineState, MainWindow *win);
   ModelThread() = delete;
   ~ModelThread();
 

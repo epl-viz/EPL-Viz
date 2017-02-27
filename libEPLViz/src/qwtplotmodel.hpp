@@ -41,7 +41,7 @@ class QWTPlotModel : public BaseModel {
  private:
   QLabel *                   canvas;
   EPL_DataCollect::EventLog *log;
-  int                        appid;
+  unsigned int               appid;
 
  public:
   QWTPlotModel();

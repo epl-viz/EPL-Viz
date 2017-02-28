@@ -27,10 +27,10 @@
  * \file mainwindow.cpp
  */
 #include "mainwindow.hpp"
+#include "TimeSeriesBuilder.hpp"
 #include "interfacepicker.hpp"
 #include "pluginswindow.hpp"
 #include "ui_mainwindow.h"
-#include "TimeSeriesBuilder.hpp"
 #include <memory>
 using namespace EPL_Viz;
 using namespace EPL_DataCollect;

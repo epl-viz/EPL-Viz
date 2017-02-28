@@ -31,13 +31,9 @@
 using namespace EPL_Viz;
 using namespace EPL_DataCollect;
 
-PythonLogModel::PythonLogModel(MainWindow *window) : BaseModel() {
-  log   = window->getCaptureInstance()->getEventLog();
-}
+PythonLogModel::PythonLogModel(MainWindow *window) : BaseModel() { log = window->getCaptureInstance()->getEventLog(); }
 
-void PythonLogModel::init() {
-  appid = log->getAppID();
-}
+void PythonLogModel::init() { appid = log->getAppID(); }
 
 void PythonLogModel::update(Cycle *cycle) {
   (void)cycle;

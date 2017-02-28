@@ -52,5 +52,4 @@ void PacketHistoryModel::update(Cycle *cycle) {
   qDebug() << "updating PacketHistoryModel";
 }
 
-void PacketHistoryModel::init() {
-}
+void PacketHistoryModel::init() {}

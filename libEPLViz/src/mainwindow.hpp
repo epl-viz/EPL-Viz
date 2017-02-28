@@ -57,12 +57,12 @@ class MainWindow : public QMainWindow {
   Q_OBJECT
 
  private:
-  Ui::MainWindow *                  ui;
-  EPL_Viz::ProfileManager *         profileManager;
-  EPL_Viz::GUIState                 machineState;
-  int                               curCycle;
-  EPL_Viz::ModelThread *            modelThread;
-  QLinkedList<EPL_Viz::BaseModel *> models;
+  Ui::MainWindow *                                  ui;
+  EPL_Viz::ProfileManager *                         profileManager;
+  EPL_Viz::GUIState                                 machineState;
+  int                                               curCycle;
+  EPL_Viz::ModelThread *                            modelThread;
+  QLinkedList<EPL_Viz::BaseModel *>                 models;
   std::unique_ptr<EPL_DataCollect::CaptureInstance> captureInstance;
 
  public:

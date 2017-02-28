@@ -32,7 +32,7 @@ using namespace EPL_Viz;
 using namespace EPL_DataCollect;
 
 CurrentODModel::CurrentODModel(QMainWindow *window) : BaseModel() {
-  QTableView  *view = window->findChild<QTableView *>("curNodeODView");
+  QTableView *view = window->findChild<QTableView *>("curNodeODView");
   view->setModel(this);
   view->verticalHeader()->hide();
 }
@@ -58,24 +58,18 @@ QVariant CurrentODModel::data(const QModelIndex &index, int role) const {
   return QVariant();
 }
 
-QVariant CurrentODModel::headerData(int section, Qt::Orientation orientation, int role) const
-{
-    if (role == Qt::DisplayRole)
-    {
-        if (orientation == Qt::Horizontal) {
-            switch (section)
-            {
-            // TODO ODEntryDescription
-            case 0:
-                return QString("Index");
-            case 1:
-                return QString("Type");
-            case 2:
-                return QString("Value");
-            }
-        }
+QVariant CurrentODModel::headerData(int section, Qt::Orientation orientation, int role) const {
+  if (role == Qt::DisplayRole) {
+    if (orientation == Qt::Horizontal) {
+      switch (section) {
+        // TODO ODEntryDescription
+        case 0: return QString("Index");
+        case 1: return QString("Type");
+        case 2: return QString("Value");
+      }
     }
-    return QVariant();
+  }
+  return QVariant();
 }
 
 void CurrentODModel::update(EPL_DataCollect::Cycle *cycle) {

@@ -25,19 +25,29 @@
  */
 /*!
  * \file pluginswindows.cpp
- * \todo Implement
  */
 
 #include "pluginswindow.hpp"
 #include "ui_pluginswindow.h"
+#include <QCloseEvent>
 
-PluginsWindow::PluginsWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::PluginsWindow) { ui->setupUi(this); }
+PluginsWindow::PluginsWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::PluginsWindow) {
+  ui->setupUi(this);
+  setAttribute(Qt::WA_QuitOnClose);
+}
 
 PluginsWindow::~PluginsWindow() { delete ui; }
 
-void PluginsWindow::save() {
-  // TODO
+void PluginsWindow::closeEvent(QCloseEvent *event) {
+  emit cleanUp();
+  event->accept();
 }
-void PluginsWindow::saveAs() {
-  // TODO
+
+void PluginsWindow::open() {
+  QString file = QFileDialog::getOpenFileName(0, "Open Python file", QString(), "Python files (*.py);;All Files (*)");
+
+  if (file == nullptr)
+    return;
+
+  emit fileOpened(file);
 }

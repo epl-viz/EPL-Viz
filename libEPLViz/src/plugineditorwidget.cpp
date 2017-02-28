@@ -25,17 +25,164 @@
  */
 /*!
  * \file plugineditorwidget.cpp
- * \todo Implement
  */
 
 #include "plugineditorwidget.hpp"
+#include <QAbstractButton>
+#include <QPushButton>
 
-PluginEditorWidget::PluginEditorWidget(QWidget *parent) : QWidget(parent) {
+
+PluginEditorWidget::PluginEditorWidget(QWidget *parent) : QWidget(parent) { layout = new QGridLayout(this); }
+
+PluginEditorWidget::~PluginEditorWidget() { cleanUp(); }
+
+void PluginEditorWidget::selectPlugin(QString plugin) {
+  // Find the specified document for the given plugin
+  for (auto d : KTextEditor::Editor::instance()->documents()) {
+    if (d->documentName() == plugin) {
+      doc = d;
+      break;
+    }
+  }
+
+  createWidget();
+}
+
+void PluginEditorWidget::loadDocument(QString fileName) {
+  // Retrieve editor singleton
   KTextEditor::Editor *editor = KTextEditor::Editor::instance();
-  // create a new document
-  KTextEditor::Document *doc = editor->createDocument(this);
-  // create a widget to display the document
-  KTextEditor::View *view = doc->createView(this);
 
-  view->insertText("Test");
+  // Create a new document
+  doc = editor->createDocument(this);
+
+  // Connect the signal of the editor buffer being changed to the modified() slot
+  QObject::connect(doc, SIGNAL(modifiedChanged(KTextEditor::Document *)), this, SLOT(modified()));
+  QObject::connect(doc, SIGNAL(documentNameChanged(KTextEditor::Document *)), this, SLOT(nameChange()));
+  QObject::connect(doc, SIGNAL(documentUrlChanged(KTextEditor::Document *)), this, SLOT(urlChange()));
+
+
+
+  // Load the file if specified
+  if (fileName != nullptr) {
+    if (!doc->openUrl(fileName)) {
+      // TODO: Add error message?
+      return;
+    }
+  }
+
+  // Set syntax to python
+  doc->setHighlightingMode("Python");
+  emit doc->highlightingModeChanged(doc);
+
+  createWidget();
+}
+
+void PluginEditorWidget::createWidget() {
+  // Check if there is a widget already
+  if (view) {
+    // Remove the old widget
+    layout->removeWidget(view);
+    delete view;
+  }
+
+  // Create a widget to display the document
+  view = doc->createView(this);
+
+  // Set status bar
+  view->setStatusBarEnabled(showStatusBar); // TODO: Add a variable for this to the global user profile
+
+  // Add the widget to the layout
+  layout->addWidget(view);
+}
+
+void PluginEditorWidget::modified() { emit modifiedChanged(doc->isModified()); }
+
+void PluginEditorWidget::statusBarToggled(bool enabled) {
+  if (view->isStatusBarEnabled() != enabled) {
+    showStatusBar = enabled;
+
+    // Update the widget if it exists
+    if (view) {
+      view->setStatusBarEnabled(enabled);
+      emit view->statusBarEnabledChanged(view, enabled);
+    }
+  }
+}
+void PluginEditorWidget::configEditor() { KTextEditor::Editor::instance()->configDialog(this); }
+
+void PluginEditorWidget::nameChange() { emit nameChanged(doc->documentName()); }
+
+void PluginEditorWidget::urlChange() { emit urlChanged(doc->url().toString()); }
+
+void PluginEditorWidget::save() {
+  if (!doc)
+    return;
+
+  doc->documentSave();
+}
+
+void PluginEditorWidget::saveAs() {
+  if (!doc)
+    return;
+
+  doc->documentSaveAs();
+}
+
+void PluginEditorWidget::newFile() { loadDocument(); }
+
+void PluginEditorWidget::openFile(QString file) { loadDocument(file); }
+
+void PluginEditorWidget::cleanUp() {
+  QMessageBox  msg;
+  QPushButton *saveButton       = msg.addButton("Save", QMessageBox::ActionRole);
+  QPushButton *saveAllButton    = msg.addButton("Save All", QMessageBox::ActionRole);
+  QPushButton *discardButton    = msg.addButton("Discard", QMessageBox::ActionRole);
+  QPushButton *discardAllButton = msg.addButton("Discard All", QMessageBox::ActionRole);
+
+
+  msg.setInformativeText("Would you like to save them?");
+  msg.setDefaultButton(saveAllButton);
+
+  bool saveAll = false;
+
+  auto list = KTextEditor::Editor::instance()->documents();
+
+  for (auto d : list) {
+    if (d->isModified()) {
+
+      if (saveAll) {
+        d->documentSave();
+        continue;
+      }
+
+      msg.setText("The plugin '" + d->documentName() + "' has unsaved changes.");
+
+      msg.exec();
+
+      QPushButton *clicked = dynamic_cast<QPushButton *>(msg.clickedButton());
+
+      if (clicked == saveButton) {
+        // Save the changes to this document
+        d->documentSave();
+        continue;
+      } else if (clicked == saveAllButton) {
+        // Save the changes to this document and remember the choice
+        d->documentSave();
+        saveAll = true;
+        continue;
+      } else if (clicked == discardButton) {
+        // Discard changes for current document
+        continue;
+      } else if (clicked == discardAllButton) {
+        // Discard all changes
+        break;
+      }
+    }
+  }
+
+  // Destroy all documents
+  for (auto d : list)
+    delete d;
+
+  emit cleanupDone();
 }

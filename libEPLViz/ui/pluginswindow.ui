@@ -15,22 +15,26 @@
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout">
-    <item row="0" column="0">
-     <widget class="QListWidget" name="pluginList"/>
-    </item>
     <item row="0" column="1">
-     <widget class="PluginEditorWidget" name="widget" native="true">
-      <property name="minimumSize">
-       <size>
-        <width>800</width>
-        <height>0</height>
-       </size>
+     <widget class="PluginEditorWidget" name="editor" native="true">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+        <horstretch>3</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
       </property>
-      <property name="baseSize">
-       <size>
-        <width>0</width>
-        <height>0</height>
-       </size>
+     </widget>
+    </item>
+    <item row="0" column="0">
+     <widget class="PluginListWidget" name="pluginList">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+        <horstretch>1</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="editTriggers">
+       <set>QAbstractItemView::NoEditTriggers</set>
       </property>
      </widget>
     </item>
@@ -42,7 +46,7 @@
      <x>0</x>
      <y>0</y>
      <width>1112</width>
-     <height>23</height>
+     <height>26</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -51,21 +55,20 @@
     </property>
     <addaction name="actionNew"/>
     <addaction name="actionOpen"/>
-    <addaction name="actionImport"/>
     <addaction name="actionSave"/>
     <addaction name="actionSave_As"/>
     <addaction name="separator"/>
     <addaction name="actionQuit"/>
    </widget>
-   <widget class="QMenu" name="menuEdit">
+   <widget class="QMenu" name="menuSettings">
     <property name="title">
-     <string>E&amp;dit</string>
+     <string>Settings</string>
     </property>
-    <addaction name="actionUndo"/>
-    <addaction name="actionRedo"/>
+    <addaction name="actionConfigure_Editor"/>
+    <addaction name="actionShow_Status_Bar"/>
    </widget>
    <addaction name="menuFile"/>
-   <addaction name="menuEdit"/>
+   <addaction name="menuSettings"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <widget class="QToolBar" name="toolBar">
@@ -78,20 +81,14 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
+   <addaction name="actionNew"/>
    <addaction name="actionOpen"/>
    <addaction name="actionSave"/>
    <addaction name="actionSave_As"/>
-   <addaction name="actionNew"/>
-   <addaction name="separator"/>
-   <addaction name="actionUndo"/>
-   <addaction name="actionRedo"/>
   </widget>
   <action name="actionQuit">
    <property name="text">
     <string>&amp;Quit</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+Q</string>
    </property>
   </action>
   <action name="actionOpen">
@@ -106,27 +103,37 @@
   </action>
   <action name="actionSave_As">
    <property name="text">
-    <string>Sa&amp;ve As</string>
-   </property>
-  </action>
-  <action name="actionUndo">
-   <property name="text">
-    <string>&amp;Undo</string>
-   </property>
-  </action>
-  <action name="actionRedo">
-   <property name="text">
-    <string>&amp;Redo</string>
+    <string>Save &amp;As</string>
    </property>
   </action>
   <action name="actionNew">
    <property name="text">
     <string>&amp;New</string>
    </property>
+   <property name="menuRole">
+    <enum>QAction::ApplicationSpecificRole</enum>
+   </property>
   </action>
-  <action name="actionImport">
+  <action name="actionConfigure_Editor">
    <property name="text">
-    <string>&amp;Import</string>
+    <string>Configure Editor</string>
+   </property>
+   <property name="menuRole">
+    <enum>QAction::PreferencesRole</enum>
+   </property>
+  </action>
+  <action name="actionShow_Status_Bar">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Show Editor Statusbar</string>
+   </property>
+   <property name="menuRole">
+    <enum>QAction::PreferencesRole</enum>
    </property>
   </action>
  </widget>
@@ -136,6 +143,34 @@
    <extends>QWidget</extends>
    <header>src/plugineditorwidget.hpp</header>
    <container>1</container>
+   <slots>
+    <signal>nameChanged(QString)</signal>
+    <signal>modifiedChanged(bool)</signal>
+    <signal>cleanupDone()</signal>
+    <signal>urlChanged(QString)</signal>
+    <slot>newFile()</slot>
+    <slot>openFile(QString)</slot>
+    <slot>save()</slot>
+    <slot>saveAs()</slot>
+    <slot>selectPlugin(QString)</slot>
+    <slot>urlChange()</slot>
+    <slot>cleanUp()</slot>
+   </slots>
+  </customwidget>
+  <customwidget>
+   <class>PluginListWidget</class>
+   <extends>QListWidget</extends>
+   <header>src/pluginlistwidget.hpp</header>
+   <slots>
+    <signal>fileOpened(QString)</signal>
+    <signal>pluginSelected(QString)</signal>
+    <slot>fileAdded(QString)</slot>
+    <slot>newFile()</slot>
+    <slot>nameChanged(QString)</slot>
+    <slot>fileModified(bool)</slot>
+    <slot>selectionChanged(QListWidgetItem*,QListWidgetItem*)</slot>
+    <slot>urlChanged(QString)</slot>
+   </slots>
   </customwidget>
  </customwidgets>
  <resources/>
@@ -143,16 +178,16 @@
   <connection>
    <sender>actionQuit</sender>
    <signal>triggered()</signal>
-   <receiver>PluginsWindow</receiver>
-   <slot>close()</slot>
+   <receiver>editor</receiver>
+   <slot>cleanUp()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>-1</x>
      <y>-1</y>
     </hint>
     <hint type="destinationlabel">
-     <x>555</x>
-     <y>330</y>
+     <x>694</x>
+     <y>344</y>
     </hint>
    </hints>
   </connection>
@@ -172,13 +207,250 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>actionConfigure_Editor</sender>
+   <signal>triggered()</signal>
+   <receiver>editor</receiver>
+   <slot>configEditor()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>694</x>
+     <y>344</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionShow_Status_Bar</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>editor</receiver>
+   <slot>statusBarToggled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>694</x>
+     <y>344</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionSave</sender>
+   <signal>triggered()</signal>
+   <receiver>editor</receiver>
+   <slot>save()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>694</x>
+     <y>344</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionSave_As</sender>
+   <signal>triggered()</signal>
+   <receiver>editor</receiver>
+   <slot>saveAs()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>694</x>
+     <y>344</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionNew</sender>
+   <signal>triggered()</signal>
+   <receiver>editor</receiver>
+   <slot>newFile()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>694</x>
+     <y>344</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>PluginsWindow</sender>
+   <signal>fileOpened(QString)</signal>
+   <receiver>pluginList</receiver>
+   <slot>fileAdded(QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>555</x>
+     <y>330</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>146</x>
+     <y>344</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pluginList</sender>
+   <signal>pluginSelected(QString)</signal>
+   <receiver>editor</receiver>
+   <slot>selectPlugin(QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>146</x>
+     <y>344</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>694</x>
+     <y>344</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pluginList</sender>
+   <signal>currentItemChanged(QListWidgetItem*,QListWidgetItem*)</signal>
+   <receiver>pluginList</receiver>
+   <slot>selectionChanged(QListWidgetItem*,QListWidgetItem*)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>146</x>
+     <y>344</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>146</x>
+     <y>344</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionNew</sender>
+   <signal>triggered()</signal>
+   <receiver>pluginList</receiver>
+   <slot>newFile()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>146</x>
+     <y>344</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>editor</sender>
+   <signal>nameChanged(QString)</signal>
+   <receiver>pluginList</receiver>
+   <slot>nameChanged(QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>694</x>
+     <y>344</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>146</x>
+     <y>344</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>editor</sender>
+   <signal>modifiedChanged(bool)</signal>
+   <receiver>pluginList</receiver>
+   <slot>fileModified(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>694</x>
+     <y>344</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>146</x>
+     <y>344</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pluginList</sender>
+   <signal>fileOpened(QString)</signal>
+   <receiver>editor</receiver>
+   <slot>openFile(QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>146</x>
+     <y>344</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>694</x>
+     <y>344</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>editor</sender>
+   <signal>cleanupDone()</signal>
+   <receiver>PluginsWindow</receiver>
+   <slot>close()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>694</x>
+     <y>344</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>555</x>
+     <y>330</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>editor</sender>
+   <signal>urlChanged(QString)</signal>
+   <receiver>pluginList</receiver>
+   <slot>urlChanged(QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>694</x>
+     <y>344</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>146</x>
+     <y>344</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>PluginsWindow</sender>
+   <signal>cleanUp()</signal>
+   <receiver>editor</receiver>
+   <slot>cleanUp()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>555</x>
+     <y>330</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>694</x>
+     <y>344</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
-  <slot>save()</slot>
-  <slot>saveAs()</slot>
+  <signal>fileOpened(QString)</signal>
+  <signal>cleanUp()</signal>
   <slot>open()</slot>
-  <slot>new()</slot>
-  <slot>undoAction()</slot>
-  <slot>redoAction()</slot>
  </slots>
 </ui>

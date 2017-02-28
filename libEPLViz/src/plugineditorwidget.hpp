@@ -24,19 +24,54 @@
  */
 /*!
  * \file plugineditorwidget.hpp
- * \todo Implement
  */
 
 #pragma once
 #include <KTextEditor/Document>
 #include <KTextEditor/Editor>
 #include <KTextEditor/View>
+#include <QGridLayout>
+#include <QMessageBox>
 #include <QWidget>
 
 class PluginEditorWidget : public QWidget {
   Q_OBJECT
 
+ private:
+  KTextEditor::Document *doc    = nullptr;
+  KTextEditor::View *    view   = nullptr;
+  QGridLayout *          layout = nullptr;
+
+  bool showStatusBar = false;
+
  public:
   PluginEditorWidget(QWidget *parent = nullptr);
-  ~PluginEditorWidget()              = default;
+  ~PluginEditorWidget();
+
+ private:
+  void loadDocument(QString fileName = nullptr);
+  void createWidget();
+
+ signals:
+  void nameChanged(QString name);
+  void urlChanged(QString url);
+  void modifiedChanged(bool modified);
+  void cleanupDone();
+
+ private slots:
+  void modified();
+  void nameChange();
+  void urlChange();
+
+ public slots:
+  void statusBarToggled(bool enabled);
+  void configEditor();
+
+  void selectPlugin(QString plugin);
+
+  void openFile(QString file);
+  void cleanUp();
+  void save();
+  void saveAs();
+  void newFile();
 };

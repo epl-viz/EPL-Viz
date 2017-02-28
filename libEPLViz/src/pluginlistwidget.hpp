@@ -25,17 +25,36 @@
  */
 /*!
  * \file pluginlistwidget.hpp
- * \todo Implement
  */
 
 #pragma once
 
-#include <QDockWidget>
+#include <QFileInfo>
+#include <QListWidget>
 
-class PluginListWidget : public QDockWidget {
+class PluginListWidget : public QListWidget {
   Q_OBJECT
+
+ private:
+  bool     modified   = false;
+  uint16_t newCounter = 1;
 
  public:
   PluginListWidget(QWidget *parent = nullptr);
   ~PluginListWidget()              = default;
+
+ private:
+  bool isListed(QString file);
+
+ signals:
+  void pluginSelected(QString newPlugin);
+  void fileOpened(QString plugin);
+
+ public slots:
+  void selectionChanged(QListWidgetItem *current, QListWidgetItem *previous);
+  void newFile();
+  void fileAdded(QString file);
+  void nameChanged(QString fileName);
+  void urlChanged(QString path);
+  void fileModified(bool newState);
 };

@@ -25,11 +25,11 @@
  */
 /*!
  * \file pluginswindow.hpp
- * \todo Implement
  */
 
 #pragma once
 
+#include <QFileDialog>
 #include <QMainWindow>
 
 namespace Ui {
@@ -46,7 +46,12 @@ class PluginsWindow : public QMainWindow {
  private:
   Ui::PluginsWindow *ui;
 
+  void closeEvent(QCloseEvent *event);
+
+ signals:
+  void fileOpened(QString filename);
+  void cleanUp();
+
  public slots:
-  void save();
-  void saveAs();
+  void open();
 };

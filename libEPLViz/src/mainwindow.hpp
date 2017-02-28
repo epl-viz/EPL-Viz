@@ -63,7 +63,7 @@ class MainWindow : public QMainWindow {
   int                               curCycle;
   EPL_Viz::ModelThread *            modelThread;
   QLinkedList<EPL_Viz::BaseModel *> models;
-  EPL_DataCollect::CaptureInstance *captureInstance;
+  std::unique_ptr<EPL_DataCollect::CaptureInstance> captureInstance;
 
  public:
   explicit MainWindow(QWidget *parent = nullptr);
@@ -89,6 +89,11 @@ class MainWindow : public QMainWindow {
   mockable EPL_Viz::GUIState getState();
 
   mockable int getCycleNum();
+  /**
+   * @brief getCaptureInstance
+   * Don't save the captureinstance. Cannot guarantee the lifetime of the pointer.
+   * @return Raw captureinstance pointer
+   */
   mockable EPL_DataCollect::CaptureInstance *getCaptureInstance();
 
   static void fixQToolButtons(std::vector<QToolButton *> &btns);

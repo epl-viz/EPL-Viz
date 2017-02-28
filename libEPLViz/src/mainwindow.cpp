@@ -30,6 +30,8 @@
 #include "interfacepicker.hpp"
 #include "pluginswindow.hpp"
 #include "ui_mainwindow.h"
+#include "TimeSeriesBuilder.hpp"
+#include <memory>
 using namespace EPL_Viz;
 using namespace EPL_DataCollect;
 
@@ -49,10 +51,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
   std::vector<QAction *> btns;
   btns.emplace_back(ui->actionOD_Filter_2);
   fixQToolButtons(btns, ui->toolBar);
-
-  // TODO create here?
-  captureInstance = new CaptureInstance();
-
 
   modelThread = new ModelThread(this, &machineState, this);
   connect(modelThread, &ModelThread::resultReady, this, &MainWindow::handleResults);
@@ -140,17 +138,21 @@ void MainWindow::openInterfacePicker() {
 }
 
 bool MainWindow::event(QEvent *event) {
-  // init stuff
+  // configure stuff
   if (event->type() == QEvent::Polish) {
     qDebug() << "Polish in main";
+    // create Models
     createModels();
+    captureInstance = std::make_unique<CaptureInstance>();
+    // add Plugins
+    captureInstance->getPluginManager()->addPlugin(std::make_shared<plugins::TimeSeriesBuilder>());
   }
   return QMainWindow::event(event);
 }
 
 int MainWindow::getCycleNum() { return curCycle; }
 
-CaptureInstance *MainWindow::getCaptureInstance() { return captureInstance; }
+CaptureInstance *MainWindow::getCaptureInstance() { return captureInstance.get(); }
 
 void MainWindow::save() {
   // TODO

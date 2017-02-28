@@ -31,7 +31,7 @@
 
 PluginListWidget::PluginListWidget(QWidget *parent) : QListWidget(parent) {}
 
-void PluginListWidget::selectionChanged(QListWidgetItem *current, QListWidgetItem *previous) {
+void PluginListWidget::selectedChanged(QListWidgetItem *current, QListWidgetItem *previous) {
   (void)previous;
 
   QString name = current->text();

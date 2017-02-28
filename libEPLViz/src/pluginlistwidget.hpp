@@ -51,7 +51,7 @@ class PluginListWidget : public QListWidget {
   void fileOpened(QString plugin);
 
  public slots:
-  void selectionChanged(QListWidgetItem *current, QListWidgetItem *previous);
+  void selectedChanged(QListWidgetItem *current, QListWidgetItem *previous);
   void newFile();
   void fileAdded(QString file);
   void nameChanged(QString fileName);

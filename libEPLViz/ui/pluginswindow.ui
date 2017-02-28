@@ -168,7 +168,7 @@
     <slot>newFile()</slot>
     <slot>nameChanged(QString)</slot>
     <slot>fileModified(bool)</slot>
-    <slot>selectionChanged(QListWidgetItem*,QListWidgetItem*)</slot>
+    <slot>selectedChanged(QListWidgetItem*,QListWidgetItem*)</slot>
     <slot>urlChanged(QString)</slot>
    </slots>
   </customwidget>
@@ -323,7 +323,7 @@
    <sender>pluginList</sender>
    <signal>currentItemChanged(QListWidgetItem*,QListWidgetItem*)</signal>
    <receiver>pluginList</receiver>
-   <slot>selectionChanged(QListWidgetItem*,QListWidgetItem*)</slot>
+   <slot>selectedChanged(QListWidgetItem*,QListWidgetItem*)</slot>
    <hints>
     <hint type="sourcelabel">
      <x>146</x>

@@ -33,8 +33,9 @@
 #include "EvPluginText.hpp"
 #include "EventLog.hpp"
 #include "basemodel.hpp"
-#include "mainwindow.hpp"
 #include "vector"
+
+class MainWindow;
 
 namespace EPL_Viz {
 class PythonLogModel : public BaseModel {
@@ -43,7 +44,7 @@ class PythonLogModel : public BaseModel {
   EPL_DataCollect::EventLog *log;
 
  public:
-  PythonLogModel();
+  PythonLogModel(MainWindow *window);
 
   void init();
 

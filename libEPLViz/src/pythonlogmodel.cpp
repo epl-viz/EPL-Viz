@@ -27,19 +27,21 @@
  * \file pyhonlogmodel.cpp
  */
 #include "pythonlogmodel.hpp"
+#include "mainwindow.hpp"
 using namespace EPL_Viz;
 using namespace EPL_DataCollect;
 
-PythonLogModel::PythonLogModel() : BaseModel() {}
+PythonLogModel::PythonLogModel(MainWindow *window) : BaseModel() {
+  log   = window->getCaptureInstance()->getEventLog();
+}
 
 void PythonLogModel::init() {
-  log   = MainWindow::mainWindow->getCaptureInstance()->getEventLog();
   appid = log->getAppID();
 }
 
 void PythonLogModel::update(Cycle *cycle) {
   (void)cycle;
-  // TODO How should the text be shown?
+  // TODO Use Table
   std::vector<EventBase *> events = log->pollEvents(appid);
 
   for (unsigned int i = 0; i < events.size(); i++) {

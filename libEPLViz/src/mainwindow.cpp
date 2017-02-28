@@ -33,12 +33,8 @@
 using namespace EPL_Viz;
 using namespace EPL_DataCollect;
 
-MainWindow *MainWindow::mainWindow = nullptr;
-
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow) {
   Q_INIT_RESOURCE(resources);
-
-  mainWindow = this;
 
   machineState = GUIState::UNINIT;
 

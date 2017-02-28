@@ -56,9 +56,6 @@ class MainWindow;
 class MainWindow : public QMainWindow {
   Q_OBJECT
 
- public:
-  static MainWindow *mainWindow;
-
  private:
   Ui::MainWindow *                  ui;
   EPL_Viz::ProfileManager *         profileManager;

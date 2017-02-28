@@ -29,12 +29,17 @@
 
 #include "packethistorymodel.hpp"
 #include "Cycle.hpp"
+#include "mainwindow.hpp"
 #include <QDebug>
 #include <string>
 #include <vector>
 using namespace EPL_Viz;
 using namespace EPL_DataCollect;
 using namespace std;
+
+PacketHistoryModel::PacketHistoryModel(MainWindow *window) : BaseModel() {
+  textWindow = window->findChild<QTextEdit *>("packetHistoryTextEdit");
+}
 
 void PacketHistoryModel::update(Cycle *cycle) {
   vector<Packet> packets = cycle->getPackets();
@@ -48,5 +53,4 @@ void PacketHistoryModel::update(Cycle *cycle) {
 }
 
 void PacketHistoryModel::init() {
-  textWindow = MainWindow::mainWindow->findChild<QTextEdit *>("packetHistoryTextEdit");
 }

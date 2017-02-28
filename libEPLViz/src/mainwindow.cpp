@@ -56,6 +56,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
   connect(modelThread, &ModelThread::resultReady, this, &MainWindow::handleResults);
   connect(modelThread, &ModelThread::finished, modelThread, &QObject::deleteLater);
   modelThread->start();
+
+  connect(this, SIGNAL(close()), modelThread, SLOT(stop()));
 }
 
 MainWindow::~MainWindow() {
@@ -175,6 +177,10 @@ void MainWindow::stopRecording() {
   dynamic_cast<QAction *>(sender())->setEnabled(false);
   findChild<QAction *>("actionStop_Recording")->setEnabled(true);
   machineState = GUIState::STOPPED;
+void MainWindow::closeEvent(QCloseEvent *event)
+{
+    emit close();
+    QWidget::closeEvent(event);
 }
 
 void MainWindow::handleResults(const QString &result) { qDebug() << "The result is\"" << result << "\""; }

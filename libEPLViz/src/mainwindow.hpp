@@ -99,6 +99,9 @@ class MainWindow : public QMainWindow {
   static void fixQToolButtons(std::vector<QToolButton *> &btns);
   static void fixQToolButtons(std::vector<QAction *> &actions, QToolBar *bar);
 
+ protected:
+  void closeEvent(QCloseEvent *event) override;
+
  private:
   mockable void createModels();
   mockable void destroyModels();
@@ -117,4 +120,5 @@ class MainWindow : public QMainWindow {
 
  signals:
   void operate(const QString &);
+  void close();
 };

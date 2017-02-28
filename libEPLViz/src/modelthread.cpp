@@ -46,21 +46,26 @@ ModelThread::~ModelThread() {
 }
 
 void ModelThread::loop() {
-  qDebug() << "Waiting for state";
-  while (*state == GUIState::UNINIT) {
-    yieldCurrentThread();
-  }
-  // initializing all Models
-  qDebug() << "Initalizing models";
-  BaseModel::initAll();
+  while (running) {
+    switch (*state) {
+    case GUIState::UNINIT:
+      yieldCurrentThread();
+      break;
+    case GUIState::PLAYING:
+    case GUIState::RECORDING:
+      BaseModel::updateAll(state, window->getCaptureInstance(), window->getCycleNum());
+      break;
+    case GUIState::PAUSED:
+      break;
+    case GUIState::STOPPED:
+      break;
+    }
 
-  qDebug() << "Starting loop";
-  while (true) {
-    BaseModel::updateAll(state, window->getCaptureInstance(), window->getCycleNum());
     // TODO Constant update time or something else?
     sleep(1);
   }
-  //   emit resultReady("Thread is done"); // Unreachable-code
 }
 
 void ModelThread::run() { ModelThread::loop(); }
+
+void ModelThread::stop() { qDebug() << "Stopping"; running = false; }

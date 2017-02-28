@@ -42,6 +42,7 @@ class ModelThread : public QThread {
  private:
   EPL_Viz::GUIState *state;
   MainWindow *       window;
+  bool               running;
 
  public:
   ModelThread(QObject *parent, GUIState *machineState, MainWindow *win);
@@ -56,5 +57,7 @@ class ModelThread : public QThread {
 
  signals:
   void resultReady(const QString &result);
+ public slots:
+  void stop();
 };
 }

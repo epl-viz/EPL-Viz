@@ -40,7 +40,6 @@ class TimelineWidget : public QDockWidget {
 
  public:
   TimelineWidget(QWidget *parent = nullptr);
-  ~TimelineWidget();
   bool event(QEvent *event);
 
  public slots:

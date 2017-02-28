@@ -36,8 +36,6 @@
 
 TimelineWidget::TimelineWidget(QWidget *parent) : QDockWidget(parent) {}
 
-TimelineWidget::~TimelineWidget() { delete (picker); }
-
 bool TimelineWidget::event(QEvent *event) {
   // Only handling Polish events
   if (event->type() == QEvent::Polish) {

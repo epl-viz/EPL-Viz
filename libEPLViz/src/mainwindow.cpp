@@ -162,9 +162,7 @@ void MainWindow::save() {
 void MainWindow::saveAs() {
   // TODO
 }
-void MainWindow::open() {
-
- }
+void MainWindow::open() {}
 
 void MainWindow::startRecording() {
   // Set other Actions enabled/disabled
@@ -184,25 +182,18 @@ void MainWindow::stopRecording() {
 void MainWindow::changeState(GUIState nState) {
   // TODO other states
   switch (machineState) {
-  case GUIState::UNINIT:
-    BaseModel::initAll();
-    break;
-  case GUIState::RECORDING:
-    break;
-  case GUIState::PAUSED:
-    break;
-  case GUIState::STOPPED:
-    break;
-  case GUIState::PLAYING:
-    break;
+    case GUIState::UNINIT: BaseModel::initAll(); break;
+    case GUIState::RECORDING: break;
+    case GUIState::PAUSED: break;
+    case GUIState::STOPPED: break;
+    case GUIState::PLAYING: break;
   }
   machineState = nState;
 }
 
-void MainWindow::closeEvent(QCloseEvent *event)
-{
-    emit close();
-    QWidget::closeEvent(event);
+void MainWindow::closeEvent(QCloseEvent *event) {
+  emit close();
+  QWidget::closeEvent(event);
 }
 
 void MainWindow::handleResults(const QString &result) { qDebug() << "The result is\"" << result << "\""; }

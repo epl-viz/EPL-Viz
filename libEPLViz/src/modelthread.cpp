@@ -48,17 +48,11 @@ ModelThread::~ModelThread() {
 void ModelThread::loop() {
   while (running) {
     switch (*state) {
-    case GUIState::UNINIT:
-      yieldCurrentThread();
-      break;
-    case GUIState::PLAYING:
-    case GUIState::RECORDING:
-      BaseModel::updateAll(state, window->getCaptureInstance(), window->getCycleNum());
-      break;
-    case GUIState::PAUSED:
-      break;
-    case GUIState::STOPPED:
-      break;
+      case GUIState::UNINIT: yieldCurrentThread(); break;
+      case GUIState::PLAYING:
+      case GUIState::RECORDING: BaseModel::updateAll(state, window->getCaptureInstance(), window->getCycleNum()); break;
+      case GUIState::PAUSED: break;
+      case GUIState::STOPPED: break;
     }
 
     // TODO Constant update time or something else?
@@ -68,4 +62,7 @@ void ModelThread::loop() {
 
 void ModelThread::run() { ModelThread::loop(); }
 
-void ModelThread::stop() { qDebug() << "Stopping"; running = false; }
+void ModelThread::stop() {
+  qDebug() << "Stopping";
+  running = false;
+}

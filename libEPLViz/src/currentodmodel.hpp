@@ -35,10 +35,13 @@
 
 #include <QAbstractTableModel>
 #include <QTableView>
+#include <QHeaderView>
 
 namespace EPL_Viz {
 class CurrentODModel : public QAbstractTableModel, public BaseModel {
   Q_OBJECT
+private:
+  int node;
  public:
   CurrentODModel(QMainWindow *window);
   void init() override;
@@ -46,7 +49,7 @@ class CurrentODModel : public QAbstractTableModel, public BaseModel {
   int rowCount(const QModelIndex &parent) const override;
   int columnCount(const QModelIndex &parent) const override;
   QVariant data(const QModelIndex &index, int role) const override;
-
+  QVariant headerData(int section, Qt::Orientation orientation, int role) const override;
  protected:
   mockable void update(EPL_DataCollect::Cycle *cycle) override;
 };

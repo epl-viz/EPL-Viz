@@ -27,10 +27,14 @@
  * \file currentodmodel.cpp
  */
 #include "currentodmodel.hpp"
+#include "ODEntryDescription.hpp"
 using namespace EPL_Viz;
+using namespace EPL_DataCollect;
 
 CurrentODModel::CurrentODModel(QMainWindow *window) : BaseModel() {
-  window->findChild<QTableView *>("curNodeODView")->setModel(this);
+  QTableView  *view = window->findChild<QTableView *>("curNodeODView");
+  view->setModel(this);
+  view->verticalHeader()->hide();
 }
 
 void CurrentODModel::init() {}
@@ -54,7 +58,27 @@ QVariant CurrentODModel::data(const QModelIndex &index, int role) const {
   return QVariant();
 }
 
+QVariant CurrentODModel::headerData(int section, Qt::Orientation orientation, int role) const
+{
+    if (role == Qt::DisplayRole)
+    {
+        if (orientation == Qt::Horizontal) {
+            switch (section)
+            {
+            // TODO ODEntryDescription
+            case 0:
+                return QString("Index");
+            case 1:
+                return QString("Type");
+            case 2:
+                return QString("Value");
+            }
+        }
+    }
+    return QVariant();
+}
+
 void CurrentODModel::update(EPL_DataCollect::Cycle *cycle) {
-  (void)cycle;
-  // TODO
+  ODDescription *description = cycle->getNode(node)->getODDesc();
+  (void)description;
 }

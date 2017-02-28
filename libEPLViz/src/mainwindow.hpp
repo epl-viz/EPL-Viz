@@ -82,6 +82,7 @@ class MainWindow : public QMainWindow {
    * \return whether or not the  change was a success
    */
   mockable bool changeCycle(int cycle);
+  mockable void changeState(EPL_Viz::GUIState nState);
   /*!
    * \brief Returns the current state
    * \return the current state

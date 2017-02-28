@@ -163,20 +163,42 @@ void MainWindow::saveAs() {
   // TODO
 }
 void MainWindow::open() {
-  // TODO
-}
+
+ }
 
 void MainWindow::startRecording() {
   // Set other Actions enabled/disabled
+  qDebug() << "start Recording";
   dynamic_cast<QAction *>(sender())->setEnabled(false);
   findChild<QAction *>("actionStart_Recording")->setEnabled(true);
-  machineState = GUIState::RECORDING;
+  changeState(GUIState::RECORDING);
 }
 
 void MainWindow::stopRecording() {
+  qDebug() << "stop Recording";
   dynamic_cast<QAction *>(sender())->setEnabled(false);
   findChild<QAction *>("actionStop_Recording")->setEnabled(true);
-  machineState = GUIState::STOPPED;
+  changeState(GUIState::STOPPED);
+}
+
+void MainWindow::changeState(GUIState nState) {
+  // TODO other states
+  switch (machineState) {
+  case GUIState::UNINIT:
+    BaseModel::initAll();
+    break;
+  case GUIState::RECORDING:
+    break;
+  case GUIState::PAUSED:
+    break;
+  case GUIState::STOPPED:
+    break;
+  case GUIState::PLAYING:
+    break;
+  }
+  machineState = nState;
+}
+
 void MainWindow::closeEvent(QCloseEvent *event)
 {
     emit close();

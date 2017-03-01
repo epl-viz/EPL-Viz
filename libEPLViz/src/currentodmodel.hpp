@@ -41,7 +41,7 @@ namespace EPL_Viz {
 class CurrentODModel : public QAbstractTableModel, public BaseModel {
   Q_OBJECT
  private:
-  int node;
+  uint8_t node;
 
  public:
   CurrentODModel(QMainWindow *window);

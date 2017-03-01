@@ -106,7 +106,7 @@ class MainWindow : public QMainWindow {
  private:
   mockable void createModels();
   mockable void destroyModels();
-  mockable bool event(QEvent *event);
+  mockable bool event(QEvent *event) override;
 
  public slots:
   void setFullscreen(bool makeFullscreen);

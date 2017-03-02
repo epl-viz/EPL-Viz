@@ -199,20 +199,29 @@ else( USE_SYSTEM_PACKETS )
       -DENABLE_CODE_COVERAGE=OFF
       -DCMAKE_INSTALL_MESSAGE=NEVER
       "-DWireshark_DIR=${Wireshark_DIR}"
+
+    BUILD_BYPRODUCTS
+      "${EPL_DC_LIB_DIR}/${CMAKE_SHARED_LIBRARY_PREFIX}epl_DataCollect${CMAKE_SHARED_LIBRARY_SUFFIX}"
+      "${EPL_DC_LIB_DIR}/${CMAKE_STATIC_LIBRARY_PREFIX}epl_DataCollect${CMAKE_STATIC_LIBRARY_SUFFIX}"
+      "${EPL_DC_LIB_DIR}/${CMAKE_SHARED_LIBRARY_PREFIX}eplp_timeSeries${CMAKE_SHARED_LIBRARY_SUFFIX}"
+      "${EPL_DC_LIB_DIR}/${CMAKE_STATIC_LIBRARY_PREFIX}eplp_timeSeries${CMAKE_STATIC_LIBRARY_SUFFIX}"
+      "${EPL_DC_LIB_DIR}/${CMAKE_SHARED_LIBRARY_PREFIX}eplp_python${CMAKE_SHARED_LIBRARY_SUFFIX}"
+      "${EPL_DC_LIB_DIR}/${CMAKE_STATIC_LIBRARY_PREFIX}eplp_python${CMAKE_STATIC_LIBRARY_SUFFIX}"
+
   )
 
   add_library( epl_DataCollect_shared SHARED IMPORTED )
-  add_library( eplp_timeSeries_shared SHARED IMPORTED )
-  add_library( eplp_python_shared SHARED IMPORTED )
   add_library( epl_DataCollect_static STATIC IMPORTED )
+  add_library( eplp_timeSeries_shared SHARED IMPORTED )
   add_library( eplp_timeSeries_static STATIC IMPORTED )
   add_library( eplp_python_static STATIC IMPORTED )
+  add_library( eplp_python_shared SHARED IMPORTED )
   set_target_properties( epl_DataCollect_shared PROPERTIES IMPORTED_LOCATION "${EPL_DC_LIB_DIR}/${CMAKE_SHARED_LIBRARY_PREFIX}epl_DataCollect${CMAKE_SHARED_LIBRARY_SUFFIX}" )
   set_target_properties( epl_DataCollect_static PROPERTIES IMPORTED_LOCATION "${EPL_DC_LIB_DIR}/${CMAKE_STATIC_LIBRARY_PREFIX}epl_DataCollect${CMAKE_STATIC_LIBRARY_SUFFIX}" )
   set_target_properties( eplp_timeSeries_shared PROPERTIES IMPORTED_LOCATION "${EPL_DC_LIB_DIR}/${CMAKE_SHARED_LIBRARY_PREFIX}eplp_timeSeries${CMAKE_SHARED_LIBRARY_SUFFIX}" )
   set_target_properties( eplp_timeSeries_static PROPERTIES IMPORTED_LOCATION "${EPL_DC_LIB_DIR}/${CMAKE_STATIC_LIBRARY_PREFIX}eplp_timeSeries${CMAKE_STATIC_LIBRARY_SUFFIX}" )
-  set_target_properties( eplp_python_shared PROPERTIES IMPORTED_LOCATION "${EPL_DC_LIB_DIR}/${CMAKE_SHARED_LIBRARY_PREFIX}eplp_python${CMAKE_SHARED_LIBRARY_SUFFIX}" )
-  set_target_properties( eplp_python_static PROPERTIES IMPORTED_LOCATION "${EPL_DC_LIB_DIR}/${CMAKE_STATIC_LIBRARY_PREFIX}eplp_python${CMAKE_STATIC_LIBRARY_SUFFIX}" )
+  set_target_properties( eplp_python_shared     PROPERTIES IMPORTED_LOCATION "${EPL_DC_LIB_DIR}/${CMAKE_SHARED_LIBRARY_PREFIX}eplp_python${CMAKE_SHARED_LIBRARY_SUFFIX}" )
+  set_target_properties( eplp_python_static     PROPERTIES IMPORTED_LOCATION "${EPL_DC_LIB_DIR}/${CMAKE_STATIC_LIBRARY_PREFIX}eplp_python${CMAKE_STATIC_LIBRARY_SUFFIX}" )
 
 endif( USE_SYSTEM_PACKETS )
 
@@ -231,7 +240,7 @@ new_project_executable(
   PATH         "${PROJECT_SOURCE_DIR}/epl-viz"
   NAME         "EPLViz"
   TEMPLATE     "${EPL_VIZ_TEMPLATES_DIR}/CMakeLists.exe.txt"
-  DEPENDENCIES libEPLViz_shared Qwt::Qwt KF5::TextEditor eplp_timeSeries_shared eplp_python_shared
+  DEPENDENCIES libEPLViz Qwt::Qwt KF5::TextEditor eplp_timeSeries_shared eplp_python_shared
 )
 
 if( NOT DISABLE_TESTS )
@@ -239,7 +248,7 @@ if( NOT DISABLE_TESTS )
     PATH         "${PROJECT_SOURCE_DIR}/tests"
     NAME         "tests"
     TEMPLATE     "${EPL_VIZ_TEMPLATES_DIR}/CMakeLists.exe.txt"
-    DEPENDENCIES libEPLViz_shared epl_DataCollect_shared Qwt::Qwt KF5::TextEditor eplp_timeSeries_shared eplp_python_shared
+    DEPENDENCIES libEPLViz epl_DataCollect_shared Qwt::Qwt KF5::TextEditor eplp_timeSeries_shared eplp_python_shared
   )
 endif( NOT DISABLE_TESTS )
 
@@ -283,8 +292,11 @@ foreach( I IN LISTS EPL-Viz_SUBDIR_LIST )
 endforeach( I IN LISTS EPL-Viz_SUBDIR_LIST )
 
 if( NOT DISABLE_TESTS )
+  add_dependencies( tests catch FakeIt )
   add_custom_target( check COMMAND tests )
 endif( NOT DISABLE_TESTS )
+
+add_dependencies( libEPLViz EPL_DataCollect )
 
 ##################
 # Generate Files #

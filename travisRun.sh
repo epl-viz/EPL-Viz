@@ -1,6 +1,6 @@
 #!/bin/bash
 
-BUILD_DIR=build2
+BUILD_DIR=build
 
 msg() {
   echo -e "\x1b[1;33m[ MSG ]\x1b[0;33m $@\x1b[0m"
@@ -97,7 +97,7 @@ testExec chmod -R a+rwx .
 
 msg "START TEST"
 
-testExecNoRoot make check
+testExec make check
 
 if (( $ERROR_COUNT == 0 )); then
   msg "Installing files"

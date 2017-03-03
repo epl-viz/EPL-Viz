@@ -52,7 +52,7 @@ void ModelThread::loop() {
       case GUIState::PLAYING:
       case GUIState::RECORDING: BaseModel::updateAll(state, window->getCaptureInstance(), window->getCycleNum()); break;
       case GUIState::PAUSED: break;
-      case GUIState::STOPPED: break;
+      case GUIState::STOPPED: yieldCurrentThread(); break;
     }
 
     // TODO Constant update time or something else?

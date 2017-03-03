@@ -32,6 +32,7 @@
 #include "pluginswindow.hpp"
 #include "ui_mainwindow.h"
 #include <memory>
+#include <wiretap/wtap.h>
 using namespace EPL_Viz;
 using namespace EPL_DataCollect;
 
@@ -72,7 +73,7 @@ void MainWindow::createModels() {
   // models.append(new PacketHistoryModel(this));
   // models.append(new PythonLogModel(this));
   // models.append(new QWTPlotModel(this));
-  models.append(new CurrentODModel(this));
+  // models.append(new CurrentODModel(this));
 }
 
 void MainWindow::destroyModels() {
@@ -143,11 +144,9 @@ bool MainWindow::event(QEvent *event) {
   // configure stuff
   if (event->type() == QEvent::Polish) {
     qDebug() << "Polish in main";
+    changeState(GUIState::UNINIT);
     // create Models
     createModels();
-    captureInstance = std::make_unique<CaptureInstance>();
-    // add Plugins
-    captureInstance->getPluginManager()->addPlugin(std::make_shared<plugins::TimeSeriesBuilder>());
   }
   return QMainWindow::event(event);
 }
@@ -162,31 +161,64 @@ void MainWindow::save() {
 void MainWindow::saveAs() {
   // TODO
 }
-void MainWindow::open() {}
+void MainWindow::open() {
+  QString filenames = "Wireshark Files (";
+  for (GSList *types = wtap_get_all_file_extensions_list(); types; types = types->next) {
+    filenames.append("*.");
+    filenames.append(static_cast<char *>(types->data));
+    filenames.append(" ");
+  }
+
+  filenames.append(")");
+
+  QString curFile = QFileDialog::getOpenFileName(this, tr("Open Captured File"), "", filenames);
+  if (curFile == QString::null)
+    return;
+  captureInstance->loadPCAP(curFile.toStdString());
+  changeState(GUIState::PLAYING);
+}
 
 void MainWindow::startRecording() {
-  // Set other Actions enabled/disabled
   qDebug() << "start Recording";
-  dynamic_cast<QAction *>(sender())->setEnabled(false);
-  findChild<QAction *>("actionStart_Recording")->setEnabled(true);
   changeState(GUIState::RECORDING);
 }
 
 void MainWindow::stopRecording() {
   qDebug() << "stop Recording";
-  dynamic_cast<QAction *>(sender())->setEnabled(false);
-  findChild<QAction *>("actionStop_Recording")->setEnabled(true);
   changeState(GUIState::STOPPED);
 }
 
 void MainWindow::changeState(GUIState nState) {
-  // TODO other states
+  // TODO other states (and maybe implement a real state machine in modelthread)
+  // switch with old state
   switch (machineState) {
     case GUIState::UNINIT: BaseModel::initAll(); break;
     case GUIState::RECORDING: break;
     case GUIState::PAUSED: break;
     case GUIState::STOPPED: break;
     case GUIState::PLAYING: break;
+  }
+  // switch with new state
+  switch (nState) {
+    case GUIState::UNINIT:
+      captureInstance = std::make_unique<CaptureInstance>();
+      findChild<QAction *>("actionStart_Recording")->setEnabled(true);
+      findChild<QAction *>("actionStop_Recording")->setEnabled(false);
+      break;
+    case GUIState::PLAYING: break;
+    case GUIState::RECORDING:
+      captureInstance->getPluginManager()->addPlugin(std::make_shared<plugins::TimeSeriesBuilder>());
+      findChild<QAction *>("actionStart_Recording")->setEnabled(false);
+      findChild<QAction *>("actionStop_Recording")->setEnabled(true);
+      captureInstance->startRecording("TODO");
+      break;
+    case GUIState::PAUSED: break;
+    case GUIState::STOPPED:
+      findChild<QAction *>("actionStop_Recording")->setEnabled(false);
+      findChild<QAction *>("actionStart_Recording")->setEnabled(true);
+      captureInstance->stopRecording();
+      break;
+      break;
   }
   machineState = nState;
 }

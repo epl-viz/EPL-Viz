@@ -66,8 +66,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>931</width>
-             <height>361</height>
+             <width>930</width>
+             <height>359</height>
             </rect>
            </property>
            <widget class="QWidget" name="widgetNode1" native="true">
@@ -308,7 +308,7 @@
              <x>0</x>
              <y>0</y>
              <width>945</width>
-             <height>361</height>
+             <height>359</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_17">
@@ -1331,6 +1331,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>actionLoad</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>open()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>767</x>
+     <y>464</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>openPluginEditor()</slot>
@@ -1338,5 +1354,6 @@
   <slot>setFullscreen(bool)</slot>
   <slot>startRecording()</slot>
   <slot>stopRecording()</slot>
+  <slot>open()</slot>
  </slots>
 </ui>

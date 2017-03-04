@@ -14,5 +14,7 @@
         <file>resources/window-close.svg</file>
         <file>resources/Screen_Shot.png</file>
         <file>resources/logo3.svg</file>
+        <file>resources/maximize.png</file>
+        <file>resources/minimize.png</file>
     </qresource>
 </RCC>

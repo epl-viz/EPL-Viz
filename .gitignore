@@ -8,3 +8,4 @@ customPreComit.sh
 *.sw*
 .DS_Store
 customPreCommit.sh
+EPLVizEnum2Str.*

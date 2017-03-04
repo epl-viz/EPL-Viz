@@ -14,6 +14,8 @@
         <file>resources/window-close.svg</file>
         <file>resources/Screen_Shot.png</file>
         <file>resources/logo3.svg</file>
+        <file>resources/maximize.png</file>
+        <file>resources/minimize.png</file>
         <file>resources/document-new-symbolic.symbolic.png</file>
         <file>resources/document-new.png</file>
         <file>resources/document-open-symbolic.symbolic.png</file>

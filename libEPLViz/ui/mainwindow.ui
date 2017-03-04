@@ -41,7 +41,7 @@
         <string>Network</string>
        </attribute>
        <layout class="QGridLayout" name="gridLayout_13">
-        <item row="0" column="0">
+        <item row="1" column="1">
          <widget class="QScrollArea" name="scrollArea_2">
           <property name="toolTip">
            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Wird alles dynamisch angepasst. Mit Qt und Mathematik&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
@@ -70,211 +70,245 @@
              <height>359</height>
             </rect>
            </property>
-           <widget class="QWidget" name="widgetNode1" native="true">
-            <property name="geometry">
-             <rect>
-              <x>6</x>
-              <y>6</y>
-              <width>231</width>
-              <height>241</height>
-             </rect>
-            </property>
-            <property name="styleSheet">
-             <string notr="true">#widgetNode1{ background-color: rgb(0, 85, 127); }</string>
-            </property>
-            <layout class="QGridLayout" name="gridLayout_16">
-             <item row="0" column="1">
-              <widget class="QLabel" name="label_9">
-               <property name="text">
-                <string>Node typ</string>
-               </property>
-              </widget>
-             </item>
-             <item row="0" column="0">
-              <widget class="QLabel" name="label_8">
-               <property name="text">
-                <string>Name Der Node</string>
-               </property>
-              </widget>
-             </item>
-             <item row="1" column="0">
-              <widget class="QLabel" name="label_12">
-               <property name="text">
-                <string>Status: ok/ready/error</string>
-               </property>
-              </widget>
-             </item>
-             <item row="2" column="0" colspan="2">
-              <widget class="QTreeWidget" name="treeWidget_5">
-               <property name="autoFillBackground">
-                <bool>false</bool>
-               </property>
-               <column>
-                <property name="text">
-                 <string>Name</string>
-                </property>
-               </column>
-               <column>
-                <property name="text">
-                 <string>Value</string>
-                </property>
-               </column>
-               <item>
-                <property name="text">
-                 <string>NAME</string>
-                </property>
-                <property name="text">
-                 <string>Val1</string>
-                </property>
+           <layout class="QGridLayout" name="gridLayout_15">
+            <item row="0" column="0">
+             <widget class="QWidget" name="Node" native="true">
+              <property name="maximumSize">
+               <size>
+                <width>300</width>
+                <height>300</height>
+               </size>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">#Node { background-color: rgb(33, 150, 243); }
+</string>
+              </property>
+              <layout class="QGridLayout" name="gridLayout_16">
+               <item row="2" column="0" colspan="3">
+                <widget class="Line" name="line">
+                 <property name="frameShadow">
+                  <enum>QFrame::Plain</enum>
+                 </property>
+                 <property name="orientation">
+                  <enum>Qt::Horizontal</enum>
+                 </property>
+                </widget>
                </item>
-               <item>
-                <property name="text">
-                 <string>Was halt</string>
-                </property>
-                <property name="text">
-                 <string>9000</string>
-                </property>
+               <item row="0" column="0" alignment="Qt::AlignLeft|Qt::AlignTop">
+                <widget class="QLabel" name="Name">
+                 <property name="text">
+                  <string>Scanner #1</string>
+                 </property>
+                </widget>
                </item>
-              </widget>
-             </item>
-            </layout>
-           </widget>
-           <widget class="QWidget" name="widgetNode2" native="true">
-            <property name="geometry">
-             <rect>
-              <x>250</x>
-              <y>10</y>
-              <width>221</width>
-              <height>231</height>
-             </rect>
-            </property>
-            <property name="styleSheet">
-             <string notr="true">#widgetNode2{ background-color: rgb(170, 0, 0); }</string>
-            </property>
-            <layout class="QGridLayout" name="gridLayout_15">
-             <item row="0" column="0">
-              <widget class="QLabel" name="label_10">
-               <property name="text">
-                <string>Name Der Node</string>
-               </property>
-              </widget>
-             </item>
-             <item row="0" column="1">
-              <widget class="QLabel" name="label_11">
-               <property name="text">
-                <string>Node typ</string>
-               </property>
-              </widget>
-             </item>
-             <item row="2" column="0" colspan="2">
-              <widget class="QTreeWidget" name="treeWidget_6">
-               <column>
-                <property name="text">
-                 <string>Name</string>
-                </property>
-               </column>
-               <column>
-                <property name="text">
-                 <string>Type</string>
-                </property>
-               </column>
-               <item>
-                <property name="text">
-                 <string>Bla</string>
-                </property>
-                <property name="text">
-                 <string>Blub</string>
-                </property>
+               <item row="1" column="0" alignment="Qt::AlignLeft|Qt::AlignVCenter">
+                <widget class="QLabel" name="Status">
+                 <property name="text">
+                  <string>Status: Ready</string>
+                 </property>
+                </widget>
                </item>
-              </widget>
-             </item>
-             <item row="1" column="0">
-              <widget class="QLabel" name="label_13">
-               <property name="text">
-                <string>Status: ok/ready</string>
+               <item row="0" column="2" alignment="Qt::AlignRight|Qt::AlignTop">
+                <widget class="QPushButton" name="minimize">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="minimumSize">
+                  <size>
+                   <width>13</width>
+                   <height>13</height>
+                  </size>
+                 </property>
+                 <property name="maximumSize">
+                  <size>
+                   <width>13</width>
+                   <height>13</height>
+                  </size>
+                 </property>
+                 <property name="styleSheet">
+                  <string notr="true"/>
+                 </property>
+                 <property name="text">
+                  <string/>
+                 </property>
+                 <property name="icon">
+                  <iconset resource="../resources.qrc">
+                   <normaloff>:/icons/resources/minimize.png</normaloff>
+                   <normalon>:/icons/resources/maximize.png</normalon>:/icons/resources/minimize.png</iconset>
+                 </property>
+                 <property name="iconSize">
+                  <size>
+                   <width>13</width>
+                   <height>13</height>
+                  </size>
+                 </property>
+                 <property name="checkable">
+                  <bool>true</bool>
+                 </property>
+                 <property name="checked">
+                  <bool>false</bool>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="2" alignment="Qt::AlignRight|Qt::AlignVCenter">
+                <widget class="QLabel" name="Type">
+                 <property name="styleSheet">
+                  <string notr="true"/>
+                 </property>
+                 <property name="text">
+                  <string>Optical Scanner</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="4" column="0" colspan="3">
+                <widget class="QRadioButton" name="advanced">
+                 <property name="styleSheet">
+                  <string notr="true"/>
+                 </property>
+                 <property name="text">
+                  <string>Show advanced...</string>
+                 </property>
+                 <property name="checked">
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+               <item row="5" column="0" colspan="3">
+                <widget class="QTreeWidget" name="ODList">
+                 <property name="enabled">
+                  <bool>true</bool>
+                 </property>
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                   <horstretch>1</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="autoFillBackground">
+                  <bool>false</bool>
+                 </property>
+                 <property name="styleSheet">
+                  <string notr="true"/>
+                 </property>
+                 <column>
+                  <property name="text">
+                   <string>Name</string>
+                  </property>
+                 </column>
+                 <column>
+                  <property name="text">
+                   <string>Value</string>
+                  </property>
+                 </column>
+                 <item>
+                  <property name="text">
+                   <string>Uptime (ms)</string>
+                  </property>
+                  <property name="text">
+                   <string>395380</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>Heat</string>
+                  </property>
+                  <property name="text">
+                   <string>9000</string>
+                  </property>
+                 </item>
+                </widget>
+               </item>
+              </layout>
+             </widget>
+            </item>
+            <item row="0" column="2">
+             <widget class="QWidget" name="widgetNode3" native="true">
+              <property name="maximumSize">
+               <size>
+                <width>100</width>
+                <height>100</height>
+               </size>
+              </property>
+              <property name="autoFillBackground">
+               <bool>false</bool>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">#widgetNode3{background-color: rgb(139, 195, 74);}</string>
+              </property>
+              <layout class="QVBoxLayout" name="verticalLayout">
+               <property name="leftMargin">
+                <number>2</number>
                </property>
-              </widget>
-             </item>
-            </layout>
-           </widget>
-           <widget class="QWidget" name="widgetNode3" native="true">
-            <property name="geometry">
-             <rect>
-              <x>480</x>
-              <y>9</y>
-              <width>41</width>
-              <height>231</height>
-             </rect>
-            </property>
-            <property name="styleSheet">
-             <string notr="true">#widgetNode3{ background-color: green; }</string>
-            </property>
-            <layout class="QVBoxLayout" name="verticalLayout_2">
-             <item>
-              <widget class="QLabel" name="label_15">
-               <property name="text">
-                <string>m</string>
+               <property name="topMargin">
+                <number>2</number>
                </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QLabel" name="label_16">
-               <property name="text">
-                <string>i</string>
+               <property name="rightMargin">
+                <number>2</number>
                </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QLabel" name="label_17">
-               <property name="text">
-                <string>n</string>
+               <property name="bottomMargin">
+                <number>2</number>
                </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QLabel" name="label_18">
-               <property name="text">
-                <string>i</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QLabel" name="label_19">
-               <property name="text">
-                <string>m</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QLabel" name="label_20">
-               <property name="text">
-                <string>i</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QLabel" name="label_21">
-               <property name="text">
-                <string>e</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QLabel" name="label_22">
-               <property name="text">
-                <string>r</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QLabel" name="label_23">
-               <property name="text">
-                <string>t</string>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </widget>
+               <item alignment="Qt::AlignRight|Qt::AlignTop">
+                <widget class="QPushButton" name="pushButton_3">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="minimumSize">
+                  <size>
+                   <width>13</width>
+                   <height>13</height>
+                  </size>
+                 </property>
+                 <property name="maximumSize">
+                  <size>
+                   <width>13</width>
+                   <height>13</height>
+                  </size>
+                 </property>
+                 <property name="styleSheet">
+                  <string notr="true"/>
+                 </property>
+                 <property name="text">
+                  <string/>
+                 </property>
+                 <property name="icon">
+                  <iconset resource="../resources.qrc">
+                   <normaloff>:/icons/resources/maximize.png</normaloff>:/icons/resources/maximize.png</iconset>
+                 </property>
+                 <property name="iconSize">
+                  <size>
+                   <width>13</width>
+                   <height>13</height>
+                  </size>
+                 </property>
+                 <property name="checkable">
+                  <bool>true</bool>
+                 </property>
+                 <property name="checked">
+                  <bool>false</bool>
+                 </property>
+                </widget>
+               </item>
+               <item alignment="Qt::AlignHCenter|Qt::AlignBottom">
+                <widget class="QLabel" name="Name_2">
+                 <property name="styleSheet">
+                  <string notr="true"/>
+                 </property>
+                 <property name="text">
+                  <string>Scanner #2</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </widget>
+            </item>
+           </layout>
           </widget>
          </widget>
         </item>
@@ -338,7 +372,7 @@
      <x>0</x>
      <y>0</y>
      <width>1535</width>
-     <height>20</height>
+     <height>26</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -919,8 +953,8 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>294</width>
-          <height>210</height>
+          <width>317</width>
+          <height>214</height>
          </rect>
         </property>
         <layout class="QGridLayout" name="gridLayout_22">
@@ -1083,6 +1117,7 @@
    <class>QwtPlot</class>
    <extends>QFrame</extends>
    <header>qwt_plot.h</header>
+   <container>1</container>
   </customwidget>
   <customwidget>
    <class>PythonLogWidget</class>

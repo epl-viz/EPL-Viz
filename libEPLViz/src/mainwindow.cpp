@@ -115,11 +115,7 @@ bool MainWindow::changeTime(double t) {
   return false;
 }
 
-bool MainWindow::changeCycle(int cycle) {
-  // TODO Maybe check upper bounds? Or just ignore it and let the update method deal with it.
-  //      Or if >max just use the last cycle.
-  if (cycle < 0)
-    return false;
+bool MainWindow::changeCycle(uint32_t cycle) {
   if (machineState == GUIState::STOPPED) {
     curCycle = cycle;
     return true;
@@ -159,7 +155,7 @@ bool MainWindow::event(QEvent *event) {
   return QMainWindow::event(event);
 }
 
-int MainWindow::getCycleNum() { return curCycle; }
+uint32_t MainWindow::getCycleNum() { return curCycle; }
 
 CaptureInstance *MainWindow::getCaptureInstance() { return captureInstance.get(); }
 
@@ -200,7 +196,7 @@ void MainWindow::stopRecording() {
 void MainWindow::changeState(GUIState nState) {
   std::string test =
         "Change state from " + EPLVizEnum2Str::toStr(machineState) + " to " + EPLVizEnum2Str::toStr(nState);
-  qDebug() << QString::fromUtf8(test.data(), test.size());
+  qDebug() << QString::fromStdString(test);
   // TODO other states (and maybe implement a real state machine in modelthread)
   // switch with old state
   switch (machineState) {

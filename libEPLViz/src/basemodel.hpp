@@ -57,7 +57,7 @@ class BaseModel {
   virtual void init()                                = 0;
 
  public:
-  static void updateAll(GUIState *state, EPL_DataCollect::CaptureInstance *instance, int cycleNum);
+  static void updateAll(GUIState *state, EPL_DataCollect::CaptureInstance *instance, uint32_t cycleNum);
   static void initAll();
   static void reg(BaseModel *model);
   static void dereg(BaseModel *model);

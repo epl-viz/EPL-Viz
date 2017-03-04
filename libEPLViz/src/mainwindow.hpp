@@ -81,7 +81,7 @@ class MainWindow : public QMainWindow {
    * \param cycle Cycle number
    * \return whether or not the  change was a success
    */
-  mockable bool changeCycle(int cycle);
+  mockable bool changeCycle(uint32_t cycle);
   mockable void changeState(EPL_Viz::GUIState nState);
   /*!
    * \brief Returns the current state
@@ -89,7 +89,7 @@ class MainWindow : public QMainWindow {
    */
   mockable EPL_Viz::GUIState getState();
 
-  mockable int getCycleNum();
+  mockable uint32_t getCycleNum();
   /**
    * @brief getCaptureInstance
    * Don't save the captureinstance. Cannot guarantee the lifetime of the pointer.

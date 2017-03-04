@@ -37,7 +37,7 @@ BaseModel::BaseModel() { reg(this); }
 
 BaseModel::~BaseModel() { dereg(this); }
 
-void BaseModel::updateAll(GUIState *state, CaptureInstance *instance, int cycleNum) {
+void BaseModel::updateAll(GUIState *state, CaptureInstance *instance, uint32_t cycleNum) {
   (void)state;
   if (instance == nullptr) {
     qDebug() << "CaptureInstance is a nullptr";
@@ -48,9 +48,7 @@ void BaseModel::updateAll(GUIState *state, CaptureInstance *instance, int cycleN
   CycleContainer *container = instance->getCycleContainer();
   (void)cycleNum;
   (void)container;
-  // get newest if <0
-  // TODO Disabled because segfault
-  if (cycleNum < 0)
+  if (cycleNum < UINT32_MAX)
     c = container->pollCycle();
   else
     c = container->getCycle(cycleNum);

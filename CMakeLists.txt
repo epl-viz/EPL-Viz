@@ -73,7 +73,7 @@ run_git()
 
 add_compiler(
   GNU MIN_VERSION "6.2"
-  ALL        "-Wall -Wextra -Wfloat-equal -Wshadow"
+  ALL        "-Wall -Wextra -Wfloat-equal -Wshadow -Wno-unknown-pragmas"
   DEBUG      "-O0 -Werror" ${COVERAGE_COMPILER_FLAG}
   RELEASE    "-O3"
   SANITIZE   "-fsanitize=${SANITIZERS}"
@@ -229,6 +229,10 @@ endif( USE_SYSTEM_PACKETS )
 # Generate subdirs #
 ####################
 
+# Write dummy files, so that they can be detected
+file( WRITE "${PROJECT_SOURCE_DIR}/libEPLViz/src/EPLVizEnum2Str.hpp" "" )
+file( WRITE "${PROJECT_SOURCE_DIR}/libEPLViz/src/EPLVizEnum2Str.cpp" "" )
+
 new_project_library(
   PATH         "${PROJECT_SOURCE_DIR}/libEPLViz"
   NAME         "libEPLViz"
@@ -301,6 +305,18 @@ add_dependencies( libEPLViz EPL_DataCollect )
 ##################
 # Generate Files #
 ##################
+
+enum2str_generate(
+  PATH       "${PROJECT_SOURCE_DIR}/libEPLViz/src"
+  CLASS_NAME "EPLVizEnum2Str"
+  FUNC_NAME  "toStr"
+  INCLUDES   "guistate.hpp"
+  INDENT_STR "  "
+  NAMESPACE  "EPL_Viz"
+  ENUMS
+    "GUIState"
+  BLACKLIST
+)
 
 configure_file( "${EPL_VIZ_TEMPLATES_DIR}/defines.in.hpp" "${EPL_VIZ_INCLUDES_DIR}/EPLVizDefines.hpp" @ONLY )
 

@@ -31,6 +31,7 @@
 #pragma once
 
 #include <QDockWidget>
+#include <QPlainTextEdit>
 
 class PacketHistoryWidget : public QDockWidget {
   Q_OBJECT
@@ -38,4 +39,7 @@ class PacketHistoryWidget : public QDockWidget {
  public:
   PacketHistoryWidget(QWidget *parent = nullptr);
   ~PacketHistoryWidget()              = default;
+
+ public slots:
+  void updatePacketHistoryLog(QString newText, QPlainTextEdit *edit);
 };

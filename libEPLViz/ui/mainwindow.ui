@@ -66,8 +66,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>906</width>
-             <height>398</height>
+             <width>930</width>
+             <height>359</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_15">
@@ -341,8 +341,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>927</width>
-             <height>398</height>
+             <width>945</width>
+             <height>359</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_17">
@@ -1022,9 +1022,12 @@
         </property>
         <layout class="QGridLayout" name="gridLayout_22">
          <item row="0" column="0">
-          <widget class="QTextEdit" name="packetHistoryTextEdit">
+          <widget class="QPlainTextEdit" name="packetHistoryTextEdit">
            <property name="readOnly">
             <bool>true</bool>
+           </property>
+           <property name="textInteractionFlags">
+            <set>Qt::NoTextInteraction</set>
            </property>
           </widget>
          </item>
@@ -1366,6 +1369,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>actionLoad</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>open()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>767</x>
+     <y>464</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>openPluginEditor()</slot>
@@ -1373,5 +1392,6 @@
   <slot>setFullscreen(bool)</slot>
   <slot>startRecording()</slot>
   <slot>stopRecording()</slot>
+  <slot>open()</slot>
  </slots>
 </ui>

@@ -31,3 +31,5 @@
 #include "packethistorywidget.hpp"
 
 PacketHistoryWidget::PacketHistoryWidget(QWidget *parent) : QDockWidget(parent) {}
+
+void PacketHistoryWidget::updatePacketHistoryLog(QString newText, QPlainTextEdit *edit) { edit->setPlainText(newText); }

@@ -60,7 +60,7 @@ class MainWindow : public QMainWindow {
   Ui::MainWindow *                                  ui;
   EPL_Viz::ProfileManager *                         profileManager;
   EPL_Viz::GUIState                                 machineState;
-  int                                               curCycle;
+  uint32_t                                          curCycle;
   EPL_Viz::ModelThread *                            modelThread;
   QLinkedList<EPL_Viz::BaseModel *>                 models;
   std::unique_ptr<EPL_DataCollect::CaptureInstance> captureInstance;
@@ -95,7 +95,7 @@ class MainWindow : public QMainWindow {
    * Don't save the captureinstance. Cannot guarantee the lifetime of the pointer.
    * @return Raw captureinstance pointer
    */
-  mockable EPL_DataCollect::CaptureInstance *getCaptureInstance();
+  EPL_DataCollect::CaptureInstance *getCaptureInstance();
 
   static void fixQToolButtons(std::vector<QToolButton *> &btns);
   static void fixQToolButtons(std::vector<QAction *> &actions, QToolBar *bar);
@@ -104,9 +104,9 @@ class MainWindow : public QMainWindow {
   void closeEvent(QCloseEvent *event) override;
 
  private:
-  mockable void createModels();
-  mockable void destroyModels();
-  mockable bool event(QEvent *event) override;
+  void createModels();
+  void destroyModels();
+  bool event(QEvent *event) override;
 
  public slots:
   void setFullscreen(bool makeFullscreen);

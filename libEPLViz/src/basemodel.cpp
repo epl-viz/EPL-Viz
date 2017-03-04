@@ -39,23 +39,26 @@ BaseModel::~BaseModel() { dereg(this); }
 
 void BaseModel::updateAll(GUIState *state, CaptureInstance *instance, int cycleNum) {
   (void)state;
-
+  if (instance == nullptr) {
+    qDebug() << "CaptureInstance is a nullptr";
+    return;
+  }
   // Get Cycle
-  Cycle *         c         = nullptr;
+  Cycle           c;
   CycleContainer *container = instance->getCycleContainer();
   (void)cycleNum;
   (void)container;
   // get newest if <0
-  /* TODO Disabled because segfault
+  // TODO Disabled because segfault
   if (cycleNum < 0)
-    *c = container->pollCycle();
+    c = container->pollCycle();
   else
-    *c = container->getCycle(cycleNum);
-*/
+    c = container->getCycle(cycleNum);
+
   // Update models
   QLinkedListIterator<BaseModel *> iterator(*registeredModels);
   while (iterator.hasNext()) {
-    iterator.next()->update(c);
+    iterator.next()->update(&c);
   }
 }
 

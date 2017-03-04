@@ -25,7 +25,6 @@
  */
 /*!
  * \file profilemanager.hpp
- * \todo Implement
  */
 #pragma once
 
@@ -33,19 +32,27 @@
 #include <QMap>
 #include <QSettings>
 #include <QString>
+#include <vector>
+
+class MainWindow;
 
 namespace EPL_Viz {
 
 class ProfileManager {
  private:
-  QSettings appSettings;
+  QSettings *appSettings;
+  QMap<QString, Profile *> *profiles;
 
  public:
-  ProfileManager() = default;
+  ProfileManager();
+  ~ProfileManager();
 
-  Profile getDefaultProfile(QString profile);
-  QMap<QString, Profile> getProfiles();
+  Profile *getDefaultProfile(QString profile);
+  std::vector<QString> getProfiles();
 
   void setDefaultProfile(Profile *profile);
+
+  void writeWindowSettings(MainWindow *window);
+  void readWindowSettings(MainWindow *window);
 };
 }

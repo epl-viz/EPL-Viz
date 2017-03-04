@@ -32,12 +32,16 @@
 #include "Cycle.hpp"
 #include "Packet.hpp"
 #include "basemodel.hpp"
+#include <QPlainTextEdit>
 
 class MainWindow;
 
-class PacketHistoryModel : public EPL_Viz::BaseModel {
+class PacketHistoryModel : public QObject, public EPL_Viz::BaseModel {
+  Q_OBJECT
  private:
-  QTextEdit *textWindow;
+  QPlainTextEdit *textWindow;
+  uint64_t        selectedPacket;
+  bool            needUpdate;
 
  public:
   PacketHistoryModel(MainWindow *window);
@@ -46,4 +50,9 @@ class PacketHistoryModel : public EPL_Viz::BaseModel {
 
  protected:
   mockable void update(EPL_DataCollect::Cycle *cycle);
+
+ signals:
+  void textUpdated(QString text, QPlainTextEdit *edit);
+ public slots:
+  void changePacket(uint64_t packet);
 };

@@ -42,6 +42,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
   machineState = GUIState::UNINIT;
 
+  profileManager = new ProfileManager();
+
   ui->setupUi(this);
   tabifyDockWidget(ui->dockCurrent, ui->dockOD);
   tabifyDockWidget(ui->dockPlugins, ui->dockEvents);
@@ -60,11 +62,14 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
   modelThread->start();
 
   connect(this, SIGNAL(close()), modelThread, SLOT(stop()));
+
+  profileManager->readWindowSettings(this);
 }
 
 MainWindow::~MainWindow() {
   Q_CLEANUP_RESOURCE(resources);
   destroyModels();
+  delete profileManager;
   delete ui;
 }
 
@@ -156,6 +161,7 @@ int MainWindow::getCycleNum() { return curCycle; }
 
 CaptureInstance *MainWindow::getCaptureInstance() { return captureInstance.get(); }
 
+
 void MainWindow::save() {
   // TODO
 }
@@ -223,12 +229,12 @@ void MainWindow::changeState(GUIState nState) {
       findChild<QAction *>("actionStart_Recording")->setEnabled(true);
       captureInstance->stopRecording();
       break;
-      break;
   }
   machineState = nState;
 }
 
 void MainWindow::closeEvent(QCloseEvent *event) {
+  profileManager->writeWindowSettings(this);
   emit close();
   QWidget::closeEvent(event);
 }

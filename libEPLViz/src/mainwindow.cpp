@@ -27,6 +27,7 @@
  * \file mainwindow.cpp
  */
 #include "mainwindow.hpp"
+#include "EPLVizEnum2Str.hpp"
 #include "TimeSeriesBuilder.hpp"
 #include "interfacepicker.hpp"
 #include "pluginswindow.hpp"
@@ -189,6 +190,9 @@ void MainWindow::stopRecording() {
 }
 
 void MainWindow::changeState(GUIState nState) {
+  std::string test =
+        "Change state from " + EPLVizEnum2Str::toStr(machineState) + " to " + EPLVizEnum2Str::toStr(nState);
+  qDebug() << QString::fromUtf8(test.data(), test.size());
   // TODO other states (and maybe implement a real state machine in modelthread)
   // switch with old state
   switch (machineState) {
@@ -210,7 +214,8 @@ void MainWindow::changeState(GUIState nState) {
       captureInstance->getPluginManager()->addPlugin(std::make_shared<plugins::TimeSeriesBuilder>());
       findChild<QAction *>("actionStart_Recording")->setEnabled(false);
       findChild<QAction *>("actionStop_Recording")->setEnabled(true);
-      captureInstance->startRecording("TODO");
+      // TODO
+      captureInstance->startRecording("eth0");
       break;
     case GUIState::PAUSED: break;
     case GUIState::STOPPED:

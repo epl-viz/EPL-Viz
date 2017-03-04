@@ -50,7 +50,11 @@ void ModelThread::loop() {
     switch (*state) {
       case GUIState::UNINIT: yieldCurrentThread(); break;
       case GUIState::PLAYING:
-      case GUIState::RECORDING: BaseModel::updateAll(state, window->getCaptureInstance(), window->getCycleNum()); break;
+      case GUIState::RECORDING: {
+        auto *ci = window->getCaptureInstance();
+        BaseModel::updateAll(state, ci, window->getCycleNum());
+        break;
+      }
       case GUIState::PAUSED: break;
       case GUIState::STOPPED: yieldCurrentThread(); break;
     }

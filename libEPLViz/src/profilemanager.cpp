@@ -24,14 +24,38 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 /*!
- * \file profile.hpp
+ * \file profilemanager.cpp
  */
 
-#pragma once
+#include "profilemanager.hpp"
+#include "mainwindow.hpp"
+using namespace EPL_Viz;
 
-namespace EPL_Viz {
-class Profile {
- public:
-  Profile() = default;
-};
+ProfileManager::ProfileManager() {
+  appSettings = new QSettings("EPL-Vizards", "EPL-Viz");
+  profiles    = new QMap<QString, Profile *>();
+}
+
+ProfileManager::~ProfileManager() {
+  delete appSettings;
+  delete profiles;
+}
+
+Profile *ProfileManager::getDefaultProfile(QString profile) {
+  (void)profile;
+  return profiles->value("default");
+}
+
+void ProfileManager::writeWindowSettings(MainWindow *window) {
+  appSettings->beginGroup("MainWindow");
+  appSettings->setValue("size", window->size());
+  appSettings->setValue("pos", window->pos());
+  appSettings->endGroup();
+}
+
+void ProfileManager::readWindowSettings(MainWindow *window) {
+  appSettings->beginGroup("MainWindow");
+  window->resize(appSettings->value("size", QSize(400, 400)).toSize());
+  window->move(appSettings->value("pos", QPoint(200, 200)).toPoint());
+  appSettings->endGroup();
 }

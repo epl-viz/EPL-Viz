@@ -29,6 +29,7 @@
 #include "mainwindow.hpp"
 #include "EPLVizEnum2Str.hpp"
 #include "TimeSeriesBuilder.hpp"
+#include "cyclecommandsmodel.hpp"
 #include "interfacepicker.hpp"
 #include "pluginswindow.hpp"
 #include "ui_mainwindow.h"
@@ -80,6 +81,7 @@ void MainWindow::createModels() {
   // models.append(new PythonLogModel(this));
   // models.append(new QWTPlotModel(this));
   // models.append(new CurrentODModel(this));
+  models.append(new CycleCommandsModel(this));
 }
 
 void MainWindow::destroyModels() {

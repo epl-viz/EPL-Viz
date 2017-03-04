@@ -34,7 +34,7 @@
     <item row="0" column="0">
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
-       <number>0</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="tabNet">
        <attribute name="title">
@@ -66,7 +66,7 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>930</width>
+             <width>744</width>
              <height>359</height>
             </rect>
            </property>
@@ -307,7 +307,7 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>945</width>
+             <width>759</width>
              <height>359</height>
             </rect>
            </property>
@@ -811,70 +811,7 @@
    <widget class="QWidget" name="dockWidgetContents_7">
     <layout class="QGridLayout" name="gridLayout_18">
      <item row="0" column="0">
-      <widget class="QTreeWidget" name="treeWidget_7">
-       <column>
-        <property name="text">
-         <string>Command</string>
-        </property>
-       </column>
-       <column>
-        <property name="text">
-         <string>Index</string>
-        </property>
-       </column>
-       <column>
-        <property name="text">
-         <string>Value</string>
-        </property>
-       </column>
-       <column>
-        <property name="text">
-         <string>Other</string>
-        </property>
-       </column>
-       <item>
-        <property name="text">
-         <string>Paket 1</string>
-        </property>
-        <property name="text">
-         <string/>
-        </property>
-        <property name="text">
-         <string/>
-        </property>
-        <property name="text">
-         <string/>
-        </property>
-        <item>
-         <property name="text">
-          <string>START Cycle</string>
-         </property>
-         <property name="text">
-          <string>N/A</string>
-         </property>
-         <property name="text">
-          <string>N/A</string>
-         </property>
-         <property name="text">
-          <string>N/A</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>Write</string>
-         </property>
-         <property name="text">
-          <string>0xffff</string>
-         </property>
-         <property name="text">
-          <string>10</string>
-         </property>
-         <property name="text">
-          <string>N/A</string>
-         </property>
-        </item>
-       </item>
-      </widget>
+      <widget class="QTreeView" name="cycleCommandsView"/>
      </item>
     </layout>
    </widget>

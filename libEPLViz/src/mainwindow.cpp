@@ -70,7 +70,7 @@ MainWindow::~MainWindow() {
 void MainWindow::createModels() {
   // Create and add Models here
   // TODO disabled because of unfinished Cycle generation/getting
-  // models.append(new PacketHistoryModel(this));
+  models.append(new PacketHistoryModel(this));
   // models.append(new PythonLogModel(this));
   // models.append(new QWTPlotModel(this));
   // models.append(new CurrentODModel(this));

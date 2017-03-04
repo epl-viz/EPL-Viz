@@ -42,6 +42,7 @@
 
 namespace EPL_Viz {
 class BaseModel {
+
  private:
   static QLinkedList<BaseModel *> *registeredModels;
 

@@ -30,6 +30,7 @@
 #include "packethistorymodel.hpp"
 #include "Cycle.hpp"
 #include "mainwindow.hpp"
+#include "packethistorywidget.hpp"
 #include <QDebug>
 #include <string>
 #include <vector>
@@ -38,18 +39,35 @@ using namespace EPL_DataCollect;
 using namespace std;
 
 PacketHistoryModel::PacketHistoryModel(MainWindow *window) : BaseModel() {
-  textWindow = window->findChild<QTextEdit *>("packetHistoryTextEdit");
+  selectedPacket = UINT64_MAX;
+  textWindow     = window->findChild<QPlainTextEdit *>("packetHistoryTextEdit");
+  // connect update Text
+  connect(this,
+          SIGNAL(textUpdated(QString, QPlainTextEdit *)),
+          window->findChild<PacketHistoryWidget *>("dockPacketHistory"),
+          SLOT(updatePacketHistoryLog(QString, QPlainTextEdit *)));
+  needUpdate = true;
 }
 
 void PacketHistoryModel::update(Cycle *cycle) {
+  if (!needUpdate)
+    return;
   vector<Packet> packets = cycle->getPackets();
   string         text;
-  for (unsigned int i = 0; i < packets.size(); i++) {
-    string temp = packets[i].getWiresharkString();
-    text.append(temp);
-  }
-  textWindow->setHtml(QString::fromStdString(text));
+  if (selectedPacket == UINT64_MAX)
+    text = "Please select a packet in the Cycle Commands widget.";
+  else if (selectedPacket < packets.size())
+    text = packets[selectedPacket].getWiresharkString();
+  else
+    text = "Packet out of bounds";
+  emit textUpdated(QString::fromStdString(text), textWindow);
+  needUpdate = false;
   qDebug() << "updating PacketHistoryModel";
+}
+
+void PacketHistoryModel::changePacket(uint64_t packet) {
+  needUpdate     = true;
+  selectedPacket = packet;
 }
 
 void PacketHistoryModel::init() {}

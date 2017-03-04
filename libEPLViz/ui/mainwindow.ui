@@ -34,7 +34,7 @@
     <item row="0" column="0">
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
-       <number>1</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="tabNet">
        <attribute name="title">
@@ -988,9 +988,12 @@
         </property>
         <layout class="QGridLayout" name="gridLayout_22">
          <item row="0" column="0">
-          <widget class="QTextEdit" name="packetHistoryTextEdit">
+          <widget class="QPlainTextEdit" name="packetHistoryTextEdit">
            <property name="readOnly">
             <bool>true</bool>
+           </property>
+           <property name="textInteractionFlags">
+            <set>Qt::NoTextInteraction</set>
            </property>
           </widget>
          </item>

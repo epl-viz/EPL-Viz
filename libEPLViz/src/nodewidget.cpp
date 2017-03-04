@@ -25,7 +25,6 @@
  */
 /*!
  * \file nodewidget.cpp
- * \todo Implement signals/slots for the buttons
  */
 
 #include "nodewidget.hpp"
@@ -125,7 +124,11 @@ NodeWidget::NodeWidget(uint8_t _id, QString _name, QString _device, QWidget *par
   // Add the layout to the maximized Widget
   minWidget->setLayout(minimizedLayout);
 
+  // Connect the signals of the buttons
+  connect(minimizeButton, SIGNAL(toggled(bool)), this, SLOT(minimizeChange(bool)));
+  connect(advanced, SIGNAL(toggled(bool)), odList, SLOT(setVisible(bool)));
 
+  // Add the two states of the widget to this one
   addWidget(maxWidget);
   addWidget(minWidget);
   widget(1)->show(); // Show the minimized widget

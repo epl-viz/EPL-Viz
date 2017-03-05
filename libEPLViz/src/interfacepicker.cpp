@@ -45,5 +45,6 @@ bool InterfacePicker::event(QEvent *event) {
 
 void InterfacePicker::updateList() {
   QListWidget *list = findChild<QListWidget *>("interfaceList");
+  (void)list;
   // TODO add to list and add sigslo for enter
 }

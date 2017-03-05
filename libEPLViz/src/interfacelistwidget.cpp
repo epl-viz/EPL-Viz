@@ -24,17 +24,9 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 /*!
- * \file interfacelistwidget.hpp
+ * \file interfacelistwidget.cpp
  */
 
-#pragma once
+#include "interfacelistwidget.hpp"
 
-#include <QDialog>
-#include <QListWidget>
-
-namespace EPL_Viz {
-class InterfaceListWidget : public QListWidget {
- public:
-  InterfaceListWidget(QDialog *parent);
-};
-}
+InterfaceListWidget::InterfaceListWidget(QWidget *parent) : QListWidget(parent) {}

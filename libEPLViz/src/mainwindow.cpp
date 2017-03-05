@@ -64,7 +64,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
   connect(this, SIGNAL(close()), modelThread, SLOT(stop()));
 
-  profileManager->readWindowSettings(this);
+  profileManager->getDefaultProfile()->readWindowSettings(this);
 }
 
 MainWindow::~MainWindow() {
@@ -237,7 +237,7 @@ void MainWindow::changeState(GUIState nState) {
 }
 
 void MainWindow::closeEvent(QCloseEvent *event) {
-  profileManager->writeWindowSettings(this);
+  profileManager->getDefaultProfile()->writeWindowSettings(this);
   emit close();
   QWidget::closeEvent(event);
 }

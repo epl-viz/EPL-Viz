@@ -24,38 +24,50 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 /*!
- * \file profilemanager.hpp
+ * \file profile.cpp
  */
-#pragma once
 
 #include "profile.hpp"
-#include <QMap>
-#include <QSettings>
-#include <QString>
-#include <vector>
+#include "mainwindow.hpp"
+using namespace EPL_Viz;
 
-class MainWindow;
 
-namespace EPL_Viz {
+  Profile::Profile(QSettings *set, QString profileName) {
+    settings = set;
+    name = profileName;
+  }
 
-class ProfileManager {
- private:
-  QSettings *appSettings;
+  QString Profile::getName() {
+    return name;
+  }
 
- public:
-  ProfileManager();
-  ~ProfileManager();
+  void Profile::writeWindowSettings(MainWindow *window) {
+    settings->beginGroup(name + "/MainWindow");
+    settings->setValue("size", window->size());
+    settings->setValue("pos", window->pos());
+    settings->endGroup();
+  }
 
-  Profile *getDefaultProfile();
-  /**
-   * @brief getProfile Returns the profile with the given name
-   * If the profile does not exist, it will be created and returned
-   * @param profileName
-   * @return
-   */
-  Profile *getProfile(QString profileName);
-  std::vector<QString> getProfiles();
+  void Profile::readWindowSettings(MainWindow *window) {
+    settings->beginGroup(name + "/MainWindow");
+    window->resize(settings->value("size", QSize(400, 400)).toSize());
+    window->move(settings->value("pos", QPoint(200, 200)).toPoint());
+    settings->endGroup();
+  }
 
-  void setDefaultProfile(Profile *profile);
-};
-}
+  void Profile::writeInterface(QString interface) {
+    settings->setValue(name + "/interface", interface);
+  }
+
+  QString Profile::readInterface() {
+    return settings->value(name + "/interface", QVariant("none")).toString();
+  }
+
+  void Profile::writeCustomValue(QString custom, QVariant val) {
+    settings->setValue(name + "/" + custom, val);
+  }
+
+  QVariant Profile::readCustomValue(QString custom) {
+    return settings->value(custom);
+  }
+

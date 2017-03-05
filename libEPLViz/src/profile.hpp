@@ -28,10 +28,30 @@
  */
 
 #pragma once
+#include <QString>
+#include <QSettings>
+
+class MainWindow;
 
 namespace EPL_Viz {
 class Profile {
  public:
-  Profile() = default;
+  Profile(QSettings *settings, QString name);
+  ~Profile() = default;
+
+  QString getName();
+
+  void writeWindowSettings(MainWindow *window);
+  void readWindowSettings(MainWindow *window);
+
+  void writeInterface(QString interface);
+  QString readInterface();
+
+  void writeCustomValue(QString custom, QVariant val);
+  QVariant readCustomValue(QString custom);
+
+private:
+  QSettings *settings;
+  QString name;
 };
 }

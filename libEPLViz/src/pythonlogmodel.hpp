@@ -31,22 +31,33 @@
 
 #include "Cycle.hpp"
 #include "EvPluginText.hpp"
+#include "EventBase.hpp"
 #include "EventLog.hpp"
 #include "basemodel.hpp"
 #include "vector"
+#include <QAbstractTableModel>
 
 class MainWindow;
 
 namespace EPL_Viz {
-class PythonLogModel : public BaseModel {
+class PythonLogModel : public QAbstractTableModel, public BaseModel {
+  Q_OBJECT
+
  private:
-  unsigned int               appid;
-  EPL_DataCollect::EventLog *log;
+  unsigned int                              appid;
+  EPL_DataCollect::EventLog *               log;
+  std::vector<EPL_DataCollect::EventBase *> events;
 
  public:
   PythonLogModel(MainWindow *window);
 
   void init();
+
+  int rowCount(const QModelIndex &parent) const override;
+  int columnCount(const QModelIndex &parent) const override;
+  QVariant data(const QModelIndex &index, int role) const override;
+  QVariant headerData(int section, Qt::Orientation orientation, int role) const override;
+  bool insertRows(int row, int count, const QModelIndex &parent = QModelIndex()) override;
 
  protected:
   mockable void update(EPL_DataCollect::Cycle *cycle);

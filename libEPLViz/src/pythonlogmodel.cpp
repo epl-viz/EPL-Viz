@@ -27,20 +27,72 @@
  * \file pyhonlogmodel.cpp
  */
 #include "pythonlogmodel.hpp"
+#include "EPLEnums.h"
 #include "mainwindow.hpp"
 using namespace EPL_Viz;
 using namespace EPL_DataCollect;
 
-PythonLogModel::PythonLogModel(MainWindow *window) : BaseModel() { log = window->getCaptureInstance()->getEventLog(); }
+PythonLogModel::PythonLogModel(MainWindow *window) : BaseModel() {
+  qDebug() << "Updating PythonLogModel";
+  log              = window->getCaptureInstance()->getEventLog();
+  QTableView *view = window->findChild<QTableView *>("pythonLogView");
+  view->setModel(this);
+  view->verticalHeader()->hide();
+}
 
 void PythonLogModel::init() { appid = log->getAppID(); }
 
 void PythonLogModel::update(Cycle *cycle) {
   (void)cycle;
-  // TODO Use Table
-  std::vector<EventBase *> events = log->pollEvents(appid);
+  events                             = log->getAllEvents();
+  std::vector<EventBase *> newEvents = log->pollEvents(appid);
+  insertRows(events.size(), newEvents.size());
+}
 
-  for (unsigned int i = 0; i < events.size(); i++) {
-    // TODO write to output
+int PythonLogModel::rowCount(const QModelIndex &parent) const {
+  (void)parent;
+  return events.size();
+}
+
+int PythonLogModel::columnCount(const QModelIndex &parent) const {
+  (void)parent;
+  return 5;
+}
+
+QVariant PythonLogModel::data(const QModelIndex &index, int role) const {
+  if (role == Qt::DisplayRole) {
+    EventBase *ev = events[index.row()];
+    switch (index.column()) {
+      case 0:
+        uint32_t start;
+        ev->getCycleRange(&start);
+        return QVariant(start);
+      case 1: return QString::fromStdString(ev->getTypeAsString());
+      case 2: return QString::fromStdString(ev->getPluginID());
+      case 3: return QString::fromStdString(ev->getName());
+      case 4: return QString::fromStdString(ev->getDescription());
+    }
   }
+  return QVariant();
+}
+
+QVariant PythonLogModel::headerData(int section, Qt::Orientation orientation, int role) const {
+  if (role == Qt::DisplayRole) {
+    if (orientation == Qt::Horizontal) {
+      switch (section) {
+        case 0: return QString("Cycle");
+        case 1: return QString("Type");
+        case 2: return QString("Plugin ID");
+        case 3: return QString("Name");
+        case 4: return QString("Description");
+      }
+    }
+  }
+  return QVariant();
+}
+
+bool PythonLogModel::insertRows(int row, int count, const QModelIndex &parent) {
+  beginInsertRows(parent, row, row + count - 1);
+  endInsertRows();
+  return true;
 }

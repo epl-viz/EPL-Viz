@@ -217,6 +217,8 @@ void MainWindow::changeState(GUIState nState) {
       captureInstance = std::make_unique<CaptureInstance>();
       findChild<QAction *>("actionStart_Recording")->setEnabled(true);
       findChild<QAction *>("actionStop_Recording")->setEnabled(false);
+      findChild<QAction *>("actionSave")->setEnabled(false);
+      findChild<QAction *>("actionSaveAs")->setEnabled(false);
       break;
     case GUIState::PLAYING: break;
     case GUIState::RECORDING:
@@ -224,13 +226,15 @@ void MainWindow::changeState(GUIState nState) {
       findChild<QAction *>("actionStart_Recording")->setEnabled(false);
       findChild<QAction *>("actionStop_Recording")->setEnabled(true);
       // TODO
-      captureInstance->startRecording("eth0");
+      captureInstance->startRecording(interface.toStdString());
       break;
     case GUIState::PAUSED: break;
     case GUIState::STOPPED:
       findChild<QAction *>("actionStop_Recording")->setEnabled(false);
       findChild<QAction *>("actionStart_Recording")->setEnabled(true);
       captureInstance->stopRecording();
+      findChild<QAction *>("actionSave")->setEnabled(true);
+      findChild<QAction *>("actionSaveAs")->setEnabled(true);
       break;
   }
   machineState = nState;

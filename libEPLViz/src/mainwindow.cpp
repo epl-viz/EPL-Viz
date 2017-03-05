@@ -76,12 +76,14 @@ MainWindow::~MainWindow() {
 
 void MainWindow::createModels() {
   // Create and add Models here
-  // TODO disabled because of unfinished Cycle generation/getting
+  CycleCommandsModel *cyCoModel = new CycleCommandsModel(this);
+  connect(this, SIGNAL(cycleChanged()), cyCoModel, SLOT(updateNext()));
+
   models.append(new PacketHistoryModel(this));
   models.append(new PythonLogModel(this));
   // models.append(new QWTPlotModel(this));
   // models.append(new CurrentODModel(this));
-  models.append(new CycleCommandsModel(this));
+  models.append(cyCoModel);
 }
 
 void MainWindow::destroyModels() {
@@ -117,7 +119,10 @@ bool MainWindow::changeTime(double t) {
 
 bool MainWindow::changeCycle(uint32_t cycle) {
   if (machineState == GUIState::STOPPED) {
-    curCycle = cycle;
+    if (curCycle != cycle) {
+      curCycle = cycle;
+      emit cycleChanged();
+    }
     return true;
   } else {
     return false;

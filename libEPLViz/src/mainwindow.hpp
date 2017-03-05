@@ -122,4 +122,5 @@ class MainWindow : public QMainWindow {
  signals:
   void operate(const QString &);
   void close();
+  void cycleChanged();
 };

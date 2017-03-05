@@ -31,19 +31,13 @@
 #include "mainwindow.hpp"
 using namespace EPL_Viz;
 
-ProfileManager::ProfileManager() {
-  appSettings = new QSettings("EPL-Vizards", "EPL-Viz");
-}
+ProfileManager::ProfileManager() { appSettings = new QSettings("EPL-Vizards", "EPL-Viz"); }
 
 ProfileManager::~ProfileManager() {
   appSettings->sync();
   delete appSettings;
 }
 
-Profile *ProfileManager::getDefaultProfile() {
-  return getProfile("default");
-}
+Profile *ProfileManager::getDefaultProfile() { return getProfile("default"); }
 
-Profile *ProfileManager::getProfile(QString profileName) {
-  return new Profile(appSettings, profileName);
-}
+Profile *ProfileManager::getProfile(QString profileName) { return new Profile(appSettings, profileName); }

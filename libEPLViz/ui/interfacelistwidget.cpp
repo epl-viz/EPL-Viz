@@ -30,7 +30,4 @@
 #include "interfacelistwidget.hpp"
 using namespace EPL_Viz;
 
-InterfaceListWidget::InterfaceListWidget(QDialog *parent) : QListWidget(parent)
-{
-
-}
+InterfaceListWidget::InterfaceListWidget(QDialog *parent) : QListWidget(parent) {}

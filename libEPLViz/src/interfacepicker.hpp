@@ -50,7 +50,7 @@ class InterfacePicker : public QDialog {
  private:
   Ui::InterfacePicker *ui;
 
-public slots:
+ public slots:
   void updateList();
 };
 }

@@ -29,13 +29,12 @@
 
 #pragma once
 
-#include <QListWidget>
 #include <QDialog>
+#include <QListWidget>
 
 namespace EPL_Viz {
-class InterfaceListWidget : public QListWidget
-{
-public:
+class InterfaceListWidget : public QListWidget {
+ public:
   InterfaceListWidget(QDialog *parent);
 };
 }

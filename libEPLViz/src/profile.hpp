@@ -28,8 +28,8 @@
  */
 
 #pragma once
-#include <QString>
 #include <QSettings>
+#include <QString>
 
 class MainWindow;
 
@@ -50,8 +50,8 @@ class Profile {
   void writeCustomValue(QString custom, QVariant val);
   QVariant readCustomValue(QString custom);
 
-private:
+ private:
   QSettings *settings;
-  QString name;
+  QString    name;
 };
 }

@@ -31,6 +31,7 @@
 #pragma once
 
 #include <QDialog>
+#include <QEvent>
 
 namespace Ui {
 class InterfacePicker;
@@ -43,7 +44,13 @@ class InterfacePicker : public QDialog {
   explicit InterfacePicker(QWidget *parent = 0);
   ~InterfacePicker();
 
+ protected:
+  bool event(QEvent *event) override;
+
  private:
   Ui::InterfacePicker *ui;
+
+public slots:
+  void updateList();
 };
 }

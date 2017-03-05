@@ -24,26 +24,13 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 /*!
- * \file interfacepicker.cpp
+ * \file interfacelistwidget.cpp
  */
 
-#include "interfacepicker.hpp"
-#include "ui_interfacepicker.h"
+#include "interfacelistwidget.hpp"
 using namespace EPL_Viz;
 
-InterfacePicker::InterfacePicker(QWidget *parent) : QDialog(parent), ui(new Ui::InterfacePicker) { ui->setupUi(this); }
+InterfaceListWidget::InterfaceListWidget(QDialog *parent) : QListWidget(parent)
+{
 
-InterfacePicker::~InterfacePicker() { delete ui; }
-
-bool InterfacePicker::event(QEvent *event) {
-  // configure stuff
-  if (event->type() == QEvent::Polish) {
-    updateList();
-  }
-  return QDialog::event(event);
-}
-
-void InterfacePicker::updateList() {
-  QListWidget *list = findChild<QListWidget *>("interfaceList");
-  // TODO add to list and add sigslo for enter
 }

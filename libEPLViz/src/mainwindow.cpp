@@ -218,7 +218,7 @@ void MainWindow::changeState(GUIState nState) {
       findChild<QAction *>("actionStart_Recording")->setEnabled(true);
       findChild<QAction *>("actionStop_Recording")->setEnabled(false);
       findChild<QAction *>("actionSave")->setEnabled(false);
-      findChild<QAction *>("actionSaveAs")->setEnabled(false);
+      findChild<QAction *>("actionSave_As")->setEnabled(false);
       break;
     case GUIState::PLAYING: break;
     case GUIState::RECORDING:

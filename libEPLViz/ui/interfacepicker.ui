@@ -29,17 +29,60 @@
     <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
    </property>
   </widget>
-  <widget class="QTableView" name="tableView">
+  <widget class="QPushButton" name="refreshButton">
+   <property name="geometry">
+    <rect>
+     <x>270</x>
+     <y>330</y>
+     <width>83</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Refresh List</string>
+   </property>
+  </widget>
+  <widget class="QScrollArea" name="scrollArea">
    <property name="geometry">
     <rect>
      <x>10</x>
      <y>10</y>
-     <width>250</width>
-     <height>340</height>
+     <width>251</width>
+     <height>341</height>
     </rect>
    </property>
+   <property name="widgetResizable">
+    <bool>true</bool>
+   </property>
+   <widget class="QWidget" name="scrollAreaWidgetContents">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>0</y>
+      <width>249</width>
+      <height>339</height>
+     </rect>
+    </property>
+    <widget class="InterfaceListWidget" name="interfaceList">
+     <property name="geometry">
+      <rect>
+       <x>-10</x>
+       <y>0</y>
+       <width>261</width>
+       <height>341</height>
+      </rect>
+     </property>
+    </widget>
+   </widget>
   </widget>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>InterfaceListWidget</class>
+   <extends>QListWidget</extends>
+   <header>interfacelistwidget.hpp</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections>
   <connection>
@@ -74,5 +117,24 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>refreshButton</sender>
+   <signal>clicked()</signal>
+   <receiver>InterfacePicker</receiver>
+   <slot>updateList()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>311</x>
+     <y>341</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>179</x>
+     <y>179</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
+ <slots>
+  <slot>updateList()</slot>
+ </slots>
 </ui>

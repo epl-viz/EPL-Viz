@@ -27,6 +27,7 @@
  * \file mainwindow.cpp
  */
 #include "mainwindow.hpp"
+#include "CSTimeSeriesPtr.hpp"
 #include "EPLVizEnum2Str.hpp"
 #include "TimeSeriesBuilder.hpp"
 #include "cyclecommandsmodel.hpp"
@@ -81,7 +82,7 @@ void MainWindow::createModels() {
 
   models.append(new PacketHistoryModel(this));
   models.append(new PythonLogModel(this));
-  // models.append(new QWTPlotModel(this));
+  models.append(new QWTPlotModel(this));
   // models.append(new CurrentODModel(this));
   models.append(cyCoModel);
 }
@@ -205,7 +206,7 @@ void MainWindow::changeState(GUIState nState) {
   // TODO other states (and maybe implement a real state machine in modelthread)
   // switch with old state
   switch (machineState) {
-    case GUIState::UNINIT: BaseModel::initAll(); break;
+    case GUIState::UNINIT: break;
     case GUIState::RECORDING: break;
     case GUIState::PAUSED: break;
     case GUIState::STOPPED: break;
@@ -222,7 +223,10 @@ void MainWindow::changeState(GUIState nState) {
       break;
     case GUIState::PLAYING: break;
     case GUIState::RECORDING:
+      BaseModel::initAll(); // TODO do we need to do this here
       captureInstance->getPluginManager()->addPlugin(std::make_shared<plugins::TimeSeriesBuilder>());
+      captureInstance->registerCycleStorage<plugins::CSTimeSeriesPtr>(
+            EPL_DataCollect::constants::EPL_DC_PLUGIN_TIME_SERIES_CSID);
       findChild<QAction *>("actionStart_Recording")->setEnabled(false);
       findChild<QAction *>("actionStop_Recording")->setEnabled(true);
       // TODO

@@ -30,25 +30,35 @@
 
 #include "EPLVizDefines.hpp"
 #include "EventLog.hpp"
+#include "TimeSeries.hpp"
 #include "basemodel.hpp"
 
-#include <QLabel>
+#include <qwt_plot.h>
+#include <qwt_plot_curve.h>
+
+#include <QObject>
 
 class MainWindow;
 
 namespace EPL_Viz {
-class QWTPlotModel : public EPL_Viz::BaseModel {
+class QWTPlotModel : public QObject, public EPL_Viz::BaseModel {
+  Q_OBJECT
+
  private:
-  MainWindow *               window;
-  QLabel *                   canvas;
-  EPL_DataCollect::EventLog *log;
-  unsigned int               appid;
+  MainWindow *                                          window;
+  QwtPlot *                                             plot;
+  QwtPlotCurve *                                        curve;
+  std::shared_ptr<EPL_DataCollect::plugins::TimeSeries> timeSeries;
 
  public:
   QWTPlotModel(MainWindow *win);
+  ~QWTPlotModel();
   void init();
 
  protected:
   mockable void update(EPL_DataCollect::Cycle *cycle);
+
+ signals:
+  void requestRedraw();
 };
 }

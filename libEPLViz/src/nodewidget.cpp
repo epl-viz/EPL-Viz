@@ -209,6 +209,15 @@ void NodeWidget::updateData(EPL_DataCollect::Node *node) {
   updateStatus(node->getStatus());
 }
 
+void NodeWidget::setHighlightingLevel(int level) { highlightingLevel = level; }
+
+void NodeWidget::updateStyleSheet() {
+  setStyleSheet(style.arg(
+        idString,
+        statusToBackground(status),
+        QString::number(static_cast<int>(255 * (static_cast<double>(highlightingLevel) / 100))))); // Change color
+}
+
 /*!
  * \brief Updates the data shown under the 'advanced' section.
  * \param identity The node identity to retrieve the information from
@@ -240,7 +249,6 @@ void NodeWidget::updateStatus(EPL_DataCollect::NMTState newStatus) {
   // Update status
   status = newStatus;
 
-  setStyleSheet(style.arg(idString, statusToBackground(status))); // Change color
   statusLabel->setObjectName(
         statusFormat.arg(QString::fromStdString(EPL_DataCollect::EPLEnum2Str::toStr(status)))); // Update label
 }

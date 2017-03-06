@@ -40,4 +40,12 @@ ProfileManager::~ProfileManager() {
 
 Profile *ProfileManager::getDefaultProfile() { return getProfile("default"); }
 
+/*!
+   * \brief Returns the profile with the given name
+   *
+   * If the profile does not exist, it will be created and returned
+   *
+   * \param profileName The name of the profile to retrieve
+   * \return The profile with the given name
+   */
 Profile *ProfileManager::getProfile(QString profileName) { return new Profile(appSettings, profileName); }

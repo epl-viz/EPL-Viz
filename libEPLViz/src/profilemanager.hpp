@@ -47,12 +47,6 @@ class ProfileManager {
   ~ProfileManager();
 
   Profile *getDefaultProfile();
-  /**
-   * @brief getProfile Returns the profile with the given name
-   * If the profile does not exist, it will be created and returned
-   * @param profileName
-   * @return
-   */
   Profile *getProfile(QString profileName);
   std::vector<QString> getProfiles();
 

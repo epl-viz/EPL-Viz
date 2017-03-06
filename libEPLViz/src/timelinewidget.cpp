@@ -33,6 +33,7 @@
 #include <qwt_picker_machine.h>
 #include <qwt_plot.h>
 #include <stdio.h>
+#include "mainwindow.hpp"
 
 TimelineWidget::TimelineWidget(QWidget *parent) : QDockWidget(parent) {}
 
@@ -63,5 +64,5 @@ bool TimelineWidget::event(QEvent *event) {
 
 void TimelineWidget::pointSelected(const QPointF &pa) {
   qDebug() << "Clicked on Timeline at point " << pa.x();
-  // TODO (try to) jump to selected time
+  window->changeCycle(pa.x());
 }

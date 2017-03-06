@@ -32,11 +32,14 @@
 #include <QDockWidget>
 #include <qwt_plot_picker.h>
 
+class MainWindow;
+
 class TimelineWidget : public QDockWidget {
   Q_OBJECT
 
  private:
   QwtPlotPicker *picker;
+  MainWindow *window;
 
  public:
   TimelineWidget(QWidget *parent = nullptr);

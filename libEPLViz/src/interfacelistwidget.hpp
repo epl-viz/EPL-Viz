@@ -33,6 +33,9 @@
 #include <QListWidget>
 
 class InterfaceListWidget : public QListWidget {
+  Q_OBJECT
+
  public:
   InterfaceListWidget(QWidget *parent);
+  ~InterfaceListWidget() = default;
 };

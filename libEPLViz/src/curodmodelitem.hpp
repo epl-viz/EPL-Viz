@@ -24,33 +24,28 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 /*!
- * \file interfacepicker.cpp
+ * \file curodmodelitem.hpp
  */
 
-#include "interfacepicker.hpp"
-#include "ui_interfacepicker.h"
-using namespace EPL_Viz;
-using namespace EPL_DataCollect;
+#pragma once
+#include <stdint.h>
+#include <QMap>
+#include <memory>
 
-InterfacePicker::InterfacePicker(QWidget *parent, CaptureInstance *ci) : QDialog(parent), ui(new Ui::InterfacePicker) {
-  captureInstance = ci;
-  ui->setupUi(this);
-}
+namespace EPL_Viz {
+class CurODModelItem
+{
+public:
+  CurODModelItem(uint16_t index, bool hasSub);
 
-InterfacePicker::~InterfacePicker() { delete ui; }
+  bool hasSubIndex();
+  uint16_t getIndex();
+  bool setSubIndex(uint8_t i, QString item);
+  QString getSubindex(uint8_t i);
 
-bool InterfacePicker::event(QEvent *event) {
-  // configure stuff
-  if (event->type() == QEvent::Polish) {
-    updateList();
-  }
-  return QDialog::event(event);
-}
-
-void InterfacePicker::updateList() {
-  QListWidget *list = findChild<QListWidget *>("interfaceList");
-  std::vector<std::string> interfaces = captureInstance->getDevices();
-  for (std::string s : interfaces) {
-    list->addItem(QString::fromStdString(s));
-  }
+private:
+  bool hasSub;
+  uint16_t index;
+  QMap<uint8_t, QString> subIndices;
+};
 }

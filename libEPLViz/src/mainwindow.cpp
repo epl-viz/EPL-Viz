@@ -82,6 +82,9 @@ void MainWindow::createModels() {
   CycleCommandsModel *cyCoModel = new CycleCommandsModel(this);
   connect(this, SIGNAL(cycleChanged()), cyCoModel, SLOT(updateNext()));
 
+  CurrentODModel *curODModel = new CurrentODModel(this);
+  connect(this, SIGNAL(cycleChanged()), curODModel, SLOT(updateNext()));
+
   models.append(new PacketHistoryModel(this));
   models.append(new PythonLogModel(this));
   models.append(new QWTPlotModel(this));
@@ -143,12 +146,12 @@ void MainWindow::setFullscreen(bool makeFullscreen) {
 }
 
 void MainWindow::openPluginEditor() {
-  PluginsWindow *win = new PluginsWindow();
+  PluginsWindow *win = new PluginsWindow(this);
   win->show();
 }
 
 void MainWindow::openInterfacePicker() {
-  InterfacePicker *picker = new InterfacePicker();
+  InterfacePicker *picker = new InterfacePicker(this, getCaptureInstance());
   picker->show();
 }
 

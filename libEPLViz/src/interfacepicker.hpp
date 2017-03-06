@@ -32,6 +32,7 @@
 
 #include <QDialog>
 #include <QEvent>
+#include <CaptureInstance.hpp>
 
 namespace Ui {
 class InterfacePicker;
@@ -41,7 +42,7 @@ class InterfacePicker : public QDialog {
   Q_OBJECT
 
  public:
-  explicit InterfacePicker(QWidget *parent = 0);
+  explicit InterfacePicker(QWidget *parent, EPL_DataCollect::CaptureInstance *ci);
   ~InterfacePicker();
 
  protected:
@@ -49,6 +50,7 @@ class InterfacePicker : public QDialog {
 
  private:
   Ui::InterfacePicker *ui;
+  EPL_DataCollect::CaptureInstance *captureInstance;
 
  public slots:
   void updateList();

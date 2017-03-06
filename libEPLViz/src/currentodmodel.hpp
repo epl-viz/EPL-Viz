@@ -32,21 +32,31 @@
 #include "EPLVizDefines.hpp"
 #include "Packet.hpp"
 #include "basemodel.hpp"
+#include "curodmodelitem.hpp"
 
-#include <QAbstractTableModel>
+#include <QAbstractItemModel>
 #include <QHeaderView>
 #include <QTableView>
+#include <unordered_map>
 
 namespace EPL_Viz {
-class CurrentODModel : public QAbstractTableModel, public BaseModel {
+class CurrentODModel : public QAbstractItemModel, public BaseModel {
   Q_OBJECT
  private:
   uint8_t node;
+  bool needUpdate;
+  QMap<uint16_t, std::shared_ptr<CurODModelItem>> odEntries;
+  std::unordered_map<int, std::pair<uint16_t, uint8_t>> convertRow;
+
+  std::shared_ptr<CurODModelItem> getItem(const QModelIndex &index) const;
 
  public:
   CurrentODModel(QMainWindow *window);
+  ~CurrentODModel() = default;
   void init() override;
 
+  QModelIndex index(int row, int column, const QModelIndex &parent = QModelIndex()) const override;
+  QModelIndex parent(const QModelIndex &index) const override;
   int rowCount(const QModelIndex &parent) const override;
   int columnCount(const QModelIndex &parent) const override;
   QVariant data(const QModelIndex &index, int role) const override;
@@ -54,5 +64,8 @@ class CurrentODModel : public QAbstractTableModel, public BaseModel {
 
  protected:
   mockable void update(EPL_DataCollect::Cycle *cycle) override;
+
+ public slots:
+  void updateNext();
 };
 }

@@ -24,33 +24,30 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 /*!
- * \file interfacepicker.cpp
+ * \file curodmodelitem.cpp
  */
-
-#include "interfacepicker.hpp"
-#include "ui_interfacepicker.h"
+#include "curodmodelitem.hpp"
 using namespace EPL_Viz;
-using namespace EPL_DataCollect;
 
-InterfacePicker::InterfacePicker(QWidget *parent, CaptureInstance *ci) : QDialog(parent), ui(new Ui::InterfacePicker) {
-  captureInstance = ci;
-  ui->setupUi(this);
+CurODModelItem::CurODModelItem(uint16_t i, bool sub)
+{
+  index = i;
+  hasSub = sub;
 }
 
-InterfacePicker::~InterfacePicker() { delete ui; }
+bool CurODModelItem::hasSubIndex() { return hasSub; }
 
-bool InterfacePicker::event(QEvent *event) {
-  // configure stuff
-  if (event->type() == QEvent::Polish) {
-    updateList();
-  }
-  return QDialog::event(event);
+bool CurODModelItem::setSubIndex(uint8_t i, QString item) {
+  if (!hasSub && i != 0)
+    return false;
+
+  subIndices.insert(i, item);
+  return true;
 }
 
-void InterfacePicker::updateList() {
-  QListWidget *list = findChild<QListWidget *>("interfaceList");
-  std::vector<std::string> interfaces = captureInstance->getDevices();
-  for (std::string s : interfaces) {
-    list->addItem(QString::fromStdString(s));
-  }
+uint16_t CurODModelItem::getIndex() { return index; }
+
+QString CurODModelItem::getSubindex(uint8_t i) {
+  return subIndices.value(i, QString("subindex does not exist"));
 }
+

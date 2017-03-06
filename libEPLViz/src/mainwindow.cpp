@@ -51,9 +51,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
   ui->setupUi(this);
   tabifyDockWidget(ui->dockCurrent, ui->dockOD);
   tabifyDockWidget(ui->dockPlugins, ui->dockEvents);
-  tabifyDockWidget(ui->dockPlugins, ui->dockNetTree);
-  tabifyDockWidget(ui->dockCycle, ui->dockPythonLog);
-  tabifyDockWidget(ui->dockCycle, ui->dockPacketHistory);
   ui->actionOD_Filter_2->setMenu(ui->menuOD_Filter);
 
   std::vector<QAction *> btns;

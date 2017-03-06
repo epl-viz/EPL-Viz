@@ -29,15 +29,14 @@
  */
 #pragma once
 
+#include <QRectF>
 #include <QWidget>
 #include <qwt_plot.h>
-#include <QRectF>
 
 class QWTPlotWidget : public QWidget {
   Q_OBJECT
 
  private:
-
  public:
   QWTPlotWidget(QWidget *parent = nullptr);
   ~QWTPlotWidget()              = default;

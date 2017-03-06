@@ -40,7 +40,7 @@ class TimelineWidget : public QDockWidget {
  private:
   QwtPlotPicker *point;
   QwtPlotPicker *area;
-  MainWindow *window;
+  MainWindow *   window;
 
  public:
   TimelineWidget(QWidget *parent = nullptr);

@@ -28,10 +28,10 @@
  */
 
 #include "modelthread.hpp"
-#include "basemodel.hpp"
-#include "mainwindow.hpp"
 #include "CaptureInstance.hpp"
 #include "EPLEnum2Str.hpp"
+#include "basemodel.hpp"
+#include "mainwindow.hpp"
 #include <QDebug>
 using namespace EPL_Viz;
 using namespace EPL_DataCollect;
@@ -54,10 +54,11 @@ void ModelThread::loop() {
       case GUIState::UNINIT: yieldCurrentThread(); break;
       case GUIState::PLAYING:
       case GUIState::RECORDING: {
-        auto *ci = window->getCaptureInstance();
+        auto *                   ci      = window->getCaptureInstance();
         CaptureInstance::CIstate cistate = ci->getState();
         if (cistate != CaptureInstance::CIstate::RUNNING) {
-          qDebug() << QString::fromStdString("Stopped because ci changed state to state " +EPLEnum2Str::toStr(cistate));
+          qDebug() << QString::fromStdString("Stopped because ci changed state to state " +
+                                             EPLEnum2Str::toStr(cistate));
           // TODO message to gui?
           window->changeState(GUIState::UNINIT);
           return;

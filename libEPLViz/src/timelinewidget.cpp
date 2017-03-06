@@ -27,18 +27,16 @@
  * \file timelinewidget.cpp
  */
 #include "timelinewidget.hpp"
+#include "mainwindow.hpp"
+#include "qwtplotwidget.hpp"
 #include <QDebug>
 #include <QEvent>
 #include <qwt_event_pattern.h>
 #include <qwt_picker_machine.h>
 #include <qwt_plot.h>
 #include <stdio.h>
-#include "mainwindow.hpp"
-#include "qwtplotwidget.hpp"
 
-TimelineWidget::TimelineWidget(QWidget *parent) : QDockWidget(parent) {
-  window = dynamic_cast<MainWindow *>(parent);
-}
+TimelineWidget::TimelineWidget(QWidget *parent) : QDockWidget(parent) { window = dynamic_cast<MainWindow *>(parent); }
 
 bool TimelineWidget::event(QEvent *event) {
   // Only handling Polish events
@@ -62,7 +60,7 @@ bool TimelineWidget::event(QEvent *event) {
       area->setMousePattern(QwtEventPattern::MousePatternCode::MouseSelect1, Qt::MouseButton::LeftButton);
 
       connect(point, SIGNAL(selected(QPointF)), this, SLOT(pointSelected(QPointF)));
-      connect(area, SIGNAL(selected(QRectF)), window->findChild<QWTPlotWidget*>("tabGraph"), SLOT(changeArea(QRectF)));
+      connect(area, SIGNAL(selected(QRectF)), window->findChild<QWTPlotWidget *>("tabGraph"), SLOT(changeArea(QRectF)));
 
     } else {
       qDebug() << "PlotTimeline not found, this is ok";

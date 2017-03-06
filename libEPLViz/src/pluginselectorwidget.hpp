@@ -1,4 +1,5 @@
 /* Copyright (c) 2017, EPL-Vizards
+ * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
@@ -23,57 +24,38 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 /*!
- * \file plugineditorwidget.hpp
+ * \file pluginselectorwidget.hpp
  */
 
 #pragma once
-#include <KTextEditor/Document>
-#include <KTextEditor/Editor>
-#include <KTextEditor/View>
-#include <QFile>
-#include <QGridLayout>
-#include <QMessageBox>
-#include <QWidget>
 
-class PluginEditorWidget : public QWidget {
+#include "PythonPlugin.hpp"
+#include "mainwindow.hpp"
+#include <QCheckBox>
+#include <QFile>
+#include <QListWidget>
+#include <QMap>
+
+class PluginSelectorWidget : public QListWidget {
   Q_OBJECT
 
  private:
-  KTextEditor::Document *doc    = nullptr;
-  KTextEditor::View *    view   = nullptr;
-  QGridLayout *          layout = nullptr;
-
-  bool showStatusBar = false;
+  bool                            recording = false;
+  EPL_DataCollect::PluginManager *pluginManager;
+  QString                         pluginPath = ""; // TODO: Add this via configuration
 
  public:
-  PluginEditorWidget(QWidget *parent = nullptr);
-  ~PluginEditorWidget();
+  PluginSelectorWidget(QWidget *parent = nullptr);
+  ~PluginSelectorWidget()              = default;
 
  private:
-  void loadDocument(QString fileName = nullptr);
-  void createWidget();
-
- signals:
-  void nameChanged(QString name);
-  void urlChanged(QString url);
-  void modifiedChanged(bool modified);
-  void pluginsSaved(QMap<QString, QString> savedPlugins);
-  void cleanupDone();
+  void addItem(QString plugin);
 
  private slots:
-  void modified();
-  void nameChange();
-  void urlChange();
+  void changeState(int state);
 
  public slots:
-  void statusBarToggled(bool enabled);
-  void configEditor();
-
-  void selectPlugin(QString plugin);
-
-  void openFile(QString file);
-  void cleanUp();
-  void save();
-  void saveAs();
-  void newFile();
+  void loadPlugins(EPL_DataCollect::CaptureInstance *ci);
+  void disableWidget();
+  void addPlugins(QMap<QString, QString> map);
 };

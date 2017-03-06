@@ -1,4 +1,5 @@
 /* Copyright (c) 2017, EPL-Vizards
+ * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
@@ -23,57 +24,29 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 /*!
- * \file plugineditorwidget.hpp
+ * \file networkgraphmodel.hpp
  */
-
 #pragma once
-#include <KTextEditor/Document>
-#include <KTextEditor/Editor>
-#include <KTextEditor/View>
-#include <QFile>
-#include <QGridLayout>
-#include <QMessageBox>
+
+#include "basemodel.hpp"
+#include "nodewidget.hpp"
+#include <QMap>
 #include <QWidget>
 
-class PluginEditorWidget : public QWidget {
-  Q_OBJECT
+class MainWindow;
 
+namespace EPL_Viz {
+class NetworkGraphModel : public BaseModel {
  private:
-  KTextEditor::Document *doc    = nullptr;
-  KTextEditor::View *    view   = nullptr;
-  QGridLayout *          layout = nullptr;
-
-  bool showStatusBar = false;
+  QMap<uint8_t, NodeWidget *> nodeMap;
+  QWidget *graph;
 
  public:
-  PluginEditorWidget(QWidget *parent = nullptr);
-  ~PluginEditorWidget();
+  NetworkGraphModel(MainWindow *mw);
+  virtual ~NetworkGraphModel();
 
- private:
-  void loadDocument(QString fileName = nullptr);
-  void createWidget();
-
- signals:
-  void nameChanged(QString name);
-  void urlChanged(QString url);
-  void modifiedChanged(bool modified);
-  void pluginsSaved(QMap<QString, QString> savedPlugins);
-  void cleanupDone();
-
- private slots:
-  void modified();
-  void nameChange();
-  void urlChange();
-
- public slots:
-  void statusBarToggled(bool enabled);
-  void configEditor();
-
-  void selectPlugin(QString plugin);
-
-  void openFile(QString file);
-  void cleanUp();
-  void save();
-  void saveAs();
-  void newFile();
+ protected:
+  void init();
+  void update(EPL_DataCollect::Cycle *cycle);
 };
+}

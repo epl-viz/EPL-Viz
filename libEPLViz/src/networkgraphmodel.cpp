@@ -1,4 +1,5 @@
 /* Copyright (c) 2017, EPL-Vizards
+ * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
@@ -23,57 +24,36 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 /*!
- * \file plugineditorwidget.hpp
+ * \file networkgraphmodel.cpp
  */
 
-#pragma once
-#include <KTextEditor/Document>
-#include <KTextEditor/Editor>
-#include <KTextEditor/View>
-#include <QFile>
-#include <QGridLayout>
-#include <QMessageBox>
-#include <QWidget>
+#include "networkgraphmodel.hpp"
+#include "mainwindow.hpp"
 
-class PluginEditorWidget : public QWidget {
-  Q_OBJECT
+using namespace EPL_Viz;
+using namespace EPL_DataCollect;
 
- private:
-  KTextEditor::Document *doc    = nullptr;
-  KTextEditor::View *    view   = nullptr;
-  QGridLayout *          layout = nullptr;
+NetworkGraphModel::NetworkGraphModel(MainWindow *mw) { graph = mw->getNetworkGraph(); }
 
-  bool showStatusBar = false;
+NetworkGraphModel::~NetworkGraphModel() {}
 
- public:
-  PluginEditorWidget(QWidget *parent = nullptr);
-  ~PluginEditorWidget();
+void NetworkGraphModel::init() {}
 
- private:
-  void loadDocument(QString fileName = nullptr);
-  void createWidget();
+void NetworkGraphModel::update(Cycle *cycle) {
+  auto list = cycle->getNodeList();
 
- signals:
-  void nameChanged(QString name);
-  void urlChanged(QString url);
-  void modifiedChanged(bool modified);
-  void pluginsSaved(QMap<QString, QString> savedPlugins);
-  void cleanupDone();
+  for (uint8_t id : list) {
+    Node *n = cycle->getNode(id);
+    auto  s = nodeMap.find(id);
 
- private slots:
-  void modified();
-  void nameChange();
-  void urlChange();
-
- public slots:
-  void statusBarToggled(bool enabled);
-  void configEditor();
-
-  void selectPlugin(QString plugin);
-
-  void openFile(QString file);
-  void cleanUp();
-  void save();
-  void saveAs();
-  void newFile();
-};
+    if (s == nodeMap.end() || s.key() != id) {
+      // The node is not yet added as a widget and has to be created
+      NodeWidget *nw = new NodeWidget(n, graph);
+      nodeMap.insert(id, nw);
+      graph->layout()->addWidget(nw);
+    } else {
+      // The node is added as widget and has to be updated
+      nodeMap[id]->updateData(n);
+    }
+  }
+}

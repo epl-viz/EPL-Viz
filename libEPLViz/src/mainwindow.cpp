@@ -163,9 +163,7 @@ void MainWindow::openInterfacePicker() {
   picker->show();
 }
 
-void MainWindow::openSettings() {
-  settingsWin->show();
-}
+void MainWindow::openSettings() { settingsWin->show(); }
 
 bool MainWindow::event(QEvent *event) {
   // configure stuff
@@ -288,8 +286,6 @@ void MainWindow::closeEvent(QCloseEvent *event) {
 
 QWidget *MainWindow::getNetworkGraph() { return ui->networkGraphContents; }
 
-SettingsWindow *MainWindow::getSettingsWin() {
-    return settingsWin;
-}
+SettingsWindow *MainWindow::getSettingsWin() { return settingsWin; }
 
 void MainWindow::handleResults(const QString &result) { qDebug() << "The result is\"" << result << "\""; }

@@ -77,6 +77,7 @@ testExec git pull
 testExec git submodule update --init --recursive
 testExec make install
 testExec cp ./run/libcapchild.a /EPL/lib
+testExec cp ./run/libcaputils.a /EPL/lib
 testExec pushd ..
 testExec mkdir -p "/EPL/include/wireshark"
 testExec find . -name "*.h" ! -path "*build*" -exec cp --parents {} "/EPL/include/wireshark" \;

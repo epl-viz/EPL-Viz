@@ -39,7 +39,7 @@ NodeWidget::NodeWidget(EPL_DataCollect::Node *node, QWidget *parent) : QStackedW
   device = QString::number(identity.Profile);
   status = node->getStatus();
 
-
+  connect(this, SIGNAL(nodeChanged(uint8_t)), parent, SLOT(selectNode(uint8_t)));
   setObjectName(QStringLiteral("node") + idString);
 
   // Create widget for minimized view

@@ -30,8 +30,11 @@
 #include "modelthread.hpp"
 #include "basemodel.hpp"
 #include "mainwindow.hpp"
+#include "CaptureInstance.hpp"
+#include "EPLEnum2Str.hpp"
 #include <QDebug>
 using namespace EPL_Viz;
+using namespace EPL_DataCollect;
 
 ModelThread::ModelThread(QObject *parent, GUIState *machineState, MainWindow *win) : QThread(parent) {
   ModelThread::state = machineState;
@@ -52,6 +55,13 @@ void ModelThread::loop() {
       case GUIState::PLAYING:
       case GUIState::RECORDING: {
         auto *ci = window->getCaptureInstance();
+        CaptureInstance::CIstate cistate = ci->getState();
+        if (cistate != CaptureInstance::CIstate::RUNNING) {
+          qDebug() << QString::fromStdString("Stopped because ci changed state to state " +EPLEnum2Str::toStr(cistate));
+          // TODO message to gui?
+          window->changeState(GUIState::UNINIT);
+          return;
+        }
         BaseModel::updateAll(state, ci, window->getCycleNum());
         break;
       }

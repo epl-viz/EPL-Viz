@@ -36,7 +36,7 @@ NodeWidget::NodeWidget(EPL_DataCollect::Node *node, QWidget *parent) : QStackedW
   auto identity = node->getIdentity();
 
   name   = QString::fromStdString(identity.HostName);
-  device = QString::fromStdString(identity.DeviceType);
+  device = QString::number(identity.Profile);
   status = node->getStatus();
 
 

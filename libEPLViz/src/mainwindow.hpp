@@ -67,7 +67,7 @@ class MainWindow : public QMainWindow {
   std::unique_ptr<EPL_DataCollect::CaptureInstance> captureInstance;
   QString                                           interface;
   std::string                                       file;
-  SettingsWindow *settingsWin;
+  SettingsWindow *                                  settingsWin;
 
  public:
   explicit MainWindow(QWidget *parent = nullptr);

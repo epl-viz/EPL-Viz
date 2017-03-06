@@ -56,6 +56,10 @@ void ModelThread::loop() {
       case GUIState::RECORDING: {
         auto *                   ci      = window->getCaptureInstance();
         CaptureInstance::CIstate cistate = ci->getState();
+        if (cistate == CaptureInstance::CIstate::SETUP) {
+          qDebug() << "Still in Setup phase";
+          continue;
+        }
         if (cistate != CaptureInstance::CIstate::RUNNING) {
           qDebug() << QString::fromStdString("Stopped because ci changed state to state " +
                                              EPLEnum2Str::toStr(cistate));

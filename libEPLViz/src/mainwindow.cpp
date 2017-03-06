@@ -242,10 +242,11 @@ void MainWindow::changeState(GUIState nState) {
     case GUIState::PLAYING:
       config();
       backendState = captureInstance->loadPCAP(file);
-      if (backendState != 0)
+      if (backendState != 0) {
         qDebug() << QString("Backend error Code ") + QString::number(backendState);
-      changeState(GUIState::UNINIT);
-      return;
+        changeState(GUIState::UNINIT);
+        return;
+      }
       break;
     case GUIState::RECORDING:
       config();

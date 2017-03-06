@@ -67,7 +67,7 @@
              <x>0</x>
              <y>0</y>
              <width>930</width>
-             <height>284</height>
+             <height>412</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_15">
@@ -320,38 +320,7 @@
        </attribute>
        <layout class="QGridLayout" name="gridLayout_14">
         <item row="0" column="0">
-         <widget class="QScrollArea" name="scrollArea_3">
-          <property name="toolTip">
-           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Scrollbar genau so wie bei der Timeline&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-          </property>
-          <property name="frameShape">
-           <enum>QFrame::NoFrame</enum>
-          </property>
-          <property name="frameShadow">
-           <enum>QFrame::Plain</enum>
-          </property>
-          <property name="horizontalScrollBarPolicy">
-           <enum>Qt::ScrollBarAlwaysOn</enum>
-          </property>
-          <property name="widgetResizable">
-           <bool>true</bool>
-          </property>
-          <widget class="QWidget" name="scrollAreaWidgetContents_3">
-           <property name="geometry">
-            <rect>
-             <x>0</x>
-             <y>0</y>
-             <width>930</width>
-             <height>451</height>
-            </rect>
-           </property>
-           <layout class="QGridLayout" name="gridLayout_17">
-            <item row="0" column="0">
-             <widget class="QwtPlot" name="qwtPlot"/>
-            </item>
-           </layout>
-          </widget>
-         </widget>
+         <widget class="QwtPlot" name="qwtPlot"/>
         </item>
        </layout>
       </widget>

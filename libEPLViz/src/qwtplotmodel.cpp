@@ -27,7 +27,6 @@
  * \file qwtplotmodel.cpp
  */
 
-#include "defines.hpp"
 #include "qwtplotmodel.hpp"
 #include "CSTimeSeriesPtr.hpp"
 #include "QPointF"

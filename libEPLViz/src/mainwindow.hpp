@@ -27,7 +27,6 @@
  * \file mainwindow.hpp
  */
 #pragma once
-#include "defines.hpp"
 #include "CaptureInstance.hpp"
 #include "EPLVizDefines.hpp"
 #include "basemodel.hpp"

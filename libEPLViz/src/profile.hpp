@@ -45,9 +45,18 @@ class Profile {
   void readWindowSettings(MainWindow *window);
 
   void writeInterface(QString interface);
+  /**
+   * @brief readInterface Returns the saved Interface name or the QString "none"
+   * @return
+   */
   QString readInterface();
 
   void writeCustomValue(QString custom, QVariant val);
+  /**
+   * @brief readCustomValue Returns a QVariant with the saved value or an empty one
+   * @param custom
+   * @return
+   */
   QVariant readCustomValue(QString custom);
 
  private:

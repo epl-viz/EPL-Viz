@@ -59,4 +59,4 @@ QString Profile::readInterface() { return settings->value(name + "/interface", Q
 
 void Profile::writeCustomValue(QString custom, QVariant val) { settings->setValue(name + "/" + custom, val); }
 
-QVariant Profile::readCustomValue(QString custom) { return settings->value(custom); }
+QVariant Profile::readCustomValue(QString custom) { return settings->value(custom, QVariant()); }

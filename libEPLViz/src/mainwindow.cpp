@@ -96,6 +96,11 @@ void MainWindow::createModels() {
   models.append(curODModel);
   models.append(networkGraphModel);
   models.append(cyCoModel);
+
+  QWidget *network = ui->networkGraphContents;
+  connect(network, SIGNAL(nodeChanged(uint8_t)), cyCoModel, SLOT(changeNodel(uint8_t)));
+  connect(network, SIGNAL(nodeChanged(uint8_t)), curODModel, SLOT(changeNodel(uint8_t)));
+  //connect(network, SIGNAL(nodeChanged(uint8_t)), odDescrModel, SLOT(changeNodel(uint8_t)));
 }
 
 void MainWindow::destroyModels() {

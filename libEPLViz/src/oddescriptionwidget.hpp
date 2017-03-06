@@ -35,7 +35,13 @@
 class ODDescriptionWidget : public QDockWidget {
   Q_OBJECT
 
+ private:
+  uint8_t node;
+
  public:
   ODDescriptionWidget(QWidget *parent = nullptr);
   ~ODDescriptionWidget()              = default;
+
+ public slots:
+  void changeNode(uint8_t n);
 };

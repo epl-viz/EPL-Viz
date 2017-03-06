@@ -67,5 +67,6 @@ class CurrentODModel : public QAbstractItemModel, public BaseModel {
 
  public slots:
   void updateNext();
+  void changeNode(uint8_t);
 };
 }

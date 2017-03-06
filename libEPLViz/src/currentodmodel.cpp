@@ -122,3 +122,7 @@ void CurrentODModel::update(EPL_DataCollect::Cycle *cycle) {
 void CurrentODModel::updateNext() {
   needUpdate = true;
 }
+
+void CurrentODModel::changeNode(uint8_t n) {
+  node = n;
+}

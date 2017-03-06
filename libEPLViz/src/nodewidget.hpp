@@ -41,6 +41,7 @@
 #include <QFrame>
 #include <QGridLayout>
 #include <QLabel>
+#include <QMouseEvent>
 #include <QPushButton>
 #include <QRadioButton>
 #include <QSize>

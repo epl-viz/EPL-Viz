@@ -57,7 +57,7 @@ class NodeWidget : public QStackedWidget {
 
  private:
   // clang-format off
-  const QString style = QString("#node%1 { background-color: %2; }");
+  const QString style = QString("#node%1 { background-color: %2; border-color: rgb(%3, 0, 0); }"); //TODO: Add border for stylesheet
 
   const QString statusFormat = QString("Status: %1"); //%1 is the status string
   const QString nameFormat = QString("%1 #%2");        //%1 is the node name, %2 its ID
@@ -71,6 +71,8 @@ class NodeWidget : public QStackedWidget {
   QString                   name;
   QString                   device;
   EPL_DataCollect::NMTState status;
+
+  int highlightingLevel = 0;
 
   QWidget *     minWidget;
   QWidget *     maxWidget;
@@ -105,4 +107,6 @@ class NodeWidget : public QStackedWidget {
 
  public slots:
   void minimizeChange(bool minimized);
+  void setHighlightingLevel(int level);
+  void updateStyleSheet();
 };

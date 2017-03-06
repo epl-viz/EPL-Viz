@@ -67,6 +67,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
   profileManager->getDefaultProfile()->readWindowSettings(this);
   captureInstance = std::make_unique<CaptureInstance>();
+
+  settingsWin = new SettingsWindow(this);
+  settingsWin->hide();
 }
 
 MainWindow::~MainWindow() {
@@ -74,6 +77,7 @@ MainWindow::~MainWindow() {
   destroyModels();
   delete profileManager;
   delete ui;
+  delete settingsWin;
 }
 
 void MainWindow::createModels() {
@@ -158,8 +162,7 @@ void MainWindow::openInterfacePicker() {
 }
 
 void MainWindow::openSettings() {
-  SettingsWindow *win = new SettingsWindow(this);
-  win->show();
+  settingsWin->show();
 }
 
 bool MainWindow::event(QEvent *event) {
@@ -281,5 +284,9 @@ void MainWindow::closeEvent(QCloseEvent *event) {
 }
 
 QWidget *MainWindow::getNetworkGraph() { return ui->networkGraphContents; }
+
+SettingsWindow *MainWindow::getSettingsWin() {
+    return settingsWin;
+}
 
 void MainWindow::handleResults(const QString &result) { qDebug() << "The result is\"" << result << "\""; }

@@ -47,10 +47,15 @@ void QWTPlotModel::init() {
 
   // TODO what the fuck am I doing
   CaptureInstance *         ci  = window->getCaptureInstance();
-  plugins::CSTimeSeriesPtr *tsp = dynamic_cast<plugins::CSTimeSeriesPtr *>(
-        ci->getStartCycle()->getCycleStorage(EPL_DataCollect::constants::EPL_DC_PLUGIN_TIME_SERIES_CSID));
+  Cycle *startC = ci->getStartCycle();
+  auto *cs = startC->getCycleStorage(EPL_DataCollect::constants::EPL_DC_PLUGIN_TIME_SERIES_CSID);
+  plugins::CSTimeSeriesPtr *tsp = dynamic_cast<plugins::CSTimeSeriesPtr *>(cs);
+
   // TODO add real values
-  timeSeries = std::make_shared<plugins::TimeSeries>(0, 0, 0);
+  int node = 0;
+  int index = 0;
+  int subindex = 0;
+  timeSeries = std::make_shared<plugins::TimeSeries>(1, 0x1006, 0);
   tsp->addTS(timeSeries);
 
   curve->attach(plot);

@@ -45,7 +45,7 @@ bool TimelineWidget::event(QEvent *event) {
     // Event gets thrown multiple times, even when not all children have been created
     if (plot) {
       // Configure axis
-      plot->enableAxis(QwtPlot::yLeft, false);
+      plot->enableAxis(QwtPlot::yLeft, true);
       plot->enableAxis(QwtPlot::xBottom, false);
       plot->enableAxis(QwtPlot::xTop, true);
 

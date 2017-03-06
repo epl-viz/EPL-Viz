@@ -33,10 +33,8 @@
 #include "basemodel.hpp"
 
 namespace EPL_Viz {
-class TimeLineModel : public EPL_Viz::BaseModel
-{
+class TimeLineModel : public EPL_Viz::BaseModel {
  private:
-
  public:
   TimeLineModel();
 
@@ -44,6 +42,5 @@ class TimeLineModel : public EPL_Viz::BaseModel
 
  protected:
   void update(EPL_DataCollect::Cycle *cycle);
-
 };
 }

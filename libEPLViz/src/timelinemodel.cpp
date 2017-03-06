@@ -31,15 +31,8 @@
 using namespace EPL_Viz;
 using namespace EPL_DataCollect;
 
-TimeLineModel::TimeLineModel()
-{
+TimeLineModel::TimeLineModel() {}
 
-}
+void TimeLineModel::init() {}
 
-void TimeLineModel::init() {
-
-}
-
-void TimeLineModel::update(Cycle *cycle) {
-
-}
+void TimeLineModel::update(Cycle *cycle) { (void)cycle; }

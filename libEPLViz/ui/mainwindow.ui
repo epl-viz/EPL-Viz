@@ -34,7 +34,7 @@
     <item row="0" column="0">
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
-       <number>0</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="tabNet">
        <attribute name="title">
@@ -76,7 +76,7 @@
         </item>
        </layout>
       </widget>
-      <widget class="QWidget" name="tabGraph">
+      <widget class="QWTPlotWidget" name="tabGraph">
        <attribute name="title">
         <string>Plot</string>
        </attribute>
@@ -96,7 +96,7 @@
      <x>0</x>
      <y>0</y>
      <width>1535</width>
-     <height>30</height>
+     <height>20</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -197,13 +197,6 @@
    </attribute>
    <widget class="QWidget" name="dockWidgetContents_6">
     <layout class="QGridLayout" name="gridLayout_2">
-     <item row="1" column="0">
-      <widget class="QScrollBar" name="hScrollTimeline">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-      </widget>
-     </item>
      <item row="0" column="0">
       <widget class="QwtPlot" name="qwtPlotTimeline">
        <property name="maximumSize">
@@ -685,6 +678,12 @@
     <slot>loadPlugins(EPL_DataCollect::CaptureInstance)</slot>
     <slot>disableWidget()</slot>
    </slots>
+  </customwidget>
+  <customwidget>
+   <class>QWTPlotWidget</class>
+   <extends>QWidget</extends>
+   <header>qwtplotwidget.hpp</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <resources>

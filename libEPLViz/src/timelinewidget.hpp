@@ -38,8 +38,9 @@ class TimelineWidget : public QDockWidget {
   Q_OBJECT
 
  private:
-  QwtPlotPicker *picker;
-  MainWindow *window;
+  QwtPlotPicker *point;
+  QwtPlotPicker *area;
+  MainWindow *   window;
 
  public:
   TimelineWidget(QWidget *parent = nullptr);

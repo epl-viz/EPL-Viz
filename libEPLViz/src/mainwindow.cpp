@@ -67,6 +67,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
   profileManager->getDefaultProfile()->readWindowSettings(this);
   captureInstance = std::make_unique<CaptureInstance>();
+
+  settingsWin = new SettingsWindow(this);
+  settingsWin->hide();
 }
 
 MainWindow::~MainWindow() {
@@ -74,6 +77,7 @@ MainWindow::~MainWindow() {
   destroyModels();
   delete profileManager;
   delete ui;
+  delete settingsWin;
 }
 
 void MainWindow::createModels() {
@@ -84,11 +88,13 @@ void MainWindow::createModels() {
   CurrentODModel *curODModel = new CurrentODModel(this);
   connect(this, SIGNAL(cycleChanged()), curODModel, SLOT(updateNext()));
 
+  NetworkGraphModel *networkGraphModel = new NetworkGraphModel(this);
+
   models.append(new PacketHistoryModel(this));
   models.append(new PythonLogModel(this));
   models.append(new QWTPlotModel(this));
-  // models.append(new CurrentODModel(this));
-  models.append(new NetworkGraphModel(this));
+  models.append(curODModel);
+  models.append(networkGraphModel);
   models.append(cyCoModel);
 }
 
@@ -158,8 +164,7 @@ void MainWindow::openInterfacePicker() {
 }
 
 void MainWindow::openSettings() {
-  SettingsWindow *win = new SettingsWindow(this);
-  win->show();
+  settingsWin->show();
 }
 
 bool MainWindow::event(QEvent *event) {
@@ -266,6 +271,7 @@ void MainWindow::changeState(GUIState nState) {
 }
 
 void MainWindow::config() {
+  emit recordingStarted(getCaptureInstance());
   captureInstance->getPluginManager()->addPlugin(std::make_shared<plugins::TimeSeriesBuilder>());
   captureInstance->registerCycleStorage<plugins::CSTimeSeriesPtr>(
         EPL_DataCollect::constants::EPL_DC_PLUGIN_TIME_SERIES_CSID);
@@ -281,5 +287,9 @@ void MainWindow::closeEvent(QCloseEvent *event) {
 }
 
 QWidget *MainWindow::getNetworkGraph() { return ui->networkGraphContents; }
+
+SettingsWindow *MainWindow::getSettingsWin() {
+    return settingsWin;
+}
 
 void MainWindow::handleResults(const QString &result) { qDebug() << "The result is\"" << result << "\""; }

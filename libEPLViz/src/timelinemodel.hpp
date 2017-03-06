@@ -24,45 +24,26 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 /*!
- * \file timelinewidget.cpp
+ * \file timelinemodel.hpp
  */
-#include "timelinewidget.hpp"
-#include <QDebug>
-#include <QEvent>
-#include <qwt_event_pattern.h>
-#include <qwt_picker_machine.h>
-#include <qwt_plot.h>
-#include <stdio.h>
-#include "mainwindow.hpp"
 
-TimelineWidget::TimelineWidget(QWidget *parent) : QDockWidget(parent) {}
+#pragma once
 
-bool TimelineWidget::event(QEvent *event) {
-  // Only handling Polish events
-  if (event->type() == QEvent::Polish) {
-    qDebug() << "Polish event thrown";
-    QwtPlot *plot = this->findChild<QwtPlot *>("qwtPlotTimeline");
-    // Event gets thrown multiple times, even when not all children have been created
-    if (plot) {
-      // Configure axis
-      plot->enableAxis(QwtPlot::yLeft, true);
-      plot->enableAxis(QwtPlot::xBottom, false);
-      plot->enableAxis(QwtPlot::xTop, true);
+#include "Cycle.hpp"
+#include "basemodel.hpp"
 
-      // Configure PlotPicker
-      picker = new QwtPlotPicker(plot->canvas());
-      picker->setStateMachine(new QwtPickerClickPointMachine());
-      picker->setMousePattern(QwtEventPattern::MousePatternCode::MouseSelect1, Qt::MouseButton::LeftButton);
-      connect(picker, SIGNAL(selected(QPointF)), this, SLOT(pointSelected(QPointF)));
+namespace EPL_Viz {
+class TimeLineModel : public EPL_Viz::BaseModel
+{
+ private:
 
-    } else {
-      qDebug() << "PlotTimeline not found, this is ok";
-    }
-  }
-  return QWidget::event(event);
-}
+ public:
+  TimeLineModel();
 
-void TimelineWidget::pointSelected(const QPointF &pa) {
-  qDebug() << "Clicked on Timeline at point " << pa.x();
-  window->changeCycle(pa.x());
+  void init();
+
+ protected:
+  void update(EPL_DataCollect::Cycle *cycle);
+
+};
 }

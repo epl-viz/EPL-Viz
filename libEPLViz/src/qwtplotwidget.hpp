@@ -29,12 +29,19 @@
  */
 #pragma once
 
-#include <QDockWidget>
+#include <QWidget>
+#include <qwt_plot.h>
+#include <QRectF>
 
-class QWTPlotWidget : public QDockWidget {
+class QWTPlotWidget : public QWidget {
   Q_OBJECT
+
+ private:
 
  public:
   QWTPlotWidget(QWidget *parent = nullptr);
   ~QWTPlotWidget()              = default;
+
+ public slots:
+  void changeArea(QRectF rect);
 };

@@ -41,5 +41,5 @@ void TimeLineModel::init() {
 }
 
 void TimeLineModel::update(Cycle *cycle) {
-
+  (void) cycle;
 }

@@ -34,8 +34,11 @@
 #include <qwt_plot.h>
 #include <stdio.h>
 #include "mainwindow.hpp"
+#include "qwtplotwidget.hpp"
 
-TimelineWidget::TimelineWidget(QWidget *parent) : QDockWidget(parent) {}
+TimelineWidget::TimelineWidget(QWidget *parent) : QDockWidget(parent) {
+  window = dynamic_cast<MainWindow *>(parent);
+}
 
 bool TimelineWidget::event(QEvent *event) {
   // Only handling Polish events
@@ -50,10 +53,16 @@ bool TimelineWidget::event(QEvent *event) {
       plot->enableAxis(QwtPlot::xTop, true);
 
       // Configure PlotPicker
-      picker = new QwtPlotPicker(plot->canvas());
-      picker->setStateMachine(new QwtPickerClickPointMachine());
-      picker->setMousePattern(QwtEventPattern::MousePatternCode::MouseSelect1, Qt::MouseButton::LeftButton);
-      connect(picker, SIGNAL(selected(QPointF)), this, SLOT(pointSelected(QPointF)));
+      point = new QwtPlotPicker(plot->canvas());
+      point->setStateMachine(new QwtPickerClickPointMachine());
+      point->setMousePattern(QwtEventPattern::MousePatternCode::MouseSelect1, Qt::MouseButton::LeftButton);
+
+      area = new QwtPlotPicker(plot->canvas());
+      area->setStateMachine(new QwtPickerDragRectMachine());
+      area->setMousePattern(QwtEventPattern::MousePatternCode::MouseSelect1, Qt::MouseButton::LeftButton);
+
+      connect(point, SIGNAL(selected(QPointF)), this, SLOT(pointSelected(QPointF)));
+      connect(area, SIGNAL(selected(QRectF)), window->findChild<QWTPlotWidget*>("tabGraph"), SLOT(changeArea(QRectF)));
 
     } else {
       qDebug() << "PlotTimeline not found, this is ok";

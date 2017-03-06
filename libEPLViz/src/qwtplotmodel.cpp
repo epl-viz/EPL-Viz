@@ -52,9 +52,6 @@ void QWTPlotModel::init() {
   plugins::CSTimeSeriesPtr *tsp = dynamic_cast<plugins::CSTimeSeriesPtr *>(cs);
 
   // TODO add real values
-  int node = 0;
-  int index = 0;
-  int subindex = 0;
   timeSeries = std::make_shared<plugins::TimeSeries>(1, 0x1006, 0);
   tsp->addTS(timeSeries);
 

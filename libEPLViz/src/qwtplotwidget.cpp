@@ -30,4 +30,12 @@
 
 #include "qwtplotwidget.hpp"
 
-QWTPlotWidget::QWTPlotWidget(QWidget *parent) : QDockWidget(parent) {}
+QWTPlotWidget::QWTPlotWidget(QWidget *parent) : QWidget(parent) {
+
+}
+
+void QWTPlotWidget::changeArea(QRectF rect) {
+  QwtPlot *plot = findChild<QwtPlot*>("qwtPlot");
+  plot->setAxisScale(QwtPlot::Axis::xBottom, rect.left(), rect.right());
+  plot->replot();
+}

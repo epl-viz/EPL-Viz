@@ -34,6 +34,7 @@
 #include "interfacepicker.hpp"
 #include "networkgraphmodel.hpp"
 #include "pluginswindow.hpp"
+#include "settingswindow.hpp"
 #include "ui_mainwindow.h"
 #include <memory>
 #include <wiretap/wtap.h>
@@ -156,6 +157,11 @@ void MainWindow::openPluginEditor() {
 void MainWindow::openInterfacePicker() {
   InterfacePicker *picker = new InterfacePicker(this, getCaptureInstance());
   picker->show();
+}
+
+void MainWindow::openSettings() {
+  SettingsWindow *win = new SettingsWindow(this);
+  win->show();
 }
 
 bool MainWindow::event(QEvent *event) {

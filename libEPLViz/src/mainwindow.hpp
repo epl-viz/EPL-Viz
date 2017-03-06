@@ -117,6 +117,7 @@ class MainWindow : public QMainWindow {
   void setFullscreen(bool makeFullscreen);
   void openPluginEditor();
   void openInterfacePicker();
+  void openSettings();
   void save();
   void saveAs();
   void open();

@@ -96,7 +96,7 @@
      <x>0</x>
      <y>0</y>
      <width>1535</width>
-     <height>20</height>
+     <height>30</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -876,5 +876,6 @@
   <slot>startRecording()</slot>
   <slot>stopRecording()</slot>
   <slot>open()</slot>
+  <slot>openSettings()</slot>
  </slots>
 </ui>

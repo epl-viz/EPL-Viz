@@ -207,6 +207,8 @@ else( USE_SYSTEM_PACKETS )
       "${EPL_DC_LIB_DIR}/${CMAKE_STATIC_LIBRARY_PREFIX}eplp_timeSeries${CMAKE_STATIC_LIBRARY_SUFFIX}"
       "${EPL_DC_LIB_DIR}/${CMAKE_SHARED_LIBRARY_PREFIX}eplp_python${CMAKE_SHARED_LIBRARY_SUFFIX}"
       "${EPL_DC_LIB_DIR}/${CMAKE_STATIC_LIBRARY_PREFIX}eplp_python${CMAKE_STATIC_LIBRARY_SUFFIX}"
+      "${EPL_DC_LIB_DIR}/${CMAKE_SHARED_LIBRARY_PREFIX}eplp_defaultFilter${CMAKE_SHARED_LIBRARY_SUFFIX}"
+      "${EPL_DC_LIB_DIR}/${CMAKE_STATIC_LIBRARY_PREFIX}eplp_defaultFilter${CMAKE_STATIC_LIBRARY_SUFFIX}"
 
   )
 
@@ -214,14 +216,18 @@ else( USE_SYSTEM_PACKETS )
   add_library( epl_DataCollect_static STATIC IMPORTED )
   add_library( eplp_timeSeries_shared SHARED IMPORTED )
   add_library( eplp_timeSeries_static STATIC IMPORTED )
-  add_library( eplp_python_static STATIC IMPORTED )
   add_library( eplp_python_shared SHARED IMPORTED )
-  set_target_properties( epl_DataCollect_shared PROPERTIES IMPORTED_LOCATION "${EPL_DC_LIB_DIR}/${CMAKE_SHARED_LIBRARY_PREFIX}epl_DataCollect${CMAKE_SHARED_LIBRARY_SUFFIX}" )
-  set_target_properties( epl_DataCollect_static PROPERTIES IMPORTED_LOCATION "${EPL_DC_LIB_DIR}/${CMAKE_STATIC_LIBRARY_PREFIX}epl_DataCollect${CMAKE_STATIC_LIBRARY_SUFFIX}" )
-  set_target_properties( eplp_timeSeries_shared PROPERTIES IMPORTED_LOCATION "${EPL_DC_LIB_DIR}/${CMAKE_SHARED_LIBRARY_PREFIX}eplp_timeSeries${CMAKE_SHARED_LIBRARY_SUFFIX}" )
-  set_target_properties( eplp_timeSeries_static PROPERTIES IMPORTED_LOCATION "${EPL_DC_LIB_DIR}/${CMAKE_STATIC_LIBRARY_PREFIX}eplp_timeSeries${CMAKE_STATIC_LIBRARY_SUFFIX}" )
-  set_target_properties( eplp_python_shared     PROPERTIES IMPORTED_LOCATION "${EPL_DC_LIB_DIR}/${CMAKE_SHARED_LIBRARY_PREFIX}eplp_python${CMAKE_SHARED_LIBRARY_SUFFIX}" )
-  set_target_properties( eplp_python_static     PROPERTIES IMPORTED_LOCATION "${EPL_DC_LIB_DIR}/${CMAKE_STATIC_LIBRARY_PREFIX}eplp_python${CMAKE_STATIC_LIBRARY_SUFFIX}" )
+  add_library( eplp_python_static STATIC IMPORTED )
+  add_library( eplp_defaultFilter_shared SHARED IMPORTED )
+  add_library( eplp_defaultFilter_static STATIC IMPORTED )
+  set_target_properties( epl_DataCollect_shared    PROPERTIES IMPORTED_LOCATION "${EPL_DC_LIB_DIR}/${CMAKE_SHARED_LIBRARY_PREFIX}epl_DataCollect${CMAKE_SHARED_LIBRARY_SUFFIX}" )
+  set_target_properties( epl_DataCollect_static    PROPERTIES IMPORTED_LOCATION "${EPL_DC_LIB_DIR}/${CMAKE_STATIC_LIBRARY_PREFIX}epl_DataCollect${CMAKE_STATIC_LIBRARY_SUFFIX}" )
+  set_target_properties( eplp_timeSeries_shared    PROPERTIES IMPORTED_LOCATION "${EPL_DC_LIB_DIR}/${CMAKE_SHARED_LIBRARY_PREFIX}eplp_timeSeries${CMAKE_SHARED_LIBRARY_SUFFIX}" )
+  set_target_properties( eplp_timeSeries_static    PROPERTIES IMPORTED_LOCATION "${EPL_DC_LIB_DIR}/${CMAKE_STATIC_LIBRARY_PREFIX}eplp_timeSeries${CMAKE_STATIC_LIBRARY_SUFFIX}" )
+  set_target_properties( eplp_python_shared        PROPERTIES IMPORTED_LOCATION "${EPL_DC_LIB_DIR}/${CMAKE_SHARED_LIBRARY_PREFIX}eplp_python${CMAKE_SHARED_LIBRARY_SUFFIX}" )
+  set_target_properties( eplp_python_static        PROPERTIES IMPORTED_LOCATION "${EPL_DC_LIB_DIR}/${CMAKE_STATIC_LIBRARY_PREFIX}eplp_python${CMAKE_STATIC_LIBRARY_SUFFIX}" )
+  set_target_properties( eplp_defaultFilter_shared PROPERTIES IMPORTED_LOCATION "${EPL_DC_LIB_DIR}/${CMAKE_SHARED_LIBRARY_PREFIX}eplp_defaultFilter${CMAKE_SHARED_LIBRARY_SUFFIX}" )
+  set_target_properties( eplp_defaultFilter_static PROPERTIES IMPORTED_LOCATION "${EPL_DC_LIB_DIR}/${CMAKE_STATIC_LIBRARY_PREFIX}eplp_defaultFilter${CMAKE_STATIC_LIBRARY_SUFFIX}" )
 
 endif( USE_SYSTEM_PACKETS )
 
@@ -237,14 +243,16 @@ new_project_library(
   PATH         "${PROJECT_SOURCE_DIR}/libEPLViz"
   NAME         "libEPLViz"
   TEMPLATE     "${EPL_VIZ_TEMPLATES_DIR}/CMakeLists.lib.txt"
-  DEPENDENCIES ${EPL_VIZ_QT_DEP_LIST} epl_DataCollect_shared Qwt::Qwt KF5::TextEditor eplp_timeSeries_shared eplp_python_shared
+  DEPENDENCIES ${EPL_VIZ_QT_DEP_LIST}
+    epl_DataCollect_shared Qwt::Qwt KF5::TextEditor
+    eplp_timeSeries_shared eplp_python_shared eplp_defaultFilter_shared
 )
 
 new_project_executable(
   PATH         "${PROJECT_SOURCE_DIR}/epl-viz"
   NAME         "EPLViz"
   TEMPLATE     "${EPL_VIZ_TEMPLATES_DIR}/CMakeLists.exe.txt"
-  DEPENDENCIES libEPLViz Qwt::Qwt KF5::TextEditor eplp_timeSeries_shared eplp_python_shared
+  DEPENDENCIES libEPLViz Qwt::Qwt KF5::TextEditor eplp_timeSeries_shared eplp_python_shared eplp_defaultFilter_shared
 )
 
 if( NOT DISABLE_TESTS )
@@ -252,7 +260,9 @@ if( NOT DISABLE_TESTS )
     PATH         "${PROJECT_SOURCE_DIR}/tests"
     NAME         "tests"
     TEMPLATE     "${EPL_VIZ_TEMPLATES_DIR}/CMakeLists.exe.txt"
-    DEPENDENCIES libEPLViz epl_DataCollect_shared Qwt::Qwt KF5::TextEditor eplp_timeSeries_shared eplp_python_shared
+    DEPENDENCIES
+      libEPLViz epl_DataCollect_shared Qwt::Qwt KF5::TextEditor
+      eplp_timeSeries_shared eplp_python_shared eplp_defaultFilter_shared
   )
 endif( NOT DISABLE_TESTS )
 

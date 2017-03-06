@@ -66,8 +66,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>744</width>
-             <height>359</height>
+             <width>930</width>
+             <height>284</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_15">
@@ -341,20 +341,13 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>759</width>
-             <height>359</height>
+             <width>930</width>
+             <height>451</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_17">
             <item row="0" column="0">
-             <widget class="QLabel" name="plotCanvas">
-              <property name="text">
-               <string>No plot given by a python plugin</string>
-              </property>
-              <property name="alignment">
-               <set>Qt::AlignCenter</set>
-              </property>
-             </widget>
+             <widget class="QwtPlot" name="qwtPlot"/>
             </item>
            </layout>
           </widget>
@@ -372,7 +365,7 @@
      <x>0</x>
      <y>0</y>
      <width>1535</width>
-     <height>26</height>
+     <height>20</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -929,7 +922,7 @@
    <widget class="QWidget" name="dockWidgetContents_9">
     <layout class="QGridLayout" name="gridLayout_20">
      <item row="0" column="0">
-      <widget class="QListView" name="pythonLogView"/>
+      <widget class="QTableView" name="pythonLogView"/>
      </item>
     </layout>
    </widget>
@@ -953,8 +946,8 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>317</width>
-          <height>214</height>
+          <width>279</width>
+          <height>92</height>
          </rect>
         </property>
         <layout class="QGridLayout" name="gridLayout_22">

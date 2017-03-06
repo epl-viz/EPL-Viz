@@ -41,18 +41,21 @@ namespace EPL_Viz {
 class ProfileManager {
  private:
   QSettings *appSettings;
-  QMap<QString, Profile *> *profiles;
 
  public:
   ProfileManager();
   ~ProfileManager();
 
-  Profile *getDefaultProfile(QString profile);
+  Profile *getDefaultProfile();
+  /**
+   * @brief getProfile Returns the profile with the given name
+   * If the profile does not exist, it will be created and returned
+   * @param profileName
+   * @return
+   */
+  Profile *getProfile(QString profileName);
   std::vector<QString> getProfiles();
 
   void setDefaultProfile(Profile *profile);
-
-  void writeWindowSettings(MainWindow *window);
-  void readWindowSettings(MainWindow *window);
 };
 }

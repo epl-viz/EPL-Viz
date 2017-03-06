@@ -24,41 +24,9 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 /*!
- * \file qwtplotmodel.hpp
+ * \file interfacelistwidget.cpp
  */
-#pragma once
 
-#include "EPLVizDefines.hpp"
-#include "EventLog.hpp"
-#include "TimeSeries.hpp"
-#include "basemodel.hpp"
+#include "interfacelistwidget.hpp"
 
-#include <qwt_plot.h>
-#include <qwt_plot_curve.h>
-
-#include <QObject>
-
-class MainWindow;
-
-namespace EPL_Viz {
-class QWTPlotModel : public QObject, public EPL_Viz::BaseModel {
-  Q_OBJECT
-
- private:
-  MainWindow *                                          window;
-  QwtPlot *                                             plot;
-  QwtPlotCurve *                                        curve;
-  std::shared_ptr<EPL_DataCollect::plugins::TimeSeries> timeSeries;
-
- public:
-  QWTPlotModel(MainWindow *win);
-  ~QWTPlotModel();
-  void init();
-
- protected:
-  mockable void update(EPL_DataCollect::Cycle *cycle);
-
- signals:
-  void requestRedraw();
-};
-}
+InterfaceListWidget::InterfaceListWidget(QWidget *parent) : QListWidget(parent) {}

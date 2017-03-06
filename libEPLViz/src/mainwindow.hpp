@@ -27,6 +27,7 @@
  * \file mainwindow.hpp
  */
 #pragma once
+#include "defines.hpp"
 #include "CaptureInstance.hpp"
 #include "EPLVizDefines.hpp"
 #include "basemodel.hpp"
@@ -64,6 +65,7 @@ class MainWindow : public QMainWindow {
   EPL_Viz::ModelThread *                            modelThread;
   QLinkedList<EPL_Viz::BaseModel *>                 models;
   std::unique_ptr<EPL_DataCollect::CaptureInstance> captureInstance;
+  QString                                           interface;
 
  public:
   explicit MainWindow(QWidget *parent = nullptr);
@@ -122,4 +124,5 @@ class MainWindow : public QMainWindow {
  signals:
   void operate(const QString &);
   void close();
+  void cycleChanged();
 };

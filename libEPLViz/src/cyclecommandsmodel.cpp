@@ -30,7 +30,6 @@
 #include "cyclecommandsmodel.hpp"
 #include "Cycle.hpp"
 #include "mainwindow.hpp"
-#include <QTreeView>
 using namespace EPL_Viz;
 using namespace EPL_DataCollect;
 
@@ -40,12 +39,12 @@ CycleCommandsModel::CycleCommandsModel(QObject *parent) : QAbstractItemModel(par
            << "Index"
            << "Value"
            << "Other";
-  rootItem        = new CyCoTreeItem(rootData);
-  QTreeView *view = static_cast<MainWindow *>(parent)->findChild<QTreeView *>("cycleCommandsView");
-  if (view == nullptr)
-    qDebug() << "Could not find child";
-  else
-    view->setModel(this);
+  rootItem = new CyCoTreeItem(rootData);
+  view     = static_cast<MainWindow *>(parent)->findChild<QTreeView *>("cycleCommandsView");
+  view->setModel(this);
+  view->setDisabled(true);
+  view->setToolTip("Please start a capture or replay and select a Node");
+  needUpdate = false;
 }
 
 CycleCommandsModel::~CycleCommandsModel() { delete rootItem; }
@@ -142,4 +141,29 @@ QVariant CycleCommandsModel::data(const QModelIndex &index, int role) const {
 
 void CycleCommandsModel::init() {}
 
-void CycleCommandsModel::update(Cycle *cycle) { (void)cycle; }
+void CycleCommandsModel::update(Cycle *cycle) {
+  if (!needUpdate)
+    return;
+
+  std::vector<Packet> packets = cycle->getPackets();
+
+  // Delete old tree and add new
+  beginResetModel();
+  rootItem->removeChildren(0, rootItem->childCount());
+
+  for (uint32_t i = 0; i < packets.size(); ++i) {
+    rootItem->insertChildren(i, 1);
+    // Root Packets
+    rootItem->child(i)->setData(0, QVariant("Frame " + QString::number(i)));
+    // TODO set children
+  }
+  endResetModel();
+}
+
+void CycleCommandsModel::updateNext() { needUpdate = true; }
+
+void CycleCommandsModel::changeNode(uint8_t newNode) {
+  selectedNode = newNode;
+  view->setEnabled(true);
+  updateNext();
+}

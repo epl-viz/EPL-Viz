@@ -32,6 +32,7 @@
 #include "basemodel.hpp"
 #include "cycotreeitem.hpp"
 #include <QAbstractItemModel>
+#include <QTreeView>
 
 namespace EPL_Viz {
 class CycleCommandsModel : public QAbstractItemModel, public BaseModel {
@@ -58,11 +59,18 @@ class CycleCommandsModel : public QAbstractItemModel, public BaseModel {
   void init() override;
 
  private:
+  uint8_t       selectedNode;
+  bool          needUpdate;
   CyCoTreeItem *rootItem;
+  QTreeView *   view;
 
   CyCoTreeItem *getItem(const QModelIndex &index) const;
 
  protected:
   mockable void update(EPL_DataCollect::Cycle *cycle) override;
+
+ public slots:
+  void updateNext();
+  void changeNode(uint8_t newNode);
 };
 }

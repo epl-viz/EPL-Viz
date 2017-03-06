@@ -27,6 +27,7 @@
  * \file mainwindow.cpp
  */
 #include "mainwindow.hpp"
+#include "CSTimeSeriesPtr.hpp"
 #include "EPLVizEnum2Str.hpp"
 #include "TimeSeriesBuilder.hpp"
 #include "cyclecommandsmodel.hpp"
@@ -64,7 +65,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
   connect(this, SIGNAL(close()), modelThread, SLOT(stop()));
 
-  profileManager->readWindowSettings(this);
+  profileManager->getDefaultProfile()->readWindowSettings(this);
 }
 
 MainWindow::~MainWindow() {
@@ -76,12 +77,14 @@ MainWindow::~MainWindow() {
 
 void MainWindow::createModels() {
   // Create and add Models here
-  // TODO disabled because of unfinished Cycle generation/getting
+  CycleCommandsModel *cyCoModel = new CycleCommandsModel(this);
+  connect(this, SIGNAL(cycleChanged()), cyCoModel, SLOT(updateNext()));
+
   models.append(new PacketHistoryModel(this));
-  // models.append(new PythonLogModel(this));
-  // models.append(new QWTPlotModel(this));
+  models.append(new PythonLogModel(this));
+  models.append(new QWTPlotModel(this));
   // models.append(new CurrentODModel(this));
-  models.append(new CycleCommandsModel(this));
+  models.append(cyCoModel);
 }
 
 void MainWindow::destroyModels() {
@@ -117,7 +120,10 @@ bool MainWindow::changeTime(double t) {
 
 bool MainWindow::changeCycle(uint32_t cycle) {
   if (machineState == GUIState::STOPPED) {
-    curCycle = cycle;
+    if (curCycle != cycle) {
+      curCycle = cycle;
+      emit cycleChanged();
+    }
     return true;
   } else {
     return false;
@@ -200,7 +206,7 @@ void MainWindow::changeState(GUIState nState) {
   // TODO other states (and maybe implement a real state machine in modelthread)
   // switch with old state
   switch (machineState) {
-    case GUIState::UNINIT: BaseModel::initAll(); break;
+    case GUIState::UNINIT: break;
     case GUIState::RECORDING: break;
     case GUIState::PAUSED: break;
     case GUIState::STOPPED: break;
@@ -212,27 +218,34 @@ void MainWindow::changeState(GUIState nState) {
       captureInstance = std::make_unique<CaptureInstance>();
       findChild<QAction *>("actionStart_Recording")->setEnabled(true);
       findChild<QAction *>("actionStop_Recording")->setEnabled(false);
+      findChild<QAction *>("actionSave")->setEnabled(false);
+      findChild<QAction *>("actionSave_As")->setEnabled(false);
       break;
     case GUIState::PLAYING: break;
     case GUIState::RECORDING:
+      BaseModel::initAll(); // TODO do we need to do this here
       captureInstance->getPluginManager()->addPlugin(std::make_shared<plugins::TimeSeriesBuilder>());
+      captureInstance->registerCycleStorage<plugins::CSTimeSeriesPtr>(
+            EPL_DataCollect::constants::EPL_DC_PLUGIN_TIME_SERIES_CSID);
       findChild<QAction *>("actionStart_Recording")->setEnabled(false);
       findChild<QAction *>("actionStop_Recording")->setEnabled(true);
       // TODO
-      captureInstance->startRecording("eth0");
+      captureInstance->startRecording(interface.toStdString());
       break;
     case GUIState::PAUSED: break;
     case GUIState::STOPPED:
       findChild<QAction *>("actionStop_Recording")->setEnabled(false);
       findChild<QAction *>("actionStart_Recording")->setEnabled(true);
       captureInstance->stopRecording();
+      findChild<QAction *>("actionSave")->setEnabled(true);
+      findChild<QAction *>("actionSaveAs")->setEnabled(true);
       break;
   }
   machineState = nState;
 }
 
 void MainWindow::closeEvent(QCloseEvent *event) {
-  profileManager->writeWindowSettings(this);
+  profileManager->getDefaultProfile()->writeWindowSettings(this);
   emit close();
   QWidget::closeEvent(event);
 }

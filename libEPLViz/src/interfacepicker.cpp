@@ -25,7 +25,6 @@
  */
 /*!
  * \file interfacepicker.cpp
- * \todo Implement
  */
 
 #include "interfacepicker.hpp"
@@ -35,3 +34,17 @@ using namespace EPL_Viz;
 InterfacePicker::InterfacePicker(QWidget *parent) : QDialog(parent), ui(new Ui::InterfacePicker) { ui->setupUi(this); }
 
 InterfacePicker::~InterfacePicker() { delete ui; }
+
+bool InterfacePicker::event(QEvent *event) {
+  // configure stuff
+  if (event->type() == QEvent::Polish) {
+    updateList();
+  }
+  return QDialog::event(event);
+}
+
+void InterfacePicker::updateList() {
+  QListWidget *list = findChild<QListWidget *>("interfaceList");
+  (void)list;
+  // TODO add to list and add sigslo for enter
+}

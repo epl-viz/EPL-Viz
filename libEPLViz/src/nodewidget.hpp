@@ -36,6 +36,7 @@
 #pragma once
 
 #include "EPLEnum2Str.hpp"
+#include "Node.hpp"
 #include "EPLEnums.h"
 #include <QFrame>
 #include <QGridLayout>
@@ -46,6 +47,7 @@
 #include <QStackedWidget>
 #include <QString>
 #include <QTreeWidget>
+#include <QTreeWidgetItem>
 #include <QVBoxLayout>
 #include <QWidget>
 
@@ -63,17 +65,18 @@ class NodeWidget : public QStackedWidget {
   const QSize minSize = QSize(100, 100);
   // clang-format on
 
-  uint8_t                     id;
-  QString                     name;
-  QString                     device;
-  EPL_DataCollect::NodeStatus status = EPL_DataCollect::NodeStatus::UNKNOWN;
+  uint8_t                   id;
+  QString                   idString;
+  QString                   name;
+  QString                   device;
+  EPL_DataCollect::NMTState status;
 
   QWidget *     minWidget;
   QWidget *     maxWidget;
   QFrame *      line;
   QLabel *      nameLabel;
   QLabel *      statusLabel;
-  QTreeWidget * odList;
+  QTreeWidget * advancedInfo;
   QLabel *      typeLabel;
   QPushButton * minimizeButton;
   QRadioButton *advanced;
@@ -81,11 +84,16 @@ class NodeWidget : public QStackedWidget {
   bool isMinimized = true;
 
  public:
-  NodeWidget(uint8_t _id, QString _name, QString _device, QWidget *parent = nullptr);
+  NodeWidget(EPL_DataCollect::Node *node, QWidget *parent = nullptr);
   ~NodeWidget() = default;
 
-  void updateStatus(EPL_DataCollect::NodeStatus newStatus);
-  static QString statusToBackground(EPL_DataCollect::NodeStatus status);
+  static QString statusToBackground(EPL_DataCollect::NMTState status);
+
+  void updateData(EPL_DataCollect::Node *node);
+
+ private:
+  void updateAdvancedInfo(EPL_DataCollect::Node::IDENT identity);
+  void updateStatus(EPL_DataCollect::NMTState newStatus);
 
  public slots:
   void minimizeChange(bool minimized);

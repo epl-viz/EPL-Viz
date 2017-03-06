@@ -29,11 +29,18 @@
 
 #include "nodewidget.hpp"
 
-NodeWidget::NodeWidget(uint8_t _id, QString _name, QString _device, QWidget *parent) : QStackedWidget(parent) {
-  id     = _id;
-  name   = _name;
-  device = _device;
-  setObjectName(QStringLiteral("node") + QString::number(_id));
+NodeWidget::NodeWidget(EPL_DataCollect::Node *node, QWidget *parent) : QStackedWidget(parent) {
+  id       = node->getID();
+  idString = QString::number(id);
+
+  auto identity = node->getIdentity();
+
+  name   = QString::fromStdString(identity.HostName);
+  device = QString::fromStdString(identity.DeviceType);
+  status = node->getStatus();
+
+
+  setObjectName(QStringLiteral("node") + idString);
 
   // Create widget for minimized view
   minWidget = new QWidget(this);
@@ -47,34 +54,70 @@ NodeWidget::NodeWidget(uint8_t _id, QString _name, QString _device, QWidget *par
 
   // Create seperator line
   line = new QFrame(this);
-  line->setObjectName(QStringLiteral("line") + QString::number(_id));
+  line->setObjectName(QStringLiteral("line") + idString);
   line->setFrameShadow(QFrame::Plain);
   line->setFrameShape(QFrame::HLine);
 
   // Create name label
   nameLabel = new QLabel(this);
-  nameLabel->setObjectName(QStringLiteral("name") + QString::number(_id));
+  nameLabel->setObjectName(QStringLiteral("name") + idString);
+  nameLabel->setText(nameFormat.arg(name, idString));
 
   // Create status label
   statusLabel = new QLabel(this);
-  statusLabel->setObjectName(QStringLiteral("status") + QString::number(_id));
+  statusLabel->setObjectName(QStringLiteral("status") + idString);
+  statusLabel->setObjectName(statusFormat.arg(QString::fromStdString(EPL_DataCollect::EPLEnum2Str::toStr(status))));
 
-  // Create ODList
-  odList = new QTreeWidget(this);
-  odList->setObjectName(QStringLiteral("odList") + QString::number(_id));
-  odList->setEnabled(true);
-  odList->setAutoFillBackground(false);
-  odList->setStyleSheet(QStringLiteral(""));
-  odList->setVisible(false); // Hide it until the user checks 'advanced'
+  // Create advanced information tree
+  advancedInfo = new QTreeWidget(this);
+  advancedInfo->setObjectName(QStringLiteral("advancedInfo") + idString);
+  advancedInfo->setEnabled(true);
+  advancedInfo->setAutoFillBackground(false);
+  advancedInfo->setStyleSheet(QStringLiteral(""));
+  advancedInfo->setVisible(false);        // Hide it until the user checks 'advanced'
+  advancedInfo->setSortingEnabled(false); // Do not sort values
+
+  // Fill the advanced information tree with values
+  QTreeWidgetItem *dev = new QTreeWidgetItem(advancedInfo);
+  dev->setText(0, QString("Device"));
+
+  QTreeWidgetItem *net = new QTreeWidgetItem(advancedInfo);
+  net->setText(0, QString("Network"));
+
+  // Device information
+  QTreeWidgetItem *vid = new QTreeWidgetItem(dev);
+  vid->setText(0, QString("Vendor ID"));
+
+  QTreeWidgetItem *prdc = new QTreeWidgetItem(dev);
+  prdc->setText(0, QString("Product Code"));
+
+  QTreeWidgetItem *sno = new QTreeWidgetItem(dev);
+  sno->setText(0, QString("Serial Number"));
+
+  QTreeWidgetItem *rno = new QTreeWidgetItem(dev);
+  rno->setText(0, QString("Revision Number"));
+
+  // Networking information
+  QTreeWidgetItem *ipa = new QTreeWidgetItem(net);
+  ipa->setText(0, QString("IP Address"));
+
+  QTreeWidgetItem *snm = new QTreeWidgetItem(net);
+  snm->setText(0, QString("Subnet Mask"));
+
+  QTreeWidgetItem *gtw = new QTreeWidgetItem(net);
+  gtw->setText(0, QString("Default Gateway"));
+
+  // Update the information
+  updateAdvancedInfo(identity);
 
   // Create type label
   typeLabel = new QLabel(this);
-  typeLabel->setObjectName(QStringLiteral("type") + QString::number(_id));
+  typeLabel->setObjectName(QStringLiteral("type") + idString);
   typeLabel->setStyleSheet(QStringLiteral(""));
 
   // Create the minimize/maximize button
   minimizeButton = new QPushButton(this);
-  minimizeButton->setObjectName(QStringLiteral("minimizeButton") + QString::number(_id));
+  minimizeButton->setObjectName(QStringLiteral("minimizeButton") + idString);
   minimizeButton->setMinimumSize(QSize(13, 13));
   minimizeButton->setMaximumSize(QSize(13, 13));
   minimizeButton->setStyleSheet(QStringLiteral(""));
@@ -89,7 +132,7 @@ NodeWidget::NodeWidget(uint8_t _id, QString _name, QString _device, QWidget *par
 
   // Create the advanced button
   advanced = new QRadioButton(this);
-  advanced->setObjectName(QStringLiteral("advanced") + QString::number(_id));
+  advanced->setObjectName(QStringLiteral("advanced") + idString);
   advanced->setStyleSheet(QStringLiteral(""));
   advanced->setChecked(true);
 
@@ -97,13 +140,13 @@ NodeWidget::NodeWidget(uint8_t _id, QString _name, QString _device, QWidget *par
   QGridLayout *maximizedLayout = new QGridLayout(this);
   maximizedLayout->setSpacing(6);
   maximizedLayout->setContentsMargins(11, 11, 11, 11);
-  maximizedLayout->setObjectName(QStringLiteral("maximizedLayout") + QString::number(_id));
+  maximizedLayout->setObjectName(QStringLiteral("maximizedLayout") + idString);
 
   // Add all widgets to the maximized layout
   maximizedLayout->addWidget(line, 2, 0, 1, 3);
   maximizedLayout->addWidget(nameLabel, 0, 0, 1, 1, Qt::AlignLeft | Qt::AlignTop);
   maximizedLayout->addWidget(statusLabel, 1, 0, 1, 1, Qt::AlignLeft | Qt::AlignVCenter);
-  maximizedLayout->addWidget(odList, 5, 0, 1, 3);
+  maximizedLayout->addWidget(advancedInfo, 5, 0, 1, 3);
   maximizedLayout->addWidget(typeLabel, 1, 2, 1, 1, Qt::AlignRight | Qt::AlignVCenter);
   maximizedLayout->addWidget(minimizeButton, 0, 2, 1, 1, Qt::AlignRight | Qt::AlignTop);
   maximizedLayout->addWidget(advanced, 4, 0, 1, 3);
@@ -114,7 +157,7 @@ NodeWidget::NodeWidget(uint8_t _id, QString _name, QString _device, QWidget *par
   // Create the layout for the minimized layout
   QVBoxLayout *minimizedLayout = new QVBoxLayout(this);
   minimizedLayout->setSpacing(6);
-  minimizedLayout->setObjectName(QStringLiteral("minimizedLayout") + QString::number(_id));
+  minimizedLayout->setObjectName(QStringLiteral("minimizedLayout") + idString);
   minimizedLayout->setContentsMargins(2, 2, 2, 2);
 
   // Add members of the minimized layout
@@ -126,7 +169,7 @@ NodeWidget::NodeWidget(uint8_t _id, QString _name, QString _device, QWidget *par
 
   // Connect the signals of the buttons
   connect(minimizeButton, SIGNAL(toggled(bool)), this, SLOT(minimizeChange(bool)));
-  connect(advanced, SIGNAL(toggled(bool)), odList, SLOT(setVisible(bool)));
+  connect(advanced, SIGNAL(toggled(bool)), advancedInfo, SLOT(setVisible(bool)));
 
   // Add the two states of the widget to this one
   addWidget(maxWidget);
@@ -135,28 +178,69 @@ NodeWidget::NodeWidget(uint8_t _id, QString _name, QString _device, QWidget *par
 }
 
 /*
-* \brief Turns a NodeStatus into its respective rgb color value.
+* \brief Turns a NMTState into its respective rgb color value.
 * \param _status The status to retrieve the color of
-* \returns The rgb color value for the given status
+* \return The rgb color value for the given status
 */
-QString NodeWidget::statusToBackground(EPL_DataCollect::NodeStatus _status) {
+QString NodeWidget::statusToBackground(EPL_DataCollect::NMTState _status) {
   switch (_status) {
-    case EPL_DataCollect::NodeStatus::OK: return QString("rgb(139, 195, 74)");
-    case EPL_DataCollect::NodeStatus::STARTING: return QString("rgb(33, 150, 243)");
-    case EPL_DataCollect::NodeStatus::ERROR: return QString("rgb(244, 67, 54)");
-    case EPL_DataCollect::NodeStatus::UNKNOWN: return QString("rgb(158, 158, 158)");
+    case EPL_DataCollect::NMTState::OFF: return QString("rgb(158, 158, 158)");
+    case EPL_DataCollect::NMTState::INITIALISING:
+    case EPL_DataCollect::NMTState::RESET_APPLICATION:
+    case EPL_DataCollect::NMTState::RESET_COMMUNICATION:
+    case EPL_DataCollect::NMTState::RESET_CONFIGURATION:
+    case EPL_DataCollect::NMTState::NOT_ACTIVE:
+    case EPL_DataCollect::NMTState::PRE_OPERATIONAL_1:
+    case EPL_DataCollect::NMTState::PRE_OPERATIONAL_2: return QString("rgb(255, 193, 7)");
+    case EPL_DataCollect::NMTState::READY_TO_OPERATE: return QString("rgb(33, 150, 243)");
+    case EPL_DataCollect::NMTState::OPERATIONAL: return QString("rgb(139, 195, 74)");
+    case EPL_DataCollect::NMTState::STOPPED: return QString("rgb(244, 67, 54)");
+    case EPL_DataCollect::NMTState::BASIC_ETHERNET: return QString("rgb(156, 39, 176)");
   }
   return QString("rgb(0, 0, 0)");
 }
 
-void NodeWidget::updateStatus(EPL_DataCollect::NodeStatus newStatus) {
+/*!
+ * \brief Updates the data of this node widget.
+ * \param node The pointer to the node model
+ */
+void NodeWidget::updateData(EPL_DataCollect::Node *node) {
+  updateAdvancedInfo(node->getIdentity());
+  updateStatus(node->getStatus());
+}
+
+/*!
+ * \brief Updates the data shown under the 'advanced' section.
+ * \param identity The node identity to retrieve the information from
+ */
+void NodeWidget::updateAdvancedInfo(EPL_DataCollect::Node::IDENT identity) {
+  QTreeWidgetItem *dev = advancedInfo->topLevelItem(0);
+  QTreeWidgetItem *net = advancedInfo->topLevelItem(1);
+
+  // Update Device information
+  dev->child(0)->setText(1, QString::number(identity.VendorId));
+  dev->child(1)->setText(1, QString::number(identity.ProductCode));
+  dev->child(2)->setText(1, QString::number(identity.SerialNumber));
+  dev->child(3)->setText(1, QString::number(identity.RevisionNumber));
+
+  // Update Networking information
+  net->child(0)->setText(1, QString::fromStdString(identity.IPAddress));
+  net->child(1)->setText(1, QString::fromStdString(identity.SubnetMask));
+  net->child(2)->setText(1, QString::fromStdString(identity.DefaultGateway));
+}
+
+/*!
+ * \brief Updates the status of this node widget.
+ * \param newStatus The new node status
+ */
+void NodeWidget::updateStatus(EPL_DataCollect::NMTState newStatus) {
   if (status == newStatus)
     return;
 
   // Update status
   status = newStatus;
 
-  setStyleSheet(style.arg(QString::number(id), statusToBackground(status))); // Change color
+  setStyleSheet(style.arg(idString, statusToBackground(status))); // Change color
   statusLabel->setObjectName(
         statusFormat.arg(QString::fromStdString(EPL_DataCollect::EPLEnum2Str::toStr(status)))); // Update label
 }

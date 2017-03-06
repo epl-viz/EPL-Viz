@@ -109,8 +109,11 @@ find_package( Qwt              REQUIRED )
 find_package( PythonInterp 3.5 REQUIRED ) # Exec python with PYTHON_EXECUTABLE
 find_package( PythonLibs   3.5 REQUIRED )
 find_package( Wireshark        REQUIRED )
+find_package( PCAP             REQUIRED )
 find_package( PkgConfig        REQUIRED )
 pkg_search_module(GLIB REQUIRED glib-2.0)
+
+link_directories( ${Wireshark_LIB_DIR} )
 
 # Generate link target list
 set( EPL_VIZ_QT_DEP_LIST "" )
@@ -180,14 +183,17 @@ endif( NOT DISABLE_TESTS )
 if( USE_SYSTEM_PACKETS )
   find_package( EPL_DataCollect REQUIRED )
 else( USE_SYSTEM_PACKETS )
-  set( EPL_DC_PREFIX "${PROJECT_BINARY_DIR}/EPL_DataCollect" )
-  set( EPL_DC_INSTALL_DIR "${EPL_DC_PREFIX}/install_dir" )
-  set( EPL_DC_LIB_DIR     "${EPL_DC_INSTALL_DIR}/lib/eplViz" )
+  set( EPL_DC_PREFIX         "${PROJECT_BINARY_DIR}/EPL_DataCollect" )
+  set( EPL_DC_BUILD_DIR      "${EPL_DC_PREFIX}/build" )
+  set( EPL_DC_INSTALL_DIR    "${EPL_DC_PREFIX}/install_dir" )
+  set( EPL_DC_LIB_DIR        "${EPL_DC_INSTALL_DIR}/lib/eplViz" )
+  set( EPL_DC_LIB_WS_LIB_DIR "${EPL_DC_BUILD_DIR}/liblibwireshark/install_dir/lib" )
 
   set( EPL_DataCollect_INCLUDE_DIRS "${EPL_DC_INSTALL_DIR}/include/eplViz" )
 
   ExternalProject_Add( EPL_DataCollect
     SOURCE_DIR        "${PROJECT_SOURCE_DIR}/external/EPL_DataCollect"
+    BINARY_DIR        "${EPL_DC_BUILD_DIR}"
     PREFIX            "${EPL_DC_PREFIX}"
     CMAKE_ARGS
       "-DCMAKE_C_COMPILER=${CMAKE_C_COMPILER}"
@@ -210,6 +216,9 @@ else( USE_SYSTEM_PACKETS )
       "${EPL_DC_LIB_DIR}/${CMAKE_SHARED_LIBRARY_PREFIX}eplp_defaultFilter${CMAKE_SHARED_LIBRARY_SUFFIX}"
       "${EPL_DC_LIB_DIR}/${CMAKE_STATIC_LIBRARY_PREFIX}eplp_defaultFilter${CMAKE_STATIC_LIBRARY_SUFFIX}"
 
+      "${EPL_DC_LIB_WS_LIB_DIR}/${CMAKE_SHARED_LIBRARY_PREFIX}libwireshark${CMAKE_SHARED_LIBRARY_SUFFIX}"
+      "${EPL_DC_LIB_WS_LIB_DIR}/${CMAKE_STATIC_LIBRARY_PREFIX}libwireshark${CMAKE_STATIC_LIBRARY_SUFFIX}"
+
   )
 
   add_library( epl_DataCollect_shared SHARED IMPORTED )
@@ -220,6 +229,10 @@ else( USE_SYSTEM_PACKETS )
   add_library( eplp_python_static STATIC IMPORTED )
   add_library( eplp_defaultFilter_shared SHARED IMPORTED )
   add_library( eplp_defaultFilter_static STATIC IMPORTED )
+  add_library( libwireshark        SHARED IMPORTED )
+  add_library( libwireshark_static STATIC IMPORTED )
+  set_target_properties( libwireshark              PROPERTIES IMPORTED_LOCATION "${EPL_DC_LIB_WS_LIB_DIR}/${CMAKE_SHARED_LIBRARY_PREFIX}libwireshark${CMAKE_SHARED_LIBRARY_SUFFIX}" )
+  set_target_properties( libwireshark_static       PROPERTIES IMPORTED_LOCATION "${EPL_DC_LIB_WS_LIB_DIR}/${CMAKE_STATIC_LIBRARY_PREFIX}libwireshark${CMAKE_STATIC_LIBRARY_SUFFIX}" )
   set_target_properties( epl_DataCollect_shared    PROPERTIES IMPORTED_LOCATION "${EPL_DC_LIB_DIR}/${CMAKE_SHARED_LIBRARY_PREFIX}epl_DataCollect${CMAKE_SHARED_LIBRARY_SUFFIX}" )
   set_target_properties( epl_DataCollect_static    PROPERTIES IMPORTED_LOCATION "${EPL_DC_LIB_DIR}/${CMAKE_STATIC_LIBRARY_PREFIX}epl_DataCollect${CMAKE_STATIC_LIBRARY_SUFFIX}" )
   set_target_properties( eplp_timeSeries_shared    PROPERTIES IMPORTED_LOCATION "${EPL_DC_LIB_DIR}/${CMAKE_SHARED_LIBRARY_PREFIX}eplp_timeSeries${CMAKE_SHARED_LIBRARY_SUFFIX}" )
@@ -244,6 +257,7 @@ new_project_library(
   NAME         "libEPLViz"
   TEMPLATE     "${EPL_VIZ_TEMPLATES_DIR}/CMakeLists.lib.txt"
   DEPENDENCIES ${EPL_VIZ_QT_DEP_LIST}
+    ${Wireshark_LIBRARY} ${GLIB_LIBRARIES} capchild caputils libwireshark ${PCAP_LIBRARIES}
     epl_DataCollect_shared Qwt::Qwt KF5::TextEditor
     eplp_timeSeries_shared eplp_python_shared eplp_defaultFilter_shared
 )
@@ -252,7 +266,9 @@ new_project_executable(
   PATH         "${PROJECT_SOURCE_DIR}/epl-viz"
   NAME         "EPLViz"
   TEMPLATE     "${EPL_VIZ_TEMPLATES_DIR}/CMakeLists.exe.txt"
-  DEPENDENCIES libEPLViz Qwt::Qwt KF5::TextEditor eplp_timeSeries_shared eplp_python_shared eplp_defaultFilter_shared
+  DEPENDENCIES
+    ${Wireshark_LIBRARY} ${GLIB_LIBRARIES} capchild caputils libwireshark ${PCAP_LIBRARIES}
+    libEPLViz Qwt::Qwt KF5::TextEditor eplp_timeSeries_shared eplp_python_shared eplp_defaultFilter_shared
 )
 
 if( NOT DISABLE_TESTS )
@@ -261,6 +277,7 @@ if( NOT DISABLE_TESTS )
     NAME         "tests"
     TEMPLATE     "${EPL_VIZ_TEMPLATES_DIR}/CMakeLists.exe.txt"
     DEPENDENCIES
+      ${Wireshark_LIBRARY} ${GLIB_LIBRARIES} capchild caputils libwireshark ${PCAP_LIBRARIES}
       libEPLViz epl_DataCollect_shared Qwt::Qwt KF5::TextEditor
       eplp_timeSeries_shared eplp_python_shared eplp_defaultFilter_shared
   )
@@ -284,6 +301,7 @@ include_directories( SYSTEM
   ${GLIB_INCLUDE_DIRS}
   ${QWT_INCLUDE_DIRS}
   ${PLF_COLONY_DIR}
+  ${PCAP_INCLUDE_DIRS}
 )
 
 link_directories( ${Wireshark_LIB_DIR} )

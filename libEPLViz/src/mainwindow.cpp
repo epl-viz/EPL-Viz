@@ -36,6 +36,7 @@
 #include "ui_mainwindow.h"
 #include <memory>
 #include <wiretap/wtap.h>
+
 using namespace EPL_Viz;
 using namespace EPL_DataCollect;
 
@@ -66,6 +67,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
   connect(this, SIGNAL(close()), modelThread, SLOT(stop()));
 
   profileManager->getDefaultProfile()->readWindowSettings(this);
+  captureInstance = std::make_unique<CaptureInstance>();
 }
 
 MainWindow::~MainWindow() {
@@ -154,7 +156,8 @@ bool MainWindow::event(QEvent *event) {
   // configure stuff
   if (event->type() == QEvent::Polish) {
     qDebug() << "Polish in main";
-    changeState(GUIState::UNINIT);
+    if (captureInstance->getState() != CaptureInstance::RUNNING)
+      changeState(GUIState::UNINIT);
     // create Models
     createModels();
   }
@@ -221,17 +224,15 @@ void MainWindow::changeState(GUIState nState) {
       findChild<QAction *>("actionSave")->setEnabled(false);
       findChild<QAction *>("actionSave_As")->setEnabled(false);
       break;
-    case GUIState::PLAYING: break;
-    case GUIState::RECORDING:
+    case GUIState::PLAYING:
       BaseModel::initAll(); // TODO do we need to do this here
       captureInstance->getPluginManager()->addPlugin(std::make_shared<plugins::TimeSeriesBuilder>());
       captureInstance->registerCycleStorage<plugins::CSTimeSeriesPtr>(
             EPL_DataCollect::constants::EPL_DC_PLUGIN_TIME_SERIES_CSID);
       findChild<QAction *>("actionStart_Recording")->setEnabled(false);
       findChild<QAction *>("actionStop_Recording")->setEnabled(true);
-      // TODO
-      captureInstance->startRecording(interface.toStdString());
-      break;
+    // TODO
+    case GUIState::RECORDING: captureInstance->startRecording(interface.toStdString()); break;
     case GUIState::PAUSED: break;
     case GUIState::STOPPED:
       findChild<QAction *>("actionStop_Recording")->setEnabled(false);

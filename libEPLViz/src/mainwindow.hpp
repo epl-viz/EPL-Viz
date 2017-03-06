@@ -65,6 +65,7 @@ class MainWindow : public QMainWindow {
   QLinkedList<EPL_Viz::BaseModel *>                 models;
   std::unique_ptr<EPL_DataCollect::CaptureInstance> captureInstance;
   QString                                           interface;
+  std::string file;
 
  public:
   explicit MainWindow(QWidget *parent = nullptr);
@@ -108,6 +109,7 @@ class MainWindow : public QMainWindow {
   void createModels();
   void destroyModels();
   bool event(QEvent *event) override;
+  void config();
 
  public slots:
   void setFullscreen(bool makeFullscreen);

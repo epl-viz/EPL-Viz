@@ -191,7 +191,8 @@ void MainWindow::open() {
   QString curFile = QFileDialog::getOpenFileName(this, tr("Open Captured File"), "", filenames);
   if (curFile == QString::null)
     return;
-  captureInstance->loadPCAP(curFile.toStdString());
+
+  file = curFile.toStdString();
   changeState(GUIState::PLAYING);
 }
 
@@ -219,6 +220,7 @@ void MainWindow::changeState(GUIState nState) {
     case GUIState::PLAYING: break;
   }
   // switch with new state
+  int backendState;
   switch (nState) {
     case GUIState::UNINIT:
       captureInstance = std::make_unique<CaptureInstance>();
@@ -228,14 +230,22 @@ void MainWindow::changeState(GUIState nState) {
       ui->actionSave_As->setEnabled(false);
       break;
     case GUIState::PLAYING:
-      BaseModel::initAll(); // TODO do we need to do this here
-      captureInstance->getPluginManager()->addPlugin(std::make_shared<plugins::TimeSeriesBuilder>());
-      captureInstance->registerCycleStorage<plugins::CSTimeSeriesPtr>(
-            EPL_DataCollect::constants::EPL_DC_PLUGIN_TIME_SERIES_CSID);
-      findChild<QAction *>("actionStart_Recording")->setEnabled(false);
-      findChild<QAction *>("actionStop_Recording")->setEnabled(true);
-    // TODO
-    case GUIState::RECORDING: captureInstance->startRecording(interface.toStdString()); break;
+      config();
+      backendState = captureInstance->loadPCAP(file);
+      if (backendState != 0)
+        qDebug() << QString("Backend error Code ") + QString::number(backendState);
+        changeState(GUIState::UNINIT);
+        return;
+      break;
+    case GUIState::RECORDING:
+      config();
+      backendState = captureInstance->startRecording(interface.toStdString());
+      if (backendState != 0) {
+        qDebug() << QString("Backend error Code ") + QString::number(backendState);
+        changeState(GUIState::UNINIT);
+        return;
+      }
+      break;
     case GUIState::PAUSED: break;
     case GUIState::STOPPED:
       findChild<QAction *>("actionStop_Recording")->setEnabled(false);
@@ -246,6 +256,15 @@ void MainWindow::changeState(GUIState nState) {
       break;
   }
   machineState = nState;
+}
+
+void MainWindow::config() {
+  captureInstance->getPluginManager()->addPlugin(std::make_shared<plugins::TimeSeriesBuilder>());
+  captureInstance->registerCycleStorage<plugins::CSTimeSeriesPtr>(
+        EPL_DataCollect::constants::EPL_DC_PLUGIN_TIME_SERIES_CSID);
+  findChild<QAction *>("actionStart_Recording")->setEnabled(false);
+  findChild<QAction *>("actionStop_Recording")->setEnabled(true);
+  BaseModel::initAll(); // TODO do we need to do this here
 }
 
 void MainWindow::closeEvent(QCloseEvent *event) {

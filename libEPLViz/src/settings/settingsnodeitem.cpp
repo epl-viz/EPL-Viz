@@ -23,28 +23,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-/*!
- * \file curodmodelitem.hpp
- */
 
-#pragma once
-#include <QMap>
-#include <memory>
-#include <stdint.h>
+#include "settingsnodeitem.hpp"
 
-namespace EPL_Viz {
-class CurODModelItem {
- public:
-  CurODModelItem(uint16_t index, bool hasSub);
-
-  bool     hasSubIndex();
-  uint16_t getIndex();
-  bool setSubIndex(uint8_t i, QString item);
-  QString getSubindex(uint8_t i);
-
- private:
-  bool     hasSub;
-  uint16_t index;
-  QMap<uint8_t, QString> subIndices;
-};
-}
+SettingsNodeItem::SettingsNodeItem() {}

@@ -23,28 +23,37 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-/*!
- * \file curodmodelitem.hpp
- */
 
-#pragma once
-#include <QMap>
-#include <memory>
-#include <stdint.h>
+#include "settingswindow.hpp"
+#include "ui_settingswindow.h"
 
-namespace EPL_Viz {
-class CurODModelItem {
- public:
-  CurODModelItem(uint16_t index, bool hasSub);
+#include "mainwindow.hpp"
 
-  bool     hasSubIndex();
-  uint16_t getIndex();
-  bool setSubIndex(uint8_t i, QString item);
-  QString getSubindex(uint8_t i);
+SettingsWindow::SettingsWindow(QWidget *parent) : QDialog(parent), ui(new Ui::SettingsWindow) {
+  ui->setupUi(this);
+  mainWindow = dynamic_cast<MainWindow *>(parent);
+}
 
- private:
-  bool     hasSub;
-  uint16_t index;
-  QMap<uint8_t, QString> subIndices;
-};
+SettingsWindow::~SettingsWindow() { delete ui; }
+
+void SettingsWindow::apply() {}
+
+void SettingsWindow::reset() {}
+
+void SettingsWindow::newProfile() {}
+
+void SettingsWindow::deleteProfile() {}
+
+void SettingsWindow::newNode() {}
+
+void SettingsWindow::deleteNode() {}
+
+void SettingsWindow::profChange(QListWidgetItem *curr, QListWidgetItem *pref) {
+  (void)curr;
+  (void)pref;
+}
+
+void SettingsWindow::nodeChange(QListWidgetItem *curr, QListWidgetItem *pref) {
+  (void)curr;
+  (void)pref;
 }

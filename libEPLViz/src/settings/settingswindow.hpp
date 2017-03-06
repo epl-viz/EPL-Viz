@@ -23,28 +23,40 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-/*!
- * \file curodmodelitem.hpp
- */
 
-#pragma once
-#include <QMap>
-#include <memory>
-#include <stdint.h>
+#ifndef SETTINGSWINDOW_HPP
+#define SETTINGSWINDOW_HPP
 
-namespace EPL_Viz {
-class CurODModelItem {
- public:
-  CurODModelItem(uint16_t index, bool hasSub);
+#include <QDialog>
+#include <QListWidget>
 
-  bool     hasSubIndex();
-  uint16_t getIndex();
-  bool setSubIndex(uint8_t i, QString item);
-  QString getSubindex(uint8_t i);
+class MainWindow;
 
- private:
-  bool     hasSub;
-  uint16_t index;
-  QMap<uint8_t, QString> subIndices;
-};
+namespace Ui {
+class SettingsWindow;
 }
+
+class SettingsWindow : public QDialog {
+  Q_OBJECT
+ private:
+  Ui::SettingsWindow *ui;
+  MainWindow *        mainWindow;
+
+ public slots:
+  void apply();
+  void reset();
+
+  void newProfile();
+  void deleteProfile();
+  void newNode();
+  void deleteNode();
+
+  void profChange(QListWidgetItem *curr, QListWidgetItem *pref);
+  void nodeChange(QListWidgetItem *curr, QListWidgetItem *pref);
+
+ public:
+  explicit SettingsWindow(QWidget *parent);
+  ~SettingsWindow();
+};
+
+#endif // SETTINGSWINDOW_HPP

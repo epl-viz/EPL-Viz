@@ -30,9 +30,9 @@
 
 #pragma once
 
+#include <CaptureInstance.hpp>
 #include <QDialog>
 #include <QEvent>
-#include <CaptureInstance.hpp>
 
 namespace Ui {
 class InterfacePicker;
@@ -49,7 +49,7 @@ class InterfacePicker : public QDialog {
   bool event(QEvent *event) override;
 
  private:
-  Ui::InterfacePicker *ui;
+  Ui::InterfacePicker *             ui;
   EPL_DataCollect::CaptureInstance *captureInstance;
 
  public slots:

@@ -44,7 +44,7 @@ class CurrentODModel : public QAbstractItemModel, public BaseModel {
   Q_OBJECT
  private:
   uint8_t node;
-  bool needUpdate;
+  bool    needUpdate;
   QMap<uint16_t, std::shared_ptr<CurODModelItem>> odEntries;
   std::unordered_map<int, std::pair<uint16_t, uint8_t>> convertRow;
 

@@ -49,13 +49,13 @@ QModelIndex CurrentODModel::parent(const QModelIndex &index) const {
 }
 
 QModelIndex CurrentODModel::index(int row, int column, const QModelIndex &parent) const {
-  (void) parent;
+  (void)parent;
   return createIndex(row, column, odEntries.value(convertRow.find(row)->first).get());
 }
 
 
 int CurrentODModel::rowCount(const QModelIndex &parent) const {
-  (void) parent;
+  (void)parent;
   return static_cast<int>(convertRow.size());
 }
 
@@ -70,12 +70,9 @@ QVariant CurrentODModel::data(const QModelIndex &index, int role) const {
 
     std::shared_ptr<CurODModelItem> entry = odEntries.value(convertRow.find(index.row())->first);
     switch (index.column()) {
-    case 0:
-      return QVariant(index.column());
-    case 1:
-      return QVariant("empty");
-    default:
-      return QVariant("This shouldn't have happened");
+      case 0: return QVariant(index.column());
+      case 1: return QVariant("empty");
+      default: return QVariant("This shouldn't have happened");
     }
   }
   return QVariant();
@@ -97,11 +94,11 @@ void CurrentODModel::update(EPL_DataCollect::Cycle *cycle) {
   if (!needUpdate)
     return;
   // Create Model
-  OD *od = cycle->getNode(node)->getOD();
+  OD * od      = cycle->getNode(node)->getOD();
   auto entries = od->getWrittenValues();
-  int counter = 0;
-  for (auto i: entries) {
-    ODEntry *entry = od->getEntry(i);
+  int  counter = 0;
+  for (auto i : entries) {
+    ODEntry *                       entry = od->getEntry(i);
     std::shared_ptr<CurODModelItem> item;
     if (entry->getArraySize() >= 0) {
       item = std::make_shared<CurODModelItem>(i, true);
@@ -119,6 +116,4 @@ void CurrentODModel::update(EPL_DataCollect::Cycle *cycle) {
   needUpdate = false;
 }
 
-void CurrentODModel::updateNext() {
-  needUpdate = true;
-}
+void CurrentODModel::updateNext() { needUpdate = true; }

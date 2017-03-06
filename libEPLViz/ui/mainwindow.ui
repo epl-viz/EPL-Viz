@@ -66,8 +66,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>930</width>
-             <height>284</height>
+             <width>937</width>
+             <height>353</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_15">
@@ -341,8 +341,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>930</width>
-             <height>451</height>
+             <width>937</width>
+             <height>444</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_17">
@@ -365,7 +365,7 @@
      <x>0</x>
      <y>0</y>
      <width>1535</width>
-     <height>20</height>
+     <height>30</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -946,8 +946,8 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>279</width>
-          <height>92</height>
+          <width>287</width>
+          <height>96</height>
          </rect>
         </property>
         <layout class="QGridLayout" name="gridLayout_22">
@@ -1315,6 +1315,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>actionSettings</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>openSettings()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>767</x>
+     <y>464</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>openPluginEditor()</slot>
@@ -1323,5 +1339,6 @@
   <slot>startRecording()</slot>
   <slot>stopRecording()</slot>
   <slot>open()</slot>
+  <slot>openSettings()</slot>
  </slots>
 </ui>

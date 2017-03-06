@@ -48,7 +48,7 @@ bool InterfacePicker::event(QEvent *event) {
 }
 
 void InterfacePicker::updateList() {
-  QListWidget *list = findChild<QListWidget *>("interfaceList");
+  QListWidget *            list       = findChild<QListWidget *>("interfaceList");
   std::vector<std::string> interfaces = captureInstance->getDevices();
   for (std::string s : interfaces) {
     list->addItem(QString::fromStdString(s));

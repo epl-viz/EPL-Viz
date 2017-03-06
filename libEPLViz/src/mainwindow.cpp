@@ -80,6 +80,9 @@ void MainWindow::createModels() {
   CycleCommandsModel *cyCoModel = new CycleCommandsModel(this);
   connect(this, SIGNAL(cycleChanged()), cyCoModel, SLOT(updateNext()));
 
+  CurrentODModel *curODModel = new CurrentODModel(this);
+  connect(this, SIGNAL(cycleChanged()), curODModel, SLOT(updateNext()));
+
   models.append(new PacketHistoryModel(this));
   models.append(new PythonLogModel(this));
   models.append(new QWTPlotModel(this));

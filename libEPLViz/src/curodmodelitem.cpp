@@ -24,48 +24,30 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 /*!
- * \file currentodmodel.hpp
+ * \file curodmodelitem.cpp
  */
-#pragma once
-
-#include "Cycle.hpp"
-#include "EPLVizDefines.hpp"
-#include "Packet.hpp"
-#include "basemodel.hpp"
 #include "curodmodelitem.hpp"
+using namespace EPL_Viz;
 
-#include <QAbstractItemModel>
-#include <QHeaderView>
-#include <QTableView>
-#include <unordered_map>
-
-namespace EPL_Viz {
-class CurrentODModel : public QAbstractItemModel, public BaseModel {
-  Q_OBJECT
- private:
-  uint8_t node;
-  bool needUpdate;
-  QMap<uint16_t, std::shared_ptr<CurODModelItem>> odEntries;
-  std::unordered_map<int, std::pair<uint16_t, uint8_t>> convertRow;
-
-  std::shared_ptr<CurODModelItem> getItem(const QModelIndex &index) const;
-
- public:
-  CurrentODModel(QMainWindow *window);
-  ~CurrentODModel();
-  void init() override;
-
-  QModelIndex index(int row, int column, const QModelIndex &parent = QModelIndex()) const override;
-  QModelIndex parent(const QModelIndex &index) const override;
-  int rowCount(const QModelIndex &parent) const override;
-  int columnCount(const QModelIndex &parent) const override;
-  QVariant data(const QModelIndex &index, int role) const override;
-  QVariant headerData(int section, Qt::Orientation orientation, int role) const override;
-
- protected:
-  mockable void update(EPL_DataCollect::Cycle *cycle) override;
-
- public slots:
-  void updateNext();
-};
+CurODModelItem::CurODModelItem(uint16_t i, bool sub)
+{
+  index = i;
+  hasSub = sub;
 }
+
+bool CurODModelItem::hasSubIndex() { return hasSub; }
+
+bool CurODModelItem::setSubIndex(uint8_t i, QString item) {
+  if (!hasSub && i != 0)
+    return false;
+
+  subIndices.insert(i, item);
+  return true;
+}
+
+uint16_t CurODModelItem::getIndex() { return index; }
+
+QString CurODModelItem::getSubindex(uint8_t i) {
+  return subIndices.value(i, QString("subindex does not exist"));
+}
+

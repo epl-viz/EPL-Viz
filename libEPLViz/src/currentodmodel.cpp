@@ -27,7 +27,8 @@
  * \file currentodmodel.cpp
  */
 #include "currentodmodel.hpp"
-#include "ODEntryDescription.hpp"
+#include "OD.hpp"
+#include <QString>
 using namespace EPL_Viz;
 using namespace EPL_DataCollect;
 
@@ -39,21 +40,42 @@ CurrentODModel::CurrentODModel(QMainWindow *window) : BaseModel() {
 
 void CurrentODModel::init() {}
 
+QModelIndex CurrentODModel::parent(const QModelIndex &index) const {
+  if (odEntries.value(convertRow.find(index.row())->first)->hasSubIndex())
+    return CurrentODModel::index(index.row(), 0, index);
+  else
+    return QModelIndex();
+}
+
+QModelIndex CurrentODModel::index(int row, int column, const QModelIndex &parent) const {
+  (void) parent;
+  return createIndex(row, column, odEntries.value(convertRow.find(row)->first).get());
+}
+
+
 int CurrentODModel::rowCount(const QModelIndex &parent) const {
-  // TODO
-  (void)parent;
-  return 1;
+  (void) parent;
+  return static_cast<int>(convertRow.size());
 }
 
 int CurrentODModel::columnCount(const QModelIndex &parent) const {
   (void)parent;
-  return 3;
+  return 2;
 }
 
 QVariant CurrentODModel::data(const QModelIndex &index, int role) const {
   // TODO
   if (role == Qt::DisplayRole) {
-    return QString("Row%1, Column%2").arg(index.row() + 1).arg(index.column() + 1);
+
+    std::shared_ptr<CurODModelItem> entry = odEntries.value(convertRow.find(index.row())->first);
+    switch (index.column()) {
+    case 0:
+      return QVariant(index.column());
+    case 1:
+      return QVariant("empty");
+    default:
+      return QVariant("This shouldn't have happened");
+    }
   }
   return QVariant();
 }
@@ -62,10 +84,8 @@ QVariant CurrentODModel::headerData(int section, Qt::Orientation orientation, in
   if (role == Qt::DisplayRole) {
     if (orientation == Qt::Horizontal) {
       switch (section) {
-        // TODO ODEntryDescription
         case 0: return QString("Index");
-        case 1: return QString("Type");
-        case 2: return QString("Value");
+        case 1: return QString("Value");
       }
     }
   }
@@ -73,6 +93,26 @@ QVariant CurrentODModel::headerData(int section, Qt::Orientation orientation, in
 }
 
 void CurrentODModel::update(EPL_DataCollect::Cycle *cycle) {
-  ODDescription *description = cycle->getNode(node)->getODDesc();
-  (void)description;
+  if (!needUpdate)
+    return;
+  // Create Model
+  OD *od = cycle->getNode(node)->getOD();
+  auto entries = od->getWrittenValues();
+  int counter = 0;
+  for (auto i: entries) {
+    ODEntry *entry = od->getEntry(i);
+    std::shared_ptr<CurODModelItem> item;
+    if (entry->getArraySize() >= 0) {
+      item = std::make_shared<CurODModelItem>(i, true);
+      for (uint8_t subI = 0; subI < entry->getArraySize(); ++subI) {
+        item->setSubIndex(subI, QString::fromStdString(entry->toString(i)));
+        convertRow[counter++] = std::make_pair(i, subI);
+      }
+    } else {
+      item = std::make_shared<CurODModelItem>(i, false);
+      item->setSubIndex(0, QString::fromStdString(entry->toString(i)));
+      convertRow[counter++] = std::make_pair(i, 0);
+    }
+    odEntries.insert(i, item);
+  }
 }

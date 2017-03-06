@@ -24,48 +24,28 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 /*!
- * \file currentodmodel.hpp
+ * \file curodmodelitem.hpp
  */
+
 #pragma once
-
-#include "Cycle.hpp"
-#include "EPLVizDefines.hpp"
-#include "Packet.hpp"
-#include "basemodel.hpp"
-#include "curodmodelitem.hpp"
-
-#include <QAbstractItemModel>
-#include <QHeaderView>
-#include <QTableView>
-#include <unordered_map>
+#include <stdint.h>
+#include <QMap>
+#include <memory>
 
 namespace EPL_Viz {
-class CurrentODModel : public QAbstractItemModel, public BaseModel {
-  Q_OBJECT
- private:
-  uint8_t node;
-  bool needUpdate;
-  QMap<uint16_t, std::shared_ptr<CurODModelItem>> odEntries;
-  std::unordered_map<int, std::pair<uint16_t, uint8_t>> convertRow;
+class CurODModelItem
+{
+public:
+  CurODModelItem(uint16_t index, bool hasSub);
 
-  std::shared_ptr<CurODModelItem> getItem(const QModelIndex &index) const;
+  bool hasSubIndex();
+  uint16_t getIndex();
+  bool setSubIndex(uint8_t i, QString item);
+  QString getSubindex(uint8_t i);
 
- public:
-  CurrentODModel(QMainWindow *window);
-  ~CurrentODModel();
-  void init() override;
-
-  QModelIndex index(int row, int column, const QModelIndex &parent = QModelIndex()) const override;
-  QModelIndex parent(const QModelIndex &index) const override;
-  int rowCount(const QModelIndex &parent) const override;
-  int columnCount(const QModelIndex &parent) const override;
-  QVariant data(const QModelIndex &index, int role) const override;
-  QVariant headerData(int section, Qt::Orientation orientation, int role) const override;
-
- protected:
-  mockable void update(EPL_DataCollect::Cycle *cycle) override;
-
- public slots:
-  void updateNext();
+private:
+  bool hasSub;
+  uint16_t index;
+  QMap<uint8_t, QString> subIndices;
 };
 }

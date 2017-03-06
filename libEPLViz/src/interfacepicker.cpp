@@ -30,8 +30,12 @@
 #include "interfacepicker.hpp"
 #include "ui_interfacepicker.h"
 using namespace EPL_Viz;
+using namespace EPL_DataCollect;
 
-InterfacePicker::InterfacePicker(QWidget *parent) : QDialog(parent), ui(new Ui::InterfacePicker) { ui->setupUi(this); }
+InterfacePicker::InterfacePicker(QWidget *parent, CaptureInstance *ci) : QDialog(parent), ui(new Ui::InterfacePicker) {
+  captureInstance = ci;
+  ui->setupUi(this);
+}
 
 InterfacePicker::~InterfacePicker() { delete ui; }
 
@@ -45,6 +49,8 @@ bool InterfacePicker::event(QEvent *event) {
 
 void InterfacePicker::updateList() {
   QListWidget *list = findChild<QListWidget *>("interfaceList");
-  (void)list;
-  // TODO add to list and add sigslo for enter
+  std::vector<std::string> interfaces = captureInstance->getDevices();
+  for (std::string s : interfaces) {
+    list->addItem(QString::fromStdString(s));
+  }
 }

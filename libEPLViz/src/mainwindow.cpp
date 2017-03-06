@@ -146,12 +146,12 @@ void MainWindow::setFullscreen(bool makeFullscreen) {
 }
 
 void MainWindow::openPluginEditor() {
-  PluginsWindow *win = new PluginsWindow();
+  PluginsWindow *win = new PluginsWindow(this);
   win->show();
 }
 
 void MainWindow::openInterfacePicker() {
-  InterfacePicker *picker = new InterfacePicker();
+  InterfacePicker *picker = new InterfacePicker(this, getCaptureInstance());
   picker->show();
 }
 

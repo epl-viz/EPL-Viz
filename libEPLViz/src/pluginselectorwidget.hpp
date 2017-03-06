@@ -24,24 +24,38 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 /*!
- * \file oddescriptionwidget.hpp
- * \todo Implement
+ * \file pluginselectorwidget.hpp
  */
 
 #pragma once
 
-#include <QDockWidget>
+#include "PythonPlugin.hpp"
+#include "mainwindow.hpp"
+#include <QCheckBox>
+#include <QFile>
+#include <QListWidget>
+#include <QMap>
 
-class ODDescriptionWidget : public QDockWidget {
+class PluginSelectorWidget : public QListWidget {
   Q_OBJECT
 
  private:
-  uint8_t node;
+  bool                            recording = false;
+  EPL_DataCollect::PluginManager *pluginManager;
+  QString                         pluginPath = ""; // TODO: Add this via configuration
 
  public:
-  ODDescriptionWidget(QWidget *parent = nullptr);
-  ~ODDescriptionWidget()              = default;
+  PluginSelectorWidget(QWidget *parent = nullptr);
+  ~PluginSelectorWidget()              = default;
+
+ private:
+  void addItem(QString plugin);
+
+ private slots:
+  void changeState(int state);
 
  public slots:
-  void changeNode(uint8_t n);
+  void loadPlugins(EPL_DataCollect::CaptureInstance *ci);
+  void disableWidget();
+  void addPlugins(QMap<QString, QString> map);
 };

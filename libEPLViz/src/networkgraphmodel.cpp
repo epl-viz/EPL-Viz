@@ -24,24 +24,36 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 /*!
- * \file oddescriptionwidget.hpp
- * \todo Implement
+ * \file networkgraphmodel.cpp
  */
 
-#pragma once
+#include "networkgraphmodel.hpp"
+#include "mainwindow.hpp"
 
-#include <QDockWidget>
+using namespace EPL_Viz;
+using namespace EPL_DataCollect;
 
-class ODDescriptionWidget : public QDockWidget {
-  Q_OBJECT
+NetworkGraphModel::NetworkGraphModel(MainWindow *mw) { graph = mw->getNetworkGraph(); }
 
- private:
-  uint8_t node;
+NetworkGraphModel::~NetworkGraphModel() {}
 
- public:
-  ODDescriptionWidget(QWidget *parent = nullptr);
-  ~ODDescriptionWidget()              = default;
+void NetworkGraphModel::init() {}
 
- public slots:
-  void changeNode(uint8_t n);
-};
+void NetworkGraphModel::update(Cycle *cycle) {
+  auto list = cycle->getNodeList();
+
+  for (uint8_t id : list) {
+    Node *n = cycle->getNode(id);
+    auto  s = nodeMap.find(id);
+
+    if (s == nodeMap.end() || s.key() != id) {
+      // The node is not yet added as a widget and has to be created
+      NodeWidget *nw = new NodeWidget(n, graph);
+      nodeMap.insert(id, nw);
+      graph->layout()->addWidget(nw);
+    } else {
+      // The node is added as widget and has to be updated
+      nodeMap[id]->updateData(n);
+    }
+  }
+}

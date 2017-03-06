@@ -31,3 +31,5 @@
 #include "oddescriptionwidget.hpp"
 
 ODDescriptionWidget::ODDescriptionWidget(QWidget *parent) : QDockWidget(parent) {}
+
+void ODDescriptionWidget::changeNode(uint8_t n) { node = n; }

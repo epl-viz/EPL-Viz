@@ -32,6 +32,7 @@
 #include "TimeSeriesBuilder.hpp"
 #include "cyclecommandsmodel.hpp"
 #include "interfacepicker.hpp"
+#include "networkgraphmodel.hpp"
 #include "pluginswindow.hpp"
 #include "settingswindow.hpp"
 #include "ui_mainwindow.h"
@@ -51,9 +52,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
   ui->setupUi(this);
   tabifyDockWidget(ui->dockCurrent, ui->dockOD);
   tabifyDockWidget(ui->dockPlugins, ui->dockEvents);
-  tabifyDockWidget(ui->dockPlugins, ui->dockNetTree);
-  tabifyDockWidget(ui->dockCycle, ui->dockPythonLog);
-  tabifyDockWidget(ui->dockCycle, ui->dockPacketHistory);
   ui->actionOD_Filter_2->setMenu(ui->menuOD_Filter);
 
   std::vector<QAction *> btns;
@@ -90,6 +88,7 @@ void MainWindow::createModels() {
   models.append(new PythonLogModel(this));
   models.append(new QWTPlotModel(this));
   // models.append(new CurrentODModel(this));
+  models.append(new NetworkGraphModel(this));
   models.append(cyCoModel);
 }
 
@@ -149,6 +148,8 @@ void MainWindow::setFullscreen(bool makeFullscreen) {
 void MainWindow::openPluginEditor() {
   PluginsWindow *win = new PluginsWindow(this);
   win->show();
+
+  connect(win, SIGNAL(pluginsSaved(QMap)), ui->pluginSelectorWidget, SLOT(addPlugins(QMap)));
 }
 
 void MainWindow::openInterfacePicker() {
@@ -197,7 +198,8 @@ void MainWindow::open() {
   QString curFile = QFileDialog::getOpenFileName(this, tr("Open Captured File"), "", filenames);
   if (curFile == QString::null)
     return;
-  captureInstance->loadPCAP(curFile.toStdString());
+
+  file = curFile.toStdString();
   changeState(GUIState::PLAYING);
 }
 
@@ -225,23 +227,32 @@ void MainWindow::changeState(GUIState nState) {
     case GUIState::PLAYING: break;
   }
   // switch with new state
+  int backendState;
   switch (nState) {
     case GUIState::UNINIT:
       captureInstance = std::make_unique<CaptureInstance>();
-      findChild<QAction *>("actionStart_Recording")->setEnabled(true);
-      findChild<QAction *>("actionStop_Recording")->setEnabled(false);
-      findChild<QAction *>("actionSave")->setEnabled(false);
-      findChild<QAction *>("actionSave_As")->setEnabled(false);
+      ui->actionStart_Recording->setEnabled(true);
+      ui->actionStop_Recording->setEnabled(false);
+      ui->actionSave->setEnabled(false);
+      ui->actionSave_As->setEnabled(false);
       break;
     case GUIState::PLAYING:
-      BaseModel::initAll(); // TODO do we need to do this here
-      captureInstance->getPluginManager()->addPlugin(std::make_shared<plugins::TimeSeriesBuilder>());
-      captureInstance->registerCycleStorage<plugins::CSTimeSeriesPtr>(
-            EPL_DataCollect::constants::EPL_DC_PLUGIN_TIME_SERIES_CSID);
-      findChild<QAction *>("actionStart_Recording")->setEnabled(false);
-      findChild<QAction *>("actionStop_Recording")->setEnabled(true);
-    // TODO
-    case GUIState::RECORDING: captureInstance->startRecording(interface.toStdString()); break;
+      config();
+      backendState = captureInstance->loadPCAP(file);
+      if (backendState != 0)
+        qDebug() << QString("Backend error Code ") + QString::number(backendState);
+      changeState(GUIState::UNINIT);
+      return;
+      break;
+    case GUIState::RECORDING:
+      config();
+      backendState = captureInstance->startRecording(interface.toStdString());
+      if (backendState != 0) {
+        qDebug() << QString("Backend error Code ") + QString::number(backendState);
+        changeState(GUIState::UNINIT);
+        return;
+      }
+      break;
     case GUIState::PAUSED: break;
     case GUIState::STOPPED:
       findChild<QAction *>("actionStop_Recording")->setEnabled(false);
@@ -254,10 +265,21 @@ void MainWindow::changeState(GUIState nState) {
   machineState = nState;
 }
 
+void MainWindow::config() {
+  captureInstance->getPluginManager()->addPlugin(std::make_shared<plugins::TimeSeriesBuilder>());
+  captureInstance->registerCycleStorage<plugins::CSTimeSeriesPtr>(
+        EPL_DataCollect::constants::EPL_DC_PLUGIN_TIME_SERIES_CSID);
+  findChild<QAction *>("actionStart_Recording")->setEnabled(false);
+  findChild<QAction *>("actionStop_Recording")->setEnabled(true);
+  BaseModel::initAll(); // TODO do we need to do this here
+}
+
 void MainWindow::closeEvent(QCloseEvent *event) {
   profileManager->getDefaultProfile()->writeWindowSettings(this);
   emit close();
   QWidget::closeEvent(event);
 }
+
+QWidget *MainWindow::getNetworkGraph() { return ui->networkGraphContents; }
 
 void MainWindow::handleResults(const QString &result) { qDebug() << "The result is\"" << result << "\""; }

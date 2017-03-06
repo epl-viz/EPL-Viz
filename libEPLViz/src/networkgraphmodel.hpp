@@ -24,24 +24,29 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 /*!
- * \file oddescriptionwidget.hpp
- * \todo Implement
+ * \file networkgraphmodel.hpp
  */
-
 #pragma once
 
-#include <QDockWidget>
+#include "basemodel.hpp"
+#include "nodewidget.hpp"
+#include <QMap>
+#include <QWidget>
 
-class ODDescriptionWidget : public QDockWidget {
-  Q_OBJECT
+class MainWindow;
 
+namespace EPL_Viz {
+class NetworkGraphModel : public BaseModel {
  private:
-  uint8_t node;
+  QMap<uint8_t, NodeWidget *> nodeMap;
+  QWidget *graph;
 
  public:
-  ODDescriptionWidget(QWidget *parent = nullptr);
-  ~ODDescriptionWidget()              = default;
+  NetworkGraphModel(MainWindow *mw);
+  virtual ~NetworkGraphModel();
 
- public slots:
-  void changeNode(uint8_t n);
+ protected:
+  void init();
+  void update(EPL_DataCollect::Cycle *cycle);
 };
+}

@@ -180,9 +180,19 @@ void PluginEditorWidget::cleanUp() {
     }
   }
 
-  // Destroy all documents
-  for (auto d : list)
-    delete d;
+  QMap<QString, QString> savedPlugins;
 
+  // Destroy all documents and add them to the map of saved plugins
+  for (auto d : list) {
+    QString localFile = d->url().toLocalFile();
+
+    if (QFile::exists(localFile)) {
+      savedPlugins.insert(d->documentName(), localFile);
+    }
+
+    delete d;
+  }
+
+  emit pluginsSaved(savedPlugins);
   emit cleanupDone();
 }

@@ -52,7 +52,7 @@ class CurrentODModel : public QAbstractItemModel, public BaseModel {
 
  public:
   CurrentODModel(QMainWindow *window);
-  ~CurrentODModel();
+  ~CurrentODModel() = default;
   void init() override;
 
   QModelIndex index(int row, int column, const QModelIndex &parent = QModelIndex()) const override;

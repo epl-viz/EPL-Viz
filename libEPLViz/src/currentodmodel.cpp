@@ -36,6 +36,7 @@ CurrentODModel::CurrentODModel(QMainWindow *window) : BaseModel() {
   QTableView *view = window->findChild<QTableView *>("curNodeODView");
   view->setModel(this);
   view->verticalHeader()->hide();
+  needUpdate = true;
 }
 
 void CurrentODModel::init() {}
@@ -115,4 +116,9 @@ void CurrentODModel::update(EPL_DataCollect::Cycle *cycle) {
     }
     odEntries.insert(i, item);
   }
+  needUpdate = false;
+}
+
+void CurrentODModel::updateNext() {
+  needUpdate = true;
 }

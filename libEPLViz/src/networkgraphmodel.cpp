@@ -55,5 +55,36 @@ void NetworkGraphModel::update(Cycle *cycle) {
       // The node is added as widget and has to be updated
       nodeMap[id]->updateData(n);
     }
+
+    nodeMap[id]->setHighlightingLevel(0);
+  }
+
+  auto events = cycle->getActiveEvents();
+
+  for (auto event : events) {
+    switch (event->getType()) {
+      case EvType::VIEW_EV_HIGHLIGHT_MN:
+      case EvType::VIEW_EV_HIGHLIGHT_CN: {
+        uint64_t node  = event->getEventFlags();             // EventFlags is the NodeID for these events
+        int      level = std::stoi(event->getDescription()); // Description is the highlighting level for these events
+
+        // Invalid node
+        if (cycle->getNode(node) == nullptr)
+          break;
+
+        // Check if event valid
+        if ((event->getType() == EvType::VIEW_EV_HIGHLIGHT_CN && node < 240) ||
+            (event->getType() == EvType::VIEW_EV_HIGHLIGHT_CN && node == 240)) {
+          // Set highlighting
+          nodeMap[node]->setHighlightingLevel(level);
+        }
+        break;
+      }
+      default: break;
+    }
+  }
+
+  for (uint8_t id : list) {
+    nodeMap[id]->updateStyleSheet();
   }
 }

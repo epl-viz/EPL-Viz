@@ -28,23 +28,22 @@
  */
 
 #pragma once
-#include <stdint.h>
 #include <QMap>
 #include <memory>
+#include <stdint.h>
 
 namespace EPL_Viz {
-class CurODModelItem
-{
-public:
+class CurODModelItem {
+ public:
   CurODModelItem(uint16_t index, bool hasSub);
 
-  bool hasSubIndex();
+  bool     hasSubIndex();
   uint16_t getIndex();
   bool setSubIndex(uint8_t i, QString item);
   QString getSubindex(uint8_t i);
 
-private:
-  bool hasSub;
+ private:
+  bool     hasSub;
   uint16_t index;
   QMap<uint8_t, QString> subIndices;
 };

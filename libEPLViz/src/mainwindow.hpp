@@ -65,7 +65,7 @@ class MainWindow : public QMainWindow {
   QLinkedList<EPL_Viz::BaseModel *>                 models;
   std::unique_ptr<EPL_DataCollect::CaptureInstance> captureInstance;
   QString                                           interface;
-  std::string file;
+  std::string                                       file;
 
  public:
   explicit MainWindow(QWidget *parent = nullptr);

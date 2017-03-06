@@ -29,9 +29,8 @@
 #include "curodmodelitem.hpp"
 using namespace EPL_Viz;
 
-CurODModelItem::CurODModelItem(uint16_t i, bool sub)
-{
-  index = i;
+CurODModelItem::CurODModelItem(uint16_t i, bool sub) {
+  index  = i;
   hasSub = sub;
 }
 
@@ -47,7 +46,4 @@ bool CurODModelItem::setSubIndex(uint8_t i, QString item) {
 
 uint16_t CurODModelItem::getIndex() { return index; }
 
-QString CurODModelItem::getSubindex(uint8_t i) {
-  return subIndices.value(i, QString("subindex does not exist"));
-}
-
+QString CurODModelItem::getSubindex(uint8_t i) { return subIndices.value(i, QString("subindex does not exist")); }

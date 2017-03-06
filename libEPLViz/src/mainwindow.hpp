@@ -37,6 +37,7 @@
 #include "profilemanager.hpp"
 #include "pythonlogmodel.hpp"
 #include "qwtplotmodel.hpp"
+#include "settingswindow.hpp"
 #include <QAction>
 #include <QDebug>
 #include <QLabel>
@@ -66,6 +67,7 @@ class MainWindow : public QMainWindow {
   std::unique_ptr<EPL_DataCollect::CaptureInstance> captureInstance;
   QString                                           interface;
   std::string                                       file;
+  SettingsWindow *settingsWin;
 
  public:
   explicit MainWindow(QWidget *parent = nullptr);
@@ -90,6 +92,8 @@ class MainWindow : public QMainWindow {
    * \return the current state
    */
   mockable EPL_Viz::GUIState getState();
+
+  SettingsWindow *getSettingsWin();
 
   mockable uint32_t getCycleNum();
   /**

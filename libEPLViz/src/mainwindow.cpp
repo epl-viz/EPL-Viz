@@ -222,10 +222,10 @@ void MainWindow::changeState(GUIState nState) {
   switch (nState) {
     case GUIState::UNINIT:
       captureInstance = std::make_unique<CaptureInstance>();
-      findChild<QAction *>("actionStart_Recording")->setEnabled(true);
-      findChild<QAction *>("actionStop_Recording")->setEnabled(false);
-      findChild<QAction *>("actionSave")->setEnabled(false);
-      findChild<QAction *>("actionSave_As")->setEnabled(false);
+      ui->actionStart_Recording->setEnabled(true);
+      ui->actionStop_Recording->setEnabled(false);
+      ui->actionSave->setEnabled(false);
+      ui->actionSave_As->setEnabled(false);
       break;
     case GUIState::PLAYING:
       BaseModel::initAll(); // TODO do we need to do this here

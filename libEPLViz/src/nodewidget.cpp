@@ -245,6 +245,12 @@ void NodeWidget::updateStatus(EPL_DataCollect::NMTState newStatus) {
         statusFormat.arg(QString::fromStdString(EPL_DataCollect::EPLEnum2Str::toStr(status)))); // Update label
 }
 
+void NodeWidget::mousePressEvent(QMouseEvent *event) {
+  if (event->button() == Qt::LeftButton) {
+    emit nodeChanged(id);
+  }
+}
+
 void NodeWidget::minimizeChange(bool minimized) {
   // Prevent unnecessary changes
   if (isMinimized == minimized)

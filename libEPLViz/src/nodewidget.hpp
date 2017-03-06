@@ -95,6 +95,13 @@ class NodeWidget : public QStackedWidget {
   void updateAdvancedInfo(EPL_DataCollect::Node::IDENT identity);
   void updateStatus(EPL_DataCollect::NMTState newStatus);
 
+ protected:
+  void mousePressEvent(QMouseEvent *event) override;
+
+ signals:
+  void nodeChanged(uint8_t node);
+
+
  public slots:
   void minimizeChange(bool minimized);
 };

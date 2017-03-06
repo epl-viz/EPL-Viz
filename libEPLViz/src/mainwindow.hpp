@@ -98,6 +98,8 @@ class MainWindow : public QMainWindow {
    */
   EPL_DataCollect::CaptureInstance *getCaptureInstance();
 
+  QWidget *getNetworkGraph();
+
   static void fixQToolButtons(std::vector<QToolButton *> &btns);
   static void fixQToolButtons(std::vector<QAction *> &actions, QToolBar *bar);
 
@@ -124,4 +126,5 @@ class MainWindow : public QMainWindow {
   void operate(const QString &);
   void close();
   void cycleChanged();
+  void recordingStarted(EPL_DataCollect::CaptureInstance *);
 };

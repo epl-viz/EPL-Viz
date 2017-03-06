@@ -32,6 +32,7 @@
 #include "TimeSeriesBuilder.hpp"
 #include "cyclecommandsmodel.hpp"
 #include "interfacepicker.hpp"
+#include "networkgraphmodel.hpp"
 #include "pluginswindow.hpp"
 #include "ui_mainwindow.h"
 #include <memory>
@@ -89,6 +90,7 @@ void MainWindow::createModels() {
   models.append(new PythonLogModel(this));
   models.append(new QWTPlotModel(this));
   // models.append(new CurrentODModel(this));
+  models.append(new NetworkGraphModel(this));
   models.append(cyCoModel);
 }
 
@@ -148,6 +150,8 @@ void MainWindow::setFullscreen(bool makeFullscreen) {
 void MainWindow::openPluginEditor() {
   PluginsWindow *win = new PluginsWindow(this);
   win->show();
+
+  connect(win, SIGNAL(pluginsSaved(QMap)), ui->pluginSelectorWidget, SLOT(addPlugins(QMap)));
 }
 
 void MainWindow::openInterfacePicker() {
@@ -229,9 +233,13 @@ void MainWindow::changeState(GUIState nState) {
       break;
     case GUIState::PLAYING:
       BaseModel::initAll(); // TODO do we need to do this here
+
       captureInstance->getPluginManager()->addPlugin(std::make_shared<plugins::TimeSeriesBuilder>());
+      emit recordingStarted(getCaptureInstance());
+
       captureInstance->registerCycleStorage<plugins::CSTimeSeriesPtr>(
             EPL_DataCollect::constants::EPL_DC_PLUGIN_TIME_SERIES_CSID);
+
       findChild<QAction *>("actionStart_Recording")->setEnabled(false);
       findChild<QAction *>("actionStop_Recording")->setEnabled(true);
     // TODO
@@ -253,5 +261,7 @@ void MainWindow::closeEvent(QCloseEvent *event) {
   emit close();
   QWidget::closeEvent(event);
 }
+
+QWidget *MainWindow::getNetworkGraph() { return ui->networkGraphContents; }
 
 void MainWindow::handleResults(const QString &result) { qDebug() << "The result is\"" << result << "\""; }

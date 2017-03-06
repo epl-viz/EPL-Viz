@@ -30,6 +30,7 @@
 #include <KTextEditor/Document>
 #include <KTextEditor/Editor>
 #include <KTextEditor/View>
+#include <QFile>
 #include <QGridLayout>
 #include <QMessageBox>
 #include <QWidget>
@@ -56,6 +57,7 @@ class PluginEditorWidget : public QWidget {
   void nameChanged(QString name);
   void urlChanged(QString url);
   void modifiedChanged(bool modified);
+  void pluginsSaved(QMap<QString, QString> savedPlugins);
   void cleanupDone();
 
  private slots:

@@ -53,7 +53,7 @@ class ModelThread : public QThread {
   void run() Q_DECL_OVERRIDE;
 
  private:
-  mockable void loop();
+  void loop();
 
  signals:
   void resultReady(const QString &result);

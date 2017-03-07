@@ -129,11 +129,12 @@ class MainWindow : public QMainWindow {
   void handleResults(const QString &);
   void startRecording();
   void stopRecording();
-  void addNodeWidget(NodeWidget *nw);
+  void addNode(EPL_DataCollect::Node *n);
 
  signals:
   void operate(const QString &);
   void close();
   void cycleChanged();
   void recordingStarted(EPL_DataCollect::CaptureInstance *);
+  void nodeAdded(uint8_t id, NodeWidget *nw);
 };

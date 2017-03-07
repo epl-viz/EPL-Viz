@@ -840,22 +840,6 @@
    </hints>
   </connection>
   <connection>
-   <sender>MainWindow</sender>
-   <signal>recordingStarted(EPL_DataCollect::CaptureInstance)</signal>
-   <receiver>pluginSelectorWidget</receiver>
-   <slot>loadPlugins(EPL_DataCollect::CaptureInstance)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>767</x>
-     <y>464</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>138</x>
-     <y>268</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
    <sender>actionStop_Recording</sender>
    <signal>triggered()</signal>
    <receiver>pluginSelectorWidget</receiver>

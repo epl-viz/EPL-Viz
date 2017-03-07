@@ -29,8 +29,6 @@
  *
  * The representation shows the assigned name, device type, status and optionally the most often requested OD Entries of
  * the node.
- *
- * \todo Complete signals, slots and add clicked() signal to notify all other parts of the gui of the node selection.
  */
 
 #pragma once
@@ -58,19 +56,18 @@ class NodeWidget : public QStackedWidget {
 
  private:
   // clang-format off
-  const QString style = QString("#node%1 { background-color: %2; border-color: rgb(%3, 0, 0); }"); //TODO: Add border for stylesheet
+  const QString styleFormat = QString("#node-%1%2 { background-color: %3; border-color: rgb(%4, 0, 0); }"); //TODO: Add border for stylesheet
 
   const QString statusFormat = QString("Status: %1"); //%1 is the status string
   const QString nameFormat = QString("%1 #%2");        //%1 is the node name, %2 its ID
 
-  const QSize maxSize = QSize(300, 300);
-  const QSize minSize = QSize(100, 100);
+  const QSize maxSizeMax = QSize(300, 300);
+  const QSize maxSizeMin = QSize(300, 100);
+  const QSize minSize = QSize(150, 150);
   // clang-format on
 
   uint8_t                   id;
   QString                   idString;
-  QString                   name;
-  QString                   device;
   EPL_DataCollect::NMTState status;
 
   int highlightingLevel = 0;
@@ -78,11 +75,13 @@ class NodeWidget : public QStackedWidget {
   QWidget *     minWidget;
   QWidget *     maxWidget;
   QFrame *      line;
-  QLabel *      nameLabel;
+  QLabel *      nameLabelMax;
+  QLabel *      nameLabelMin;
   QLabel *      statusLabel;
   QTreeWidget * advancedInfo;
   QLabel *      typeLabel;
   QPushButton * minimizeButton;
+  QPushButton * maximizeButton;
   QRadioButton *advanced;
 
   bool isMinimized = true;
@@ -93,10 +92,8 @@ class NodeWidget : public QStackedWidget {
 
   static QString statusToBackground(EPL_DataCollect::NMTState status);
 
-  void updateData(EPL_DataCollect::Node *node);
-
  private:
-  void updateAdvancedInfo(EPL_DataCollect::Node::IDENT identity);
+  void updateIdentityInfo(EPL_DataCollect::Node::IDENT identity);
   void updateStatus(EPL_DataCollect::NMTState newStatus);
 
  protected:
@@ -105,9 +102,12 @@ class NodeWidget : public QStackedWidget {
  signals:
   void nodeChanged(uint8_t node);
 
+ private slots:
+  void fixTree(QTreeWidgetItem *item);
 
  public slots:
   void minimizeChange(bool minimized);
   void setHighlightingLevel(int level);
+  void updateData(EPL_DataCollect::Node *node);
   void updateStyleSheet();
 };

@@ -84,6 +84,13 @@ MainWindow::~MainWindow() {
   delete settingsWin;
 }
 
+void MainWindow::addNode(Node *n) {
+  NodeWidget *nw = new NodeWidget(n, ui->networkGraphContents);
+
+  ui->networkGraphContents->layout()->addWidget(nw);
+  emit nodeAdded(n->getID(), nw);
+}
+
 void MainWindow::createModels() {
   // Create and add Models here
   CycleCommandsModel *cyCoModel = new CycleCommandsModel(this);

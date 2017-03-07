@@ -40,6 +40,7 @@ class NetworkGraphModel : public QObject, public BaseModel {
 
  private:
   QMap<uint8_t, NodeWidget *> nodeMap;
+  QWidget *graph;
 
  public:
   NetworkGraphModel(MainWindow *mw);
@@ -50,6 +51,11 @@ class NetworkGraphModel : public QObject, public BaseModel {
   void update(EPL_DataCollect::Cycle *cycle);
 
  signals:
-  void createdNodeWidget(NodeWidget *node);
+  void detectedNewNode(EPL_DataCollect::Node *node);
+  void nodeUpdated(EPL_DataCollect::Node *node);
+  void eventsDone();
+
+ public slots:
+  void trackNodeWidget(uint8_t id, NodeWidget *nw);
 };
 }

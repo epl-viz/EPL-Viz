@@ -40,12 +40,14 @@
 #include <QTextEdit>
 #include <QWidget>
 
+class MainWindow;
+
 namespace EPL_Viz {
 class BaseModel {
 
  private:
   static QLinkedList<BaseModel *> *registeredModels;
-  static uint32_t                  appID = UINT32_MAX;
+  static uint32_t                  appID;
 
  public:
   BaseModel();

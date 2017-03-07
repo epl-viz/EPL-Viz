@@ -28,6 +28,7 @@
  */
 
 #include "basemodel.hpp"
+#include "mainwindow.hpp"
 using namespace EPL_Viz;
 using namespace EPL_DataCollect;
 
@@ -81,6 +82,7 @@ void BaseModel::updateAll(MainWindow *mw, CaptureInstance *instance, uint32_t cy
           mw->changeState(GUIState::PLAYING);
         }
         break;
+      default: break;
     }
   }
 
@@ -97,6 +99,8 @@ void BaseModel::updateAll(MainWindow *mw, CaptureInstance *instance, uint32_t cy
 
 void BaseModel::initAll() {
   QLinkedListIterator<BaseModel *> iterator(*registeredModels);
+  appID = UINT32_MAX; // Initialize appID with a dummy value
+
   while (iterator.hasNext()) {
     iterator.next()->init();
   }
@@ -116,3 +120,5 @@ void BaseModel::dereg(BaseModel *model) {
 }
 
 bool BaseModel::operator==(const BaseModel &other) { return this == &other; }
+
+uint32_t BaseModel::appID;

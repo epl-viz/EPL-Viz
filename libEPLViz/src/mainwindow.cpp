@@ -66,7 +66,13 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
   connect(this,
           SIGNAL(recordingStarted(EPL_DataCollect::CaptureInstance *)),
           ui->pluginSelectorWidget,
-          SLOT(loadPlugins(EPL_DataCollect::CaptureInstance *)));
+          SLOT(loadPlugins(
+                EPL_DataCollect::CaptureInstance *))); // Notify the pluginSelectorWidget of the start of recording
+  connect(this,
+          SIGNAL(recordingStarted(EPL_DataCollect::CaptureInstance *)),
+          ui->eventLog,
+          SLOT(start(EPL_DataCollect::CaptureInstance *)));            // Notify the eventLog of the start of recording
+  connect(this, SIGNAL(cycleChanged()), ui->eventLog, SLOT(update())); // Notify the eventLog of cycle changes
   connect(this, SIGNAL(close()), modelThread, SLOT(stop()));
 
   profileManager->getDefaultProfile()->readWindowSettings(this);
@@ -103,9 +109,9 @@ void MainWindow::createModels() {
 
   NetworkGraphModel *networkGraphModel = new NetworkGraphModel(this);
 
-  models.append(new PacketHistoryModel(this));
-  models.append(new PythonLogModel(this));
-  models.append(new QWTPlotModel(this));
+  // models.append(new PacketHistoryModel(this));
+  // models.append(new PythonLogModel(this));
+  // models.append(new QWTPlotModel(this));
   models.append(curODModel);
   models.append(networkGraphModel);
   models.append(cyCoModel);

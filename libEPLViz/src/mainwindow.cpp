@@ -109,14 +109,12 @@ void MainWindow::createModels() {
   CycleCommandsModel *cyCoModel = new CycleCommandsModel(this);
   connect(this, SIGNAL(cycleChanged()), cyCoModel, SLOT(updateNext()));
 
-  // NetworkGraphModel *networkGraphModel = new NetworkGraphModel(this);
+  NetworkGraphModel *networkGraphModel = new NetworkGraphModel(this);
 
   CurrentODModel *curODModel = new CurrentODModel(this);
   connect(this, SIGNAL(cycleChanged()), curODModel, SLOT(updateNext()));
-  // connect(networkGraphModel, SIGNAL(nodeChanged(uint8_t)), curODModel, SLOT(changeNode(uint8_t)))
 
   ODDescpriptonModel *oddescrModel = new ODDescpriptonModel(this);
-  // connect(networkGraphModel, SIGNAL(nodeChanged(uint8_t)), odDescrModel, SLOT(changeNode(uint8_t)))
 
 
 
@@ -124,14 +122,14 @@ void MainWindow::createModels() {
   // models.append(new PythonLogModel(this));
   models.append(new QWTPlotModel(this));
   models.append(curODModel);
-  // models.append(networkGraphModel);
+  models.append(networkGraphModel);
   models.append(cyCoModel);
   models.append(oddescrModel);
 
   QWidget *network = ui->networkGraphContents;
   connect(network, SIGNAL(nodeChanged(uint8_t)), cyCoModel, SLOT(changeNode(uint8_t)));
   connect(network, SIGNAL(nodeChanged(uint8_t)), curODModel, SLOT(changeNode(uint8_t)));
-  // connect(network, SIGNAL(nodeChanged(uint8_t)), odDescrModel, SLOT(changeNode(uint8_t)));
+  connect(network, SIGNAL(nodeChanged(uint8_t)), oddescrModel, SLOT(changeNode(uint8_t)));
 }
 
 void MainWindow::destroyModels() {

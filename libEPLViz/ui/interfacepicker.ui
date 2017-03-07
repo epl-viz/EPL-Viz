@@ -133,8 +133,25 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>accepted()</signal>
+   <receiver>InterfacePicker</receiver>
+   <slot>saveInterface()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>309</x>
+     <y>179</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>179</x>
+     <y>179</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>updateList()</slot>
+  <slot>saveInterface()</slot>
  </slots>
 </ui>

@@ -165,7 +165,7 @@ bool MainWindow::changeTime(double t) {
 }
 
 bool MainWindow::changeCycle(uint32_t cycle) {
-  if (machineState == GUIState::STOPPED) {
+  if (machineState != GUIState::STOPPED) {
     if (curCycle != cycle) {
       curCycle = cycle;
       emit cycleChanged();

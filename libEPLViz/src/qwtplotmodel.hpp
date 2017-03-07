@@ -33,8 +33,10 @@
 #include "TimeSeries.hpp"
 #include "basemodel.hpp"
 
+#include "CSTimeSeriesPtr.hpp"
 #include <qwt_plot.h>
 #include <qwt_plot_curve.h>
+
 
 #include <QObject>
 
@@ -49,6 +51,7 @@ class QWTPlotModel : public QObject, public EPL_Viz::BaseModel {
   QwtPlot *                                             plot;
   QwtPlotCurve *                                        curve;
   std::shared_ptr<EPL_DataCollect::plugins::TimeSeries> timeSeries;
+  EPL_DataCollect::plugins::CSTimeSeriesPtr *           tsp;
 
  public:
   QWTPlotModel(MainWindow *win);
@@ -60,5 +63,8 @@ class QWTPlotModel : public QObject, public EPL_Viz::BaseModel {
 
  signals:
   void requestRedraw();
+
+ public slots:
+  void createPlot(uint8_t nodeID, uint16_t index, uint8_t subIndex);
 };
 }

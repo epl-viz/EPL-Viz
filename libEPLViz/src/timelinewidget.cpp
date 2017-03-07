@@ -71,5 +71,5 @@ bool TimelineWidget::event(QEvent *event) {
 
 void TimelineWidget::pointSelected(const QPointF &pa) {
   qDebug() << "Clicked on Timeline at point " << pa.x();
-  window->changeCycle(pa.x());
+  window->changeCycle(static_cast<uint32_t>(pa.x()));
 }

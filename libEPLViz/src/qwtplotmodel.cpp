@@ -64,18 +64,18 @@ void QWTPlotModel::update(EPL_DataCollect::Cycle *cycle) {
   Cycle curCycle = window->getCaptureInstance()->getCycleContainer()->pollCycle();
 
   std::vector<double> values       = timeSeries->tsData;
-  int                 oldDataCount = curve->data()->size();
-  int                 newDataCount = values.size();
-  int                 start        = 0;
+  size_t                 oldDataCount = curve->data()->size();
+  size_t                 newDataCount = values.size();
+  size_t                 start        = 0;
 
   if (oldDataCount == newDataCount)
     return;
   if (oldDataCount < newDataCount)
     start = oldDataCount;
 
-  for (int i = start; i < newDataCount; ++i) {
-    double x = (double)i;
-    double y = (double)values[i];
+  for (size_t i = start; i < newDataCount; ++i) {
+    double x = static_cast<double>(i);
+    double y = static_cast<double>(values[i]);
     curve->setSamples(&x, &y, 1);
   }
   emit requestRedraw();

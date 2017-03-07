@@ -49,7 +49,10 @@ class SettingsWindow : public QDialog {
 
   std::string currentProfile;
 
+  void saveIntoProfiles();
   void updateProfiles();
+
+  SettingsProfileItem::Config startCFG;
 
  public slots:
   void apply();

@@ -73,14 +73,14 @@ void NetworkGraphModel::update(Cycle *cycle) {
         int      level = std::stoi(event->getDescription()); // Description is the highlighting level for these events
 
         // Invalid node
-        if (cycle->getNode(node) == nullptr)
+        if (cycle->getNode(static_cast<uint8_t>(node)) == nullptr)
           break;
 
         // Check if event is valid
         if ((event->getType() == EvType::VIEW_EV_HIGHLIGHT_CN && node < 240) ||
             (event->getType() == EvType::VIEW_EV_HIGHLIGHT_CN && node == 240)) {
           // Set highlighting
-          nodeMap[node]->setHighlightingLevel(level);
+          nodeMap[static_cast<uint8_t>(node)]->setHighlightingLevel(level);
         }
         break;
       }

@@ -26,6 +26,8 @@
 
 #include "settingsprofileitem.hpp"
 
+SettingsProfileItem::~SettingsProfileItem() {}
+
 SettingsProfileItem::SettingsProfileItem(QString str, QListWidget *parent) : QListWidgetItem(str, parent), name(str) {}
 
 SettingsProfileItem::Config SettingsProfileItem::getConfig() { return cfg; }

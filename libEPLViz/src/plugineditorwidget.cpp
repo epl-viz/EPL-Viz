@@ -63,8 +63,8 @@ void PluginEditorWidget::loadDocument(QString fileName) {
 
 
   // Load the file if specified
-  if (fileName != nullptr) {
-    if (!doc->openUrl(fileName)) {
+  if (fileName != "") {
+    if (!doc->openUrl(QUrl(fileName.to))) {
       // TODO: Add error message?
       return;
     }
@@ -185,6 +185,7 @@ void PluginEditorWidget::cleanUp() {
   // Destroy all documents and add them to the map of saved plugins
   for (auto d : list) {
     QString localFile = d->url().toLocalFile();
+    qDebug() << localFile;
 
     if (QFile::exists(localFile)) {
       savedPlugins.insert(d->documentName(), localFile);

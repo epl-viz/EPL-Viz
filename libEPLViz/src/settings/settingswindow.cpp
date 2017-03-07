@@ -31,7 +31,6 @@
 #include "mainwindow.hpp"
 
 SettingsWindow::SettingsWindow(QWidget *parent) : QDialog(parent), ui(new Ui::SettingsWindow) {
-  startCFG.backConf = mainWindow->getCaptureInstance()->getConfig();
   ui->setupUi(this);
   mainWindow                = dynamic_cast<MainWindow *>(parent);
   profiles["Default"]       = std::make_shared<SettingsProfileItem>("Default", ui->profList);
@@ -42,6 +41,7 @@ SettingsWindow::SettingsWindow(QWidget *parent) : QDialog(parent), ui(new Ui::Se
   prof->cfg.currentNode = -1;
   currentProfile        = "Default";
 
+  startCFG = prof->cfg;
   updateProfiles();
 }
 

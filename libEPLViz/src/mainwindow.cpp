@@ -63,6 +63,10 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
   connect(modelThread, &ModelThread::finished, modelThread, &QObject::deleteLater);
   modelThread->start();
 
+  connect(this,
+          SIGNAL(recordingStarted(EPL_DataCollect::CaptureInstance *)),
+          ui->pluginSelectorWidget,
+          SLOT(loadPlugins(EPL_DataCollect::CaptureInstance *)));
   connect(this, SIGNAL(close()), modelThread, SLOT(stop()));
 
   profileManager->getDefaultProfile()->readWindowSettings(this);

@@ -675,7 +675,6 @@
    <extends>QListWidget</extends>
    <header>src/pluginselectorwidget.hpp</header>
    <slots>
-    <slot>loadPlugins(EPL_DataCollect::CaptureInstance)</slot>
     <slot>disableWidget()</slot>
    </slots>
   </customwidget>
@@ -890,7 +889,6 @@
   </connection>
  </connections>
  <slots>
-  <signal>recordingStarted(EPL_DataCollect::CaptureInstance)</signal>
   <slot>openPluginEditor()</slot>
   <slot>openInterfacePicker()</slot>
   <slot>setFullscreen(bool)</slot>

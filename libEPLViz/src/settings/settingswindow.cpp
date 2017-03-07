@@ -51,6 +51,33 @@ void SettingsWindow::updateProfiles() {
   ui->G_XDDDir->setText(prof->cfg.backConf.xddDir.c_str());
   ui->SM_interval->setValue(prof->cfg.backConf.smConfig.saveInterval);
   ui->PY_pluginDIR->setText(prof->cfg.pythonPluginsDir.c_str());
+  ui->IH_EPLFrameName->setText(prof->cfg.backConf.ihConfig.eplFrameName.c_str());
+  ui->IH_Prefetch->setValue(prof->cfg.backConf.ihConfig.prefetchSize);
+  ui->IH_CleanupI->setValue(prof->cfg.backConf.ihConfig.cleanupInterval);
+  ui->IH_CheckPrefetch->setValue(prof->cfg.backConf.ihConfig.checkPrefetch);
+  ui->IH_DeleteCyclesAfter->setValue(prof->cfg.backConf.ihConfig.deleteCyclesAfter.count());
+  ui->IH_LoopWait->setValue(prof->cfg.backConf.ihConfig.loopWaitTimeout.count());
+  ui->nodesList->clear();
+  for (auto i : prof->cfg.nodes) {
+    QString name = std::to_string(i.first).c_str();
+    if (i.first < 0) {
+      name = "Default";
+    }
+    ui->nodesList->addItem(name);
+  }
+}
+
+void SettingsWindow::saveIntoProfiles() {
+  SettingsProfileItem *prof                     = profiles[currentProfile].get();
+  prof->cfg.backConf.xddDir                     = ui->G_XDDDir->text().toStdString();
+  prof->cfg.backConf.smConfig.saveInterval      = ui->SM_interval->value();
+  prof->cfg.pythonPluginsDir                    = ui->PY_pluginDIR->text().toStdString();
+  prof->cfg.backConf.ihConfig.eplFrameName      = ui->IH_EPLFrameName->text().toStdString();
+  prof->cfg.backConf.ihConfig.prefetchSize      = ui->IH_Prefetch->value();
+  prof->cfg.backConf.ihConfig.cleanupInterval   = ui->IH_CleanupI->value();
+  prof->cfg.backConf.ihConfig.checkPrefetch     = ui->IH_CheckPrefetch->value();
+  prof->cfg.backConf.ihConfig.deleteCyclesAfter = std::chrono::milliseconds(ui->IH_DeleteCyclesAfter->value());
+  prof->cfg.backConf.ihConfig.loopWaitTimeout   = std::chrono::milliseconds(ui->IH_LoopWait->value());
 }
 
 void SettingsWindow::apply() {}
@@ -68,11 +95,13 @@ void SettingsWindow::deleteNode() {}
 void SettingsWindow::profChange(QListWidgetItem *curr, QListWidgetItem *pref) {
   (void)curr;
   (void)pref;
+  saveIntoProfiles();
 }
 
 void SettingsWindow::nodeChange(QListWidgetItem *curr, QListWidgetItem *pref) {
   (void)curr;
   (void)pref;
+  saveIntoProfiles();
 }
 
 SettingsProfileItem::Config SettingsWindow::getConfig() { return profiles["Default"].get()->cfg; }

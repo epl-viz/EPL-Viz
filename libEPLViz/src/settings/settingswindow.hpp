@@ -49,6 +49,7 @@ class SettingsWindow : public QDialog {
 
   std::string currentProfile;
 
+  void saveIntoProfiles();
   void updateProfiles();
 
  public slots:

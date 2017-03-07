@@ -53,6 +53,8 @@ class QWTPlotModel : public QObject, public EPL_Viz::BaseModel {
   std::shared_ptr<EPL_DataCollect::plugins::TimeSeries> timeSeries;
   EPL_DataCollect::plugins::CSTimeSeriesPtr *           tsp;
 
+  bool created = false;
+
  public:
   QWTPlotModel(MainWindow *win);
   ~QWTPlotModel();

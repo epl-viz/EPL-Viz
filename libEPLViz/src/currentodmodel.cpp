@@ -42,7 +42,7 @@ CurrentODModel::CurrentODModel(QMainWindow *window) : BaseModel() {
 void CurrentODModel::init() {}
 
 QModelIndex CurrentODModel::parent(const QModelIndex &index) const {
-  if (odEntries.value(convertRow.find(index.row())->first)->hasSubIndex())
+  if (odEntries.value(static_cast<uint8_t>( convertRow.find(index.row())->first))->hasSubIndex())
     return CurrentODModel::index(index.row(), 0, index);
   else
     return QModelIndex();
@@ -50,7 +50,7 @@ QModelIndex CurrentODModel::parent(const QModelIndex &index) const {
 
 QModelIndex CurrentODModel::index(int row, int column, const QModelIndex &parent) const {
   (void)parent;
-  return createIndex(row, column, odEntries.value(convertRow.find(row)->first).get());
+  return createIndex(row, column, odEntries.value(static_cast<uint8_t>(convertRow.find(row)->first)).get());
 }
 
 
@@ -68,7 +68,7 @@ QVariant CurrentODModel::data(const QModelIndex &index, int role) const {
   // TODO
   if (role == Qt::DisplayRole) {
 
-    std::shared_ptr<CurODModelItem> entry = odEntries.value(convertRow.find(index.row())->first);
+    std::shared_ptr<CurODModelItem> entry = odEntries.value(static_cast<uint8_t>(convertRow.find(index.row())->first));
     switch (index.column()) {
       case 0: return QVariant(index.column());
       case 1: return QVariant("empty");
@@ -110,12 +110,12 @@ void CurrentODModel::update(EPL_DataCollect::Cycle *cycle) {
     if (entry->getArraySize() >= 0) {
       item = std::make_shared<CurODModelItem>(i, true);
       for (uint8_t subI = 0; subI < entry->getArraySize(); ++subI) {
-        item->setSubIndex(subI, QString::fromStdString(entry->toString(i)));
+        item->setSubIndex(subI, QString::fromStdString(entry->toString(static_cast<uint8_t>(i))));
         convertRow[counter++] = std::make_pair(i, subI);
       }
     } else {
       item = std::make_shared<CurODModelItem>(i, false);
-      item->setSubIndex(0, QString::fromStdString(entry->toString(i)));
+      item->setSubIndex(0, QString::fromStdString(entry->toString(static_cast<uint8_t>(i))));
       convertRow[counter++] = std::make_pair(i, 0);
     }
     odEntries.insert(i, item);

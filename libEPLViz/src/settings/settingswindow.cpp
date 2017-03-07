@@ -31,6 +31,7 @@
 #include "mainwindow.hpp"
 
 SettingsWindow::SettingsWindow(QWidget *parent) : QDialog(parent), ui(new Ui::SettingsWindow) {
+  startCFG.backConf = mainWindow->getCaptureInstance()->getConfig();
   ui->setupUi(this);
   mainWindow                = dynamic_cast<MainWindow *>(parent);
   profiles["Default"]       = std::make_shared<SettingsProfileItem>("Default", ui->profList);
@@ -49,14 +50,14 @@ SettingsWindow::~SettingsWindow() { delete ui; }
 void SettingsWindow::updateProfiles() {
   SettingsProfileItem *prof = profiles[currentProfile].get();
   ui->G_XDDDir->setText(prof->cfg.backConf.xddDir.c_str());
-  ui->SM_interval->setValue(prof->cfg.backConf.smConfig.saveInterval);
+  ui->SM_interval->setValue(static_cast<int>( prof->cfg.backConf.smConfig.saveInterval));
   ui->PY_pluginDIR->setText(prof->cfg.pythonPluginsDir.c_str());
   ui->IH_EPLFrameName->setText(prof->cfg.backConf.ihConfig.eplFrameName.c_str());
   ui->IH_Prefetch->setValue(prof->cfg.backConf.ihConfig.prefetchSize);
-  ui->IH_CleanupI->setValue(prof->cfg.backConf.ihConfig.cleanupInterval);
-  ui->IH_CheckPrefetch->setValue(prof->cfg.backConf.ihConfig.checkPrefetch);
-  ui->IH_DeleteCyclesAfter->setValue(prof->cfg.backConf.ihConfig.deleteCyclesAfter.count());
-  ui->IH_LoopWait->setValue(prof->cfg.backConf.ihConfig.loopWaitTimeout.count());
+  ui->IH_CleanupI->setValue(static_cast<int>(prof->cfg.backConf.ihConfig.cleanupInterval));
+  ui->IH_CheckPrefetch->setValue(static_cast<int>(prof->cfg.backConf.ihConfig.checkPrefetch));
+  ui->IH_DeleteCyclesAfter->setValue(static_cast<int>(prof->cfg.backConf.ihConfig.deleteCyclesAfter.count()));
+  ui->IH_LoopWait->setValue(static_cast<int>(prof->cfg.backConf.ihConfig.loopWaitTimeout.count()));
   ui->nodesList->clear();
   for (auto i : prof->cfg.nodes) {
     QString name = std::to_string(i.first).c_str();
@@ -70,19 +71,33 @@ void SettingsWindow::updateProfiles() {
 void SettingsWindow::saveIntoProfiles() {
   SettingsProfileItem *prof                     = profiles[currentProfile].get();
   prof->cfg.backConf.xddDir                     = ui->G_XDDDir->text().toStdString();
-  prof->cfg.backConf.smConfig.saveInterval      = ui->SM_interval->value();
+  prof->cfg.backConf.smConfig.saveInterval      = static_cast<uint32_t>(ui->SM_interval->value());
   prof->cfg.pythonPluginsDir                    = ui->PY_pluginDIR->text().toStdString();
   prof->cfg.backConf.ihConfig.eplFrameName      = ui->IH_EPLFrameName->text().toStdString();
-  prof->cfg.backConf.ihConfig.prefetchSize      = ui->IH_Prefetch->value();
-  prof->cfg.backConf.ihConfig.cleanupInterval   = ui->IH_CleanupI->value();
-  prof->cfg.backConf.ihConfig.checkPrefetch     = ui->IH_CheckPrefetch->value();
+  prof->cfg.backConf.ihConfig.prefetchSize      = static_cast<uint8_t>(ui->IH_Prefetch->value());
+  prof->cfg.backConf.ihConfig.cleanupInterval   = static_cast<uint8_t>(ui->IH_CleanupI->value());
+  prof->cfg.backConf.ihConfig.checkPrefetch     = static_cast<uint8_t>(ui->IH_CheckPrefetch->value());
   prof->cfg.backConf.ihConfig.deleteCyclesAfter = std::chrono::milliseconds(ui->IH_DeleteCyclesAfter->value());
   prof->cfg.backConf.ihConfig.loopWaitTimeout   = std::chrono::milliseconds(ui->IH_LoopWait->value());
+  prof->cfg.nodes.clear();
+
+  QListWidgetItem *it = ui->nodesList->currentItem();
+  std::string name = it->text().toStdString();
+  int nodeID = -1;
+  if(name != "Default") {
+     nodeID = static_cast<uint8_t>(std::stoi(name));
+  }
+  prof->cfg.nodes[nodeID].autoDeduceSpecificProfile = ui->N_autoDetect->checkState() == Qt::Checked;
+  prof->cfg.nodes[nodeID].baseProfile = ui->N_Base->text().toStdString();
+  prof->cfg.nodes[nodeID].specificProfile = ui->N_Special->text().toStdString();
 }
 
 void SettingsWindow::apply() {}
 
-void SettingsWindow::reset() {}
+void SettingsWindow::reset() {
+    SettingsProfileItem *prof = profiles[currentProfile].get();
+    prof->cfg = startCFG;
+}
 
 void SettingsWindow::newProfile() {}
 

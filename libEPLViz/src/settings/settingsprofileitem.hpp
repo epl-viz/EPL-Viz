@@ -32,7 +32,7 @@
 
 class SettingsWindow;
 
-class SettingsProfileItem : public QListWidgetItem {
+class SettingsProfileItem final : public QListWidgetItem {
  private:
   struct Config {
     EPL_DataCollect::CaptureInstance::Config backConf;
@@ -46,6 +46,7 @@ class SettingsProfileItem : public QListWidgetItem {
 
  public:
   SettingsProfileItem(QString str, QListWidget *parent);
+  ~SettingsProfileItem();
 
   Config  getConfig();
   QString getName();

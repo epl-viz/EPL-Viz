@@ -52,6 +52,8 @@ class SettingsWindow : public QDialog {
   void saveIntoProfiles();
   void updateProfiles();
 
+  SettingsProfileItem::Config startCFG;
+
  public slots:
   void apply();
   void reset();

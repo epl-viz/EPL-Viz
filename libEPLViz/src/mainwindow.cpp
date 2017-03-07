@@ -314,7 +314,7 @@ void MainWindow::changeState(GUIState nState) {
       break;
     case GUIState::PAUSED: break;
     case GUIState::STOPPED:
-      ui->actionStart_Recording->setEnabled(true);
+      ui->actionStart_Recording->setEnabled(false); // TODO: Do not allow until a reset has been done
       ui->actionStop_Recording->setEnabled(false);
       captureInstance->stopRecording();
       ui->actionSave->setEnabled(true);

@@ -71,8 +71,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
   connect(this,
           SIGNAL(recordingStarted(EPL_DataCollect::CaptureInstance *)),
           ui->eventLog,
-          SLOT(start(EPL_DataCollect::CaptureInstance *)));            // Notify the eventLog of the start of recording
-  connect(this, SIGNAL(cycleChanged()), ui->eventLog, SLOT(update())); // Notify the eventLog of cycle changes
+          SLOT(start(EPL_DataCollect::CaptureInstance *))); // Notify the eventLog of the start of recording
   connect(this, SIGNAL(close()), modelThread, SLOT(stop()));
 
   profileManager->getDefaultProfile()->readWindowSettings(this);
@@ -93,9 +92,12 @@ MainWindow::~MainWindow() {
 }
 
 void MainWindow::addNode(Node *n) {
-  NodeWidget *nw = new NodeWidget(n, ui->networkGraphContents);
+  NodeWidget * nw     = new NodeWidget(n, ui->networkGraphContents);
+  QGridLayout *layout = qobject_cast<QGridLayout *>(ui->networkGraphContents->layout());
 
-  ui->networkGraphContents->layout()->addWidget(nw);
+  int col = layout->columnCount();
+
+  layout->addWidget(nw, col / 4, col % 4);
   emit nodeAdded(n->getID(), nw);
 }
 

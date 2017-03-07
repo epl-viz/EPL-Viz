@@ -47,9 +47,9 @@
 #include <QThread>
 #include <QToolBar>
 #include <QToolButton>
+#include <QVector>
 #include <iostream>
 #include <vector>
-#include <QVector>
 
 namespace Ui {
 class MainWindow;

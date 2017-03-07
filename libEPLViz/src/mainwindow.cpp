@@ -33,6 +33,7 @@
 #include "cyclecommandsmodel.hpp"
 #include "interfacepicker.hpp"
 #include "networkgraphmodel.hpp"
+#include "oddescriptionmodel.hpp"
 #include "pluginswindow.hpp"
 #include "settingswindow.hpp"
 #include "settingswindow.hpp"
@@ -40,7 +41,6 @@
 #include <memory>
 #include <vector>
 #include <wiretap/wtap.h>
-#include "oddescriptionmodel.hpp"
 
 using namespace EPL_Viz;
 using namespace EPL_DataCollect;
@@ -109,14 +109,14 @@ void MainWindow::createModels() {
   CycleCommandsModel *cyCoModel = new CycleCommandsModel(this);
   connect(this, SIGNAL(cycleChanged()), cyCoModel, SLOT(updateNext()));
 
-  //NetworkGraphModel *networkGraphModel = new NetworkGraphModel(this);
+  // NetworkGraphModel *networkGraphModel = new NetworkGraphModel(this);
 
   CurrentODModel *curODModel = new CurrentODModel(this);
   connect(this, SIGNAL(cycleChanged()), curODModel, SLOT(updateNext()));
-  //connect(networkGraphModel, SIGNAL(nodeChanged(uint8_t)), curODModel, SLOT(changeNode(uint8_t)))
+  // connect(networkGraphModel, SIGNAL(nodeChanged(uint8_t)), curODModel, SLOT(changeNode(uint8_t)))
 
   ODDescpriptonModel *oddescrModel = new ODDescpriptonModel(this);
-  //connect(networkGraphModel, SIGNAL(nodeChanged(uint8_t)), odDescrModel, SLOT(changeNode(uint8_t)))
+  // connect(networkGraphModel, SIGNAL(nodeChanged(uint8_t)), odDescrModel, SLOT(changeNode(uint8_t)))
 
 
 
@@ -124,7 +124,7 @@ void MainWindow::createModels() {
   // models.append(new PythonLogModel(this));
   models.append(new QWTPlotModel(this));
   models.append(curODModel);
-  //models.append(networkGraphModel);
+  // models.append(networkGraphModel);
   models.append(cyCoModel);
   models.append(oddescrModel);
 
@@ -391,7 +391,6 @@ void MainWindow::odDescrWidgetUpdateData(QTreeWidgetItem *item, QVector<QString>
     item->setText(1, newData[1]);
   if (item->text(3).compare(newData[2]))
     item->setText(1, newData[2]);
-
 }
 
 void MainWindow::externalUpdateODDescr(EPL_DataCollect::Cycle *cycle, int node) {
@@ -408,9 +407,9 @@ void MainWindow::externalUpdateODDescr(EPL_DataCollect::Cycle *cycle, int node) 
   sort(entriesVect.begin(), entriesVect.end());
 
   for (uint32_t i = 0; i < entriesVect.size(); i++) {
-    //uint16_t         odIndex = entriesVect[i];
-    //ODEntry *        entry   = od->getEntry(odIndex);
-    ODDescription*   descr   = od->getODDesc();
+    // uint16_t         odIndex = entriesVect[i];
+    // ODEntry *        entry   = od->getEntry(odIndex);
+    ODDescription *  descr   = od->getODDesc();
     QTreeWidgetItem *topItem = tree->topLevelItem(i);
     if (topItem == nullptr) {
       // Does not exist, create it and subindices

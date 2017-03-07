@@ -175,6 +175,8 @@ NodeWidget::NodeWidget(EPL_DataCollect::Node *node, QWidget *parent) : QStackedW
   addWidget(maxWidget);
   addWidget(minWidget);
   widget(1)->show(); // Show the minimized widget
+
+  qDebug() << "Created new node widget";
 }
 
 /*

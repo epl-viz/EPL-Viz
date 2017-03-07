@@ -38,6 +38,7 @@
 #include "EPLEnum2Str.hpp"
 #include "Node.hpp"
 #include "EPLEnums.h"
+#include <QDebug>
 #include <QFrame>
 #include <QGridLayout>
 #include <QLabel>

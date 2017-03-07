@@ -29,6 +29,7 @@
 
 #include "networkgraphmodel.hpp"
 #include "mainwindow.hpp"
+#include <QDebug>
 
 using namespace EPL_Viz;
 using namespace EPL_DataCollect;
@@ -42,16 +43,20 @@ void NetworkGraphModel::init() {}
 void NetworkGraphModel::update(Cycle *cycle) {
   auto list = cycle->getNodeList();
 
+  qDebug() << "Updating the network graph!";
+
   for (uint8_t id : list) {
     Node *n = cycle->getNode(id);
     auto  s = nodeMap.find(id);
 
     if (s == nodeMap.end() || s.key() != id) {
+      qDebug() << "Adding node " << QString::number(id);
       // The node is not yet added as a widget and has to be created
       NodeWidget *nw = new NodeWidget(n, graph);
       nodeMap.insert(id, nw);
       graph->layout()->addWidget(nw);
     } else {
+      qDebug() << "Updating node " << QString::number(id);
       // The node is added as widget and has to be updated
       nodeMap[id]->updateData(n);
     }

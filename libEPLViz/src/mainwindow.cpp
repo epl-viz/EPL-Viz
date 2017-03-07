@@ -74,6 +74,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
   settingsWin = new SettingsWindow(this);
   settingsWin->hide();
+
+  ui->pluginSelectorWidget->setMainWindow(this);
 }
 
 MainWindow::~MainWindow() {
@@ -82,6 +84,13 @@ MainWindow::~MainWindow() {
   delete profileManager;
   delete ui;
   delete settingsWin;
+}
+
+void MainWindow::addNode(Node *n) {
+  NodeWidget *nw = new NodeWidget(n, ui->networkGraphContents);
+
+  ui->networkGraphContents->layout()->addWidget(nw);
+  emit nodeAdded(n->getID(), nw);
 }
 
 void MainWindow::createModels() {
@@ -102,9 +111,9 @@ void MainWindow::createModels() {
   models.append(cyCoModel);
 
   QWidget *network = ui->networkGraphContents;
-  connect(network, SIGNAL(nodeChanged(uint8_t)), cyCoModel, SLOT(changeNodel(uint8_t)));
-  connect(network, SIGNAL(nodeChanged(uint8_t)), curODModel, SLOT(changeNodel(uint8_t)));
-  //connect(network, SIGNAL(nodeChanged(uint8_t)), odDescrModel, SLOT(changeNodel(uint8_t)));
+  connect(network, SIGNAL(nodeChanged(uint8_t)), cyCoModel, SLOT(changeNode(uint8_t)));
+  connect(network, SIGNAL(nodeChanged(uint8_t)), curODModel, SLOT(changeNode(uint8_t)));
+  // connect(network, SIGNAL(nodeChanged(uint8_t)), odDescrModel, SLOT(changeNode(uint8_t)));
 }
 
 void MainWindow::destroyModels() {
@@ -164,7 +173,10 @@ void MainWindow::openPluginEditor() {
   PluginsWindow *win = new PluginsWindow(this);
   win->show();
 
-  connect(win, SIGNAL(pluginsSaved(QMap)), ui->pluginSelectorWidget, SLOT(addPlugins(QMap)));
+  connect(win->getEditor(),
+          SIGNAL(pluginsSaved(QMap<QString, QString>)),
+          ui->pluginSelectorWidget,
+          SLOT(addPlugins(QMap<QString, QString>)));
 }
 
 void MainWindow::openInterfacePicker() {

@@ -27,8 +27,11 @@
 #ifndef SETTINGSWINDOW_HPP
 #define SETTINGSWINDOW_HPP
 
+#include "settingsprofileitem.hpp"
 #include <QDialog>
 #include <QListWidget>
+#include <memory>
+#include <unordered_map>
 
 class MainWindow;
 
@@ -41,6 +44,15 @@ class SettingsWindow : public QDialog {
  private:
   Ui::SettingsWindow *ui;
   MainWindow *        mainWindow;
+
+  std::unordered_map<std::string, std::shared_ptr<SettingsProfileItem>> profiles;
+
+  std::string currentProfile;
+
+  void saveIntoProfiles();
+  void updateProfiles();
+
+  SettingsProfileItem::Config startCFG;
 
  public slots:
   void apply();
@@ -57,6 +69,8 @@ class SettingsWindow : public QDialog {
  public:
   explicit SettingsWindow(QWidget *parent);
   ~SettingsWindow();
+
+  SettingsProfileItem::Config getConfig();
 };
 
 #endif // SETTINGSWINDOW_HPP

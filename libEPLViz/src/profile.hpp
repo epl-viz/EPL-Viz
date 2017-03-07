@@ -47,15 +47,15 @@ class Profile {
   void writeInterface(QString interface);
   /**
    * @brief readInterface Returns the saved Interface name or the QString "none"
-   * @return
+   * @return A string
    */
   QString readInterface();
 
   void writeCustomValue(QString custom, QVariant val);
   /**
    * @brief readCustomValue Returns a QVariant with the saved value or an empty one
-   * @param custom
-   * @return
+   * @param custom The new val
+   * @return A Variant
    */
   QVariant readCustomValue(QString custom);
 

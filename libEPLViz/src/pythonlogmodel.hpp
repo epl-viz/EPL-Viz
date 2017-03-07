@@ -51,7 +51,7 @@ class PythonLogModel : public QAbstractTableModel, public BaseModel {
  public:
   PythonLogModel(MainWindow *window);
 
-  void init();
+  void init() override;
 
   int rowCount(const QModelIndex &parent) const override;
   int columnCount(const QModelIndex &parent) const override;
@@ -60,6 +60,6 @@ class PythonLogModel : public QAbstractTableModel, public BaseModel {
   bool insertRows(int row, int count, const QModelIndex &parent = QModelIndex()) override;
 
  protected:
-  mockable void update(EPL_DataCollect::Cycle *cycle);
+  void update(EPL_DataCollect::Cycle *cycle) override;
 };
 }

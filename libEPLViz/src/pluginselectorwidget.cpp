@@ -35,13 +35,19 @@ void PluginSelectorWidget::addItem(QString plugin) {
   QListWidgetItem *i   = new QListWidgetItem(this);
   QCheckBox *      box = new QCheckBox(plugin, this);
 
-  QObject::connect(box, SIGNAL(stateChanged(int)), this, SLOT(changeEnabled(int)));
+  QObject::connect(box, SIGNAL(stateChanged(int)), this, SLOT(changeState(int)));
 
   setItemWidget(i, box);
 }
 
+void PluginSelectorWidget::setMainWindow(MainWindow *mw) { main = mw; }
+
 void PluginSelectorWidget::addPlugins(QMap<QString, QString> map) {
   QMapIterator<QString, QString> i(map);
+  QString pluginPath = QDir::currentPath();
+
+  if (main)
+    pluginPath = QString::fromStdString(main->getSettingsWin()->getConfig().pythonPluginsDir);
 
   while (i.hasNext()) {
     i.next();
@@ -49,10 +55,20 @@ void PluginSelectorWidget::addPlugins(QMap<QString, QString> map) {
     QString plugin = i.key();
     QString path   = i.value();
 
-    if (!QFile::copy(path, pluginPath + plugin)) {
-      QFile::remove(path); // TODO: Add a dialog to warn for overwriting the file
-      QFile::copy(path, pluginPath + "/" + plugin);
+    QString newPath = pluginPath + "/" + plugin;
+
+    if (QFile::exists(newPath)) {
+      qDebug() << "File already exists! Removing it...";
+      QFile::remove(newPath);
+      // TODO: Add a dialog to warn for overwriting the file
     }
+
+    if (!QFile::copy(path, newPath)) {
+      qDebug() << "Failed to move file!";
+      continue;
+    }
+
+    qDebug() << "Moved file to " << newPath;
 
     addItem(plugin);
   }
@@ -74,6 +90,7 @@ void PluginSelectorWidget::changeState(int state) {
 }
 
 void PluginSelectorWidget::loadPlugins(EPL_DataCollect::CaptureInstance *ci) {
+  qDebug() << "Received plugin load signal!";
   pluginManager = ci->getPluginManager();
 
   for (int i = 0; i < count(); i++) {

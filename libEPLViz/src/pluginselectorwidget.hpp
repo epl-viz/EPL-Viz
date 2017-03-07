@@ -32,6 +32,7 @@
 #include "PythonPlugin.hpp"
 #include "mainwindow.hpp"
 #include <QCheckBox>
+#include <QDir>
 #include <QFile>
 #include <QListWidget>
 #include <QMap>
@@ -42,11 +43,13 @@ class PluginSelectorWidget : public QListWidget {
  private:
   bool                            recording = false;
   EPL_DataCollect::PluginManager *pluginManager;
-  QString                         pluginPath = ""; // TODO: Add this via configuration
+  MainWindow *                    main;
 
  public:
   PluginSelectorWidget(QWidget *parent = nullptr);
   ~PluginSelectorWidget()              = default;
+
+  void setMainWindow(MainWindow *mw);
 
  private:
   void addItem(QString plugin);

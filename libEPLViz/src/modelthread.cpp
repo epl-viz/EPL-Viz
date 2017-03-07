@@ -67,7 +67,7 @@ void ModelThread::loop() {
           window->changeState(GUIState::UNINIT);
           return;
         }
-        BaseModel::updateAll(state, ci, window->getCycleNum());
+        BaseModel::updateAll(window, ci, window->getCycleNum());
         break;
       }
       case GUIState::PAUSED: break;

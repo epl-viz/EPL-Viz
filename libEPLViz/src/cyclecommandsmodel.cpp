@@ -152,9 +152,9 @@ void CycleCommandsModel::update(Cycle *cycle) {
   rootItem->removeChildren(0, rootItem->childCount());
 
   for (uint32_t i = 0; i < packets.size(); ++i) {
-    rootItem->insertChildren(i, 1);
+    rootItem->insertChildren(static_cast<int>(i), 1);
     // Root Packets
-    rootItem->child(i)->setData(0, QVariant("Frame " + QString::number(i)));
+    rootItem->child(static_cast<int>(i))->setData(0, QVariant("Frame " + QString::number(i)));
     // TODO set children
   }
   endResetModel();

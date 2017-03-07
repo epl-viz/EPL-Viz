@@ -28,7 +28,6 @@
  */
 
 #include "qwtplotmodel.hpp"
-#include "CSTimeSeriesPtr.hpp"
 #include "QPointF"
 #include "mainwindow.hpp"
 using namespace EPL_Viz;
@@ -45,37 +44,38 @@ void QWTPlotModel::init() {
   plot = window->findChild<QwtPlot *>("qwtPlot");
   connect(this, SIGNAL(requestRedraw()), plot, SLOT(repaint()));
 
-  // TODO what the fuck am I doing
-  CaptureInstance *         ci     = window->getCaptureInstance();
-  Cycle *                   startC = ci->getStartCycle();
-  auto *                    cs  = startC->getCycleStorage(EPL_DataCollect::constants::EPL_DC_PLUGIN_TIME_SERIES_CSID);
-  plugins::CSTimeSeriesPtr *tsp = dynamic_cast<plugins::CSTimeSeriesPtr *>(cs);
+  CaptureInstance *ci     = window->getCaptureInstance();
+  Cycle *          startC = ci->getStartCycle();
+  auto *           cs     = startC->getCycleStorage(EPL_DataCollect::constants::EPL_DC_PLUGIN_TIME_SERIES_CSID);
+  tsp                     = dynamic_cast<plugins::CSTimeSeriesPtr *>(cs);
+}
 
-  // TODO add real values
-  timeSeries = std::make_shared<plugins::TimeSeries>(1, 0x1006, 0);
+// TODO: Connect this slot to the signal of the OD Widget
+void QWTPlotModel::createPlot(uint8_t nodeID, uint16_t index, uint8_t subIndex) {
+  timeSeries = std::make_shared<plugins::TimeSeries>(nodeID, index, subIndex);
   tsp->addTS(timeSeries);
 
   curve->attach(plot);
 }
 
-void QWTPlotModel::update(EPL_DataCollect::Cycle *cycle) {
+void QWTPlotModel::update(Cycle *cycle) {
   (void)cycle;
   // We're using always the newest cycle
   Cycle curCycle = window->getCaptureInstance()->getCycleContainer()->pollCycle();
 
   std::vector<double> values       = timeSeries->tsData;
-  int                 oldDataCount = curve->data()->size();
-  int                 newDataCount = values.size();
-  int                 start        = 0;
+  size_t              oldDataCount = curve->data()->size();
+  size_t              newDataCount = values.size();
+  size_t              start        = 0;
 
   if (oldDataCount == newDataCount)
     return;
   if (oldDataCount < newDataCount)
     start = oldDataCount;
 
-  for (int i = start; i < newDataCount; ++i) {
-    double x = (double)i;
-    double y = (double)values[i];
+  for (size_t i = start; i < newDataCount; ++i) {
+    double x = static_cast<double>(i);
+    double y = static_cast<double>(values[i]);
     curve->setSamples(&x, &y, 1);
   }
   emit requestRedraw();

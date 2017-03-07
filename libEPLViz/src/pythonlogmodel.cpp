@@ -46,12 +46,12 @@ void PythonLogModel::update(Cycle *cycle) {
   (void)cycle;
   events                             = log->getAllEvents();
   std::vector<EventBase *> newEvents = log->pollEvents(appid);
-  insertRows(events.size(), newEvents.size());
+  insertRows(static_cast<int>(events.size()), static_cast<int>(newEvents.size()));
 }
 
 int PythonLogModel::rowCount(const QModelIndex &parent) const {
   (void)parent;
-  return events.size();
+  return static_cast<int>(events.size());
 }
 
 int PythonLogModel::columnCount(const QModelIndex &parent) const {
@@ -61,7 +61,7 @@ int PythonLogModel::columnCount(const QModelIndex &parent) const {
 
 QVariant PythonLogModel::data(const QModelIndex &index, int role) const {
   if (role == Qt::DisplayRole) {
-    EventBase *ev = events[index.row()];
+    EventBase *ev = events[static_cast<uint8_t>(index.row())];
     switch (index.column()) {
       case 0:
         uint32_t start;

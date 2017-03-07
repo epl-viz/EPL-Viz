@@ -26,10 +26,29 @@
 
 #pragma once
 
+#include "CaptureInstance.hpp"
 #include <QListWidget>
+#include <unordered_map>
 
+class SettingsWindow;
 
-class SettingsProfileItem : public QListWidgetItem {
+class SettingsProfileItem final : public QListWidgetItem {
+ private:
+  struct Config {
+    EPL_DataCollect::CaptureInstance::Config backConf;
+    std::unordered_map<int, EPL_DataCollect::CaptureInstance::NodeConfig> nodes;
+    std::string pythonPluginsDir = "/opt";
+    int         currentNode;
+  };
+
+  Config  cfg;
+  QString name;
+
  public:
-  SettingsProfileItem();
+  SettingsProfileItem(QString str, QListWidget *parent);
+  ~SettingsProfileItem();
+
+  Config  getConfig();
+  QString getName();
+  friend class SettingsWindow;
 };

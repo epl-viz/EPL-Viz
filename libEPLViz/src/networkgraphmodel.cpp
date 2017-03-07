@@ -29,11 +29,16 @@
 
 #include "networkgraphmodel.hpp"
 #include "mainwindow.hpp"
+#include <QDebug>
 
 using namespace EPL_Viz;
 using namespace EPL_DataCollect;
 
-NetworkGraphModel::NetworkGraphModel(MainWindow *mw) { graph = mw->getNetworkGraph(); }
+NetworkGraphModel::NetworkGraphModel(MainWindow *mw) : BaseModel() {
+  graph = mw->getNetworkGraph();
+  connect(this, SIGNAL(detectedNewNode(EPL_DataCollect::Node *)), mw, SLOT(addNode(EPL_DataCollect::Node *)));
+  connect(mw, SIGNAL(nodeAdded(uint8_t, NodeWidget *)), this, SLOT(trackNodeWidget(uint8_t, NodeWidget *)));
+}
 
 NetworkGraphModel::~NetworkGraphModel() {}
 
@@ -48,19 +53,18 @@ void NetworkGraphModel::update(Cycle *cycle) {
 
     if (s == nodeMap.end() || s.key() != id) {
       // The node is not yet added as a widget and has to be created
-      NodeWidget *nw = new NodeWidget(n, graph);
-      nodeMap.insert(id, nw);
-      graph->layout()->addWidget(nw);
+      emit detectedNewNode(n);
     } else {
       // The node is added as widget and has to be updated
-      nodeMap[id]->updateData(n);
+      emit nodeUpdated(n);
+      // Reset highlighting
+      nodeMap[id]->setHighlightingLevel(0);
     }
-
-    nodeMap[id]->setHighlightingLevel(0);
   }
 
   auto events = cycle->getActiveEvents();
 
+  // Iterate over all events that are currently active
   for (auto event : events) {
     switch (event->getType()) {
       case EvType::VIEW_EV_HIGHLIGHT_MN:
@@ -69,14 +73,14 @@ void NetworkGraphModel::update(Cycle *cycle) {
         int      level = std::stoi(event->getDescription()); // Description is the highlighting level for these events
 
         // Invalid node
-        if (cycle->getNode(node) == nullptr)
+        if (cycle->getNode(static_cast<uint8_t>(node)) == nullptr)
           break;
 
-        // Check if event valid
+        // Check if event is valid
         if ((event->getType() == EvType::VIEW_EV_HIGHLIGHT_CN && node < 240) ||
             (event->getType() == EvType::VIEW_EV_HIGHLIGHT_CN && node == 240)) {
           // Set highlighting
-          nodeMap[node]->setHighlightingLevel(level);
+          nodeMap[static_cast<uint8_t>(node)]->setHighlightingLevel(level);
         }
         break;
       }
@@ -84,7 +88,27 @@ void NetworkGraphModel::update(Cycle *cycle) {
     }
   }
 
-  for (uint8_t id : list) {
-    nodeMap[id]->updateStyleSheet();
-  }
+  emit eventsDone();
+
+
+  // qDebug() << "Setting stylesheet!";
+
+  // Update the stylesheet for each node widget
+  // for (uint8_t id : list) {
+  // auto s = nodeMap.find(id);
+
+  // qDebug() << "Will " << QString::number(id) << " be the doom to this world?";
+
+  // if (s == nodeMap.end()) {
+  // qDebug() << "DOOM COMES TO THIS WORLD ";
+  //}
+  //}
+
+  // qDebug() << "Updating network graph DONE!";
+}
+
+void NetworkGraphModel::trackNodeWidget(uint8_t id, NodeWidget *nw) {
+  nodeMap.insert(id, nw);
+  connect(this, SIGNAL(nodeUpdated(EPL_DataCollect::Node *)), nw, SLOT(updateData(EPL_DataCollect::Node *)));
+  connect(this, SIGNAL(eventsDone()), nw, SLOT(updateStyleSheet()));
 }

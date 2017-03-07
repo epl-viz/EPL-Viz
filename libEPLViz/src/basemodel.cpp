@@ -37,21 +37,56 @@ BaseModel::BaseModel() { reg(this); }
 
 BaseModel::~BaseModel() { dereg(this); }
 
-void BaseModel::updateAll(GUIState *state, CaptureInstance *instance, uint32_t cycleNum) {
-  (void)state;
+void BaseModel::updateAll(MainWindow *mw, CaptureInstance *instance, uint32_t cycleNum) {
   if (instance == nullptr) {
     qDebug() << "CaptureInstance is a nullptr";
     return;
   }
+
   // Get Cycle
   Cycle           c;
   CycleContainer *container = instance->getCycleContainer();
-  (void)cycleNum;
-  (void)container;
+
   if (cycleNum < UINT32_MAX)
     c = container->pollCycle();
   else
     c = container->getCycle(cycleNum);
+
+  GUIState state = mw->getState();
+
+  EventLog *log = instance->getEventLog();
+
+  // Check if appID has been set already
+  if (appID == UINT32_MAX) {
+    // Retrieve appID for the basemodel
+    appID = log->getAppID();
+    qDebug() << "[BaseModel] Retrieved new appID " << QString::number(appID);
+  }
+
+  // Poll all events
+  auto events = log->pollEvents(appID);
+
+  for (auto event : events) {
+    switch (event->getType()) {
+      case EvType::VIEW_ENDCAP:
+        // Check if the GUI is running
+        if (state == GUIState::RECORDING || state == GUIState::PLAYING) {
+          // Pause recording/playing
+          mw->changeState(GUIState::PAUSED); // TODO: Add configuration option for pausing playing
+        }
+        break;
+      case EvType::VIEW_STARTCAP:
+        // Check if the GUI is paused
+        if (state == GUIState::PAUSED) {
+          mw->changeState(GUIState::PLAYING);
+        }
+        break;
+    }
+  }
+
+  // If the recording is paused, do not update models
+  if (state == GUIState::PAUSED)
+    return;
 
   // Update models
   QLinkedListIterator<BaseModel *> iterator(*registeredModels);

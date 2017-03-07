@@ -98,6 +98,12 @@ void MainWindow::addNode(Node *n) {
   NodeWidget * nw     = new NodeWidget(n, ui->networkGraphContents);
   QGridLayout *layout = qobject_cast<QGridLayout *>(ui->networkGraphContents->layout());
 
+  if (!layout) {
+    layout = new QGridLayout();
+    ui->networkGraphContents->setLayout(layout);
+    qDebug() << "NetworkGraphWidget was broken";
+  }
+
   int col = layout->columnCount();
 
   layout->addWidget(nw, col / 4, col % 4);

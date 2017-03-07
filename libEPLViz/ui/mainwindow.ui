@@ -71,6 +71,7 @@
             </rect>
            </property>
           </widget>
+          <layout class="QGridLayout" name="gridLayout_15"/>
          </widget>
         </item>
        </layout>
@@ -600,7 +601,7 @@
   </customwidget>
   <customwidget>
    <class>NetworkGraphWidget</class>
-   <extends>QDockWidget</extends>
+   <extends>QWidget</extends>
    <header>src/networkgraphwidget.hpp</header>
    <container>1</container>
   </customwidget>

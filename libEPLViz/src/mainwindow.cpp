@@ -127,6 +127,7 @@ void MainWindow::createModels() {
   // models.append(networkGraphModel);
   models.append(cyCoModel);
   models.append(oddescrModel);
+  models.append(ui->eventLog);
 
   QWidget *network = ui->networkGraphContents;
   connect(network, SIGNAL(nodeChanged(uint8_t)), cyCoModel, SLOT(changeNode(uint8_t)));

@@ -282,6 +282,7 @@ void MainWindow::changeState(GUIState nState) {
       ui->actionStop_Recording->setEnabled(false);
       ui->pushButton->setEnabled(true);
       ui->actionPlugins->setEnabled(true);
+      ui->actionLoad->setEnabled(true);
       ui->actionSave->setEnabled(false);
       ui->actionSave_As->setEnabled(false);
       break;
@@ -305,11 +306,11 @@ void MainWindow::changeState(GUIState nState) {
       break;
     case GUIState::PAUSED: break;
     case GUIState::STOPPED:
-      findChild<QAction *>("actionStop_Recording")->setEnabled(false);
-      findChild<QAction *>("actionStart_Recording")->setEnabled(true);
+      ui->actionStart_Recording->setEnabled(true);
+      ui->actionStop_Recording->setEnabled(false);
       captureInstance->stopRecording();
-      findChild<QAction *>("actionSave")->setEnabled(true);
-      findChild<QAction *>("actionSaveAs")->setEnabled(true);
+      ui->actionSave->setEnabled(true);
+      ui->actionSave_As->setEnabled(true);
       break;
   }
   machineState = nState;
@@ -320,8 +321,11 @@ void MainWindow::config() {
   captureInstance->getPluginManager()->addPlugin(std::make_shared<plugins::TimeSeriesBuilder>());
   captureInstance->registerCycleStorage<plugins::CSTimeSeriesPtr>(
         EPL_DataCollect::constants::EPL_DC_PLUGIN_TIME_SERIES_CSID);
-  findChild<QAction *>("actionStart_Recording")->setEnabled(false);
-  findChild<QAction *>("actionStop_Recording")->setEnabled(true);
+  ui->actionStart_Recording->setEnabled(false);
+  ui->actionStop_Recording->setEnabled(true);
+  ui->actionLoad->setEnabled(false);
+  ui->actionSave->setEnabled(false);
+  ui->actionSave_As->setEnabled(false);
   ui->pushButton->setEnabled(false);
   ui->actionPlugins->setEnabled(false);
   BaseModel::initAll(); // TODO do we need to do this here

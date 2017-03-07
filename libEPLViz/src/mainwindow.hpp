@@ -33,6 +33,7 @@
 #include "currentodmodel.hpp"
 #include "guistate.hpp"
 #include "modelthread.hpp"
+#include "nodewidget.hpp"
 #include "packethistorymodel.hpp"
 #include "profilemanager.hpp"
 #include "pythonlogmodel.hpp"
@@ -128,6 +129,7 @@ class MainWindow : public QMainWindow {
   void handleResults(const QString &);
   void startRecording();
   void stopRecording();
+  void addNodeWidget(NodeWidget *nw);
 
  signals:
   void operate(const QString &);

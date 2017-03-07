@@ -34,7 +34,9 @@
 using namespace EPL_Viz;
 using namespace EPL_DataCollect;
 
-NetworkGraphModel::NetworkGraphModel(MainWindow *mw) { graph = mw->getNetworkGraph(); }
+NetworkGraphModel::NetworkGraphModel(MainWindow *mw) : BaseModel() {
+  connect(this, SIGNAL(createdNodeWidget(NodeWidget *)), mw, SLOT(addNodeWidget(NodeWidget *)));
+}
 
 NetworkGraphModel::~NetworkGraphModel() {}
 
@@ -52,9 +54,9 @@ void NetworkGraphModel::update(Cycle *cycle) {
     if (s == nodeMap.end() || s.key() != id) {
       qDebug() << "Adding node " << QString::number(id);
       // The node is not yet added as a widget and has to be created
-      NodeWidget *nw = new NodeWidget(n, graph);
+      NodeWidget *nw = new NodeWidget(n);
       nodeMap.insert(id, nw);
-      graph->layout()->addWidget(nw);
+      emit createdNodeWidget(nw);
     } else {
       qDebug() << "Updating node " << QString::number(id);
       // The node is added as widget and has to be updated

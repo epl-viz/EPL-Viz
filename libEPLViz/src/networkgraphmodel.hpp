@@ -31,15 +31,15 @@
 #include "basemodel.hpp"
 #include "nodewidget.hpp"
 #include <QMap>
-#include <QWidget>
 
 class MainWindow;
 
 namespace EPL_Viz {
-class NetworkGraphModel : public BaseModel {
+class NetworkGraphModel : public QObject, public BaseModel {
+  Q_OBJECT
+
  private:
   QMap<uint8_t, NodeWidget *> nodeMap;
-  QWidget *graph;
 
  public:
   NetworkGraphModel(MainWindow *mw);
@@ -48,5 +48,8 @@ class NetworkGraphModel : public BaseModel {
  protected:
   void init();
   void update(EPL_DataCollect::Cycle *cycle);
+
+ signals:
+  void createdNodeWidget(NodeWidget *node);
 };
 }

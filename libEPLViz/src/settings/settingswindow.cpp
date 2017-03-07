@@ -25,16 +25,33 @@
  */
 
 #include "settingswindow.hpp"
+#include "settingsprofileitem.hpp"
 #include "ui_settingswindow.h"
 
 #include "mainwindow.hpp"
 
 SettingsWindow::SettingsWindow(QWidget *parent) : QDialog(parent), ui(new Ui::SettingsWindow) {
   ui->setupUi(this);
-  mainWindow = dynamic_cast<MainWindow *>(parent);
+  mainWindow                = dynamic_cast<MainWindow *>(parent);
+  profiles["Default"]       = std::make_shared<SettingsProfileItem>("Default", ui->profList);
+  SettingsProfileItem *prof = profiles["Default"].get();
+  ui->profList->addItem(prof);
+  prof->cfg.backConf    = mainWindow->getCaptureInstance()->getConfig();
+  prof->cfg.nodes[-1]   = mainWindow->getCaptureInstance()->getDefaultNodeConfig();
+  prof->cfg.currentNode = -1;
+  currentProfile        = "Default";
+
+  updateProfiles();
 }
 
 SettingsWindow::~SettingsWindow() { delete ui; }
+
+void SettingsWindow::updateProfiles() {
+  SettingsProfileItem *prof = profiles[currentProfile].get();
+  ui->G_XDDDir->setText(prof->cfg.backConf.xddDir.c_str());
+  ui->SM_interval->setValue(prof->cfg.backConf.smConfig.saveInterval);
+  ui->PY_pluginDIR->setText(prof->cfg.pythonPluginsDir.c_str());
+}
 
 void SettingsWindow::apply() {}
 
@@ -57,3 +74,5 @@ void SettingsWindow::nodeChange(QListWidgetItem *curr, QListWidgetItem *pref) {
   (void)curr;
   (void)pref;
 }
+
+SettingsProfileItem::Config SettingsWindow::getConfig() { return profiles["Default"].get()->cfg; }

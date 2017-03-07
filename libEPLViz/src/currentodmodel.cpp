@@ -42,7 +42,7 @@ CurrentODModel::CurrentODModel(QMainWindow *window) : BaseModel() {
 void CurrentODModel::init() {}
 
 QModelIndex CurrentODModel::parent(const QModelIndex &index) const {
-  if (odEntries.value(static_cast<uint8_t>( convertRow.find(index.row())->first))->hasSubIndex())
+  if (odEntries.value(static_cast<uint8_t>(convertRow.find(index.row())->first))->hasSubIndex())
     return CurrentODModel::index(index.row(), 0, index);
   else
     return QModelIndex();

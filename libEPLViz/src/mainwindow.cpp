@@ -63,6 +63,10 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
   connect(modelThread, &ModelThread::finished, modelThread, &QObject::deleteLater);
   modelThread->start();
 
+  connect(this,
+          SIGNAL(recordingStarted(EPL_DataCollect::CaptureInstance *)),
+          ui->pluginSelectorWidget,
+          SLOT(loadPlugins(EPL_DataCollect::CaptureInstance *)));
   connect(this, SIGNAL(close()), modelThread, SLOT(stop()));
 
   profileManager->getDefaultProfile()->readWindowSettings(this);
@@ -96,6 +100,11 @@ void MainWindow::createModels() {
   models.append(curODModel);
   models.append(networkGraphModel);
   models.append(cyCoModel);
+
+  QWidget *network = ui->networkGraphContents;
+  connect(network, SIGNAL(nodeChanged(uint8_t)), cyCoModel, SLOT(changeNodel(uint8_t)));
+  connect(network, SIGNAL(nodeChanged(uint8_t)), curODModel, SLOT(changeNodel(uint8_t)));
+  //connect(network, SIGNAL(nodeChanged(uint8_t)), odDescrModel, SLOT(changeNodel(uint8_t)));
 }
 
 void MainWindow::destroyModels() {

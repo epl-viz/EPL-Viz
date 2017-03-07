@@ -94,9 +94,16 @@ void CurrentODModel::update(EPL_DataCollect::Cycle *cycle) {
   if (!needUpdate)
     return;
   // Create Model
-  OD * od      = cycle->getNode(node)->getOD();
+  Node *n = cycle->getNode(node);
+  if (n == nullptr) {
+    qDebug() << "Node in CurrentODModel not really set";
+    return;
+  }
+  beginResetModel();
+  OD * od      = n->getOD();
   auto entries = od->getWrittenValues();
   int  counter = 0;
+
   for (auto i : entries) {
     ODEntry *                       entry = od->getEntry(i);
     std::shared_ptr<CurODModelItem> item;
@@ -113,7 +120,9 @@ void CurrentODModel::update(EPL_DataCollect::Cycle *cycle) {
     }
     odEntries.insert(i, item);
   }
+  endResetModel();
   needUpdate = false;
+  qDebug() << "Finished updating currentodmodel";
 }
 
 void CurrentODModel::updateNext() { needUpdate = true; }

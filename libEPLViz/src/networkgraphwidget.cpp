@@ -30,4 +30,6 @@
 
 #include "networkgraphwidget.hpp"
 
-NetworkGraphWidget::NetworkGraphWidget(QWidget *parent) : QDockWidget(parent) {}
+NetworkGraphWidget::NetworkGraphWidget(QWidget *parent) : QWidget(parent) {}
+
+void NetworkGraphWidget::selectNode(uint8_t node) { emit nodeChanged(node); }

@@ -29,16 +29,18 @@
 
 #include "pluginselectorwidget.hpp"
 #include "PythonInit.hpp"
+#include <algorithm>
 
 PluginSelectorWidget::PluginSelectorWidget(QWidget *parent) : QListWidget(parent) {}
 
 void PluginSelectorWidget::addItem(QString plugin) {
-  QListWidgetItem *i   = new QListWidgetItem(this);
+  QListWidgetItem *it  = new QListWidgetItem(this);
   QCheckBox *      box = new QCheckBox(plugin, this);
+
 
   QObject::connect(box, SIGNAL(stateChanged(int)), this, SLOT(changeState(int)));
 
-  setItemWidget(i, box);
+  setItemWidget(it, box);
 }
 
 void PluginSelectorWidget::setMainWindow(MainWindow *mw) { main = mw; }
@@ -47,7 +49,7 @@ void PluginSelectorWidget::addPlugins(QMap<QString, QString> map) {
   QMapIterator<QString, QString> i(map);
   QString pluginPath = QDir::currentPath();
 
-  if (main)
+  if (!main)
     pluginPath = QString::fromStdString(main->getSettingsWin()->getConfig().pythonPluginsDir);
 
   EPL_DataCollect::plugins::PythonInit::addPath(pluginPath.toStdString());
@@ -60,18 +62,22 @@ void PluginSelectorWidget::addPlugins(QMap<QString, QString> map) {
 
     QString newPath = pluginPath + "/" + plugin;
 
-    if (QFile::exists(newPath)) {
-      qDebug() << "File already exists! Removing it...";
-      QFile::remove(newPath);
-      // TODO: Add a dialog to warn for overwriting the file
-    }
+    if (newPath != path) {
+      if (QFile::exists(newPath)) {
+        qDebug() << "File already exists! Removing it...";
+        QFile::remove(newPath);
+        // TODO: Add a dialog to warn for overwriting the file
+      }
 
-    if (!QFile::copy(path, newPath)) {
-      qDebug() << "Failed to move file!";
-      continue;
-    }
+      qDebug() << "Trying to move " << path << " to " << newPath;
 
-    qDebug() << "Moved file to " << newPath;
+      if (!QFile::copy(path, newPath)) {
+        qDebug() << "Failed to move file!";
+        continue;
+      }
+
+      qDebug() << "Moved file to " << newPath;
+    }
 
     addItem(plugin);
   }
@@ -86,8 +92,13 @@ void PluginSelectorWidget::changeState(int state) {
     if (!sender || state != 0)
       return;
 
+    std::string name = sender->text().toStdString();
+
+    // Remove invalid mnemonics
+    name.erase(std::remove(name.begin(), name.end(), '&'), name.end());
+
     // Plugins can only be disabled while a recording is active
-    pluginManager->removePlugin(sender->text().toStdString());
+    pluginManager->removePlugin(name);
     sender->setEnabled(false);
   }
 }
@@ -107,7 +118,12 @@ void PluginSelectorWidget::loadPlugins(EPL_DataCollect::CaptureInstance *ci) {
 
     if (box->isChecked()) {
       // Plugin is enabled, load it in the backend
-      pluginManager->addPlugin(std::make_shared<EPL_DataCollect::plugins::PythonPlugin>(box->text().toStdString()));
+      std::string name = box->text().toStdString();
+
+      // Remove invalid mnemonics
+      name.erase(std::remove(name.begin(), name.end(), '&'), name.end());
+
+      pluginManager->addPlugin(std::make_shared<EPL_DataCollect::plugins::PythonPlugin>(name));
     } else {
       // Plugin is not enabled, disable the checkbox to prevent activation during recording
       box->setEnabled(false);

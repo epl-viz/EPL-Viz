@@ -54,5 +54,6 @@ class InterfacePicker : public QDialog {
 
  public slots:
   void updateList();
+  void saveInterface();
 };
 }

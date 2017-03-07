@@ -56,7 +56,7 @@ class NodeWidget : public QStackedWidget {
 
  private:
   // clang-format off
-  const QString styleFormat = QString("#node-%1%2 { background-color: %3; border-color: rgb(%4, 0, 0); }"); //TODO: Add border for stylesheet
+  const QString styleFormat = QString("#node-%1%2 { background-color: %3; border-color: rgb(%4, 0, 0); border-style: outset;  border-width: 2px;}"); //TODO: Add border for stylesheet
 
   const QString statusFormat = QString("Status: %1"); //%1 is the status string
   const QString nameFormat = QString("%1 #%2");        //%1 is the node name, %2 its ID

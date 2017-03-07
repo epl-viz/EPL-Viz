@@ -48,7 +48,7 @@ void PluginEditorWidget::selectPlugin(QString plugin) {
   createWidget();
 }
 
-void PluginEditorWidget::loadDocument(QString fileName) {
+void PluginEditorWidget::loadDocument(QUrl fileName) {
   // Retrieve editor singleton
   KTextEditor::Editor *editor = KTextEditor::Editor::instance();
 
@@ -63,9 +63,9 @@ void PluginEditorWidget::loadDocument(QString fileName) {
 
 
   // Load the file if specified
-  if (fileName != "") {
-    if (!doc->openUrl(QUrl(fileName))) {
-      // TODO: Add error message?
+  if (fileName != QUrl()) {
+    if (!doc->openUrl(fileName)) {
+      qDebug() << "Failed to open " << fileName.toLocalFile();
       return;
     }
   }
@@ -130,7 +130,7 @@ void PluginEditorWidget::saveAs() {
 
 void PluginEditorWidget::newFile() { loadDocument(); }
 
-void PluginEditorWidget::openFile(QString file) { loadDocument(file); }
+void PluginEditorWidget::openFile(QUrl file) { loadDocument(file); }
 
 void PluginEditorWidget::cleanUp() {
   QMessageBox  msg;

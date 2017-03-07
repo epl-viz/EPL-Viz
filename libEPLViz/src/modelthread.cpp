@@ -60,7 +60,7 @@ void ModelThread::loop() {
           qDebug() << "Still in Setup phase";
           continue;
         }
-        if (cistate != CaptureInstance::CIstate::RUNNING) {
+        if (cistate != CaptureInstance::CIstate::RUNNING && cistate != CaptureInstance::CIstate::DONE) {
           qDebug() << QString::fromStdString("Stopped because ci changed state to state " +
                                              EPLEnum2Str::toStr(cistate));
           // TODO message to gui?

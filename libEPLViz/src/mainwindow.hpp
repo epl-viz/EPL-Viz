@@ -47,6 +47,7 @@
 #include <QThread>
 #include <QToolBar>
 #include <QToolButton>
+#include <QVector>
 #include <iostream>
 #include <vector>
 
@@ -118,6 +119,7 @@ class MainWindow : public QMainWindow {
   bool event(QEvent *event) override;
   void config();
   bool curODWidgetUpdateData(QTreeWidgetItem *item, QString newData);
+  void odDescrWidgetUpdateData(QTreeWidgetItem *item, QVector<QString> newData);
 
  public slots:
   void setFullscreen(bool makeFullscreen);
@@ -131,7 +133,8 @@ class MainWindow : public QMainWindow {
   void startRecording();
   void stopRecording();
   void addNode(EPL_DataCollect::Node *n);
-  void externalUpdate(EPL_DataCollect::Cycle *cycle, int node);
+  void externalUpdateCurOD(EPL_DataCollect::Cycle *cycle, int node);
+  void externalUpdateODDescr(EPL_DataCollect::Cycle *cycle, int node);
 
  signals:
   void operate(const QString &);

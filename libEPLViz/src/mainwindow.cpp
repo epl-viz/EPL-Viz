@@ -33,6 +33,7 @@
 #include "cyclecommandsmodel.hpp"
 #include "interfacepicker.hpp"
 #include "networkgraphmodel.hpp"
+#include "oddescriptionmodel.hpp"
 #include "pluginswindow.hpp"
 #include "settingswindow.hpp"
 #include "settingswindow.hpp"
@@ -97,6 +98,12 @@ void MainWindow::addNode(Node *n) {
   NodeWidget * nw     = new NodeWidget(n, ui->networkGraphContents);
   QGridLayout *layout = qobject_cast<QGridLayout *>(ui->networkGraphContents->layout());
 
+  if (!layout) {
+    layout = new QGridLayout();
+    ui->networkGraphContents->setLayout(layout);
+    qDebug() << "NetworkGraphWidget was broken";
+  }
+
   int col = layout->columnCount();
 
   layout->addWidget(nw, col / 4, col % 4);
@@ -108,22 +115,35 @@ void MainWindow::createModels() {
   CycleCommandsModel *cyCoModel = new CycleCommandsModel(this);
   connect(this, SIGNAL(cycleChanged()), cyCoModel, SLOT(updateNext()));
 
-  CurrentODModel *curODModel = new CurrentODModel(this);
-  connect(this, SIGNAL(cycleChanged()), curODModel, SLOT(updateNext()));
-
   NetworkGraphModel *networkGraphModel = new NetworkGraphModel(this);
 
-  // models.append(new PacketHistoryModel(this));
+  CurrentODModel *curODModel = new CurrentODModel(this);
+  connect(this, SIGNAL(cycleChanged()), curODModel, SLOT(updateNext()));
+  connect(curODModel,
+          SIGNAL(updateExternal(EPL_DataCollect::Cycle *, int)),
+          this,
+          SLOT(externalUpdateCurOD(EPL_DataCollect::Cycle *, int)),
+          Qt::BlockingQueuedConnection);
+
+  ODDescpriptonModel *oddescrModel = new ODDescpriptonModel(this);
+  // connect(oddescrModel, SIGNAL(updateExternal(EPL_DataCollect::Cycle *, int)), this,
+  // SLOT(externalUpdateODDescr(EPL_DataCollect::Cycle *, int)), Qt::BlockingQueuedConnection);
+
+
+
+  models.append(new PacketHistoryModel(this));
   // models.append(new PythonLogModel(this));
-  // models.append(new QWTPlotModel(this));
+  models.append(new QWTPlotModel(this));
   models.append(curODModel);
   models.append(networkGraphModel);
   models.append(cyCoModel);
+  models.append(oddescrModel);
+  models.append(ui->eventLog);
 
   QWidget *network = ui->networkGraphContents;
   connect(network, SIGNAL(nodeChanged(uint8_t)), cyCoModel, SLOT(changeNode(uint8_t)));
   connect(network, SIGNAL(nodeChanged(uint8_t)), curODModel, SLOT(changeNode(uint8_t)));
-  // connect(network, SIGNAL(nodeChanged(uint8_t)), odDescrModel, SLOT(changeNode(uint8_t)));
+  connect(network, SIGNAL(nodeChanged(uint8_t)), oddescrModel, SLOT(changeNode(uint8_t)));
 }
 
 void MainWindow::destroyModels() {
@@ -158,7 +178,7 @@ bool MainWindow::changeTime(double t) {
 }
 
 bool MainWindow::changeCycle(uint32_t cycle) {
-  if (machineState == GUIState::STOPPED) {
+  if (machineState != GUIState::STOPPED) {
     if (curCycle != cycle) {
       curCycle = cycle;
       emit cycleChanged();
@@ -234,6 +254,7 @@ void MainWindow::open() {
     return;
 
   file = curFile.toStdString();
+  changeState(GUIState::UNINIT);
   changeState(GUIState::PLAYING);
 }
 
@@ -255,10 +276,10 @@ void MainWindow::changeState(GUIState nState) {
   // switch with old state
   switch (machineState) {
     case GUIState::UNINIT: break;
-    case GUIState::RECORDING: break;
+    case GUIState::RECORDING:
+    case GUIState::PLAYING:
     case GUIState::PAUSED: break;
     case GUIState::STOPPED: break;
-    case GUIState::PLAYING: break;
   }
   // switch with new state
   int backendState;
@@ -267,6 +288,9 @@ void MainWindow::changeState(GUIState nState) {
       captureInstance = std::make_unique<CaptureInstance>();
       ui->actionStart_Recording->setEnabled(true);
       ui->actionStop_Recording->setEnabled(false);
+      ui->pushButton->setEnabled(true);
+      ui->actionPlugins->setEnabled(true);
+      ui->actionLoad->setEnabled(true);
       ui->actionSave->setEnabled(false);
       ui->actionSave_As->setEnabled(false);
       break;
@@ -290,11 +314,11 @@ void MainWindow::changeState(GUIState nState) {
       break;
     case GUIState::PAUSED: break;
     case GUIState::STOPPED:
-      findChild<QAction *>("actionStop_Recording")->setEnabled(false);
-      findChild<QAction *>("actionStart_Recording")->setEnabled(true);
+      ui->actionStart_Recording->setEnabled(false); // TODO: Do not allow until a reset has been done
+      ui->actionStop_Recording->setEnabled(false);
       captureInstance->stopRecording();
-      findChild<QAction *>("actionSave")->setEnabled(true);
-      findChild<QAction *>("actionSaveAs")->setEnabled(true);
+      ui->actionSave->setEnabled(true);
+      ui->actionSave_As->setEnabled(true);
       break;
   }
   machineState = nState;
@@ -305,8 +329,13 @@ void MainWindow::config() {
   captureInstance->getPluginManager()->addPlugin(std::make_shared<plugins::TimeSeriesBuilder>());
   captureInstance->registerCycleStorage<plugins::CSTimeSeriesPtr>(
         EPL_DataCollect::constants::EPL_DC_PLUGIN_TIME_SERIES_CSID);
-  findChild<QAction *>("actionStart_Recording")->setEnabled(false);
-  findChild<QAction *>("actionStop_Recording")->setEnabled(true);
+  ui->actionStart_Recording->setEnabled(false);
+  ui->actionStop_Recording->setEnabled(true);
+  ui->actionLoad->setEnabled(false);
+  ui->actionSave->setEnabled(false);
+  ui->actionSave_As->setEnabled(false);
+  ui->pushButton->setEnabled(false);
+  ui->actionPlugins->setEnabled(false);
   BaseModel::initAll(); // TODO do we need to do this here
 }
 
@@ -322,7 +351,8 @@ bool MainWindow::curODWidgetUpdateData(QTreeWidgetItem *item, QString newData) {
   return true;
 }
 
-void MainWindow::externalUpdate(EPL_DataCollect::Cycle *cycle, int node) {
+// Partly disabled because of performance
+void MainWindow::externalUpdateCurOD(EPL_DataCollect::Cycle *cycle, int node) {
   QTreeWidget *tree = ui->curNodeODWidget;
   (void)tree;
   Node *n = cycle->getNode(node);
@@ -370,6 +400,54 @@ void MainWindow::externalUpdate(EPL_DataCollect::Cycle *cycle, int node) {
         }
         */
       }
+    }
+  }
+  qDebug() << "Finished updating currentodmodel";
+}
+
+void MainWindow::odDescrWidgetUpdateData(QTreeWidgetItem *item, QVector<QString> newData) {
+  if (item->text(1).compare(newData[0]))
+    item->setText(1, newData[0]);
+  if (item->text(2).compare(newData[1]))
+    item->setText(1, newData[1]);
+  if (item->text(3).compare(newData[2]))
+    item->setText(1, newData[2]);
+}
+
+void MainWindow::externalUpdateODDescr(EPL_DataCollect::Cycle *cycle, int node) {
+  QTreeWidget *tree = ui->odDescriptionWidget;
+  (void)tree;
+  Node *n = cycle->getNode(node);
+  if (n == nullptr) {
+    qDebug() << "Node does not exist, finished update";
+    return;
+  }
+  OD *                  od      = n->getOD();
+  auto                  entries = od->getWrittenValues();
+  std::vector<uint16_t> entriesVect(entries.begin(), entries.end());
+  sort(entriesVect.begin(), entriesVect.end());
+
+  for (uint32_t i = 0; i < entriesVect.size(); i++) {
+    // uint16_t         odIndex = entriesVect[i];
+    // ODEntry *        entry   = od->getEntry(odIndex);
+    ODDescription *  descr   = od->getODDesc();
+    QTreeWidgetItem *topItem = tree->topLevelItem(i);
+    if (topItem == nullptr) {
+      // Does not exist, create it and subindices
+      topItem = new QTreeWidgetItem();
+      topItem->setText(0, QString("0x") + QString::number(descr->getEntry(i)->index, 16));
+      topItem->setText(1, QString::fromStdString(EPLEnum2Str::toStr(descr->getEntry(i)->dataType)));
+      topItem->setText(2, QString::fromStdString(descr->getEntry(i)->name));
+      topItem->setText(3, QString::fromStdString(descr->getEntry(i)->defaultValue->toString()));
+      tree->addTopLevelItem(topItem);
+    } else {
+      // check for changes
+      QVector<QString> d;
+      d[0] = QString::fromStdString(EPLEnum2Str::toStr(descr->getEntry(i)->dataType));
+      d[1] = QString::fromStdString(descr->getEntry(i)->name);
+      d[2] = QString::fromStdString(descr->getEntry(i)->defaultValue->toString());
+      topItem->setText(0, QString("0x") + QString::number(descr->getEntry(i)->index, 16));
+      odDescrWidgetUpdateData(topItem, d);
     }
   }
   qDebug() << "Finished updating currentodmodel";

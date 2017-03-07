@@ -24,32 +24,47 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 /*!
- * \file pluginswindows.cpp
+ * \file oddescriptionmodel.hpp
  */
+#pragma once
 
-#include "pluginswindow.hpp"
-#include "ui_pluginswindow.h"
-#include <QCloseEvent>
+#include "Cycle.hpp"
+#include "EPLVizDefines.hpp"
+#include "Packet.hpp"
+#include "basemodel.hpp"
+#include "curodmodelitem.hpp"
 
-PluginsWindow::PluginsWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::PluginsWindow) {
-  ui->setupUi(this);
-  setAttribute(Qt::WA_QuitOnClose);
-}
+#include <QList>
+#include <QTreeWidget>
+#include <plf_colony.h>
+#include <unordered_map>
 
-PluginsWindow::~PluginsWindow() { delete ui; }
+namespace EPL_Viz {
+class ODDescpriptonModel : public QObject, public BaseModel {
+  Q_OBJECT
+ private:
+  uint8_t                                 node = 1;
+  bool                                    needUpdate;
+  QTreeWidget *                           tree;
+  bool                                    wait = true;
+  plf::colony<uint16_t>                   oldValues;
+  QList<std::unique_ptr<QTreeWidgetItem>> topIndices;
 
-PluginEditorWidget *PluginsWindow::getEditor() { return ui->editor; }
+  // std::shared_ptr<CurODModelItem> getItem(const QModelIndex &index) const;
+ public:
+  ODDescpriptonModel(QMainWindow *window);
+  ~ODDescpriptonModel() = default;
+  void init() override;
 
-void PluginsWindow::closeEvent(QCloseEvent *event) {
-  emit cleanUp();
-  event->accept();
-}
+ protected:
+  void update(EPL_DataCollect::Cycle *cycle) override;
 
-void PluginsWindow::open() {
-  QUrl file = QFileDialog::getOpenFileUrl(0, "Open Python file", QString(), "Python files (*.py);;All Files (*)");
-
-  if (file == QUrl())
-    return;
-
-  emit fileOpened(file);
+ public slots:
+  void updateNext();
+  void changeNode(uint8_t);
+  void showContextMenu(const QPoint &);
+ signals:
+  void drawingPlot(uint8_t nodeID, uint16_t index, uint8_t subIndex);
+  void updateExternal(EPL_DataCollect::Cycle *cycle, int node);
+};
 }

@@ -78,9 +78,9 @@ void PluginListWidget::newFile() {
   newCounter++;
 }
 
-void PluginListWidget::fileAdded(QString file) {
+void PluginListWidget::fileAdded(QUrl file) {
   // Check that the file is not already opened
-  if (isListed(file))
+  if (isListed(file.toLocalFile()))
     return;
 
   // Deselect current item
@@ -88,7 +88,7 @@ void PluginListWidget::fileAdded(QString file) {
     currentItem()->setSelected(false);
 
   // Create a QFileInfo to extract name and path of file
-  QFileInfo fileInfo(file);
+  QFileInfo fileInfo(file.toLocalFile());
 
   // Create new entry
   QListWidgetItem *item = new QListWidgetItem();

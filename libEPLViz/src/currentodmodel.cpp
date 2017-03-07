@@ -28,82 +28,34 @@
  */
 #include "currentodmodel.hpp"
 #include "OD.hpp"
+#include <QMenu>
 #include <QString>
+#include <QThread>
+#include <algorithm>
 using namespace EPL_Viz;
 using namespace EPL_DataCollect;
+using namespace std;
 
 CurrentODModel::CurrentODModel(QMainWindow *window) : BaseModel() {
-  QTableView *view = window->findChild<QTableView *>("curNodeODView");
-  view->setModel(this);
-  view->verticalHeader()->hide();
+  tree = window->findChild<QTreeWidget *>("curNodeODWidget");
+  tree->setContextMenuPolicy(Qt::CustomContextMenu);
+  tree->setSortingEnabled(true);
+  connect(tree, SIGNAL(customContextMenuRequested(const QPoint &)), this, SLOT(showContextMenu(const QPoint &)));
   needUpdate = true;
 }
 
 void CurrentODModel::init() {}
 
-QModelIndex CurrentODModel::parent(const QModelIndex &index) const {
-  if (odEntries.value(static_cast<uint8_t>(convertRow.find(index.row())->first))->hasSubIndex())
-    return CurrentODModel::index(index.row(), 0, index);
-  else
-    return QModelIndex();
-}
 
-QModelIndex CurrentODModel::index(int row, int column, const QModelIndex &parent) const {
-  (void)parent;
-  return createIndex(row, column, odEntries.value(static_cast<uint8_t>(convertRow.find(row)->first)).get());
-}
-
-
-int CurrentODModel::rowCount(const QModelIndex &parent) const {
-  (void)parent;
-  return static_cast<int>(convertRow.size());
-}
-
-int CurrentODModel::columnCount(const QModelIndex &parent) const {
-  (void)parent;
-  return 2;
-}
-
-QVariant CurrentODModel::data(const QModelIndex &index, int role) const {
-  // TODO
-  if (role == Qt::DisplayRole) {
-
-    std::shared_ptr<CurODModelItem> entry = odEntries.value(static_cast<uint8_t>(convertRow.find(index.row())->first));
-    switch (index.column()) {
-      case 0: return QVariant(index.column());
-      case 1: return QVariant("empty");
-      default: return QVariant("This shouldn't have happened");
-    }
-  }
-  return QVariant();
-}
-
-QVariant CurrentODModel::headerData(int section, Qt::Orientation orientation, int role) const {
-  if (role == Qt::DisplayRole) {
-    if (orientation == Qt::Horizontal) {
-      switch (section) {
-        case 0: return QString("Index");
-        case 1: return QString("Value");
-      }
-    }
-  }
-  return QVariant();
-}
 
 void CurrentODModel::update(EPL_DataCollect::Cycle *cycle) {
   if (!needUpdate)
     return;
-  // Create Model
-  Node *n = cycle->getNode(node);
-  if (n == nullptr) {
-    qDebug() << "Node in CurrentODModel not really set";
-    return;
-  }
-  beginResetModel();
-  OD * od      = n->getOD();
-  auto entries = od->getWrittenValues();
-  int  counter = 0;
 
+  emit(updateExternal(cycle, node));
+  qDebug() << "Block ended";
+
+  /*
   for (auto i : entries) {
     ODEntry *                       entry = od->getEntry(i);
     std::shared_ptr<CurODModelItem> item;
@@ -119,12 +71,34 @@ void CurrentODModel::update(EPL_DataCollect::Cycle *cycle) {
       convertRow[counter++] = std::make_pair(i, 0);
     }
     odEntries.insert(i, item);
-  }
-  endResetModel();
-  needUpdate = false;
-  qDebug() << "Finished updating currentodmodel";
+  }*/
 }
 
 void CurrentODModel::updateNext() { needUpdate = true; }
 
 void CurrentODModel::changeNode(uint8_t n) { node = n; }
+
+void CurrentODModel::showContextMenu(const QPoint &pos) {
+  QPoint globalPos = tree->mapToGlobal(pos);
+
+  QList<QTreeWidgetItem *> selection = tree->selectedItems();
+
+  if (selection.size() != 1)
+    return;
+
+  QMenu myMenu;
+  myMenu.addAction("Draw Plot");
+
+  QAction *selectedItem = myMenu.exec(globalPos);
+  if (selectedItem) {
+    tree->selectedItems();
+    bool     ok;
+    uint16_t index = selection.first()->text(0).remove(0, 2).toInt(&ok, 16);
+    if (!ok) {
+      qDebug() << "Could not get index from text in curodmodel";
+      return;
+    }
+
+    emit drawingPlot(node, index, 0);
+  }
+}

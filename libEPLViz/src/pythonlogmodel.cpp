@@ -28,6 +28,8 @@
  */
 #include "pythonlogmodel.hpp"
 #include "EPLEnums.h"
+#include "QHeaderView"
+#include "QTableView"
 #include "mainwindow.hpp"
 using namespace EPL_Viz;
 using namespace EPL_DataCollect;

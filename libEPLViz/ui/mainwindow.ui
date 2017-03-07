@@ -66,11 +66,10 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>906</width>
-             <height>426</height>
+             <width>930</width>
+             <height>420</height>
             </rect>
            </property>
-           <layout class="QGridLayout" name="gridLayout_15"/>
           </widget>
          </widget>
         </item>
@@ -96,7 +95,7 @@
      <x>0</x>
      <y>0</y>
      <width>1535</width>
-     <height>26</height>
+     <height>20</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -246,7 +245,18 @@
    <widget class="QWidget" name="dockWidgetContents_4">
     <layout class="QGridLayout" name="gridLayout">
      <item row="0" column="0">
-      <widget class="QTreeView" name="curNodeODView"/>
+      <widget class="QTreeWidget" name="curNodeODWidget">
+       <column>
+        <property name="text">
+         <string>Index</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>Value</string>
+        </property>
+       </column>
+      </widget>
      </item>
     </layout>
    </widget>
@@ -407,8 +417,8 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>775</width>
-          <height>214</height>
+          <width>759</width>
+          <height>92</height>
          </rect>
         </property>
         <layout class="QGridLayout" name="gridLayout_22">
@@ -634,12 +644,6 @@
    <class>EventViewerWidget</class>
    <extends>QTreeWidget</extends>
    <header>src/eventviewerwidget.hpp</header>
-  </customwidget>
-  <customwidget>
-   <class>NetworkGraphWidget</class>
-   <extends>QWidget</extends>
-   <header>src/networkgraphwidget.hpp</header>
-   <container>1</container>
   </customwidget>
  </customwidgets>
  <resources>

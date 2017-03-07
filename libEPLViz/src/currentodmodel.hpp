@@ -34,39 +34,37 @@
 #include "basemodel.hpp"
 #include "curodmodelitem.hpp"
 
-#include <QAbstractItemModel>
-#include <QHeaderView>
-#include <QTableView>
+#include <QList>
+#include <QTreeWidget>
+#include <plf_colony.h>
 #include <unordered_map>
 
 namespace EPL_Viz {
-class CurrentODModel : public QAbstractItemModel, public BaseModel {
+class CurrentODModel : public QObject, public BaseModel {
   Q_OBJECT
  private:
-  uint8_t node = 1;
-  bool    needUpdate;
-  QMap<uint16_t, std::shared_ptr<CurODModelItem>> odEntries;
-  std::unordered_map<int, std::pair<uint16_t, uint8_t>> convertRow;
+  uint8_t                                 node = 1;
+  bool                                    needUpdate;
+  QTreeWidget *                           tree;
+  bool                                    wait = true;
+  plf::colony<uint16_t>                   oldValues;
+  QList<std::unique_ptr<QTreeWidgetItem>> topIndices;
 
-  std::shared_ptr<CurODModelItem> getItem(const QModelIndex &index) const;
-
+  // std::shared_ptr<CurODModelItem> getItem(const QModelIndex &index) const;
  public:
   CurrentODModel(QMainWindow *window);
   ~CurrentODModel() = default;
   void init() override;
 
-  QModelIndex index(int row, int column, const QModelIndex &parent = QModelIndex()) const override;
-  QModelIndex parent(const QModelIndex &index) const override;
-  int rowCount(const QModelIndex &parent) const override;
-  int columnCount(const QModelIndex &parent) const override;
-  QVariant data(const QModelIndex &index, int role) const override;
-  QVariant headerData(int section, Qt::Orientation orientation, int role) const override;
-
  protected:
-  mockable void update(EPL_DataCollect::Cycle *cycle) override;
+  void update(EPL_DataCollect::Cycle *cycle) override;
 
  public slots:
   void updateNext();
   void changeNode(uint8_t);
+  void showContextMenu(const QPoint &);
+ signals:
+  void drawingPlot(uint8_t nodeID, uint16_t index, uint8_t subIndex);
+  void updateExternal(EPL_DataCollect::Cycle *cycle, int node);
 };
 }

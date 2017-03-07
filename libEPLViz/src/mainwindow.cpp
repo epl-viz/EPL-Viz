@@ -173,7 +173,10 @@ void MainWindow::openPluginEditor() {
   PluginsWindow *win = new PluginsWindow(this);
   win->show();
 
-  connect(win->getEditor(), SIGNAL(pluginsSaved(QMap)), ui->pluginSelectorWidget, SLOT(addPlugins(QMap)));
+  connect(win->getEditor(),
+          SIGNAL(pluginsSaved(QMap<QString, QString>)),
+          ui->pluginSelectorWidget,
+          SLOT(addPlugins(QMap<QString, QString>)));
 }
 
 void MainWindow::openInterfacePicker() {

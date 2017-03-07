@@ -54,3 +54,7 @@ void InterfacePicker::updateList() {
     list->addItem(QString::fromStdString(s));
   }
 }
+
+void InterfacePicker::saveInterface() {
+
+}

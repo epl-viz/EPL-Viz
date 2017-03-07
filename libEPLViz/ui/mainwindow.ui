@@ -70,6 +70,7 @@
              <height>426</height>
             </rect>
            </property>
+           <layout class="QGridLayout" name="gridLayout_15"/>
           </widget>
          </widget>
         </item>
@@ -633,6 +634,10 @@
    <class>EventViewerWidget</class>
    <extends>QTreeWidget</extends>
    <header>src/eventviewerwidget.hpp</header>
+   <class>NetworkGraphWidget</class>
+   <extends>QWidget</extends>
+   <header>src/networkgraphwidget.hpp</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <resources>

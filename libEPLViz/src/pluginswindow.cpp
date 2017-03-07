@@ -38,6 +38,8 @@ PluginsWindow::PluginsWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::
 
 PluginsWindow::~PluginsWindow() { delete ui; }
 
+PluginEditorWidget *PluginsWindow::getEditor() { return ui->editor; }
+
 void PluginsWindow::closeEvent(QCloseEvent *event) {
   emit cleanUp();
   event->accept();

@@ -29,6 +29,7 @@
 
 #pragma once
 
+#include "plugineditorwidget.hpp"
 #include <QFileDialog>
 #include <QMainWindow>
 
@@ -42,6 +43,8 @@ class PluginsWindow : public QMainWindow {
  public:
   explicit PluginsWindow(QWidget *parent = 0);
   ~PluginsWindow();
+
+  PluginEditorWidget *getEditor();
 
  private:
   Ui::PluginsWindow *ui;

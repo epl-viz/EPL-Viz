@@ -74,6 +74,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
   settingsWin = new SettingsWindow(this);
   settingsWin->hide();
+
+  ui->pluginSelectorWidget->setMainWindow(this);
 }
 
 MainWindow::~MainWindow() {
@@ -171,7 +173,7 @@ void MainWindow::openPluginEditor() {
   PluginsWindow *win = new PluginsWindow(this);
   win->show();
 
-  connect(win, SIGNAL(pluginsSaved(QMap)), ui->pluginSelectorWidget, SLOT(addPlugins(QMap)));
+  connect(win->getEditor(), SIGNAL(pluginsSaved(QMap)), ui->pluginSelectorWidget, SLOT(addPlugins(QMap)));
 }
 
 void MainWindow::openInterfacePicker() {

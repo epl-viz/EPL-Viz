@@ -55,6 +55,4 @@ void InterfacePicker::updateList() {
   }
 }
 
-void InterfacePicker::saveInterface() {
-
-}
+void InterfacePicker::saveInterface() {}

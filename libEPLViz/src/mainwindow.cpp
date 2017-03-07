@@ -119,8 +119,15 @@ void MainWindow::createModels() {
 
   CurrentODModel *curODModel = new CurrentODModel(this);
   connect(this, SIGNAL(cycleChanged()), curODModel, SLOT(updateNext()));
+  connect(curODModel,
+          SIGNAL(updateExternal(EPL_DataCollect::Cycle *, int)),
+          this,
+          SLOT(externalUpdateCurOD(EPL_DataCollect::Cycle *, int)),
+          Qt::BlockingQueuedConnection);
 
   ODDescpriptonModel *oddescrModel = new ODDescpriptonModel(this);
+  // connect(oddescrModel, SIGNAL(updateExternal(EPL_DataCollect::Cycle *, int)), this,
+  // SLOT(externalUpdateODDescr(EPL_DataCollect::Cycle *, int)), Qt::BlockingQueuedConnection);
 
 
 
@@ -247,6 +254,7 @@ void MainWindow::open() {
     return;
 
   file = curFile.toStdString();
+  changeState(GUIState::UNINIT);
   changeState(GUIState::PLAYING);
 }
 
@@ -268,10 +276,10 @@ void MainWindow::changeState(GUIState nState) {
   // switch with old state
   switch (machineState) {
     case GUIState::UNINIT: break;
-    case GUIState::RECORDING: break;
+    case GUIState::RECORDING:
+    case GUIState::PLAYING:
     case GUIState::PAUSED: break;
     case GUIState::STOPPED: break;
-    case GUIState::PLAYING: break;
   }
   // switch with new state
   int backendState;
@@ -403,7 +411,7 @@ void MainWindow::odDescrWidgetUpdateData(QTreeWidgetItem *item, QVector<QString>
 }
 
 void MainWindow::externalUpdateODDescr(EPL_DataCollect::Cycle *cycle, int node) {
-  QTreeWidget *tree = ui->curNodeODWidget;
+  QTreeWidget *tree = ui->odDescriptionWidget;
   (void)tree;
   Node *n = cycle->getNode(node);
   if (n == nullptr) {

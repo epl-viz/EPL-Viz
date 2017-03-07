@@ -27,6 +27,7 @@
  * \file nodewidget.cpp
  */
 
+
 #include "nodewidget.hpp"
 
 NodeWidget::NodeWidget(EPL_DataCollect::Node *node, QWidget *parent) : QStackedWidget(parent) {
@@ -259,21 +260,45 @@ void NodeWidget::updateIdentityInfo(EPL_DataCollect::Node::IDENT identity) {
   nameLabelMax->setText(nameFormat.arg(name, idString));
 
   // Update type
-  typeLabel->setText(QString::number(identity.Profile));
+  typeLabel->setText(validateUInt(identity.Profile));
 
   QTreeWidgetItem *dev = advancedInfo->topLevelItem(0);
   QTreeWidgetItem *net = advancedInfo->topLevelItem(1);
 
   // Update Device information
-  dev->child(0)->setText(1, QString::number(identity.VendorId));
-  dev->child(1)->setText(1, QString::number(identity.ProductCode));
-  dev->child(2)->setText(1, QString::number(identity.SerialNumber));
-  dev->child(3)->setText(1, QString::number(identity.RevisionNumber));
+  dev->child(0)->setText(1, validateUInt(identity.VendorId));
+  dev->child(1)->setText(1, validateUInt(identity.ProductCode));
+  dev->child(2)->setText(1, validateUInt(identity.SerialNumber));
+  dev->child(3)->setText(1, validateUInt(identity.RevisionNumber));
 
   // Update Networking information
   net->child(0)->setText(1, QString::fromStdString(identity.IPAddress));
   net->child(1)->setText(1, QString::fromStdString(identity.SubnetMask));
   net->child(2)->setText(1, QString::fromStdString(identity.DefaultGateway));
+}
+
+/*!
+ * \brief Checks if the given value is a valid value for the uint size.
+ * \param val The uint16_t to validate
+ * \return A string containing either the value, if valid, or '<N/A>'
+ */
+QString NodeWidget::validateUInt(uint16_t val) {
+  if (val == UINT16_MAX)
+    return "<N/A>";
+  else
+    return QString::number(val);
+}
+
+/*!
+ * \brief Checks if the given value is a valid value for the uint size.
+ * \param val The uint32_t to validate
+ * \return A string containing either the value, if valid, or '<N/A>'
+ */
+QString NodeWidget::validateUInt(uint32_t val) {
+  if (val == UINT32_MAX)
+    return "<N/A>";
+  else
+    return QString::number(val);
 }
 
 void NodeWidget::fixTree(QTreeWidgetItem *item) {

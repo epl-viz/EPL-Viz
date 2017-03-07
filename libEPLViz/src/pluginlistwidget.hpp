@@ -31,6 +31,7 @@
 
 #include <QFileInfo>
 #include <QListWidget>
+#include <QUrl>
 
 class PluginListWidget : public QListWidget {
   Q_OBJECT
@@ -48,12 +49,12 @@ class PluginListWidget : public QListWidget {
 
  signals:
   void pluginSelected(QString newPlugin);
-  void fileOpened(QString plugin);
+  void fileOpened(QUrl plugin);
 
  public slots:
   void selectedChanged(QListWidgetItem *current, QListWidgetItem *previous);
   void newFile();
-  void fileAdded(QString file);
+  void fileAdded(QUrl file);
   void nameChanged(QString fileName);
   void urlChanged(QString path);
   void fileModified(bool newState);

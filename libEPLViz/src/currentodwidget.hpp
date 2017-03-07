@@ -30,10 +30,12 @@
 
 #pragma once
 
+#include "Cycle.hpp"
 #include <QDockWidget>
 
 class CurrentODWidget : public QDockWidget {
   Q_OBJECT
+
 
  public:
   CurrentODWidget(QWidget *parent = nullptr);

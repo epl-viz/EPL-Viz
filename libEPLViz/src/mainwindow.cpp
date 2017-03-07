@@ -37,6 +37,7 @@
 #include "settingswindow.hpp"
 #include "ui_mainwindow.h"
 #include <memory>
+#include <vector>
 #include <wiretap/wtap.h>
 
 using namespace EPL_Viz;
@@ -304,6 +305,65 @@ void MainWindow::closeEvent(QCloseEvent *event) {
   profileManager->getDefaultProfile()->writeWindowSettings(this);
   emit close();
   QWidget::closeEvent(event);
+}
+
+bool MainWindow::curODWidgetUpdateData(QTreeWidgetItem *item, QString newData) {
+  if (item->text(1).compare(newData))
+    item->setText(1, newData);
+  return true;
+}
+
+void MainWindow::externalUpdate(EPL_DataCollect::Cycle *cycle, int node) {
+  QTreeWidget *tree = ui->curNodeODWidget;
+  (void)tree;
+  Node *n = cycle->getNode(node);
+  if (n == nullptr) {
+    qDebug() << "Node does not exist, finished update";
+    return;
+  }
+  OD *                  od      = n->getOD();
+  auto                  entries = od->getWrittenValues();
+  std::vector<uint16_t> entriesVect(entries.begin(), entries.end());
+  sort(entriesVect.begin(), entriesVect.end());
+
+  for (uint32_t i = 0; i < entriesVect.size(); i++) {
+    uint16_t         odIndex = entriesVect[i];
+    ODEntry *        entry   = od->getEntry(odIndex);
+    QTreeWidgetItem *topItem = tree->topLevelItem(i);
+    if (topItem == nullptr) {
+      // Does not exist, create it and subindices
+      topItem = new QTreeWidgetItem();
+      topItem->setText(0, QString("0x") + QString::number(odIndex, 16));
+      topItem->setText(1, QString(""));
+      curODWidgetUpdateData(topItem, QString::fromStdString(entry->toString(0)));
+      // Create Subindices if needed
+      /*
+      if (entry->getArraySize() >= 0) {
+        for (uint16_t subI = 0; subI < entry->getArraySize(); i++) {
+          QTreeWidgetItem *subItem = new QTreeWidgetItem();
+          subItem->setText(0, QString("0x") + QString::number(subI, 16));
+          curODWidgetUpdateData(subItem, QString::fromStdString(entry->toString(subI)));
+          topItem->addChild(subItem);
+        }
+      }*/
+      tree->addTopLevelItem(topItem);
+    } else {
+      // check for changes
+      int children = topItem->childCount();
+      if (children == 0) {
+        // no children, check top value
+        curODWidgetUpdateData(topItem, QString::fromStdString(entry->toString(0)));
+      } else {
+        // check children
+        /*
+        for (uint16_t subI = 0; i < UINT8_MAX; i++) {
+          curODWidgetUpdateData(topItem->child(subI), QString::fromStdString(entry->toString(subI)));
+        }
+        */
+      }
+    }
+  }
+  qDebug() << "Finished updating currentodmodel";
 }
 
 QWidget *MainWindow::getNetworkGraph() { return ui->networkGraphContents; }

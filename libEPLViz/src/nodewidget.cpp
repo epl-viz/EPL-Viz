@@ -114,7 +114,7 @@ NodeWidget::NodeWidget(EPL_DataCollect::Node *node, QWidget *parent) : QStackedW
   // Update the information
   updateIdentityInfo(identity);
 
-  // Add icons for maximizing/minimizing
+  // Add icons for maximizing (Box is checked) and minimizing (Box is unchecked)
   QIcon minmaxIcon;
   minmaxIcon.addFile(QStringLiteral(":/icons/resources/minimize.png"), QSize(), QIcon::Normal, QIcon::Off);
   minmaxIcon.addFile(QStringLiteral(":/icons/resources/maximize.png"), QSize(), QIcon::Normal, QIcon::On);
@@ -128,7 +128,7 @@ NodeWidget::NodeWidget(EPL_DataCollect::Node *node, QWidget *parent) : QStackedW
   maximizeButton->setIcon(minmaxIcon);
   maximizeButton->setIconSize(QSize(13, 13));
   maximizeButton->setCheckable(true);
-  maximizeButton->setChecked(true);
+  maximizeButton->setChecked(false);
 
   // Create the minimize button
   minimizeButton = new QPushButton(minWidget);
@@ -198,8 +198,8 @@ NodeWidget::NodeWidget(EPL_DataCollect::Node *node, QWidget *parent) : QStackedW
 
   updateStatus(node->getStatus());
 
-  widget(0)->hide();
-  widget(1)->show(); // Show the minimized widget
+  widget(1)->hide();
+  widget(0)->show(); // Show the maximized widget when starting
 }
 
 /*

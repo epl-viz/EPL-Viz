@@ -84,7 +84,7 @@ class NodeWidget : public QStackedWidget {
   QPushButton * maximizeButton;
   QRadioButton *advanced;
 
-  bool isMinimized = true;
+  bool isMinimized = false;
 
  public:
   NodeWidget(EPL_DataCollect::Node *node, QWidget *parent = nullptr);

@@ -64,9 +64,9 @@ void QWTPlotModel::update(EPL_DataCollect::Cycle *cycle) {
   Cycle curCycle = window->getCaptureInstance()->getCycleContainer()->pollCycle();
 
   std::vector<double> values       = timeSeries->tsData;
-  size_t                 oldDataCount = curve->data()->size();
-  size_t                 newDataCount = values.size();
-  size_t                 start        = 0;
+  size_t              oldDataCount = curve->data()->size();
+  size_t              newDataCount = values.size();
+  size_t              start        = 0;
 
   if (oldDataCount == newDataCount)
     return;

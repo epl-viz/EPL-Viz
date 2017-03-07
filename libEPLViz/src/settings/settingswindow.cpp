@@ -50,7 +50,7 @@ SettingsWindow::~SettingsWindow() { delete ui; }
 void SettingsWindow::updateProfiles() {
   SettingsProfileItem *prof = profiles[currentProfile].get();
   ui->G_XDDDir->setText(prof->cfg.backConf.xddDir.c_str());
-  ui->SM_interval->setValue(static_cast<int>( prof->cfg.backConf.smConfig.saveInterval));
+  ui->SM_interval->setValue(static_cast<int>(prof->cfg.backConf.smConfig.saveInterval));
   ui->PY_pluginDIR->setText(prof->cfg.pythonPluginsDir.c_str());
   ui->IH_EPLFrameName->setText(prof->cfg.backConf.ihConfig.eplFrameName.c_str());
   ui->IH_Prefetch->setValue(prof->cfg.backConf.ihConfig.prefetchSize);
@@ -81,22 +81,22 @@ void SettingsWindow::saveIntoProfiles() {
   prof->cfg.backConf.ihConfig.loopWaitTimeout   = std::chrono::milliseconds(ui->IH_LoopWait->value());
   prof->cfg.nodes.clear();
 
-  QListWidgetItem *it = ui->nodesList->currentItem();
-  std::string name = it->text().toStdString();
-  int nodeID = -1;
-  if(name != "Default") {
-     nodeID = static_cast<uint8_t>(std::stoi(name));
+  QListWidgetItem *it     = ui->nodesList->currentItem();
+  std::string      name   = it->text().toStdString();
+  int              nodeID = -1;
+  if (name != "Default") {
+    nodeID = static_cast<uint8_t>(std::stoi(name));
   }
   prof->cfg.nodes[nodeID].autoDeduceSpecificProfile = ui->N_autoDetect->checkState() == Qt::Checked;
-  prof->cfg.nodes[nodeID].baseProfile = ui->N_Base->text().toStdString();
-  prof->cfg.nodes[nodeID].specificProfile = ui->N_Special->text().toStdString();
+  prof->cfg.nodes[nodeID].baseProfile               = ui->N_Base->text().toStdString();
+  prof->cfg.nodes[nodeID].specificProfile           = ui->N_Special->text().toStdString();
 }
 
 void SettingsWindow::apply() {}
 
 void SettingsWindow::reset() {
-    SettingsProfileItem *prof = profiles[currentProfile].get();
-    prof->cfg = startCFG;
+  SettingsProfileItem *prof = profiles[currentProfile].get();
+  prof->cfg                 = startCFG;
 }
 
 void SettingsWindow::newProfile() {}

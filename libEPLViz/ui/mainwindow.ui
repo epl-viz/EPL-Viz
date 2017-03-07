@@ -634,6 +634,8 @@
    <class>EventViewerWidget</class>
    <extends>QTreeWidget</extends>
    <header>src/eventviewerwidget.hpp</header>
+  </customwidget>
+  <customwidget>
    <class>NetworkGraphWidget</class>
    <extends>QWidget</extends>
    <header>src/networkgraphwidget.hpp</header>

@@ -25,17 +25,26 @@
  */
 /*!
  * \file eventviewerwidget.hpp
- * \todo Implement
  */
 
 #pragma once
 
-#include <QDockWidget>
+#include "CaptureInstance.hpp"
+#include "EventLog.hpp"
+#include <QTreeWidget>
 
-class EventViewerWidget : public QDockWidget {
+class EventViewerWidget : public QTreeWidget {
   Q_OBJECT
+
+ private:
+  uint32_t                   appID = UINT32_MAX;
+  EPL_DataCollect::EventLog *log   = nullptr;
 
  public:
   EventViewerWidget(QWidget *parent = nullptr);
   ~EventViewerWidget()              = default;
+
+ public slots:
+  void start(EPL_DataCollect::CaptureInstance *ci);
+  void update();
 };

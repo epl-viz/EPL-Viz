@@ -40,11 +40,14 @@
 #include <QTextEdit>
 #include <QWidget>
 
+class MainWindow;
+
 namespace EPL_Viz {
 class BaseModel {
 
  private:
   static QLinkedList<BaseModel *> *registeredModels;
+  static uint32_t                  appID;
 
  public:
   BaseModel();
@@ -57,7 +60,7 @@ class BaseModel {
   virtual void init()                                = 0;
 
  public:
-  static void updateAll(GUIState *state, EPL_DataCollect::CaptureInstance *instance, uint32_t cycleNum);
+  static void updateAll(MainWindow *mw, EPL_DataCollect::CaptureInstance *instance, uint32_t cycleNum);
   static void initAll();
   static void reg(BaseModel *model);
   static void dereg(BaseModel *model);

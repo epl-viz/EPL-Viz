@@ -246,7 +246,7 @@
    <widget class="QWidget" name="dockWidgetContents_4">
     <layout class="QGridLayout" name="gridLayout">
      <item row="0" column="0">
-      <widget class="QTableView" name="curNodeODView"/>
+      <widget class="QTreeView" name="curNodeODView"/>
      </item>
     </layout>
    </widget>
@@ -301,17 +301,17 @@
     </layout>
    </widget>
   </widget>
-  <widget class="EventViewerWidget" name="dockEvents">
+  <widget class="QDockWidget" name="dockEvents">
    <property name="windowTitle">
     <string>Events</string>
    </property>
    <attribute name="dockWidgetArea">
     <number>1</number>
    </attribute>
-   <widget class="QWidget" name="dockWidgetContents_5">
+   <widget class="QWidget" name="dockEventsContents">
     <layout class="QGridLayout" name="gridLayout_6">
      <item row="0" column="0">
-      <widget class="QTreeWidget" name="treeWidget_4">
+      <widget class="EventViewerWidget" name="eventLog">
        <property name="toolTip">
         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Unterstuetzt das automatische Springen zu cyclen&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
        </property>
@@ -322,7 +322,17 @@
        </column>
        <column>
         <property name="text">
+         <string>Description</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
          <string>Type</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>Flags</string>
         </property>
        </column>
        <column>
@@ -335,76 +345,11 @@
          <string>Last</string>
         </property>
        </column>
-       <item>
+       <column>
         <property name="text">
-         <string>Plugin1</string>
+         <string>Plugin</string>
         </property>
-        <property name="text">
-         <string/>
-        </property>
-        <property name="text">
-         <string/>
-        </property>
-        <property name="text">
-         <string/>
-        </property>
-        <item>
-         <property name="text">
-          <string>Event1</string>
-         </property>
-         <property name="text">
-          <string>Error</string>
-         </property>
-         <property name="text">
-          <string>100</string>
-         </property>
-         <property name="text">
-          <string>102</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>Event2</string>
-         </property>
-         <property name="text">
-          <string>Info</string>
-         </property>
-         <property name="text">
-          <string>200</string>
-         </property>
-         <property name="text">
-          <string>200</string>
-         </property>
-        </item>
-       </item>
-       <item>
-        <property name="text">
-         <string>Plugin2</string>
-        </property>
-        <property name="text">
-         <string/>
-        </property>
-        <property name="text">
-         <string/>
-        </property>
-        <property name="text">
-         <string/>
-        </property>
-        <item>
-         <property name="text">
-          <string>Event3</string>
-         </property>
-         <property name="text">
-          <string>Warning</string>
-         </property>
-         <property name="text">
-          <string>0</string>
-         </property>
-         <property name="text">
-          <string>1000</string>
-         </property>
-        </item>
-       </item>
+       </column>
       </widget>
      </item>
     </layout>
@@ -653,15 +598,15 @@
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>EventViewerWidget</class>
-   <extends>QDockWidget</extends>
-   <header>src/eventviewerwidget.hpp</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
    <class>CycleCommandsWidget</class>
    <extends>QDockWidget</extends>
    <header>src/cyclecommandswidget.hpp</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>NetworkGraphWidget</class>
+   <extends>QDockWidget</extends>
+   <header>src/networkgraphwidget.hpp</header>
    <container>1</container>
   </customwidget>
   <customwidget>
@@ -675,6 +620,7 @@
    <extends>QListWidget</extends>
    <header>src/pluginselectorwidget.hpp</header>
    <slots>
+    <slot>loadPlugins(EPL_DataCollect::CaptureInstance)</slot>
     <slot>disableWidget()</slot>
    </slots>
   </customwidget>
@@ -685,6 +631,9 @@
    <container>1</container>
   </customwidget>
   <customwidget>
+   <class>EventViewerWidget</class>
+   <extends>QTreeWidget</extends>
+   <header>src/eventviewerwidget.hpp</header>
    <class>NetworkGraphWidget</class>
    <extends>QWidget</extends>
    <header>src/networkgraphwidget.hpp</header>

@@ -35,6 +35,7 @@
 #include "networkgraphmodel.hpp"
 #include "pluginswindow.hpp"
 #include "settingswindow.hpp"
+#include "settingswindow.hpp"
 #include "ui_mainwindow.h"
 #include <memory>
 #include <wiretap/wtap.h>
@@ -77,7 +78,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
   profileManager->getDefaultProfile()->readWindowSettings(this);
   captureInstance = std::make_unique<CaptureInstance>();
 
-  settingsWin = new SettingsWindow(this);
+  settingsWin = new SettingsWindow(this, profileManager);
   settingsWin->hide();
 
   ui->pluginSelectorWidget->setMainWindow(this);

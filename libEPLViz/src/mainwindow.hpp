@@ -68,7 +68,7 @@ class MainWindow : public QMainWindow {
   std::unique_ptr<EPL_DataCollect::CaptureInstance> captureInstance;
   QString                                           interface;
   std::string                                       file;
-  SettingsWindow *                                  settingsWin;
+  EPL_Viz::SettingsWindow *                         settingsWin;
 
  public:
   explicit MainWindow(QWidget *parent = nullptr);
@@ -94,7 +94,7 @@ class MainWindow : public QMainWindow {
    */
   mockable EPL_Viz::GUIState getState();
 
-  SettingsWindow *getSettingsWin();
+  EPL_Viz::SettingsWindow *getSettingsWin();
 
   mockable uint32_t getCycleNum();
   /**

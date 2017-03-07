@@ -71,7 +71,7 @@
           <item>
            <widget class="QTabWidget" name="backendTabs">
             <property name="currentIndex">
-             <number>0</number>
+             <number>2</number>
             </property>
             <widget class="QWidget" name="general">
              <attribute name="title">
@@ -146,6 +146,12 @@
                    <property name="suffix">
                     <string> cycle</string>
                    </property>
+                   <property name="minimum">
+                    <number>0</number>
+                   </property>
+                   <property name="maximum">
+                    <number>10000</number>
+                   </property>
                   </widget>
                  </item>
                 </layout>
@@ -203,6 +209,9 @@
                    <property name="prefix">
                     <string/>
                    </property>
+                   <property name="maximum">
+                    <number>255</number>
+                   </property>
                   </widget>
                  </item>
                  <item row="3" column="1">
@@ -210,12 +219,18 @@
                    <property name="suffix">
                     <string> ms</string>
                    </property>
+                   <property name="maximum">
+                    <number>1000000</number>
+                   </property>
                   </widget>
                  </item>
                  <item row="1" column="1">
                   <widget class="QSpinBox" name="IH_Prefetch">
                    <property name="suffix">
                     <string> cycle</string>
+                   </property>
+                   <property name="maximum">
+                    <number>255</number>
                    </property>
                   </widget>
                  </item>
@@ -252,12 +267,18 @@
                    <property name="suffix">
                     <string> ms</string>
                    </property>
+                   <property name="maximum">
+                    <number>10000</number>
+                   </property>
                   </widget>
                  </item>
                  <item row="2" column="1">
                   <widget class="QSpinBox" name="IH_CheckPrefetch">
                    <property name="suffix">
                     <string> cycle</string>
+                   </property>
+                   <property name="maximum">
+                    <number>255</number>
                    </property>
                   </widget>
                  </item>
@@ -581,7 +602,7 @@
    <sender>profList</sender>
    <signal>currentItemChanged(QListWidgetItem*,QListWidgetItem*)</signal>
    <receiver>SettingsWindow</receiver>
-   <slot>profChange()</slot>
+   <slot>profChange(QListWidgetItem*,QListWidgetItem*)</slot>
    <hints>
     <hint type="sourcelabel">
      <x>137</x>
@@ -597,7 +618,7 @@
    <sender>nodesList</sender>
    <signal>currentItemChanged(QListWidgetItem*,QListWidgetItem*)</signal>
    <receiver>SettingsWindow</receiver>
-   <slot>nodeChange()</slot>
+   <slot>nodeChange(QListWidgetItem*,QListWidgetItem*)</slot>
    <hints>
     <hint type="sourcelabel">
      <x>425</x>
@@ -617,7 +638,7 @@
   <slot>deleteProfile()</slot>
   <slot>newNode()</slot>
   <slot>deleteNode()</slot>
-  <slot>profChange()</slot>
-  <slot>nodeChange()</slot>
+  <slot>profChange(QListWidgetItem*,QListWidgetItem*)</slot>
+  <slot>nodeChange(QListWidgetItem*,QListWidgetItem*)</slot>
  </slots>
 </ui>

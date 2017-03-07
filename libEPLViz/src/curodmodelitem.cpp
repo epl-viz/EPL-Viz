@@ -28,22 +28,31 @@
  */
 #include "curodmodelitem.hpp"
 using namespace EPL_Viz;
+using namespace std;
 
-CurODModelItem::CurODModelItem(uint16_t i, bool sub) {
+CurODModelItem::CurODModelItem(uint16_t i, bool hsub, bool isub, QString d, std::shared_ptr<CurODModelItem> par) {
   index  = i;
-  hasSub = sub;
+  hasSub = hsub;
+  isSub  = isub;
+  data   = d;
+  parent = par;
 }
 
 bool CurODModelItem::hasSubIndex() { return hasSub; }
+bool CurODModelItem::isSubIndex() { return isSub; }
 
-bool CurODModelItem::setSubIndex(uint8_t i, QString item) {
-  if (!hasSub && i != 0)
+QString CurODModelItem::getData() { return data; }
+
+bool CurODModelItem::setSubIndex(uint16_t i, std::shared_ptr<CurODModelItem> item) {
+  if (!hasSub)
     return false;
 
   subIndices.insert(i, item);
   return true;
 }
 
+std::shared_ptr<CurODModelItem> CurODModelItem::getParent() { return parent; }
+
 uint16_t CurODModelItem::getIndex() { return index; }
 
-QString CurODModelItem::getSubindex(uint8_t i) { return subIndices.value(i, QString("subindex does not exist")); }
+std::shared_ptr<CurODModelItem> CurODModelItem::getSubindex(uint16_t i) { return subIndices.value(i); }

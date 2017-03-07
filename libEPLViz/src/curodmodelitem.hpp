@@ -35,16 +35,24 @@
 namespace EPL_Viz {
 class CurODModelItem {
  public:
-  CurODModelItem(uint16_t index, bool hasSub);
+  CurODModelItem(
+        uint16_t index, bool hasSub, bool isSub, QString data, std::shared_ptr<CurODModelItem> parent = nullptr);
 
   bool     hasSubIndex();
+  bool     isSubIndex();
   uint16_t getIndex();
-  bool setSubIndex(uint8_t i, QString item);
-  QString getSubindex(uint8_t i);
+  QString  getData();
+  bool setSubIndex(uint16_t i, std::shared_ptr<CurODModelItem> item);
+  std::shared_ptr<CurODModelItem> getSubindex(uint16_t i);
+  std::shared_ptr<CurODModelItem> getParent();
 
  private:
-  bool     hasSub;
-  uint16_t index;
-  QMap<uint8_t, QString> subIndices;
+  bool                            hasSub;
+  bool                            isSub;
+  uint16_t                        index;
+  QString                         data;
+  std::shared_ptr<CurODModelItem> parent;
+
+  QMap<uint16_t, std::shared_ptr<CurODModelItem>> subIndices;
 };
 }

@@ -29,34 +29,74 @@
 #include "currentodmodel.hpp"
 #include "OD.hpp"
 #include <QString>
+#include <QTreeView>
 using namespace EPL_Viz;
 using namespace EPL_DataCollect;
 
 CurrentODModel::CurrentODModel(QMainWindow *window) : BaseModel() {
-  QTableView *view = window->findChild<QTableView *>("curNodeODView");
+
+  odEntries.insert(0, std::make_shared<CurODModelItem>(0, false, false, QString("first node")));
+  convertRow[0]                          = std::make_pair(0, UINT16_MAX);
+  std::shared_ptr<CurODModelItem> parent = std::make_shared<CurODModelItem>(1, true, false, QString("first node"));
+  convertRow[1]                          = std::make_pair(1, UINT16_MAX);
+  odEntries.insert(1, parent);
+  parent->setSubIndex(0, std::make_shared<CurODModelItem>(1, false, true, QString("first node")));
+  convertRow[2] = std::make_pair(1, 0);
+
+  QTreeView *view = window->findChild<QTreeView *>("curNodeODView");
   view->setModel(this);
-  view->verticalHeader()->hide();
   needUpdate = true;
 }
 
 void CurrentODModel::init() {}
 
 QModelIndex CurrentODModel::parent(const QModelIndex &index) const {
-  if (odEntries.value(static_cast<uint8_t>(convertRow.find(index.row())->first))->hasSubIndex())
-    return CurrentODModel::index(index.row(), 0, index);
-  else
+  auto it = convertRow.value(index.row());
+  // auto odindex = it->second.first;
+  if (it.second == UINT16_MAX) {
     return QModelIndex();
+  } else {
+    auto row = index.row();
+    auto sub = it.second;
+    auto i   = row - sub;
+    return createIndex(i, index.column(), getItem(index)->getParent().get());
+  }
+}
+
+std::shared_ptr<CurODModelItem> CurrentODModel::getItem(const QModelIndex &index) const { return getItem(index.row()); }
+
+std::shared_ptr<CurODModelItem> CurrentODModel::getItem(int row) const {
+  auto it = convertRow.value(row);
+
+  if (it.second == UINT16_MAX) {
+    auto i     = it.first;
+    auto entry = odEntries.value(i);
+    return entry;
+  } else {
+    auto i     = it.first;
+    auto sub   = it.second;
+    auto entry = odEntries.value(i)->getSubindex(sub);
+    return entry;
+  }
 }
 
 QModelIndex CurrentODModel::index(int row, int column, const QModelIndex &parent) const {
   (void)parent;
-  return createIndex(row, column, odEntries.value(static_cast<uint8_t>(convertRow.find(row)->first)).get());
+  auto it      = convertRow.find(row);
+  auto odindex = it->first;
+  // qDebug() << "row: " << QString::number(row) << " od: " << QString::number(odindex);
+  if (odEntries.contains(odindex))
+    return createIndex(row, column, getItem(row).get());
+  else
+    return QModelIndex();
 }
 
 
 int CurrentODModel::rowCount(const QModelIndex &parent) const {
   (void)parent;
-  return static_cast<int>(convertRow.size());
+  auto size = convertRow.size();
+  // qDebug() << "showing: " << QString::number(size);
+  return static_cast<int>(size);
 }
 
 int CurrentODModel::columnCount(const QModelIndex &parent) const {
@@ -66,12 +106,13 @@ int CurrentODModel::columnCount(const QModelIndex &parent) const {
 
 QVariant CurrentODModel::data(const QModelIndex &index, int role) const {
   // TODO
-  if (role == Qt::DisplayRole) {
+  if (!index.isValid())
+    return QVariant();
 
-    std::shared_ptr<CurODModelItem> entry = odEntries.value(static_cast<uint8_t>(convertRow.find(index.row())->first));
+  if (role == Qt::DisplayRole) {
     switch (index.column()) {
-      case 0: return QVariant(index.column());
-      case 1: return QVariant("empty");
+      case 0: return QString::fromStdString("row: ") + QString::number(index.row());
+      case 1: return getItem(index)->getData();
       default: return QVariant("This shouldn't have happened");
     }
   }
@@ -93,13 +134,15 @@ QVariant CurrentODModel::headerData(int section, Qt::Orientation orientation, in
 void CurrentODModel::update(EPL_DataCollect::Cycle *cycle) {
   if (!needUpdate)
     return;
+  (void)cycle;
+  beginResetModel();
+  /*
   // Create Model
   Node *n = cycle->getNode(node);
   if (n == nullptr) {
     qDebug() << "Node in CurrentODModel not really set";
     return;
   }
-  beginResetModel();
   OD * od      = n->getOD();
   auto entries = od->getWrittenValues();
   int  counter = 0;
@@ -108,20 +151,27 @@ void CurrentODModel::update(EPL_DataCollect::Cycle *cycle) {
     ODEntry *                       entry = od->getEntry(i);
     std::shared_ptr<CurODModelItem> item;
     if (entry->getArraySize() >= 0) {
-      item = std::make_shared<CurODModelItem>(i, true);
-      for (uint8_t subI = 0; subI < entry->getArraySize(); ++subI) {
-        item->setSubIndex(subI, QString::fromStdString(entry->toString(static_cast<uint8_t>(i))));
+      item = std::make_shared<CurODModelItem>(i, true, false, "Subindices");
+      convertRow[counter++] = std::make_pair(i, UINT16_MAX);
+      for (uint16_t subI = 0; subI < entry->getArraySize(); ++subI) {
+        // TODO Unterschied toString sub und nicht sub
+        std::shared_ptr<CurODModelItem> sub = std::make_shared<CurODModelItem>(subI, false, true,
+  QString::fromStdString(entry->toString(i)), item);
+        item->setSubIndex(subI, sub);
         convertRow[counter++] = std::make_pair(i, subI);
       }
     } else {
-      item = std::make_shared<CurODModelItem>(i, false);
-      item->setSubIndex(0, QString::fromStdString(entry->toString(static_cast<uint8_t>(i))));
-      convertRow[counter++] = std::make_pair(i, 0);
+      item = std::make_shared<CurODModelItem>(i, false, false, QString::fromStdString(entry->toString(0)), nullptr);
+      convertRow[counter++] = std::make_pair(i, UINT16_MAX);
     }
     odEntries.insert(i, item);
   }
+  */
+  // debug start
+
+
   endResetModel();
-  needUpdate = false;
+  // needUpdate = false;
   qDebug() << "Finished updating currentodmodel";
 }
 

@@ -24,53 +24,47 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 /*!
- * \file cyclecommandsmodel.hpp
- * Adapted from https://doc.qt.io/qt-5/qtwidgets-itemviews-editabletreemodel-example.html
+ * \file oddescriptionmodel.hpp
  */
 #pragma once
 
+#include "Cycle.hpp"
+#include "EPLVizDefines.hpp"
+#include "Packet.hpp"
 #include "basemodel.hpp"
-#include "cycotreeitem.hpp"
-#include <QAbstractItemModel>
-#include <QTreeView>
+#include "curodmodelitem.hpp"
+
+#include <QList>
+#include <QTreeWidget>
+#include <plf_colony.h>
+#include <unordered_map>
 
 namespace EPL_Viz {
-class CycleCommandsModel : public QAbstractItemModel, public BaseModel {
+class ODDescpriptonModel : public QObject, public BaseModel {
   Q_OBJECT
+ private:
+  uint8_t                                 node = 1;
+  bool                                    needUpdate;
+  QTreeWidget *                           tree;
+  bool                                    wait = true;
+  plf::colony<uint16_t>                   oldValues;
+  QList<std::unique_ptr<QTreeWidgetItem>> topIndices;
 
+  // std::shared_ptr<CurODModelItem> getItem(const QModelIndex &index) const;
  public:
-  CycleCommandsModel(QObject *parent = 0);
-  ~CycleCommandsModel();
-
-  QVariant data(const QModelIndex &index, int role) const override;
-  QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;
-  QModelIndex index(int row, int column, const QModelIndex &parent = QModelIndex()) const override;
-  QModelIndex parent(const QModelIndex &index) const override;
-  int rowCount(const QModelIndex &parent = QModelIndex()) const override;
-  int columnCount(const QModelIndex &parent = QModelIndex()) const override;
-
-  Qt::ItemFlags flags(const QModelIndex &index) const override;
-  // bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole) override;
-  // bool setHeaderData(int section, Qt::Orientation orientation, const QVariant &value, int role = Qt::EditRole)
-  // override;
-  bool insertRows(int position, int rows, const QModelIndex &parent = QModelIndex()) override;
-  bool removeRows(int position, int rows, const QModelIndex &parent = QModelIndex()) override;
-
+  ODDescpriptonModel(QMainWindow *window);
+  ~ODDescpriptonModel() = default;
   void init() override;
 
- private:
-  uint8_t       selectedNode = 0;
-  bool          needUpdate   = 0;
-  CyCoTreeItem *rootItem     = nullptr;
-  QTreeView *   view         = nullptr;
-
-  CyCoTreeItem *getItem(const QModelIndex &index) const;
-
  protected:
-  mockable void update(EPL_DataCollect::Cycle *cycle) override;
+  void update(EPL_DataCollect::Cycle *cycle) override;
 
  public slots:
   void updateNext();
-  void changeNode(uint8_t newNode);
+  void changeNode(uint8_t);
+  void showContextMenu(const QPoint &);
+ signals:
+  void drawingPlot(uint8_t nodeID, uint16_t index, uint8_t subIndex);
+  void updateExternal(EPL_DataCollect::Cycle *cycle, int node);
 };
 }

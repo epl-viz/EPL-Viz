@@ -52,7 +52,7 @@ class PluginsWindow : public QMainWindow {
   void closeEvent(QCloseEvent *event);
 
  signals:
-  void fileOpened(QString filename);
+  void fileOpened(QUrl filename);
   void cleanUp();
 
  public slots:

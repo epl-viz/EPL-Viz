@@ -50,7 +50,7 @@ class PluginEditorWidget : public QWidget {
   ~PluginEditorWidget();
 
  private:
-  void loadDocument(QString fileName = nullptr);
+  void loadDocument(QUrl fileName = QUrl());
   void createWidget();
 
  signals:
@@ -71,7 +71,7 @@ class PluginEditorWidget : public QWidget {
 
   void selectPlugin(QString plugin);
 
-  void openFile(QString file);
+  void openFile(QUrl file);
   void cleanUp();
   void save();
   void saveAs();

@@ -46,9 +46,9 @@ void PluginsWindow::closeEvent(QCloseEvent *event) {
 }
 
 void PluginsWindow::open() {
-  QString file = QFileDialog::getOpenFileName(0, "Open Python file", QString(), "Python files (*.py);;All Files (*)");
+  QUrl file = QFileDialog::getOpenFileUrl(0, "Open Python file", QString(), "Python files (*.py);;All Files (*)");
 
-  if (file == nullptr)
+  if (file == QUrl())
     return;
 
   emit fileOpened(file);

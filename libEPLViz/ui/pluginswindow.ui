@@ -149,12 +149,12 @@
     <signal>cleanupDone()</signal>
     <signal>urlChanged(QString)</signal>
     <slot>newFile()</slot>
-    <slot>openFile(QString)</slot>
     <slot>save()</slot>
     <slot>saveAs()</slot>
     <slot>selectPlugin(QString)</slot>
     <slot>urlChange()</slot>
     <slot>cleanUp()</slot>
+    <slot>openFile(QUrl)</slot>
    </slots>
   </customwidget>
   <customwidget>
@@ -162,14 +162,14 @@
    <extends>QListWidget</extends>
    <header>src/pluginlistwidget.hpp</header>
    <slots>
-    <signal>fileOpened(QString)</signal>
     <signal>pluginSelected(QString)</signal>
-    <slot>fileAdded(QString)</slot>
+    <signal>fileOpened(QUrl)</signal>
     <slot>newFile()</slot>
     <slot>nameChanged(QString)</slot>
     <slot>fileModified(bool)</slot>
     <slot>selectedChanged(QListWidgetItem*,QListWidgetItem*)</slot>
     <slot>urlChanged(QString)</slot>
+    <slot>fileAdded(QUrl)</slot>
    </slots>
   </customwidget>
  </customwidgets>
@@ -289,9 +289,9 @@
   </connection>
   <connection>
    <sender>PluginsWindow</sender>
-   <signal>fileOpened(QString)</signal>
+   <signal>fileOpened(QUrl)</signal>
    <receiver>pluginList</receiver>
-   <slot>fileAdded(QString)</slot>
+   <slot>fileAdded(QUrl)</slot>
    <hints>
     <hint type="sourcelabel">
      <x>555</x>
@@ -385,9 +385,9 @@
   </connection>
   <connection>
    <sender>pluginList</sender>
-   <signal>fileOpened(QString)</signal>
+   <signal>fileOpened(QUrl)</signal>
    <receiver>editor</receiver>
-   <slot>openFile(QString)</slot>
+   <slot>openFile(QUrl)</slot>
    <hints>
     <hint type="sourcelabel">
      <x>146</x>
@@ -449,8 +449,8 @@
   </connection>
  </connections>
  <slots>
-  <signal>fileOpened(QString)</signal>
   <signal>cleanUp()</signal>
+  <signal>fileOpened(QUrl)</signal>
   <slot>open()</slot>
  </slots>
 </ui>

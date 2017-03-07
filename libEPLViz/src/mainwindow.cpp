@@ -267,6 +267,8 @@ void MainWindow::changeState(GUIState nState) {
       captureInstance = std::make_unique<CaptureInstance>();
       ui->actionStart_Recording->setEnabled(true);
       ui->actionStop_Recording->setEnabled(false);
+      ui->pushButton->setEnabled(true);
+      ui->actionPlugins->setEnabled(true);
       ui->actionSave->setEnabled(false);
       ui->actionSave_As->setEnabled(false);
       break;
@@ -307,6 +309,8 @@ void MainWindow::config() {
         EPL_DataCollect::constants::EPL_DC_PLUGIN_TIME_SERIES_CSID);
   findChild<QAction *>("actionStart_Recording")->setEnabled(false);
   findChild<QAction *>("actionStop_Recording")->setEnabled(true);
+  ui->pushButton->setEnabled(false);
+  ui->actionPlugins->setEnabled(false);
   BaseModel::initAll(); // TODO do we need to do this here
 }
 

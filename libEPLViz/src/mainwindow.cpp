@@ -40,6 +40,7 @@
 #include <memory>
 #include <vector>
 #include <wiretap/wtap.h>
+#include "oddescriptionmodel.hpp"
 
 using namespace EPL_Viz;
 using namespace EPL_DataCollect;
@@ -108,17 +109,24 @@ void MainWindow::createModels() {
   CycleCommandsModel *cyCoModel = new CycleCommandsModel(this);
   connect(this, SIGNAL(cycleChanged()), cyCoModel, SLOT(updateNext()));
 
+  //NetworkGraphModel *networkGraphModel = new NetworkGraphModel(this);
+
   CurrentODModel *curODModel = new CurrentODModel(this);
   connect(this, SIGNAL(cycleChanged()), curODModel, SLOT(updateNext()));
+  //connect(networkGraphModel, SIGNAL(nodeChanged(uint8_t)), curODModel, SLOT(changeNode(uint8_t)))
 
-  NetworkGraphModel *networkGraphModel = new NetworkGraphModel(this);
+  ODDescpriptonModel *oddescrModel = new ODDescpriptonModel(this);
+  //connect(networkGraphModel, SIGNAL(nodeChanged(uint8_t)), odDescrModel, SLOT(changeNode(uint8_t)))
 
-  // models.append(new PacketHistoryModel(this));
+
+
+  models.append(new PacketHistoryModel(this));
   // models.append(new PythonLogModel(this));
-  // models.append(new QWTPlotModel(this));
+  models.append(new QWTPlotModel(this));
   models.append(curODModel);
-  models.append(networkGraphModel);
+  //models.append(networkGraphModel);
   models.append(cyCoModel);
+  models.append(oddescrModel);
 
   QWidget *network = ui->networkGraphContents;
   connect(network, SIGNAL(nodeChanged(uint8_t)), cyCoModel, SLOT(changeNode(uint8_t)));
@@ -322,7 +330,8 @@ bool MainWindow::curODWidgetUpdateData(QTreeWidgetItem *item, QString newData) {
   return true;
 }
 
-void MainWindow::externalUpdate(EPL_DataCollect::Cycle *cycle, int node) {
+// Partly disabled because of performance
+void MainWindow::externalUpdateCurOD(EPL_DataCollect::Cycle *cycle, int node) {
   QTreeWidget *tree = ui->curNodeODWidget;
   (void)tree;
   Node *n = cycle->getNode(node);
@@ -370,6 +379,55 @@ void MainWindow::externalUpdate(EPL_DataCollect::Cycle *cycle, int node) {
         }
         */
       }
+    }
+  }
+  qDebug() << "Finished updating currentodmodel";
+}
+
+void MainWindow::odDescrWidgetUpdateData(QTreeWidgetItem *item, QVector<QString> newData) {
+  if (item->text(1).compare(newData[0]))
+    item->setText(1, newData[0]);
+  if (item->text(2).compare(newData[1]))
+    item->setText(1, newData[1]);
+  if (item->text(3).compare(newData[2]))
+    item->setText(1, newData[2]);
+
+}
+
+void MainWindow::externalUpdateODDescr(EPL_DataCollect::Cycle *cycle, int node) {
+  QTreeWidget *tree = ui->curNodeODWidget;
+  (void)tree;
+  Node *n = cycle->getNode(node);
+  if (n == nullptr) {
+    qDebug() << "Node does not exist, finished update";
+    return;
+  }
+  OD *                  od      = n->getOD();
+  auto                  entries = od->getWrittenValues();
+  std::vector<uint16_t> entriesVect(entries.begin(), entries.end());
+  sort(entriesVect.begin(), entriesVect.end());
+
+  for (uint32_t i = 0; i < entriesVect.size(); i++) {
+    //uint16_t         odIndex = entriesVect[i];
+    //ODEntry *        entry   = od->getEntry(odIndex);
+    ODDescription*   descr   = od->getODDesc();
+    QTreeWidgetItem *topItem = tree->topLevelItem(i);
+    if (topItem == nullptr) {
+      // Does not exist, create it and subindices
+      topItem = new QTreeWidgetItem();
+      topItem->setText(0, QString("0x") + QString::number(descr->getEntry(i)->index, 16));
+      topItem->setText(1, QString::fromStdString(EPLEnum2Str::toStr(descr->getEntry(i)->dataType)));
+      topItem->setText(2, QString::fromStdString(descr->getEntry(i)->name));
+      topItem->setText(3, QString::fromStdString(descr->getEntry(i)->defaultValue->toString()));
+      tree->addTopLevelItem(topItem);
+    } else {
+      // check for changes
+      QVector<QString> d;
+      d[0] = QString::fromStdString(EPLEnum2Str::toStr(descr->getEntry(i)->dataType));
+      d[1] = QString::fromStdString(descr->getEntry(i)->name);
+      d[2] = QString::fromStdString(descr->getEntry(i)->defaultValue->toString());
+      topItem->setText(0, QString("0x") + QString::number(descr->getEntry(i)->index, 16));
+      odDescrWidgetUpdateData(topItem, d);
     }
   }
   qDebug() << "Finished updating currentodmodel";

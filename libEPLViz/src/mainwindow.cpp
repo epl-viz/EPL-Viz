@@ -35,6 +35,7 @@
 #include "networkgraphmodel.hpp"
 #include "pluginswindow.hpp"
 #include "settingswindow.hpp"
+#include "settingswindow.hpp"
 #include "ui_mainwindow.h"
 #include <memory>
 #include <vector>
@@ -67,13 +68,18 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
   connect(this,
           SIGNAL(recordingStarted(EPL_DataCollect::CaptureInstance *)),
           ui->pluginSelectorWidget,
-          SLOT(loadPlugins(EPL_DataCollect::CaptureInstance *)));
+          SLOT(loadPlugins(
+                EPL_DataCollect::CaptureInstance *))); // Notify the pluginSelectorWidget of the start of recording
+  connect(this,
+          SIGNAL(recordingStarted(EPL_DataCollect::CaptureInstance *)),
+          ui->eventLog,
+          SLOT(start(EPL_DataCollect::CaptureInstance *))); // Notify the eventLog of the start of recording
   connect(this, SIGNAL(close()), modelThread, SLOT(stop()));
 
   profileManager->getDefaultProfile()->readWindowSettings(this);
   captureInstance = std::make_unique<CaptureInstance>();
 
-  settingsWin = new SettingsWindow(this);
+  settingsWin = new SettingsWindow(this, profileManager);
   settingsWin->hide();
 
   ui->pluginSelectorWidget->setMainWindow(this);
@@ -88,9 +94,12 @@ MainWindow::~MainWindow() {
 }
 
 void MainWindow::addNode(Node *n) {
-  NodeWidget *nw = new NodeWidget(n, ui->networkGraphContents);
+  NodeWidget * nw     = new NodeWidget(n, ui->networkGraphContents);
+  QGridLayout *layout = qobject_cast<QGridLayout *>(ui->networkGraphContents->layout());
 
-  ui->networkGraphContents->layout()->addWidget(nw);
+  int col = layout->columnCount();
+
+  layout->addWidget(nw, col / 4, col % 4);
   emit nodeAdded(n->getID(), nw);
 }
 
@@ -104,9 +113,9 @@ void MainWindow::createModels() {
 
   NetworkGraphModel *networkGraphModel = new NetworkGraphModel(this);
 
-  models.append(new PacketHistoryModel(this));
-  models.append(new PythonLogModel(this));
-  models.append(new QWTPlotModel(this));
+  // models.append(new PacketHistoryModel(this));
+  // models.append(new PythonLogModel(this));
+  // models.append(new QWTPlotModel(this));
   models.append(curODModel);
   models.append(networkGraphModel);
   models.append(cyCoModel);

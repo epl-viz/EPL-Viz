@@ -34,29 +34,37 @@ using namespace EPL_Viz;
 
 Profile::Profile(QSettings *set, QString profileName) {
   settings = set;
-  name     = profileName;
+  name     = profileName + "/";
 }
 
 QString Profile::getName() { return name; }
 
 void Profile::writeWindowSettings(MainWindow *window) {
-  settings->beginGroup(name + "/MainWindow");
+  settings->beginGroup(name + "MainWindow");
   settings->setValue("size", window->size());
   settings->setValue("pos", window->pos());
   settings->endGroup();
 }
 
 void Profile::readWindowSettings(MainWindow *window) {
-  settings->beginGroup(name + "/MainWindow");
+  settings->beginGroup(name + "MainWindow");
   window->resize(settings->value("size", QSize(400, 400)).toSize());
   window->move(settings->value("pos", QPoint(200, 200)).toPoint());
   settings->endGroup();
 }
 
-void Profile::writeInterface(QString interface) { settings->setValue(name + "/interface", interface); }
+void Profile::writeInterface(QString interface) { settings->setValue(name + "interface", interface); }
 
-QString Profile::readInterface() { return settings->value(name + "/interface", QVariant("none")).toString(); }
+QString Profile::readInterface() { return settings->value(name + "interface", QVariant("none")).toString(); }
 
-void Profile::writeCustomValue(QString custom, QVariant val) { settings->setValue(name + "/" + custom, val); }
+void Profile::writeCustomValue(QString custom, QVariant val) { settings->setValue(name + custom, val); }
 
 QVariant Profile::readCustomValue(QString custom) { return settings->value(custom, QVariant()); }
+
+void Profile::beginWriteArray(QString custom) { settings->beginWriteArray(name + custom); }
+
+int Profile::beginReadArray(QString custom) { return settings->beginReadArray(name + custom); }
+
+void Profile::setArrayIndex(int i) { settings->setArrayIndex(i); }
+
+void Profile::endArray() { settings->endArray(); }

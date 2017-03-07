@@ -89,22 +89,6 @@ void NetworkGraphModel::update(Cycle *cycle) {
   }
 
   emit eventsDone();
-
-
-  // qDebug() << "Setting stylesheet!";
-
-  // Update the stylesheet for each node widget
-  // for (uint8_t id : list) {
-  // auto s = nodeMap.find(id);
-
-  // qDebug() << "Will " << QString::number(id) << " be the doom to this world?";
-
-  // if (s == nodeMap.end()) {
-  // qDebug() << "DOOM COMES TO THIS WORLD ";
-  //}
-  //}
-
-  // qDebug() << "Updating network graph DONE!";
 }
 
 void NetworkGraphModel::trackNodeWidget(uint8_t id, NodeWidget *nw) {

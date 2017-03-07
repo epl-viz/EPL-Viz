@@ -25,9 +25,45 @@
  */
 /*!
  * \file eventviewerwidget.cpp
- * \todo Implement
  */
 
 #include "eventviewerwidget.hpp"
 
-EventViewerWidget::EventViewerWidget(QWidget *parent) : QDockWidget(parent) {}
+using namespace EPL_Viz;
+using namespace EPL_DataCollect;
+
+EventViewerWidget::EventViewerWidget(QWidget *parent) : QTreeWidget(parent), BaseModel() { setEnabled(false); }
+
+void EventViewerWidget::init() {}
+
+void EventViewerWidget::start(CaptureInstance *ci) {
+  log   = ci->getEventLog();
+  appID = log->getAppID();
+  setEnabled(true); // Turn on the widgets
+}
+
+void EventViewerWidget::update(Cycle *cycle) {
+  (void)cycle;
+  // Don't update if the widget is not ready yet
+  if (!isEnabled())
+    return;
+
+  auto events = log->pollEvents(appID);
+  for (auto event : events) {
+    QTreeWidgetItem *evItem = new QTreeWidgetItem(this);
+
+    uint32_t first = 0; // The first cycle this event occured in
+    uint32_t last  = 0; // The last cycle this event occured in
+
+    // Load the values for first and last
+    event->getCycleRange(&first, &last);
+
+    evItem->setText(0, QString::fromStdString(event->getName()));         // The name of the event
+    evItem->setText(1, QString::fromStdString(event->getDescription()));  // The description of the event
+    evItem->setText(2, QString::fromStdString(event->getTypeAsString())); // The type of the event
+    evItem->setText(3, QString::number(event->getEventFlags()));          // The flags of the event
+    evItem->setText(4, QString::number(first));                           // The first cycle occurrence of the event
+    evItem->setText(5, QString::number(last));                            // The last cycle occurrence of the event
+    evItem->setText(6, QString::fromStdString(event->getPluginID()));     // The name of the plugin that sent the event
+  }
+}

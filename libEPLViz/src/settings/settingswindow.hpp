@@ -27,6 +27,7 @@
 #ifndef SETTINGSWINDOW_HPP
 #define SETTINGSWINDOW_HPP
 
+#include "profilemanager.hpp"
 #include "settingsprofileitem.hpp"
 #include <QDialog>
 #include <QListWidget>
@@ -39,16 +40,21 @@ namespace Ui {
 class SettingsWindow;
 }
 
+namespace EPL_Viz {
+
 class SettingsWindow : public QDialog {
   Q_OBJECT
  private:
   Ui::SettingsWindow *ui;
   MainWindow *        mainWindow;
+  ProfileManager *    conf;
 
   std::unordered_map<std::string, std::shared_ptr<SettingsProfileItem>> profiles;
 
-  std::string currentProfile;
+  std::string currentProfile = "Default";
 
+  void loadConfig();
+  void saveConfig();
   void saveIntoProfiles();
   void updateProfiles();
 
@@ -67,10 +73,11 @@ class SettingsWindow : public QDialog {
   void nodeChange(QListWidgetItem *curr, QListWidgetItem *pref);
 
  public:
-  explicit SettingsWindow(QWidget *parent);
+  explicit SettingsWindow(QWidget *parent, ProfileManager *settings);
   ~SettingsWindow();
 
   SettingsProfileItem::Config getConfig();
 };
+}
 
 #endif // SETTINGSWINDOW_HPP

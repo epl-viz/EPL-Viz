@@ -56,11 +56,17 @@ void QWTPlotModel::createPlot(uint8_t nodeID, uint16_t index, uint8_t subIndex) 
   tsp->addTS(timeSeries);
 
   curve->attach(plot);
+  created = true;
 }
 
 void QWTPlotModel::update(Cycle *cycle) {
+  // Abort when the QWTPlot has not been created
+  if (!created)
+    return;
+
   (void)cycle;
-  // We're using always the newest cycle
+
+  // We're only using the newest cycle
   Cycle curCycle = window->getCaptureInstance()->getCycleContainer()->pollCycle();
 
   std::vector<double> values       = timeSeries->tsData;

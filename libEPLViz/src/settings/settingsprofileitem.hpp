@@ -30,17 +30,21 @@
 #include <QListWidget>
 #include <unordered_map>
 
+namespace EPL_Viz {
+
 class SettingsWindow;
 
 class SettingsProfileItem final : public QListWidgetItem {
- private:
+ public:
   struct Config {
     EPL_DataCollect::CaptureInstance::Config backConf;
     std::unordered_map<int, EPL_DataCollect::CaptureInstance::NodeConfig> nodes;
     std::string pythonPluginsDir = "/opt";
     int         currentNode;
+    bool        pauseWhilePlayingFile = true;
   };
 
+ private:
   Config  cfg;
   QString name;
 
@@ -52,3 +56,4 @@ class SettingsProfileItem final : public QListWidgetItem {
   QString getName();
   friend class SettingsWindow;
 };
+}

@@ -28,6 +28,7 @@
  */
 
 #include "pluginselectorwidget.hpp"
+#include "PythonInit.hpp"
 
 PluginSelectorWidget::PluginSelectorWidget(QWidget *parent) : QListWidget(parent) {}
 
@@ -48,6 +49,8 @@ void PluginSelectorWidget::addPlugins(QMap<QString, QString> map) {
 
   if (main)
     pluginPath = QString::fromStdString(main->getSettingsWin()->getConfig().pythonPluginsDir);
+
+  EPL_DataCollect::plugins::PythonInit::addPath(pluginPath.toStdString());
 
   while (i.hasNext()) {
     i.next();

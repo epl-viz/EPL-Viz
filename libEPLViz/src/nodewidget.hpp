@@ -96,6 +96,9 @@ class NodeWidget : public QStackedWidget {
   void updateIdentityInfo(EPL_DataCollect::Node::IDENT identity);
   void updateStatus(EPL_DataCollect::NMTState newStatus);
 
+  QString validateUInt(uint16_t val);
+  QString validateUInt(uint32_t val);
+
  protected:
   void mousePressEvent(QMouseEvent *event) override;
 

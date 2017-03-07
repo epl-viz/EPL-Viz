@@ -38,9 +38,18 @@ class MainWindow;
 
 namespace EPL_Viz {
 
+namespace profStrings {
+static const QString DEFAULT_PROF = "Default";
+static const QString PROF_LIST    = "profileList";
+static const QString PROF_ITEM    = "profile";
+}
+
 class ProfileManager {
  private:
-  QSettings *appSettings;
+  QSettings *          appSettings;
+  std::vector<QString> profiles;
+
+  void updateProfiles();
 
  public:
   ProfileManager();
@@ -49,7 +58,9 @@ class ProfileManager {
   Profile *getDefaultProfile();
   Profile *getProfile(QString profileName);
   std::vector<QString> getProfiles();
+  void deleteProfile(QString profileName);
 
   void setDefaultProfile(Profile *profile);
+  QSettings *getRawSettings();
 };
 }

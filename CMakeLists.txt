@@ -257,7 +257,7 @@ new_project_library(
   NAME         "libEPLViz"
   TEMPLATE     "${EPL_VIZ_TEMPLATES_DIR}/CMakeLists.lib.txt"
   DEPENDENCIES ${EPL_VIZ_QT_DEP_LIST}
-    ${Wireshark_LIBRARY} ${GLIB_LIBRARIES} capchild caputils libwireshark ${PCAP_LIBRARIES}
+    ${Wireshark_LIBRARY} ${GLIB_LIBRARIES} capchild caputils ${PCAP_LIBRARIES}
     epl_DataCollect_shared Qwt::Qwt KF5::TextEditor
     eplp_timeSeries_shared eplp_python_shared eplp_defaultFilter_shared
 )
@@ -267,7 +267,7 @@ new_project_executable(
   NAME         "EPLViz"
   TEMPLATE     "${EPL_VIZ_TEMPLATES_DIR}/CMakeLists.exe.txt"
   DEPENDENCIES
-    ${Wireshark_LIBRARY} ${GLIB_LIBRARIES} capchild caputils libwireshark ${PCAP_LIBRARIES}
+    ${Wireshark_LIBRARY} ${GLIB_LIBRARIES} capchild caputils ${PCAP_LIBRARIES}
     libEPLViz Qwt::Qwt KF5::TextEditor eplp_timeSeries_shared eplp_python_shared eplp_defaultFilter_shared
 )
 
@@ -277,7 +277,7 @@ if( NOT DISABLE_TESTS )
     NAME         "tests"
     TEMPLATE     "${EPL_VIZ_TEMPLATES_DIR}/CMakeLists.exe.txt"
     DEPENDENCIES
-      ${Wireshark_LIBRARY} ${GLIB_LIBRARIES} capchild caputils libwireshark ${PCAP_LIBRARIES}
+      ${Wireshark_LIBRARY} ${GLIB_LIBRARIES} capchild caputils ${PCAP_LIBRARIES}
       libEPLViz epl_DataCollect_shared Qwt::Qwt KF5::TextEditor
       eplp_timeSeries_shared eplp_python_shared eplp_defaultFilter_shared
   )

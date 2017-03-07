@@ -30,12 +30,18 @@
 
 #pragma once
 
-#include <QDockWidget>
+#include <QWidget>
 
-class NetworkGraphWidget : public QDockWidget {
+class NetworkGraphWidget : public QWidget {
   Q_OBJECT
 
  public:
   NetworkGraphWidget(QWidget *parent = nullptr);
   ~NetworkGraphWidget()              = default;
+
+ signals:
+  void nodeChanged(uint8_t node);
+
+ public slots:
+  void selectNode(uint8_t node);
 };

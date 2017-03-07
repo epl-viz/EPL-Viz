@@ -105,6 +105,9 @@ void MainWindow::createModels() {
   connect(network, SIGNAL(nodeChanged(uint8_t)), cyCoModel, SLOT(changeNodel(uint8_t)));
   connect(network, SIGNAL(nodeChanged(uint8_t)), curODModel, SLOT(changeNodel(uint8_t)));
   //connect(network, SIGNAL(nodeChanged(uint8_t)), odDescrModel, SLOT(changeNodel(uint8_t)));
+  connect(network, SIGNAL(nodeChanged(uint8_t)), cyCoModel, SLOT(changeNode(uint8_t)));
+  connect(network, SIGNAL(nodeChanged(uint8_t)), curODModel, SLOT(changeNode(uint8_t)));
+  // connect(network, SIGNAL(nodeChanged(uint8_t)), odDescrModel, SLOT(changeNode(uint8_t)));
 }
 
 void MainWindow::destroyModels() {

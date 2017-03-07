@@ -29,9 +29,12 @@
 
 #include "eventviewerwidget.hpp"
 
+using namespace EPL_Viz;
 using namespace EPL_DataCollect;
 
-EventViewerWidget::EventViewerWidget(QWidget *parent) : QTreeWidget(parent) { setEnabled(false); }
+EventViewerWidget::EventViewerWidget(QWidget *parent) : QTreeWidget(parent), BaseModel() { setEnabled(false); }
+
+void EventViewerWidget::init() {}
 
 void EventViewerWidget::start(CaptureInstance *ci) {
   log   = ci->getEventLog();
@@ -39,7 +42,8 @@ void EventViewerWidget::start(CaptureInstance *ci) {
   setEnabled(true); // Turn on the widgets
 }
 
-void EventViewerWidget::update() {
+void EventViewerWidget::update(Cycle *cycle) {
+  (void)cycle;
   // Don't update if the widget is not ready yet
   if (!isEnabled())
     return;

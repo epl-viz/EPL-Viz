@@ -60,9 +60,9 @@ class CycleCommandsModel : public QAbstractItemModel, public BaseModel {
 
  private:
   uint8_t       selectedNode = 0;
-  bool          needUpdate = 0;
-  CyCoTreeItem *rootItem = nullptr;
-  QTreeView *   view = nullptr;
+  bool          needUpdate   = 0;
+  CyCoTreeItem *rootItem     = nullptr;
+  QTreeView *   view         = nullptr;
 
   CyCoTreeItem *getItem(const QModelIndex &index) const;
 

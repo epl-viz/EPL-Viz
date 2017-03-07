@@ -84,7 +84,7 @@ void PluginListWidget::fileAdded(QString file) {
     return;
 
   // Deselect current item
-  if(currentItem())
+  if (currentItem())
     currentItem()->setSelected(false);
 
   // Create a QFileInfo to extract name and path of file
@@ -122,8 +122,8 @@ void PluginListWidget::fileModified(bool newState) {
 
 void PluginListWidget::nameChanged(QString fileName) {
   // Reset italic font on saved entries
-  if(!currentItem())
-      return;
+  if (!currentItem())
+    return;
 
   if (currentItem()->text().startsWith("Untitled")) {
     QFont font = currentItem()->font();
@@ -135,8 +135,8 @@ void PluginListWidget::nameChanged(QString fileName) {
 }
 
 void PluginListWidget::urlChanged(QString path) {
-    if(!currentItem())
-        return;
+  if (!currentItem())
+    return;
 
   currentItem()->setToolTip(path);
   currentItem()->setStatusTip(path);

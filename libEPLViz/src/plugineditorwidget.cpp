@@ -64,7 +64,7 @@ void PluginEditorWidget::loadDocument(QString fileName) {
 
   // Load the file if specified
   if (fileName != "") {
-    if (!doc->openUrl(QUrl(fileName.to))) {
+    if (!doc->openUrl(QUrl(fileName))) {
       // TODO: Add error message?
       return;
     }

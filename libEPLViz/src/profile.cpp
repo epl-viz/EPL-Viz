@@ -59,7 +59,7 @@ QString Profile::readInterface() { return settings->value(name + "interface", QV
 
 void Profile::writeCustomValue(QString custom, QVariant val) { settings->setValue(name + custom, val); }
 
-QVariant Profile::readCustomValue(QString custom) { return settings->value(custom, QVariant()); }
+QVariant Profile::readCustomValue(QString custom) { return settings->value(name + custom, QVariant()); }
 
 void Profile::beginWriteArray(QString custom) { settings->beginWriteArray(name + custom); }
 

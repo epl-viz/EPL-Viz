@@ -56,7 +56,7 @@ class SettingsWindow : public QDialog {
   void loadConfig();
   void saveConfig();
   void saveIntoProfiles();
-  void updateProfiles();
+  void updateView(bool updateNodes = true);
 
   SettingsProfileItem::Config startCFG;
 

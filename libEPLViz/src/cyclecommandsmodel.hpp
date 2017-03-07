@@ -59,10 +59,10 @@ class CycleCommandsModel : public QAbstractItemModel, public BaseModel {
   void init() override;
 
  private:
-  uint8_t       selectedNode;
-  bool          needUpdate;
-  CyCoTreeItem *rootItem;
-  QTreeView *   view;
+  uint8_t       selectedNode = 0;
+  bool          needUpdate = 0;
+  CyCoTreeItem *rootItem = nullptr;
+  QTreeView *   view = nullptr;
 
   CyCoTreeItem *getItem(const QModelIndex &index) const;
 

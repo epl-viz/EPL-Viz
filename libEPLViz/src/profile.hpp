@@ -59,6 +59,11 @@ class Profile {
    */
   QVariant readCustomValue(QString custom);
 
+  void beginWriteArray(QString custom);
+  int beginReadArray(QString custom);
+  void setArrayIndex(int i);
+  void endArray();
+
  private:
   QSettings *settings;
   QString    name;

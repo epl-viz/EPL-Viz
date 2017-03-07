@@ -26,6 +26,8 @@
 
 #include "settingsprofileitem.hpp"
 
+using namespace EPL_Viz;
+
 SettingsProfileItem::~SettingsProfileItem() {}
 
 SettingsProfileItem::SettingsProfileItem(QString str, QListWidget *parent) : QListWidgetItem(str, parent), name(str) {}

@@ -30,15 +30,47 @@
 #include "profilemanager.hpp"
 #include "mainwindow.hpp"
 using namespace EPL_Viz;
+using namespace profStrings;
 
-ProfileManager::ProfileManager() { appSettings = new QSettings("EPL-Vizards", "EPL-Viz"); }
+ProfileManager::ProfileManager() {
+  appSettings = new QSettings("EPL-Vizards", "EPL-Viz");
+  int size    = appSettings->beginReadArray(PROF_LIST);
+  for (int i = 0; i < size; ++i) {
+    appSettings->setArrayIndex(i);
+    auto prof = appSettings->value(PROF_ITEM).toString();
+    profiles.push_back(prof);
+    qDebug() << "[ProfileManager] Read Profile " << prof;
+  }
+  appSettings->endArray();
+  if (profiles.empty()) {
+    qDebug() << "[ProfileManager] Adding default profile";
+    profiles.push_back(DEFAULT_PROF);
+  }
+}
 
 ProfileManager::~ProfileManager() {
   appSettings->sync();
   delete appSettings;
 }
 
-Profile *ProfileManager::getDefaultProfile() { return getProfile("default"); }
+void ProfileManager::deleteProfile(QString profileName) {
+  if (profileName == DEFAULT_PROF) {
+    qDebug() << "[ProfileManager] Not removing the default profile";
+  }
+
+  for (size_t i = 0; i < profiles.size(); ++i) {
+    if (profileName == profiles[i]) {
+      qDebug() << "[ProfileManager] Removing profile " << profileName;
+      profiles.erase(profiles.begin() + static_cast<long>(i));
+      updateProfiles();
+      return;
+    }
+  }
+
+  qDebug() << "[ProfileManager] Could not delete Profile " << profileName << " (notFound)";
+}
+
+Profile *ProfileManager::getDefaultProfile() { return getProfile(DEFAULT_PROF); }
 
 /*!
    * \brief Returns the profile with the given name
@@ -48,4 +80,35 @@ Profile *ProfileManager::getDefaultProfile() { return getProfile("default"); }
    * \param profileName The name of the profile to retrieve
    * \return The profile with the given name
    */
-Profile *ProfileManager::getProfile(QString profileName) { return new Profile(appSettings, profileName); }
+Profile *ProfileManager::getProfile(QString profileName) {
+  bool found = false;
+  for (auto const &i : profiles) {
+    if (i == profileName) {
+      found = true;
+      break;
+    }
+  }
+
+  if (!found) {
+    profiles.push_back(profileName);
+    updateProfiles();
+  }
+
+  return new Profile(appSettings, profileName);
+}
+
+void ProfileManager::updateProfiles() {
+  appSettings->beginWriteArray(PROF_LIST);
+  int counter = 0;
+  for (auto const &i : profiles) {
+    qDebug() << "[ProfileManager] Writing profile " << i;
+    appSettings->setArrayIndex(counter);
+    appSettings->setValue(PROF_ITEM, i);
+    ++counter;
+  }
+  appSettings->endArray();
+}
+
+QSettings *ProfileManager::getRawSettings() { return appSettings; }
+
+std::vector<QString> ProfileManager::getProfiles() { return profiles; }

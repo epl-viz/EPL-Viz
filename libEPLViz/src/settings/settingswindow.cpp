@@ -27,25 +27,53 @@
 #include "settingswindow.hpp"
 #include "settingsprofileitem.hpp"
 #include "ui_settingswindow.h"
+#include <QInputDialog>
 
 #include "mainwindow.hpp"
 
-SettingsWindow::SettingsWindow(QWidget *parent) : QDialog(parent), ui(new Ui::SettingsWindow) {
-  ui->setupUi(this);
-  mainWindow                = dynamic_cast<MainWindow *>(parent);
-  profiles["Default"]       = std::make_shared<SettingsProfileItem>("Default", ui->profList);
-  SettingsProfileItem *prof = profiles["Default"].get();
-  ui->profList->addItem(prof);
-  prof->cfg.backConf    = mainWindow->getCaptureInstance()->getConfig();
-  prof->cfg.nodes[-1]   = mainWindow->getCaptureInstance()->getDefaultNodeConfig();
-  prof->cfg.currentNode = -1;
-  currentProfile        = "Default";
+using namespace EPL_Viz;
 
-  startCFG = prof->cfg;
+SettingsWindow::SettingsWindow(QWidget *parent, ProfileManager *settings)
+    : QDialog(parent), ui(new Ui::SettingsWindow) {
+  ui->setupUi(this);
+  mainWindow = dynamic_cast<MainWindow *>(parent);
+  conf       = settings;
+
+  auto profs = conf->getProfiles();
+
+  for (auto i : profs) {
+    currentProfile = i.toStdString();
+    profiles[i.toStdString()] = std::make_shared<SettingsProfileItem>(i, ui->profList);
+    SettingsProfileItem *prof = profiles[i.toStdString()].get();
+    ui->profList->addItem(prof);
+    loadConfig();
+    if (prof->cfg.nodes.empty()) {
+      prof->cfg.nodes[-1]   = mainWindow->getCaptureInstance()->getDefaultNodeConfig();
+      prof->cfg.currentNode = -1;
+    }
+  }
+
+  startCFG.nodes[-1]   = mainWindow->getCaptureInstance()->getDefaultNodeConfig();
+  startCFG.currentNode = -1;
+  startCFG.backConf = mainWindow->getCaptureInstance()->getConfig();
+
+  currentProfile = conf->getRawSettings()->value("currentProfile").toString().toStdString();
+  if(profiles[currentProfile].get() == nullptr)
+      currentProfile = "Default";
+
+  SettingsProfileItem *prof = profiles["Default"].get();
+  if(prof->cfg.backConf.ihConfig.eplFrameName.empty()) {
+      prof->cfg = startCFG;
+  }
+
+  prof = profiles[currentProfile].get();
+  ui->profList->setCurrentItem(prof);
   updateProfiles();
 }
 
-SettingsWindow::~SettingsWindow() { delete ui; }
+SettingsWindow::~SettingsWindow() {
+    delete ui;
+}
 
 void SettingsWindow::updateProfiles() {
   SettingsProfileItem *prof = profiles[currentProfile].get();
@@ -66,6 +94,13 @@ void SettingsWindow::updateProfiles() {
     }
     ui->nodesList->addItem(name);
   }
+  std::string name = prof->cfg.currentNode < 0 ? "Default" : std::to_string(prof->cfg.currentNode);
+  QList<QListWidgetItem *> list = ui->nodesList->findItems(name.c_str(), Qt::MatchExactly);
+  if(list.empty()) {
+      qDebug() << "ERROR: No nodes saved";
+  } else {
+      ui->nodesList->setCurrentItem(*list.begin());
+  }
 }
 
 void SettingsWindow::saveIntoProfiles() {
@@ -81,7 +116,21 @@ void SettingsWindow::saveIntoProfiles() {
   prof->cfg.backConf.ihConfig.loopWaitTimeout   = std::chrono::milliseconds(ui->IH_LoopWait->value());
   prof->cfg.nodes.clear();
 
+  std::string nID = prof->cfg.currentNode < 0 ? "Default" : std::to_string(prof->cfg.currentNode);
   QListWidgetItem *it     = ui->nodesList->currentItem();
+  if(!it) {
+      QList<QListWidgetItem *> list = ui->nodesList->findItems(nID.c_str(), Qt::MatchExactly);
+      if(list.empty()) {
+          qDebug() << "ERROR: No nodes saved";
+      } else {
+         it = *list.begin();
+      }
+  }
+
+  if(!it) {
+      return;
+  }
+
   std::string      name   = it->text().toStdString();
   int              nodeID = -1;
   if (name != "Default") {
@@ -92,31 +141,147 @@ void SettingsWindow::saveIntoProfiles() {
   prof->cfg.nodes[nodeID].specificProfile           = ui->N_Special->text().toStdString();
 }
 
-void SettingsWindow::apply() {}
+void SettingsWindow::loadConfig() {
+  SettingsProfileItem *prof = profiles[currentProfile].get();
+  Profile *            sp   = conf->getProfile(currentProfile.c_str());
+  prof->cfg.backConf.xddDir = sp->readCustomValue("EPL_DC/xddDir").toString().toStdString();
+  prof->cfg.backConf.smConfig.saveInterval =
+        static_cast<uint32_t>(sp->readCustomValue("EPL_DC/SM/saveInterval").toInt());
+  prof->cfg.pythonPluginsDir               = sp->readCustomValue("pythonPluginsDir").toString().toStdString();
+  prof->cfg.backConf.ihConfig.eplFrameName = sp->readCustomValue("EPL_DC/IH/eplFrameName").toString().toStdString();
+  prof->cfg.backConf.ihConfig.prefetchSize =
+        static_cast<uint8_t>(sp->readCustomValue("EPL_DC/IH/prefetchSize").toInt());
+  prof->cfg.backConf.ihConfig.cleanupInterval =
+        static_cast<uint8_t>(sp->readCustomValue("EPL_DC/IH/cleanupInterval").toInt());
+  prof->cfg.backConf.ihConfig.checkPrefetch =
+        static_cast<uint8_t>(sp->readCustomValue("EPL_DC/IH/checkPrefetch").toInt());
+  prof->cfg.backConf.ihConfig.deleteCyclesAfter =
+        std::chrono::milliseconds(sp->readCustomValue("EPL_DC/IH/deleteCyclesAfter").toInt());
+  prof->cfg.backConf.ihConfig.deleteCyclesAfter =
+        std::chrono::milliseconds(sp->readCustomValue("EPL_DC/IH/loopWaitTimeout").toInt());
+
+  int size = sp->beginReadArray("nodes");
+  for (int i = 0; i < size; ++i) {
+    sp->setArrayIndex(i);
+    int         index                                = sp->readCustomValue("id").toInt();
+    bool        autoDed                              = sp->readCustomValue("autoDeduceSpecificProfile").toBool();
+    std::string base                                 = sp->readCustomValue("baseProfile").toString().toStdString();
+    std::string specificProfile                      = sp->readCustomValue("specificProfile").toString().toStdString();
+    prof->cfg.nodes[index].autoDeduceSpecificProfile = autoDed;
+    prof->cfg.nodes[index].baseProfile               = base;
+    prof->cfg.nodes[index].specificProfile           = specificProfile;
+  }
+  sp->endArray();
+}
+
+void SettingsWindow::saveConfig() {
+  SettingsProfileItem *prof = profiles[currentProfile].get();
+  Profile *            sp   = conf->getProfile(currentProfile.c_str());
+  sp->writeCustomValue("EPL_DC/xddDir", prof->cfg.backConf.xddDir.c_str());
+  sp->writeCustomValue("EPL_DC/SM/saveInterval", prof->cfg.backConf.smConfig.saveInterval);
+  sp->writeCustomValue("pythonPluginsDir", prof->cfg.pythonPluginsDir.c_str());
+  sp->writeCustomValue("EPL_DC/IH/eplFrameName", prof->cfg.backConf.ihConfig.eplFrameName.c_str());
+  sp->writeCustomValue("EPL_DC/IH/prefetchSize", prof->cfg.backConf.ihConfig.prefetchSize);
+  sp->writeCustomValue("EPL_DC/IH/cleanupInterval", prof->cfg.backConf.ihConfig.cleanupInterval);
+  sp->writeCustomValue("EPL_DC/IH/checkPrefetch", prof->cfg.backConf.ihConfig.checkPrefetch);
+  sp->writeCustomValue("EPL_DC/IH/deleteCyclesAfter",
+                       static_cast<int>(prof->cfg.backConf.ihConfig.deleteCyclesAfter.count()));
+  sp->writeCustomValue("EPL_DC/IH/loopWaitTimeout",
+                       static_cast<int>(prof->cfg.backConf.ihConfig.deleteCyclesAfter.count()));
+
+  sp->beginWriteArray("nodes");
+  auto counter = 0;
+  for (auto const &i : prof->cfg.nodes) {
+    sp->setArrayIndex(counter);
+    sp->writeCustomValue("id", i.first);
+    sp->writeCustomValue("autoDeduceSpecificProfile", i.second.autoDeduceSpecificProfile);
+    sp->writeCustomValue("baseProfile", i.second.baseProfile.c_str());
+    sp->writeCustomValue("specificProfile", i.second.specificProfile.c_str());
+    qDebug() << "Writing node " << i.first;
+    ++counter;
+  }
+  sp->endArray();
+
+  conf->getRawSettings()->setValue("currentProfile", currentProfile.c_str());
+}
+
+void SettingsWindow::apply() {
+  SettingsProfileItem *prof = profiles[currentProfile].get();
+  saveIntoProfiles();
+  saveConfig();
+  mainWindow->getCaptureInstance()->setConfig(prof->cfg.backConf);
+}
 
 void SettingsWindow::reset() {
   SettingsProfileItem *prof = profiles[currentProfile].get();
   prof->cfg                 = startCFG;
+  updateProfiles();
+  saveConfig();
 }
 
-void SettingsWindow::newProfile() {}
+void SettingsWindow::newProfile() {
+  bool        ok;
+  std::string newProf;
+  QString     title = "Pleas enter the new Profile";
+  while (true) {
+    newProf = QInputDialog::getText(this, title, "Name: ", QLineEdit::Normal, "", &ok).toStdString();
 
-void SettingsWindow::deleteProfile() {}
+    if (!ok)
+      return;
+
+    if (newProf.find_first_not_of("abcdefghijklmnopqrstuvwxyzABCDEFGHIKLMNOPQRSTUVWXYZ0123456789_") == std::string::npos &&
+        !newProf.empty())
+      break;
+
+    title = "No special characters are allowed";
+  }
+
+  saveIntoProfiles();
+  saveConfig();
+  currentProfile            = newProf;
+  profiles[newProf]         = std::make_shared<SettingsProfileItem>(newProf.c_str(), ui->profList);
+  SettingsProfileItem *prof = profiles[newProf].get();
+  ui->profList->addItem(prof);
+  prof->cfg.backConf = mainWindow->getCaptureInstance()->getConfig();
+  prof->cfg.nodes.clear();
+  prof->cfg.nodes[-1]   = mainWindow->getCaptureInstance()->getDefaultNodeConfig();
+  prof->cfg.currentNode = -1;
+  saveConfig();
+  updateProfiles();
+}
+
+void SettingsWindow::deleteProfile() {
+  SettingsProfileItem *prof = reinterpret_cast<SettingsProfileItem *>(ui->nodesList->currentItem());
+
+  if (prof->name == "Default")
+    return;
+
+  conf->deleteProfile(prof->name);
+  profiles[prof->name.toStdString()] = nullptr;
+  ui->nodesList->removeItemWidget(prof);
+  currentProfile = "Default";
+  updateProfiles();
+  saveConfig();
+}
 
 void SettingsWindow::newNode() {}
 
 void SettingsWindow::deleteNode() {}
 
-void SettingsWindow::profChange(QListWidgetItem *curr, QListWidgetItem *pref) {
+void SettingsWindow::profChange(QListWidgetItem *curr, QListWidgetItem *) {
   (void)curr;
-  (void)pref;
   saveIntoProfiles();
+  saveConfig();
+
+  SettingsProfileItem *it = dynamic_cast<SettingsProfileItem *>(curr);
+  currentProfile = it->name.toStdString();
+  updateProfiles();
 }
 
-void SettingsWindow::nodeChange(QListWidgetItem *curr, QListWidgetItem *pref) {
+void SettingsWindow::nodeChange(QListWidgetItem *curr, QListWidgetItem *) {
   (void)curr;
-  (void)pref;
   saveIntoProfiles();
+  saveConfig();
 }
 
 SettingsProfileItem::Config SettingsWindow::getConfig() { return profiles["Default"].get()->cfg; }

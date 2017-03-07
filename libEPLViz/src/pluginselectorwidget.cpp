@@ -49,7 +49,7 @@ void PluginSelectorWidget::addPlugins(QMap<QString, QString> map) {
     QString plugin = i.key();
     QString path   = i.value();
 
-    if (!QFile::copy(path, pluginPath + plugin)) {
+    if (!QFile::copy(path, pluginPath + "/" + plugin)) {
       QFile::remove(path); // TODO: Add a dialog to warn for overwriting the file
       QFile::copy(path, pluginPath + "/" + plugin);
     }

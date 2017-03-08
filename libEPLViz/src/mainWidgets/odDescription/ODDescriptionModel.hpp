@@ -40,7 +40,7 @@
 #include <unordered_map>
 
 namespace EPL_Viz {
-class ODDescpriptonModel : public QObject, public BaseModel {
+class ODDescriptionModel : public QObject, public BaseModel {
   Q_OBJECT
  private:
   uint8_t                                 node = 1;
@@ -52,8 +52,8 @@ class ODDescpriptonModel : public QObject, public BaseModel {
 
   // std::shared_ptr<CurODModelItem> getItem(const QModelIndex &index) const;
  public:
-  ODDescpriptonModel(QMainWindow *window);
-  ~ODDescpriptonModel() = default;
+  ODDescriptionModel(QMainWindow *window);
+  ~ODDescriptionModel() = default;
   void init() override;
 
  protected:

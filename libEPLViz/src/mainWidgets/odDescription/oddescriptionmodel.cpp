@@ -24,9 +24,9 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 /*!
- * \file currentodmodel.cpp
+ * \file oddescriptionmodel.cpp
  */
-#include "currentodmodel.hpp"
+#include "oddescriptionmodel.hpp"
 #include "OD.hpp"
 #include <QMenu>
 #include <QString>
@@ -36,19 +36,19 @@ using namespace EPL_Viz;
 using namespace EPL_DataCollect;
 using namespace std;
 
-CurrentODModel::CurrentODModel(QMainWindow *window) : BaseModel() {
-  tree = window->findChild<QTreeWidget *>("curNodeODWidget");
+ODDescpriptonModel::ODDescpriptonModel(QMainWindow *window) : BaseModel() {
+  tree = window->findChild<QTreeWidget *>("odDescriptionWidget");
   tree->setContextMenuPolicy(Qt::CustomContextMenu);
   tree->setSortingEnabled(true);
   connect(tree, SIGNAL(customContextMenuRequested(const QPoint &)), this, SLOT(showContextMenu(const QPoint &)));
   needUpdate = true;
 }
 
-void CurrentODModel::init() {}
+void ODDescpriptonModel::init() {}
 
 
 
-void CurrentODModel::update(EPL_DataCollect::Cycle *cycle) {
+void ODDescpriptonModel::update(EPL_DataCollect::Cycle *cycle) {
   if (!needUpdate)
     return;
 
@@ -74,11 +74,11 @@ void CurrentODModel::update(EPL_DataCollect::Cycle *cycle) {
   }*/
 }
 
-void CurrentODModel::updateNext() { needUpdate = true; }
+void ODDescpriptonModel::updateNext() { needUpdate = true; }
 
-void CurrentODModel::changeNode(uint8_t n) { node = n; }
+void ODDescpriptonModel::changeNode(uint8_t n) { node = n; }
 
-void CurrentODModel::showContextMenu(const QPoint &pos) {
+void ODDescpriptonModel::showContextMenu(const QPoint &pos) {
   QPoint globalPos = tree->mapToGlobal(pos);
 
   QList<QTreeWidgetItem *> selection = tree->selectedItems();
@@ -93,7 +93,7 @@ void CurrentODModel::showContextMenu(const QPoint &pos) {
   if (selectedItem) {
     tree->selectedItems();
     bool     ok;
-    uint16_t index = selection.first()->text(0).remove(0, 2).toInt(&ok, 16);
+    uint16_t index = static_cast<uint16_t>(selection.first()->text(0).remove(0, 2).toInt(&ok, 16));
     if (!ok) {
       qDebug() << "Could not get index from text in curodmodel";
       return;

@@ -355,7 +355,7 @@ bool MainWindow::curODWidgetUpdateData(QTreeWidgetItem *item, QString newData) {
 void MainWindow::externalUpdateCurOD(EPL_DataCollect::Cycle *cycle, int node) {
   QTreeWidget *tree = ui->curNodeODWidget;
   (void)tree;
-  Node *n = cycle->getNode(node);
+  Node *n = cycle->getNode(static_cast<uint8_t>(node));
   if (n == nullptr) {
     qDebug() << "Node does not exist, finished update";
     return;
@@ -368,7 +368,7 @@ void MainWindow::externalUpdateCurOD(EPL_DataCollect::Cycle *cycle, int node) {
   for (uint32_t i = 0; i < entriesVect.size(); i++) {
     uint16_t         odIndex = entriesVect[i];
     ODEntry *        entry   = od->getEntry(odIndex);
-    QTreeWidgetItem *topItem = tree->topLevelItem(i);
+    QTreeWidgetItem *topItem = tree->topLevelItem(static_cast<int>(i));
     if (topItem == nullptr) {
       // Does not exist, create it and subindices
       topItem = new QTreeWidgetItem();
@@ -417,7 +417,7 @@ void MainWindow::odDescrWidgetUpdateData(QTreeWidgetItem *item, QVector<QString>
 void MainWindow::externalUpdateODDescr(EPL_DataCollect::Cycle *cycle, int node) {
   QTreeWidget *tree = ui->odDescriptionWidget;
   (void)tree;
-  Node *n = cycle->getNode(node);
+  Node *n = cycle->getNode(static_cast<uint8_t>(node));
   if (n == nullptr) {
     qDebug() << "Node does not exist, finished update";
     return;
@@ -427,11 +427,11 @@ void MainWindow::externalUpdateODDescr(EPL_DataCollect::Cycle *cycle, int node) 
   std::vector<uint16_t> entriesVect(entries.begin(), entries.end());
   sort(entriesVect.begin(), entriesVect.end());
 
-  for (uint32_t i = 0; i < entriesVect.size(); i++) {
+  for (uint16_t i = 0; i < entriesVect.size(); i++) {
     // uint16_t         odIndex = entriesVect[i];
     // ODEntry *        entry   = od->getEntry(odIndex);
     ODDescription *  descr   = od->getODDesc();
-    QTreeWidgetItem *topItem = tree->topLevelItem(i);
+    QTreeWidgetItem *topItem = tree->topLevelItem(static_cast<int>(i));
     if (topItem == nullptr) {
       // Does not exist, create it and subindices
       topItem = new QTreeWidgetItem();

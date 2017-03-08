@@ -66,12 +66,12 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>553</width>
-             <height>420</height>
+             <width>937</width>
+             <height>408</height>
             </rect>
            </property>
+           <layout class="QGridLayout" name="gridLayout_15"/>
           </widget>
-          <layout class="QGridLayout" name="gridLayout_15"/>
          </widget>
         </item>
        </layout>
@@ -96,7 +96,7 @@
      <x>0</x>
      <y>0</y>
      <width>1535</width>
-     <height>20</height>
+     <height>30</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -404,8 +404,8 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>759</width>
-          <height>92</height>
+          <width>749</width>
+          <height>96</height>
          </rect>
         </property>
         <layout class="QGridLayout" name="gridLayout_22">
@@ -572,49 +572,49 @@
   <customwidget>
    <class>PythonLogWidget</class>
    <extends>QDockWidget</extends>
-   <header>src/pythonlogwidget.hpp</header>
+   <header>pythonlogwidget.hpp</header>
    <container>1</container>
   </customwidget>
   <customwidget>
    <class>TimelineWidget</class>
    <extends>QDockWidget</extends>
-   <header>src/timelinewidget.hpp</header>
+   <header>timelinewidget.hpp</header>
    <container>1</container>
   </customwidget>
   <customwidget>
    <class>CurrentODWidget</class>
    <extends>QDockWidget</extends>
-   <header>src/currentodwidget.hpp</header>
+   <header>currentodwidget.hpp</header>
    <container>1</container>
   </customwidget>
   <customwidget>
    <class>ODDescriptionWidget</class>
    <extends>QDockWidget</extends>
-   <header>src/oddescriptionwidget.hpp</header>
+   <header>oddescriptionwidget.hpp</header>
    <container>1</container>
   </customwidget>
   <customwidget>
    <class>CycleCommandsWidget</class>
    <extends>QDockWidget</extends>
-   <header>src/cyclecommandswidget.hpp</header>
+   <header>cyclecommandswidget.hpp</header>
    <container>1</container>
   </customwidget>
   <customwidget>
    <class>NetworkGraphWidget</class>
    <extends>QWidget</extends>
-   <header>src/networkgraphwidget.hpp</header>
+   <header>networkgraphwidget.hpp</header>
    <container>1</container>
   </customwidget>
   <customwidget>
    <class>PacketHistoryWidget</class>
    <extends>QDockWidget</extends>
-   <header>src/packethistorywidget.hpp</header>
+   <header>packethistorywidget.hpp</header>
    <container>1</container>
   </customwidget>
   <customwidget>
    <class>PluginSelectorWidget</class>
    <extends>QListWidget</extends>
-   <header>src/pluginselectorwidget.hpp</header>
+   <header>pluginselectorwidget.hpp</header>
    <slots>
     <slot>loadPlugins(EPL_DataCollect::CaptureInstance)</slot>
     <slot>disableWidget()</slot>
@@ -629,7 +629,7 @@
   <customwidget>
    <class>EventViewerWidget</class>
    <extends>QTreeWidget</extends>
-   <header>src/eventviewerwidget.hpp</header>
+   <header>eventviewerwidget.hpp</header>
   </customwidget>
  </customwidgets>
  <resources>

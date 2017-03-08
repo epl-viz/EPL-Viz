@@ -4,6 +4,7 @@
 /*/CMakeLists.txt
 customPreComit.sh
 *.user
+*.user.*
 *.pyc
 *.sw*
 .DS_Store

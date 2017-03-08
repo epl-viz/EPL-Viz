@@ -28,22 +28,70 @@
  */
 #include "curodmodelitem.hpp"
 using namespace EPL_Viz;
+using namespace EPL_DataCollect;
 
-CurODModelItem::CurODModelItem(uint16_t i, bool sub) {
-  index  = i;
-  hasSub = sub;
+CurODModelItem::CurODModelItem(
+      CurODModelItem *parent, ProtectedCycle &cycle, uint8_t cNode, uint16_t odIndex, uint16_t odSubIndex)
+    : p(parent), c(cycle), node(cNode), index(odIndex), subIndex(odSubIndex) {}
+
+CurODModelItem::~CurODModelItem() { qDeleteAll(childItems); }
+
+
+void CurODModelItem::setChildItems(QList<CurODModelItem *> items) {
+  qDeleteAll(childItems);
+  childItems = items;
 }
 
-bool CurODModelItem::hasSubIndex() { return hasSub; }
 
-bool CurODModelItem::setSubIndex(uint8_t i, QString item) {
-  if (!hasSub && i != 0)
-    return false;
+CurODModelItem *CurODModelItem::parent() { return p; }
 
-  subIndices.insert(i, item);
-  return true;
+QVariant CurODModelItem::data(int column) {
+  auto  lock = c.getLock();
+  Node *n    = c->getNode(node);
+  if (!n)
+    return QVariant("[INVALID NODE]");
+
+  ODEntry *entry = n->getOD()->getEntry(index);
+
+  if (!entry) {
+    QString error = "[INVALID OD INDEX ";
+    error += std::to_string(index).c_str();
+    error += "]";
+    return QVariant(error);
+  }
+
+  switch (column) {
+    case 0: // INDEX
+
+      if (subIndex > UINT8_MAX) // This is a root OD item
+        return QVariant(static_cast<int>(index));
+      else // This is a subIndex item
+        return QVariant(static_cast<int>(subIndex));
+
+    case 1: // VALUE
+
+      if (subIndex > UINT8_MAX) { // This is a root OD item
+        if (entry->getArraySize() < 0) {
+          return QVariant("<ROOT INDEX>");
+        }
+        return QVariant(entry->toString().c_str());
+      } else { // This is a subIndex item
+        if (entry->getArraySize() < 0) {
+          return QVariant("[ERROR: THIS ENTRY HAS NO SUBINDECES]");
+        }
+
+        return QVariant(entry->toString(static_cast<uint8_t>(subIndex)).c_str());
+      }
+
+    default: return QVariant("[INVALID COLUMN]");
+  }
 }
 
-uint16_t CurODModelItem::getIndex() { return index; }
+int CurODModelItem::childCount() const { return childItems.size(); }
+int CurODModelItem::columnCount() const { return 2; }
+int CurODModelItem::row() const {
+  if (p)
+    return p->childItems.indexOf(const_cast<CurODModelItem *>(this));
 
-QString CurODModelItem::getSubindex(uint8_t i) { return subIndices.value(i, QString("subindex does not exist")); }
+  return 0;
+}

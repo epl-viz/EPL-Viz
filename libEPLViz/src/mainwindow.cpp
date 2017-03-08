@@ -121,11 +121,6 @@ void MainWindow::createModels() {
 
   CurrentODModel *curODModel = new CurrentODModel(this);
   connect(this, SIGNAL(cycleChanged()), curODModel, SLOT(updateNext()));
-  connect(curODModel,
-          SIGNAL(updateExternal(EPL_DataCollect::Cycle *, int)),
-          this,
-          SLOT(externalUpdateCurOD(EPL_DataCollect::Cycle *, int)),
-          Qt::BlockingQueuedConnection);
 
   ODDescpriptonModel *oddescrModel = new ODDescpriptonModel(this);
   // connect(oddescrModel, SIGNAL(updateExternal(EPL_DataCollect::Cycle *, int)), this,
@@ -141,6 +136,8 @@ void MainWindow::createModels() {
   models.append(cyCoModel);
   models.append(oddescrModel);
   models.append(ui->eventLog);
+
+  ui->curNodeODWidget->setModel(curODModel);
 
   QWidget *network = ui->networkGraphContents;
   connect(network, SIGNAL(nodeChanged(uint8_t)), cyCoModel, SLOT(changeNode(uint8_t)));
@@ -356,6 +353,9 @@ bool MainWindow::curODWidgetUpdateData(QTreeWidgetItem *item, QString newData) {
 
 // Partly disabled because of performance
 void MainWindow::externalUpdateCurOD(EPL_DataCollect::Cycle *cycle, int node) {
+  (void)cycle;
+  (void)node;
+#if 0
   QTreeWidget *tree = ui->curNodeODWidget;
   (void)tree;
   Node *n = cycle->getNode(static_cast<uint8_t>(node));
@@ -406,6 +406,7 @@ void MainWindow::externalUpdateCurOD(EPL_DataCollect::Cycle *cycle, int node) {
     }
   }
   qDebug() << "Finished updating currentodmodel";
+#endif
 }
 
 void MainWindow::odDescrWidgetUpdateData(QTreeWidgetItem *item, QVector<QString> newData) {

@@ -28,23 +28,38 @@
  */
 
 #pragma once
+#include "basemodel.hpp"
 #include <QMap>
 #include <memory>
 #include <stdint.h>
 
 namespace EPL_Viz {
+
 class CurODModelItem {
- public:
-  CurODModelItem(uint16_t index, bool hasSub);
-
-  bool     hasSubIndex();
-  uint16_t getIndex();
-  bool setSubIndex(uint8_t i, QString item);
-  QString getSubindex(uint8_t i);
-
  private:
-  bool     hasSub;
-  uint16_t index;
-  QMap<uint8_t, QString> subIndices;
+  CurODModelItem *        p;
+  ProtectedCycle &        c;
+  uint8_t                 node;
+  uint16_t                index;
+  uint16_t                subIndex = UINT16_MAX; // Values bigger UINT8_MAX: this is not a sub index
+  QList<CurODModelItem *> childItems;
+
+ public:
+  CurODModelItem() = delete;
+  CurODModelItem(CurODModelItem *parent,
+                 ProtectedCycle &cycle,
+                 uint8_t         cNode,
+                 uint16_t        odIndex,
+                 uint16_t        odSubIndex = UINT16_MAX);
+
+  ~CurODModelItem();
+
+  void setChildItems(QList<CurODModelItem *> items);
+
+  CurODModelItem *parent();
+  QVariant data(int column);
+  int childCount() const;
+  int columnCount() const;
+  int row() const;
 };
 }

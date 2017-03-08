@@ -36,15 +36,50 @@ using namespace EPL_Viz;
 using namespace EPL_DataCollect;
 using namespace std;
 
-CurrentODModel::CurrentODModel(QMainWindow *window) : BaseModel() {
-  tree = window->findChild<QTreeWidget *>("curNodeODWidget");
-  tree->setContextMenuPolicy(Qt::CustomContextMenu);
-  tree->setSortingEnabled(true);
-  connect(tree, SIGNAL(customContextMenuRequested(const QPoint &)), this, SLOT(showContextMenu(const QPoint &)));
+CurrentODModel::CurrentODModel(QMainWindow *window) : QAbstractItemModel(window), BaseModel() {
+  //  tree->setContextMenuPolicy(Qt::CustomContextMenu);
+  //  connect(tree, SIGNAL(customContextMenuRequested(const QPoint &)), this, SLOT(showContextMenu(const QPoint &)));
   needUpdate = true;
 }
 
 void CurrentODModel::init() {}
+
+
+
+QModelIndex CurrentODModel::index(int row, int column, const QModelIndex &parent) const {
+  (void)row;
+  (void)column;
+  (void)parent;
+  return QModelIndex();
+}
+
+QModelIndex CurrentODModel::parent(const QModelIndex &index) const {
+  (void)index;
+  return QModelIndex();
+}
+
+int CurrentODModel::rowCount(const QModelIndex &parent) const {
+  (void)parent;
+  return 0;
+}
+
+int CurrentODModel::columnCount(const QModelIndex &parent) const {
+  (void)parent;
+  return 0;
+}
+
+QVariant CurrentODModel::data(const QModelIndex &index, int role) const {
+  (void)index;
+  (void)role;
+  return QVariant("TODO");
+}
+
+QVariant CurrentODModel::headerData(int section, Qt::Orientation orientation, int role) const {
+  (void)section;
+  (void)orientation;
+  (void)role;
+  return QVariant("TODO");
+}
 
 
 
@@ -56,24 +91,6 @@ void CurrentODModel::update(ProtectedCycle &cycle) {
 
   emit(updateExternal(*cycle, node));
   qDebug() << "Block ended";
-
-  /*
-  for (auto i : entries) {
-    ODEntry *                       entry = od->getEntry(i);
-    std::shared_ptr<CurODModelItem> item;
-    if (entry->getArraySize() >= 0) {
-      item = std::make_shared<CurODModelItem>(i, true);
-      for (uint8_t subI = 0; subI < entry->getArraySize(); ++subI) {
-        item->setSubIndex(subI, QString::fromStdString(entry->toString(static_cast<uint8_t>(i))));
-        convertRow[counter++] = std::make_pair(i, subI);
-      }
-    } else {
-      item = std::make_shared<CurODModelItem>(i, false);
-      item->setSubIndex(0, QString::fromStdString(entry->toString(static_cast<uint8_t>(i))));
-      convertRow[counter++] = std::make_pair(i, 0);
-    }
-    odEntries.insert(i, item);
-  }*/
 }
 
 void CurrentODModel::updateNext() { needUpdate = true; }
@@ -81,6 +98,8 @@ void CurrentODModel::updateNext() { needUpdate = true; }
 void CurrentODModel::changeNode(uint8_t n) { node = n; }
 
 void CurrentODModel::showContextMenu(const QPoint &pos) {
+  (void)pos;
+#if 0
   QPoint globalPos = tree->mapToGlobal(pos);
 
   QList<QTreeWidgetItem *> selection = tree->selectedItems();
@@ -103,4 +122,5 @@ void CurrentODModel::showContextMenu(const QPoint &pos) {
 
     emit drawingPlot(node, index, 0);
   }
+#endif
 }

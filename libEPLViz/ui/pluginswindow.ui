@@ -141,7 +141,7 @@
   <customwidget>
    <class>PluginEditorWidget</class>
    <extends>QWidget</extends>
-   <header>plugineditorwidget.hpp</header>
+   <header>PluginEditorWidget.hpp</header>
    <container>1</container>
    <slots>
     <signal>nameChanged(QString)</signal>
@@ -160,7 +160,7 @@
   <customwidget>
    <class>PluginListWidget</class>
    <extends>QListWidget</extends>
-   <header>pluginlistwidget.hpp</header>
+   <header>PluginListWidget.hpp</header>
    <slots>
     <signal>pluginSelected(QString)</signal>
     <signal>fileOpened(QUrl)</signal>

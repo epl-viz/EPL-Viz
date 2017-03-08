@@ -338,7 +338,7 @@ enum2str_generate(
   PATH       "${PROJECT_SOURCE_DIR}/libEPLViz/src"
   CLASS_NAME "EPLVizEnum2Str"
   FUNC_NAME  "toStr"
-  INCLUDES   "guistate.hpp"
+  INCLUDES   "GUIState.hpp"
   INDENT_STR "  "
   NAMESPACE  "EPL_Viz"
   ENUMS

@@ -561,49 +561,49 @@
   <customwidget>
    <class>PythonLogWidget</class>
    <extends>QDockWidget</extends>
-   <header>pythonlogwidget.hpp</header>
+   <header>PythonLogWidget.hpp</header>
    <container>1</container>
   </customwidget>
   <customwidget>
    <class>TimelineWidget</class>
    <extends>QDockWidget</extends>
-   <header>timelinewidget.hpp</header>
+   <header>TimeLineWidget.hpp</header>
    <container>1</container>
   </customwidget>
   <customwidget>
    <class>CurrentODWidget</class>
    <extends>QDockWidget</extends>
-   <header>currentodwidget.hpp</header>
+   <header>CurrentODWidget.hpp</header>
    <container>1</container>
   </customwidget>
   <customwidget>
    <class>ODDescriptionWidget</class>
    <extends>QDockWidget</extends>
-   <header>oddescriptionwidget.hpp</header>
+   <header>ODDescriptionWidget.hpp</header>
    <container>1</container>
   </customwidget>
   <customwidget>
    <class>CycleCommandsWidget</class>
    <extends>QDockWidget</extends>
-   <header>cyclecommandswidget.hpp</header>
+   <header>CycleCommandsWidget.hpp</header>
    <container>1</container>
   </customwidget>
   <customwidget>
    <class>NetworkGraphWidget</class>
    <extends>QWidget</extends>
-   <header>networkgraphwidget.hpp</header>
+   <header>NetworkGraphWidget.hpp</header>
    <container>1</container>
   </customwidget>
   <customwidget>
    <class>PacketHistoryWidget</class>
    <extends>QDockWidget</extends>
-   <header>packethistorywidget.hpp</header>
+   <header>PacketHistoryWidget.hpp</header>
    <container>1</container>
   </customwidget>
   <customwidget>
    <class>PluginSelectorWidget</class>
    <extends>QListWidget</extends>
-   <header>pluginselectorwidget.hpp</header>
+   <header>PluginSelectorWidget.hpp</header>
    <slots>
     <slot>loadPlugins(EPL_DataCollect::CaptureInstance)</slot>
     <slot>disableWidget()</slot>
@@ -612,13 +612,13 @@
   <customwidget>
    <class>QWTPlotWidget</class>
    <extends>QWidget</extends>
-   <header>qwtplotwidget.hpp</header>
+   <header>QWTPlotWidget.hpp</header>
    <container>1</container>
   </customwidget>
   <customwidget>
    <class>EventViewerWidget</class>
    <extends>QTreeWidget</extends>
-   <header>eventviewerwidget.hpp</header>
+   <header>EventViewerWidget.hpp</header>
   </customwidget>
  </customwidgets>
  <resources>

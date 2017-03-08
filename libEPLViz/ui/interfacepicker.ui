@@ -80,7 +80,7 @@
   <customwidget>
    <class>InterfaceListWidget</class>
    <extends>QListWidget</extends>
-   <header>interfacelistwidget.hpp</header>
+   <header>InterfaceListWidget.hpp</header>
   </customwidget>
  </customwidgets>
  <resources/>

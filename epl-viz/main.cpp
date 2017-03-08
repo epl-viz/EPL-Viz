@@ -1,6 +1,6 @@
 #include "Init.hpp"
+#include "MainWindow.hpp"
 #include "PythonInit.hpp"
-#include "mainwindow.hpp"
 #include <QApplication>
 
 int main(int argc, char *argv[]) {

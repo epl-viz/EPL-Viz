@@ -39,15 +39,52 @@
 #include <QMainWindow>
 #include <QTextEdit>
 #include <QWidget>
+#include <shared_mutex>
 
 class MainWindow;
 
 namespace EPL_Viz {
+
+class ProtectedCycle final {
+ private:
+  EPL_DataCollect::Cycle  c;
+  std::shared_timed_mutex mut;
+
+ public:
+  ProtectedCycle()  = default;
+  ~ProtectedCycle() = default;
+
+  ProtectedCycle(const ProtectedCycle &) = delete;
+  ProtectedCycle(ProtectedCycle &&)      = delete;
+
+  ProtectedCycle &operator=(const ProtectedCycle &) = delete;
+  ProtectedCycle &operator=(ProtectedCycle &&) = delete;
+
+  inline void updateCycle(EPL_DataCollect::CaptureInstance *instance, uint32_t cycleNum) {
+    std::unique_lock<std::shared_timed_mutex> lk(mut);
+
+    auto *container = instance->getCycleContainer();
+
+    if (cycleNum == UINT32_MAX)
+      c = container->pollCycle();
+    else
+      c = container->getCycle(cycleNum);
+  }
+
+  inline std::shared_lock<std::shared_timed_mutex> getLock() { return std::shared_lock<std::shared_timed_mutex>(mut); }
+
+  inline EPL_DataCollect::Cycle *getCycle() { return &c; }
+
+  inline EPL_DataCollect::Cycle *operator*() noexcept { return getCycle(); }
+  inline EPL_DataCollect::Cycle *operator->() noexcept { return getCycle(); }
+};
+
 class BaseModel {
 
  private:
   static QLinkedList<BaseModel *> *registeredModels;
   static uint32_t                  appID;
+  static ProtectedCycle            cycle;
 
  public:
   BaseModel();
@@ -56,8 +93,8 @@ class BaseModel {
   inline bool operator==(const BaseModel &other);
 
  protected:
-  virtual void update(EPL_DataCollect::Cycle *cycle) = 0;
-  virtual void init()                                = 0;
+  virtual void update(ProtectedCycle &cycle) = 0;
+  virtual void init()                        = 0;
 
  public:
   static void updateAll(MainWindow *mw, EPL_DataCollect::CaptureInstance *instance, uint32_t cycleNum);

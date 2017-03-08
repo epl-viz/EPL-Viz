@@ -37,13 +37,15 @@
 #include "pluginswindow.hpp"
 #include "settingswindow.hpp"
 #include "settingswindow.hpp"
-#include "ui_mainwindow.h"
 #include <memory>
 #include <vector>
 #include <wiretap/wtap.h>
 
 using namespace EPL_Viz;
+#include "ui_mainwindow.h"
+
 using namespace EPL_DataCollect;
+
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow) {
   Q_INIT_RESOURCE(resources);
@@ -325,6 +327,7 @@ void MainWindow::changeState(GUIState nState) {
 }
 
 void MainWindow::config() {
+  curCycle = UINT32_MAX;
   emit recordingStarted(getCaptureInstance());
   captureInstance->getPluginManager()->addPlugin(std::make_shared<plugins::TimeSeriesBuilder>());
   captureInstance->registerCycleStorage<plugins::CSTimeSeriesPtr>(

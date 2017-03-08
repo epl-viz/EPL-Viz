@@ -141,10 +141,11 @@ QVariant CycleCommandsModel::data(const QModelIndex &index, int role) const {
 
 void CycleCommandsModel::init() {}
 
-void CycleCommandsModel::update(Cycle *cycle) {
+void CycleCommandsModel::update(ProtectedCycle &cycle) {
   if (!needUpdate)
     return;
 
+  auto                lock    = cycle.getLock();
   std::vector<Packet> packets = cycle->getPackets();
 
   // Delete old tree and add new

@@ -45,13 +45,7 @@ void BaseModel::updateAll(MainWindow *mw, CaptureInstance *instance, uint32_t cy
   }
 
   // Get Cycle
-  Cycle           c;
-  CycleContainer *container = instance->getCycleContainer();
-
-  if (cycleNum < UINT32_MAX)
-    c = container->pollCycle();
-  else
-    c = container->getCycle(cycleNum);
+  cycle.updateCycle(instance, cycleNum);
 
   GUIState state = mw->getState();
 
@@ -93,7 +87,7 @@ void BaseModel::updateAll(MainWindow *mw, CaptureInstance *instance, uint32_t cy
   // Update models
   QLinkedListIterator<BaseModel *> iterator(*registeredModels);
   while (iterator.hasNext()) {
-    iterator.next()->update(&c);
+    iterator.next()->update(cycle);
   }
 }
 
@@ -121,4 +115,5 @@ void BaseModel::dereg(BaseModel *model) {
 
 bool BaseModel::operator==(const BaseModel &other) { return this == &other; }
 
-uint32_t BaseModel::appID;
+uint32_t       BaseModel::appID;
+ProtectedCycle BaseModel::cycle;

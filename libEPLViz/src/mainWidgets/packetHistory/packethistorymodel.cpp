@@ -49,9 +49,12 @@ PacketHistoryModel::PacketHistoryModel(MainWindow *window) : BaseModel() {
   needUpdate = true;
 }
 
-void PacketHistoryModel::update(Cycle *cycle) {
+void PacketHistoryModel::update(ProtectedCycle &cycle) {
   if (!needUpdate)
     return;
+
+  auto lock = cycle.getLock();
+
   vector<Packet> packets = cycle->getPackets();
   string         text;
   if (selectedPacket == UINT64_MAX)

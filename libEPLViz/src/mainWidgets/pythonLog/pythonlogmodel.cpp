@@ -44,7 +44,7 @@ PythonLogModel::PythonLogModel(MainWindow *window) : BaseModel() {
 
 void PythonLogModel::init() { appid = log->getAppID(); }
 
-void PythonLogModel::update(Cycle *cycle) {
+void PythonLogModel::update(ProtectedCycle &cycle) {
   (void)cycle;
   events                             = log->getAllEvents();
   std::vector<EventBase *> newEvents = log->pollEvents(appid);

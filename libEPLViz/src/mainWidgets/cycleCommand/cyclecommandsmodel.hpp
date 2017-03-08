@@ -67,7 +67,7 @@ class CycleCommandsModel : public QAbstractItemModel, public BaseModel {
   CyCoTreeItem *getItem(const QModelIndex &index) const;
 
  protected:
-  mockable void update(EPL_DataCollect::Cycle *cycle) override;
+  mockable void update(ProtectedCycle &cycle) override;
 
  public slots:
   void updateNext();

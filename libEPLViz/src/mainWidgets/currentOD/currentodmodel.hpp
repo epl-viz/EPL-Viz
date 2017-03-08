@@ -57,7 +57,7 @@ class CurrentODModel : public QObject, public BaseModel {
   void init() override;
 
  protected:
-  void update(EPL_DataCollect::Cycle *cycle) override;
+  void update(ProtectedCycle &cycle) override;
 
  public slots:
   void updateNext();

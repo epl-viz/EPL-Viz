@@ -60,6 +60,6 @@ class PythonLogModel : public QAbstractTableModel, public BaseModel {
   bool insertRows(int row, int count, const QModelIndex &parent = QModelIndex()) override;
 
  protected:
-  void update(EPL_DataCollect::Cycle *cycle) override;
+  void update(ProtectedCycle &cycle) override;
 };
 }

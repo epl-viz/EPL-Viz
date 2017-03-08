@@ -48,7 +48,7 @@ class NetworkGraphModel : public QObject, public BaseModel {
 
  protected:
   void init();
-  void update(EPL_DataCollect::Cycle *cycle);
+  void update(ProtectedCycle &cycle);
 
  signals:
   void detectedNewNode(EPL_DataCollect::Node *node);

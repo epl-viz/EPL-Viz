@@ -58,10 +58,10 @@ class QWTPlotModel : public QObject, public EPL_Viz::BaseModel {
  public:
   QWTPlotModel(MainWindow *win);
   ~QWTPlotModel();
-  void init();
+  void init() override;
 
  protected:
-  mockable void update(EPL_DataCollect::Cycle *cycle);
+  void update(ProtectedCycle &cycle) override;
 
  signals:
   void requestRedraw();

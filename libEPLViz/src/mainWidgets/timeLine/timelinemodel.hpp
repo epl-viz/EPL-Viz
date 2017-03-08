@@ -38,9 +38,9 @@ class TimeLineModel : public EPL_Viz::BaseModel {
  public:
   TimeLineModel();
 
-  void init();
+  void init() override;
 
  protected:
-  void update(EPL_DataCollect::Cycle *cycle);
+  void update(ProtectedCycle &cycle) override;
 };
 }

@@ -63,7 +63,7 @@ class MainWindow : public QMainWindow {
   Ui::MainWindow *                                  ui;
   EPL_Viz::ProfileManager *                         profileManager;
   EPL_Viz::GUIState                                 machineState;
-  uint32_t                                          curCycle;
+  uint32_t                                          curCycle = UINT32_MAX;
   EPL_Viz::ModelThread *                            modelThread;
   QLinkedList<EPL_Viz::BaseModel *>                 models;
   std::unique_ptr<EPL_DataCollect::CaptureInstance> captureInstance;

@@ -34,6 +34,8 @@
 #include "basemodel.hpp"
 #include <QTreeWidget>
 
+namespace EPL_Viz {
+
 class EventViewerWidget : public QTreeWidget, public EPL_Viz::BaseModel {
   Q_OBJECT
 
@@ -48,8 +50,9 @@ class EventViewerWidget : public QTreeWidget, public EPL_Viz::BaseModel {
   void init() override;
 
  protected:
-  void update(EPL_DataCollect::Cycle *cycle) override;
+  void update(ProtectedCycle &cycle) override;
 
  public slots:
   void start(EPL_DataCollect::CaptureInstance *ci);
 };
+}

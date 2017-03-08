@@ -48,11 +48,13 @@ void ODDescpriptonModel::init() {}
 
 
 
-void ODDescpriptonModel::update(EPL_DataCollect::Cycle *cycle) {
+void ODDescpriptonModel::update(ProtectedCycle &cycle) {
   if (!needUpdate)
     return;
 
-  emit(updateExternal(cycle, node));
+  auto lock = cycle.getLock();
+
+  emit(updateExternal(*cycle, node));
   qDebug() << "Block ended";
 
   /*

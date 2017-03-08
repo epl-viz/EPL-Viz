@@ -36,7 +36,8 @@
 
 class MainWindow;
 
-class PacketHistoryModel : public QObject, public EPL_Viz::BaseModel {
+namespace EPL_Viz {
+class PacketHistoryModel : public QObject, public BaseModel {
   Q_OBJECT
  private:
   QPlainTextEdit *textWindow;
@@ -46,13 +47,14 @@ class PacketHistoryModel : public QObject, public EPL_Viz::BaseModel {
  public:
   PacketHistoryModel(MainWindow *window);
 
-  void init();
+  void init() override;
 
  protected:
-  mockable void update(EPL_DataCollect::Cycle *cycle);
+  void update(ProtectedCycle &cycle) override;
 
  signals:
   void textUpdated(QString text, QPlainTextEdit *edit);
  public slots:
   void changePacket(uint64_t packet);
 };
+}

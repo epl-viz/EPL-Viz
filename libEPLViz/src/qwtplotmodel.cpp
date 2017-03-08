@@ -59,7 +59,7 @@ void QWTPlotModel::createPlot(uint8_t nodeID, uint16_t index, uint8_t subIndex) 
   created = true;
 }
 
-void QWTPlotModel::update(Cycle *cycle) {
+void QWTPlotModel::update(ProtectedCycle &cycle) {
   // Abort when the QWTPlot has not been created
   if (!created)
     return;

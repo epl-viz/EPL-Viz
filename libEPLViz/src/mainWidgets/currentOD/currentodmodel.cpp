@@ -48,11 +48,13 @@ void CurrentODModel::init() {}
 
 
 
-void CurrentODModel::update(EPL_DataCollect::Cycle *cycle) {
+void CurrentODModel::update(ProtectedCycle &cycle) {
   if (!needUpdate)
     return;
 
-  emit(updateExternal(cycle, node));
+  auto lock = cycle.getLock();
+
+  emit(updateExternal(*cycle, node));
   qDebug() << "Block ended";
 
   /*

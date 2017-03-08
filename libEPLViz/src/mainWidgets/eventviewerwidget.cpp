@@ -42,7 +42,7 @@ void EventViewerWidget::start(CaptureInstance *ci) {
   setEnabled(true); // Turn on the widgets
 }
 
-void EventViewerWidget::update(Cycle *cycle) {
+void EventViewerWidget::update(ProtectedCycle &cycle) {
   (void)cycle;
   // Don't update if the widget is not ready yet
   if (!isEnabled())

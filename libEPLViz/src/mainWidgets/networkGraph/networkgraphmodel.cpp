@@ -44,7 +44,8 @@ NetworkGraphModel::~NetworkGraphModel() {}
 
 void NetworkGraphModel::init() {}
 
-void NetworkGraphModel::update(Cycle *cycle) {
+void NetworkGraphModel::update(ProtectedCycle &cycle) {
+  auto lock = cycle.getLock();
   auto list = cycle->getNodeList();
 
   for (uint8_t id : list) {

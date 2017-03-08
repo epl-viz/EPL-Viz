@@ -35,4 +35,4 @@ TimeLineModel::TimeLineModel() {}
 
 void TimeLineModel::init() {}
 
-void TimeLineModel::update(Cycle *cycle) { (void)cycle; }
+void TimeLineModel::update(ProtectedCycle &cycle) { (void)cycle; }

@@ -40,9 +40,10 @@
 
 #include <QObject>
 
+namespace EPL_Viz {
+
 class MainWindow;
 
-namespace EPL_Viz {
 class QWTPlotModel : public QObject, public EPL_Viz::BaseModel {
   Q_OBJECT
 

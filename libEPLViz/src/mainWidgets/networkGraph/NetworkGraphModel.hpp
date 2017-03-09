@@ -32,9 +32,10 @@
 #include "NodeWidget.hpp"
 #include <QMap>
 
+namespace EPL_Viz {
+
 class MainWindow;
 
-namespace EPL_Viz {
 class NetworkGraphModel : public QObject, public BaseModel {
   Q_OBJECT
 

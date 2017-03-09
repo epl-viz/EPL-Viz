@@ -31,6 +31,8 @@
 #include "PythonInit.hpp"
 #include <algorithm>
 
+using namespace EPL_Viz;
+
 PluginSelectorWidget::PluginSelectorWidget(QWidget *parent) : QListWidget(parent) {}
 
 void PluginSelectorWidget::addItem(QString plugin) {

@@ -33,9 +33,10 @@
 #include "GUIState.hpp"
 #include <QThread>
 
+namespace EPL_Viz {
+
 class MainWindow;
 
-namespace EPL_Viz {
 class ModelThread : public QThread {
   Q_OBJECT
 

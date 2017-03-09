@@ -37,9 +37,10 @@
 #include "vector"
 #include <QAbstractTableModel>
 
+namespace EPL_Viz {
+
 class MainWindow;
 
-namespace EPL_Viz {
 class PythonLogModel : public QAbstractTableModel, public BaseModel {
   Q_OBJECT
 

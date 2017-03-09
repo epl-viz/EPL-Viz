@@ -40,17 +40,20 @@
 #include <unordered_map>
 
 namespace EPL_Viz {
-class CurrentODModel : public QAbstractItemModel, public BaseModel {
+class CurrentODModel final : public QAbstractItemModel, public BaseModel {
   Q_OBJECT
  private:
-  uint8_t node = 1;
+  uint8_t node            = 1;
+  uint8_t lastUpdatedNode = node;
   bool    needUpdate;
   bool    wait = true;
+
+  CurODModelItem *root = nullptr;
 
   // std::shared_ptr<CurODModelItem> getItem(const QModelIndex &index) const;
  public:
   CurrentODModel(QMainWindow *window);
-  ~CurrentODModel() = default;
+  ~CurrentODModel();
   void init() override;
 
   QModelIndex index(int row, int column, const QModelIndex &parent = QModelIndex()) const override;
@@ -59,6 +62,7 @@ class CurrentODModel : public QAbstractItemModel, public BaseModel {
   int columnCount(const QModelIndex &parent) const override;
   QVariant data(const QModelIndex &index, int role) const override;
   QVariant headerData(int section, Qt::Orientation orientation, int role) const override;
+  Qt::ItemFlags flags(const QModelIndex &index) const override;
 
  protected:
   void update(ProtectedCycle &cycle) override;

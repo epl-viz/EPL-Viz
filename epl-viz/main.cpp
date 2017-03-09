@@ -9,8 +9,8 @@ int main(int argc, char *argv[]) {
   if (!init.getIsOK()) {
     return 1;
   }
-  QApplication a(argc, argv);
-  MainWindow   w;
+  QApplication        a(argc, argv);
+  EPL_Viz::MainWindow w;
   w.show();
 
   return a.exec();

@@ -34,9 +34,9 @@
 #include <QString>
 #include <vector>
 
-class MainWindow;
-
 namespace EPL_Viz {
+
+class MainWindow;
 
 namespace profStrings {
 static const QString DEFAULT_PROF = "Default";

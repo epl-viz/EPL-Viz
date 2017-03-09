@@ -34,9 +34,10 @@
 #include "Packet.hpp"
 #include <QPlainTextEdit>
 
+namespace EPL_Viz {
+
 class MainWindow;
 
-namespace EPL_Viz {
 class PacketHistoryModel : public QObject, public BaseModel {
   Q_OBJECT
  private:

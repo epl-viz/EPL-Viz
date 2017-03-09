@@ -55,21 +55,23 @@ namespace Ui {
 class MainWindow;
 }
 
+namespace EPL_Viz {
 
 class MainWindow : public QMainWindow {
   Q_OBJECT
+  typedef std::unique_ptr<EPL_DataCollect::CaptureInstance> CI_PTR;
 
  private:
-  Ui::MainWindow *                                  ui;
-  EPL_Viz::ProfileManager *                         profileManager;
-  EPL_Viz::GUIState                                 machineState;
-  uint32_t                                          curCycle = UINT32_MAX;
-  EPL_Viz::ModelThread *                            modelThread;
-  QLinkedList<EPL_Viz::BaseModel *>                 models;
-  std::unique_ptr<EPL_DataCollect::CaptureInstance> captureInstance;
-  QString                                           interface;
-  std::string                                       file;
-  EPL_Viz::SettingsWindow *                         settingsWin;
+  Ui::MainWindow *                  ui;
+  ProfileManager *                  profileManager;
+  GUIState                          machineState;
+  uint32_t                          curCycle = UINT32_MAX;
+  ModelThread *                     modelThread;
+  QLinkedList<EPL_Viz::BaseModel *> models;
+  CI_PTR                            captureInstance;
+  QString                           interface;
+  std::string                       file;
+  SettingsWindow *                  settingsWin;
 
  public:
   explicit MainWindow(QWidget *parent = nullptr);
@@ -143,3 +145,4 @@ class MainWindow : public QMainWindow {
   void recordingStarted(EPL_DataCollect::CaptureInstance *);
   void nodeAdded(uint8_t id, NodeWidget *nw);
 };
+}

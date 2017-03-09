@@ -48,7 +48,7 @@ class QWTPlotModel : public QObject, public BaseModel {
  private:
   MainWindow *                                          window;
   QwtPlot *                                             plot;
-  QwtPlotCurve *                                        curve;
+  std::shared_ptr<QwtPlotCurve>                         curve;
   std::shared_ptr<EPL_DataCollect::plugins::TimeSeries> timeSeries;
   EPL_DataCollect::plugins::CSTimeSeriesPtr *           tsp;
 
@@ -57,7 +57,7 @@ class QWTPlotModel : public QObject, public BaseModel {
  public:
   QWTPlotModel(MainWindow *win, QwtPlot *widget);
   QWTPlotModel() = delete;
-  ~QWTPlotModel();
+  ~QWTPlotModel() = default;
 
   void init() override;
 

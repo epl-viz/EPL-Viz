@@ -37,10 +37,7 @@ using namespace EPL_DataCollect;
 QWTPlotModel::QWTPlotModel(MainWindow *win, QwtPlot *widget) : BaseModel(win, widget) {
   window = win;
   plot   = widget;
-  curve  = new QwtPlotCurve();
 }
-
-QWTPlotModel::~QWTPlotModel() { delete curve; }
 
 void QWTPlotModel::init() {
   connect(this, SIGNAL(requestRedraw()), plot, SLOT(repaint()));
@@ -53,6 +50,7 @@ void QWTPlotModel::init() {
 
 // TODO: Connect this slot to the signal of the OD Widget
 void QWTPlotModel::createPlot(uint8_t nodeID, uint16_t index, uint8_t subIndex) {
+  curve = std::make_shared<QwtPlotCurve>();
   timeSeries = std::make_shared<plugins::TimeSeries>(nodeID, index, subIndex);
   tsp->addTS(timeSeries);
 

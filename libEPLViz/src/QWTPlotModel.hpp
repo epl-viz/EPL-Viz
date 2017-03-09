@@ -42,7 +42,6 @@ namespace EPL_Viz {
 
 class MainWindow;
 
-namespace EPL_Viz {
 class QWTPlotModel : public QObject, public BaseModel {
   Q_OBJECT
 

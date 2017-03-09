@@ -45,16 +45,15 @@ class CurrentODModel final : public QAbstractItemModel, public BaseModel {
  private:
   uint8_t node            = 1;
   uint8_t lastUpdatedNode = node;
-  bool    needUpdate;
-  bool    wait = true;
+  bool    wait            = true;
 
   CurODModelItem *root = nullptr;
 
   // std::shared_ptr<CurODModelItem> getItem(const QModelIndex &index) const;
  public:
   CurrentODModel(MainWindow *window, QWidget *widget);
-  CurrentODModel()  = delete;
-  ~CurrentODModel() = default;
+  CurrentODModel() = delete;
+  ~CurrentODModel();
 
   void init() override;
 

@@ -24,8 +24,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef SETTINGSWINDOW_HPP
-#define SETTINGSWINDOW_HPP
+#pragma once
 
 #include "ProfileManager.hpp"
 #include "SettingsProfileItem.hpp"
@@ -79,5 +78,3 @@ class SettingsWindow : public QDialog {
   SettingsProfileItem::Config getConfig();
 };
 }
-
-#endif // SETTINGSWINDOW_HPP

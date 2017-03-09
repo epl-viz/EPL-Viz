@@ -42,7 +42,6 @@ CurrentODModel::CurrentODModel(MainWindow *window, QWidget *widget)
   (void)widget;
   //  tree->setContextMenuPolicy(Qt::CustomContextMenu);
   //  connect(tree, SIGNAL(customContextMenuRequested(const QPoint &)), this, SLOT(showContextMenu(const QPoint &)));
-  needUpdate = true;
 }
 
 CurrentODModel::~CurrentODModel() {
@@ -143,9 +142,6 @@ Qt::ItemFlags CurrentODModel::flags(const QModelIndex &index) const {
 
 
 void CurrentODModel::update(ProtectedCycle &cycle) {
-  if (!needUpdate)
-    return;
-
   auto lock = cycle.getLock();
 
   if (!root)
@@ -173,7 +169,7 @@ void CurrentODModel::update(ProtectedCycle &cycle) {
   lastUpdatedNode = node;
 }
 
-void CurrentODModel::updateNext() { needUpdate = true; }
+void CurrentODModel::updateNext() {}
 
 void CurrentODModel::changeNode(uint8_t n) { node = n; }
 

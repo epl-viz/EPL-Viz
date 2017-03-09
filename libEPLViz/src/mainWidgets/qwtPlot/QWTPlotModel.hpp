@@ -32,42 +32,20 @@
 #include "CSTimeSeriesPtr.hpp"
 #include "EPLVizDefines.hpp"
 #include "EventLog.hpp"
+#include "QwtBaseModel.hpp"
 #include "TimeSeries.hpp"
 #include <qwt_plot.h>
 #include <qwt_plot_curve.h>
-
-#include <QObject>
 
 namespace EPL_Viz {
 
 class MainWindow;
 
-class QWTPlotModel : public QObject, public BaseModel {
-  Q_OBJECT
-
- private:
-  MainWindow *                                          window;
-  QwtPlot *                                             plot;
-  std::shared_ptr<QwtPlotCurve>                         curve;
-  std::shared_ptr<EPL_DataCollect::plugins::TimeSeries> timeSeries;
-  EPL_DataCollect::plugins::CSTimeSeriesPtr *           tsp;
-
-  bool created = false;
+class QWTPlotModel : public QwtBaseModel {
 
  public:
   QWTPlotModel(MainWindow *win, QwtPlot *widget);
-  QWTPlotModel() = delete;
+  QWTPlotModel()  = delete;
   ~QWTPlotModel() = default;
-
-  void init() override;
-
- protected:
-  void update(ProtectedCycle &cycle) override;
-
- signals:
-  void requestRedraw();
-
- public slots:
-  void createPlot(uint8_t nodeID, uint16_t index, uint8_t subIndex);
 };
 }

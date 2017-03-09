@@ -24,17 +24,49 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 /*!
- * \file QWTPlotModel.cpp
+ * \file QwtBaseModel.hpp
  */
+#pragma once
 
-#include "QWTPlotModel.hpp"
-#include "MainWindow.hpp"
-#include "QPointF"
+#include "BaseModel.hpp"
+#include "CSTimeSeriesPtr.hpp"
+#include "EPLVizDefines.hpp"
+#include "EventLog.hpp"
+#include "TimeSeries.hpp"
+#include <qwt_plot.h>
+#include <qwt_plot_curve.h>
 
-using namespace EPL_Viz;
-using namespace EPL_DataCollect;
+#include <QObject>
 
-QWTPlotModel::QWTPlotModel(MainWindow *win, QwtPlot *widget) : QwtBaseModel(win, widget) {
-  (void)win;
-  (void)widget;
+namespace EPL_Viz {
+
+class MainWindow;
+
+class QwtBaseModel : public QObject, public BaseModel {
+  Q_OBJECT
+
+ public:
+  QwtBaseModel(MainWindow *win, QwtPlot *widget);
+  QwtBaseModel()  = delete;
+  ~QwtBaseModel() = default;
+
+  void init() override;
+
+ protected:
+  MainWindow *                                          window;
+  QwtPlot *                                             plot;
+  std::shared_ptr<QwtPlotCurve>                         curve;
+  std::shared_ptr<EPL_DataCollect::plugins::TimeSeries> timeSeries;
+  EPL_DataCollect::plugins::CSTimeSeriesPtr *           tsp;
+
+  bool created = false;
+
+  virtual void update(ProtectedCycle &cycle) override;
+
+ signals:
+  void requestRedraw();
+
+ public slots:
+  virtual void createPlot(uint8_t nodeID, uint16_t index, uint8_t subIndex);
+};
 }

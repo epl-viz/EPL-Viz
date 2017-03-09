@@ -31,18 +31,14 @@
 
 #include "BaseModel.hpp"
 #include "Cycle.hpp"
+#include "QwtBaseModel.hpp"
 
 namespace EPL_Viz {
-class TimeLineModel : public BaseModel {
- private:
+class TimeLineModel : public QwtBaseModel {
+
  public:
-  TimeLineModel(MainWindow *mw, QWidget *widget);
+  TimeLineModel(MainWindow *mw, QwtPlot *widget);
   TimeLineModel()  = delete;
   ~TimeLineModel() = default;
-
-  void init() override;
-
- protected:
-  void update(ProtectedCycle &cycle) override;
 };
 }

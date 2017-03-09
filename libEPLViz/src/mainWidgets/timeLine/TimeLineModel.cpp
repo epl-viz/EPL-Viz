@@ -31,11 +31,7 @@
 using namespace EPL_Viz;
 using namespace EPL_DataCollect;
 
-TimeLineModel::TimeLineModel(MainWindow *mw, QWidget *widget) : BaseModel(mw, widget) {
+TimeLineModel::TimeLineModel(MainWindow *mw, QwtPlot *widget) : QwtBaseModel(mw, widget) {
   (void)mw;
   (void)widget;
 }
-
-void TimeLineModel::init() {}
-
-void TimeLineModel::update(ProtectedCycle &cycle) { (void)cycle; }

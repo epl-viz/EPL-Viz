@@ -42,6 +42,7 @@
 namespace EPL_Viz {
 class CurrentODModel final : public QAbstractItemModel, public BaseModel {
   Q_OBJECT
+
  private:
   uint8_t node            = 1;
   uint8_t lastUpdatedNode = node;
@@ -49,13 +50,14 @@ class CurrentODModel final : public QAbstractItemModel, public BaseModel {
 
   CurODModelItem *root = nullptr;
 
-  // std::shared_ptr<CurODModelItem> getItem(const QModelIndex &index) const;
  public:
   CurrentODModel(MainWindow *window, QWidget *widget);
   CurrentODModel() = delete;
   ~CurrentODModel();
 
   void init() override;
+
+  CurODModelItem *getItem(const QModelIndex &index) const;
 
   QModelIndex index(int row, int column, const QModelIndex &parent = QModelIndex()) const override;
   QModelIndex parent(const QModelIndex &index) const override;
@@ -64,6 +66,12 @@ class CurrentODModel final : public QAbstractItemModel, public BaseModel {
   QVariant data(const QModelIndex &index, int role) const override;
   QVariant headerData(int section, Qt::Orientation orientation, int role) const override;
   Qt::ItemFlags flags(const QModelIndex &index) const override;
+
+  QModelIndex indexOf(CurODModelItem *item, int column = 0) const;
+  QModelIndex parentOf(CurODModelItem *item, int column = 0) const;
+
+  void emitRowChaned(QModelIndex index);
+  void emitRowChaned(CurODModelItem *item);
 
  protected:
   void update(ProtectedCycle &cycle) override;

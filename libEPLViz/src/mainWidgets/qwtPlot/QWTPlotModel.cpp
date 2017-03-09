@@ -38,3 +38,5 @@ QWTPlotModel::QWTPlotModel(MainWindow *win, QwtPlot *widget) : QwtBaseModel(win,
   (void)win;
   (void)widget;
 }
+
+QWTPlotModel::~QWTPlotModel() {}

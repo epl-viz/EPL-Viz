@@ -45,7 +45,7 @@ class QWTPlotModel : public QwtBaseModel {
 
  public:
   QWTPlotModel(MainWindow *win, QwtPlot *widget);
-  QWTPlotModel()  = delete;
-  ~QWTPlotModel() = default;
+  QWTPlotModel() = delete;
+  virtual ~QWTPlotModel();
 };
 }

@@ -135,8 +135,6 @@ class MainWindow : public QMainWindow {
   void startRecording();
   void stopRecording();
   void addNode(EPL_DataCollect::Node *n);
-  void externalUpdateCurOD(EPL_DataCollect::Cycle *cycle, int node);
-  void externalUpdateODDescr(EPL_DataCollect::Cycle *cycle, int node);
   void completeCycle();
 
  signals:

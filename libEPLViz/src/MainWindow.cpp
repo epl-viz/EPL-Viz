@@ -73,7 +73,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
   modelThread = new ModelThread(this, &machineState, this);
   connect(modelThread, &ModelThread::resultReady, this, &MainWindow::handleResults);
   connect(modelThread, &ModelThread::finished, modelThread, &QObject::deleteLater);
-  connect(modelThread, SIGNAL(cycleHandled()), this, SLOT(completeCycle()));
+  // connect(modelThread, SIGNAL(cycleHandled()), this, SLOT(completeCycle()));
   modelThread->start();
 
   connect(this,
@@ -144,11 +144,6 @@ void MainWindow::createModels() {
           SIGNAL(textUpdated(QString, QPlainTextEdit *)),
           ui->dockPacketHistory,
           SLOT(updatePacketHistoryLog(QString, QPlainTextEdit *)));
-  connect(oddescrModel,
-          SIGNAL(updateExternal(EPL_DataCollect::Cycle *, int)),
-          this,
-          SLOT(externalUpdateODDescr(EPL_DataCollect::Cycle *, int)),
-          Qt::BlockingQueuedConnection);
 
   // Append the nodes to a list for cleanup
   models.append(packetHistoryModel);
@@ -371,112 +366,6 @@ bool MainWindow::curODWidgetUpdateData(QTreeWidgetItem *item, QString newData) {
   if (item->text(1).compare(newData))
     item->setText(1, newData);
   return true;
-}
-
-// Partly disabled because of performance
-void MainWindow::externalUpdateCurOD(EPL_DataCollect::Cycle *cycle, int node) {
-  (void)cycle;
-  (void)node;
-#if 0
-  QTreeWidget *tree = ui->curNodeODWidget;
-  (void)tree;
-  Node *n = cycle->getNode(static_cast<uint8_t>(node));
-  if (n == nullptr) {
-    qDebug() << "Node does not exist, finished update";
-    return;
-  }
-  OD *                  od      = n->getOD();
-  auto                  entries = od->getWrittenValues();
-  std::vector<uint16_t> entriesVect(entries.begin(), entries.end());
-  sort(entriesVect.begin(), entriesVect.end());
-
-  for (uint32_t i = 0; i < entriesVect.size(); i++) {
-    uint16_t         odIndex = entriesVect[i];
-    ODEntry *        entry   = od->getEntry(odIndex);
-    QTreeWidgetItem *topItem = tree->topLevelItem(static_cast<int>(i));
-    if (topItem == nullptr) {
-      // Does not exist, create it and subindices
-      topItem = new QTreeWidgetItem();
-      topItem->setText(0, QString("0x") + QString::number(odIndex, 16));
-      topItem->setText(1, QString(""));
-      curODWidgetUpdateData(topItem, QString::fromStdString(entry->toString(0)));
-      // Create Subindices if needed
-      /*
-      if (entry->getArraySize() >= 0) {
-        for (uint16_t subI = 0; subI < entry->getArraySize(); i++) {
-          QTreeWidgetItem *subItem = new QTreeWidgetItem();
-          subItem->setText(0, QString("0x") + QString::number(subI, 16));
-          curODWidgetUpdateData(subItem, QString::fromStdString(entry->toString(subI)));
-          topItem->addChild(subItem);
-        }
-      }*/
-      tree->addTopLevelItem(topItem);
-    } else {
-      // check for changes
-      int children = topItem->childCount();
-      if (children == 0) {
-        // no children, check top value
-        curODWidgetUpdateData(topItem, QString::fromStdString(entry->toString(0)));
-      } else {
-        // check children
-        /*
-        for (uint16_t subI = 0; i < UINT8_MAX; i++) {
-          curODWidgetUpdateData(topItem->child(subI), QString::fromStdString(entry->toString(subI)));
-        }
-        */
-      }
-    }
-  }
-  qDebug() << "Finished updating currentodmodel";
-#endif
-}
-
-void MainWindow::odDescrWidgetUpdateData(QTreeWidgetItem *item, QVector<QString> newData) {
-  if (item->text(1).compare(newData[0]))
-    item->setText(1, newData[0]);
-  if (item->text(2).compare(newData[1]))
-    item->setText(1, newData[1]);
-  if (item->text(3).compare(newData[2]))
-    item->setText(1, newData[2]);
-}
-
-void MainWindow::externalUpdateODDescr(EPL_DataCollect::Cycle *cycle, int node) {
-  QTreeWidget *tree = ui->odDescriptionWidget;
-  (void)tree;
-  Node *n = cycle->getNode(static_cast<uint8_t>(node));
-  if (n == nullptr) {
-    qDebug() << "Node does not exist, finished update";
-    return;
-  }
-  OD *                  od      = n->getOD();
-  auto                  entries = od->getWrittenValues();
-  std::vector<uint16_t> entriesVect(entries.begin(), entries.end());
-  sort(entriesVect.begin(), entriesVect.end());
-
-  for (uint16_t i = 0; i < entriesVect.size(); i++) {
-    // uint16_t         odIndex = entriesVect[i];
-    // ODEntry *        entry   = od->getEntry(odIndex);
-    ODDescription *  descr   = od->getODDesc();
-    QTreeWidgetItem *topItem = tree->topLevelItem(static_cast<int>(i));
-    if (topItem == nullptr) {
-      // Does not exist, create it and subindices
-      topItem = new QTreeWidgetItem();
-      topItem->setText(0, QString("0x") + QString::number(descr->getEntry(i)->index, 16));
-      topItem->setText(1, QString::fromStdString(EPLEnum2Str::toStr(descr->getEntry(i)->dataType)));
-      topItem->setText(2, QString::fromStdString(descr->getEntry(i)->name));
-      topItem->setText(3, QString::fromStdString(descr->getEntry(i)->defaultValue->toString()));
-      tree->addTopLevelItem(topItem);
-    } else {
-      // check for changes
-      QVector<QString> d;
-      d[0] = QString::fromStdString(EPLEnum2Str::toStr(descr->getEntry(i)->dataType));
-      d[1] = QString::fromStdString(descr->getEntry(i)->name);
-      d[2] = QString::fromStdString(descr->getEntry(i)->defaultValue->toString());
-      topItem->setText(0, QString("0x") + QString::number(descr->getEntry(i)->index, 16));
-      odDescrWidgetUpdateData(topItem, d);
-    }
-  }
-  qDebug() << "Finished updating CurrentODModel";
 }
 
 SettingsWindow *MainWindow::getSettingsWin() { return settingsWin; }

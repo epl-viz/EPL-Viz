@@ -38,7 +38,7 @@ class TimeLineModel : public QwtBaseModel {
 
  public:
   TimeLineModel(MainWindow *mw, QwtPlot *widget);
-  TimeLineModel()  = delete;
-  ~TimeLineModel() = default;
+  TimeLineModel() = delete;
+  virtual ~TimeLineModel();
 };
 }

@@ -35,3 +35,5 @@ TimeLineModel::TimeLineModel(MainWindow *mw, QwtPlot *widget) : QwtBaseModel(mw,
   (void)mw;
   (void)widget;
 }
+
+TimeLineModel::~TimeLineModel() {}

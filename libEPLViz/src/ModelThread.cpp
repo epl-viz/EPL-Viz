@@ -75,7 +75,7 @@ void ModelThread::loop() {
     }
 
     // TODO: Ensure that the cycle has been handled in order to correctly update the cyclenum
-    emit cycleHandled();
+    // emit cycleHandled();
     // TODO Constant update time or something else?
     sleep(1);
   }

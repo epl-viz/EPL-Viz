@@ -29,20 +29,26 @@
 
 #pragma once
 #include "BaseModel.hpp"
-#include <QMap>
 #include <memory>
 #include <stdint.h>
+#include <unordered_map>
+#include <vector>
 
 namespace EPL_Viz {
 
 class CurODModelItem {
+ public:
+  typedef std::vector<std::unique_ptr<CurODModelItem>> LIST;
+  typedef std::unordered_map<CurODModelItem const *, size_t> MAP;
+
  private:
-  CurODModelItem *        p = nullptr;
-  ProtectedCycle &        c;
-  uint8_t                 node     = UINT8_MAX;
-  uint16_t                index    = UINT16_MAX;
-  uint16_t                subIndex = UINT16_MAX; // Values bigger UINT8_MAX: this is not a sub index
-  QList<CurODModelItem *> childItems;
+  CurODModelItem *p = nullptr;
+  ProtectedCycle &c;
+  uint8_t         node     = UINT8_MAX;
+  uint16_t        index    = UINT16_MAX;
+  uint16_t        subIndex = UINT16_MAX; // Values bigger UINT8_MAX: this is not a sub index
+  LIST            childItems;
+  MAP             childIndexMap;
 
  public:
   CurODModelItem() = delete;
@@ -52,17 +58,22 @@ class CurODModelItem {
                  uint16_t        odIndex,
                  uint16_t        odSubIndex = UINT16_MAX);
 
-  ~CurODModelItem();
-
-  void setChildItems(QList<CurODModelItem *> items);
+  virtual ~CurODModelItem();
 
   CurODModelItem *parent();
-  CurODModelItem *child(int row);
+  CurODModelItem *child(size_t row);
   QVariant data(int column, Qt::ItemDataRole role);
-  int childCount() const;
-  int columnCount() const;
-  int row() const;
+  int    childCount() const;
+  int    columnCount() const;
+  size_t row() const;
+  size_t indexOf(CurODModelItem const *item) const;
+  bool          hasChanged();
+  Qt::ItemFlags flags();
 
-  QList<CurODModelItem *> *getChildren();
+  LIST *getChildren();
+  void push_back(std::unique_ptr<CurODModelItem> item);
+  void clear();
+
+  uint16_t getIndex() const;
 };
 }

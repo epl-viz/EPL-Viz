@@ -55,6 +55,9 @@ void BaseModel::updateAll(CaptureInstance *instance, uint32_t cycleNum) {
   // Get Cycle
   cycle.updateCycle(instance, cycleNum);
 
+  if (cycle->getCycleNum() == UINT32_MAX)
+    return;
+
   GUIState state = mainWindow->getState();
 
   EventLog *log = instance->getEventLog();

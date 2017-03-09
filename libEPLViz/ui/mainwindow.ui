@@ -236,7 +236,7 @@
     </layout>
    </widget>
   </widget>
-  <widget class="CurrentODWidget" name="dockCurrent">
+  <widget class="QDockWidget" name="dockCurrent">
    <property name="windowTitle">
     <string>Current &amp;Node OD</string>
    </property>
@@ -568,12 +568,6 @@
    <class>TimelineWidget</class>
    <extends>QDockWidget</extends>
    <header>TimeLineWidget.hpp</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>CurrentODWidget</class>
-   <extends>QDockWidget</extends>
-   <header>CurrentODWidget.hpp</header>
    <container>1</container>
   </customwidget>
   <customwidget>

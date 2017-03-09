@@ -32,6 +32,7 @@
 #include <QString>
 #include <QThread>
 #include <algorithm>
+
 using namespace EPL_Viz;
 using namespace EPL_DataCollect;
 using namespace std;
@@ -53,19 +54,25 @@ void CurrentODModel::init() {}
 
 
 
+CurODModelItem *CurrentODModel::getItem(const QModelIndex &index) const {
+  if (index.isValid()) {
+    CurODModelItem *p = static_cast<CurODModelItem *>(index.internalPointer());
+    if (p) {
+      return p;
+    }
+  }
+
+  return root;
+}
+
+
 QModelIndex CurrentODModel::index(int row, int column, const QModelIndex &parent) const {
-  if (!hasIndex(row, column, parent))
+  if (parent.isValid() && parent.column() != 0)
     return QModelIndex();
 
-  CurODModelItem *p;
-  CurODModelItem *c;
+  CurODModelItem *p = getItem(parent);
+  CurODModelItem *c = p->child(static_cast<size_t>(row));
 
-  if (!parent.isValid())
-    p = root;
-  else
-    p = static_cast<CurODModelItem *>(parent.internalPointer());
-
-  c = p->child(row);
   if (c) {
     return createIndex(row, column, c);
   }
@@ -77,13 +84,13 @@ QModelIndex CurrentODModel::parent(const QModelIndex &index) const {
   if (!index.isValid())
     return QModelIndex();
 
-  CurODModelItem *c = static_cast<CurODModelItem *>(index.internalPointer());
+  CurODModelItem *c = getItem(index);
   CurODModelItem *p = c->parent();
 
-  if (p == root)
+  if (p == root || p == nullptr)
     return QModelIndex();
 
-  return createIndex(p->row(), 0, p);
+  return createIndex(static_cast<int>(p->row()), 0, p);
 }
 
 int CurrentODModel::rowCount(const QModelIndex &parent) const {
@@ -108,14 +115,14 @@ int CurrentODModel::columnCount(const QModelIndex &parent) const {
   if (!parent.isValid())
     return root->columnCount();
 
-  return static_cast<CurODModelItem *>(parent.internalPointer())->columnCount();
+  return getItem(parent)->columnCount();
 }
 
 QVariant CurrentODModel::data(const QModelIndex &index, int role) const {
   if (!index.isValid())
     return QVariant();
 
-  CurODModelItem *item = static_cast<CurODModelItem *>(index.internalPointer());
+  CurODModelItem *item = getItem(index);
   return item->data(index.column(), static_cast<Qt::ItemDataRole>(role));
 }
 
@@ -124,6 +131,7 @@ QVariant CurrentODModel::headerData(int section, Qt::Orientation orientation, in
     switch (section) {
       case 0: return QVariant("Index");
       case 1: return QVariant("Value");
+      case 2: return QVariant("Debug");
       default: return QVariant("[ERROR: You should not see this]");
     }
   }
@@ -132,13 +140,39 @@ QVariant CurrentODModel::headerData(int section, Qt::Orientation orientation, in
 }
 
 Qt::ItemFlags CurrentODModel::flags(const QModelIndex &index) const {
-  if (!index.isValid())
-    return 0;
+  if (index.isValid())
+    return getItem(index)->flags();
 
-  return Qt::ItemIsSelectable;
+  return 0;
+}
+
+QModelIndex CurrentODModel::indexOf(CurODModelItem *item, int column) const {
+  if (!item)
+    return QModelIndex();
+
+  return createIndex(static_cast<int>(item->row()), column, item);
+}
+
+QModelIndex CurrentODModel::parentOf(CurODModelItem *item, int column) const {
+  if (!item)
+    return QModelIndex();
+
+  CurODModelItem *p = item->parent();
+
+  if (!p)
+    return QModelIndex();
+
+  return createIndex(static_cast<int>(item->row()), column, p);
 }
 
 
+void CurrentODModel::emitRowChaned(QModelIndex index) {
+  QModelIndex begin = createIndex(index.row(), 0, index.internalPointer());
+  QModelIndex end   = createIndex(index.row(), columnCount(index), index.internalPointer());
+  emit        dataChanged(begin, end);
+}
+
+void CurrentODModel::emitRowChaned(CurODModelItem *item) { emitRowChaned(indexOf(item)); }
 
 
 void CurrentODModel::update(ProtectedCycle &cycle) {
@@ -147,24 +181,86 @@ void CurrentODModel::update(ProtectedCycle &cycle) {
   if (!root)
     root = new CurODModelItem(nullptr, cycle, UINT8_MAX, UINT16_MAX, UINT16_MAX);
 
-  if (node != lastUpdatedNode) {
-    beginResetModel();
-    delete root;
-    root = new CurODModelItem(nullptr, cycle, UINT8_MAX, UINT16_MAX, UINT16_MAX);
-    endResetModel();
-  }
-
   Node *n = cycle->getNode(node);
   if (!n) {
-    qDebug() << "ERROR: CurrentODModel: Node " << static_cast<int>(node) << " is not valid";
     return;
   }
 
+  auto *children = root->getChildren();
+
+  static std::vector<uint16_t> oldVec;
+  static std::vector<uint16_t> chVec; // static: recycle heap memory
+  static std::vector<uint16_t> diff;
+  oldVec.clear();
+  chVec.clear();
+  diff.clear();
+
+  for (auto &i : *root->getChildren()) {
+    oldVec.emplace_back(i->getIndex());
+  }
+
   plf::colony<uint16_t> changedList = n->getOD()->getWrittenValues();
-  std::vector<uint16_t> changedVec;
-  changedVec.reserve(changedList.size());
-  changedVec.assign(changedList.begin(), changedList.end());
-  std::sort(changedVec.begin(), changedVec.end());
+
+  chVec.assign(changedList.begin(), changedList.end());
+  std::sort(chVec.begin(), chVec.end());
+  std::sort(oldVec.begin(), oldVec.end());
+  std::set_symmetric_difference(chVec.begin(), chVec.end(), oldVec.begin(), oldVec.end(), std::back_inserter(diff));
+
+  if (diff.empty() && node == lastUpdatedNode) {
+    // No entry changes
+    for (auto &i : *root->getChildren()) {
+      ODEntry *entry = n->getOD()->getEntry(i->getIndex());
+      if (entry->getArraySize() >= 0 && i->childCount() != entry->getArraySize()) {
+        QModelIndex index = indexOf(i.get());
+        beginRemoveRows(index, 0, i->childCount() - 1);
+        i->clear();
+        endRemoveRows();
+
+        beginInsertRows(index, 0, entry->getArraySize() - 1);
+        for (uint16_t j = 0; j < entry->getArraySize(); ++j) {
+          i->push_back(std::make_unique<CurODModelItem>(i.get(), cycle, node, i->getIndex(), j));
+        }
+        endInsertRows();
+        continue;
+      }
+
+      for (auto &j : *i->getChildren()) {
+        if (j->hasChanged()) {
+          emitRowChaned(j.get());
+        }
+      }
+
+      if (i->hasChanged()) {
+        emitRowChaned(i.get());
+      }
+    }
+  } else {
+    // Rebuild entire model (new / deleted entries are rare)
+    beginResetModel();
+
+    delete root;
+    root     = new CurODModelItem(nullptr, cycle, UINT8_MAX, UINT16_MAX, UINT16_MAX);
+    children = root->getChildren();
+
+    for (auto i : chVec) {
+      ODEntry *entry = n->getOD()->getEntry(i);
+
+      if (!entry) {
+        qDebug() << "ERROR entry does not exist! " << i;
+        continue;
+      }
+
+      auto            uPtr = std::make_unique<CurODModelItem>(root, cycle, node, i);
+      CurODModelItem *item = uPtr.get();
+      root->push_back(std::move(uPtr));
+
+      for (uint16_t j = 0; j < entry->getArraySize() && j <= 0xFF; ++j) {
+        item->push_back(std::make_unique<CurODModelItem>(item, cycle, node, i, j));
+      }
+    }
+
+    endResetModel();
+  }
 
   lastUpdatedNode = node;
 }

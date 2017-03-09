@@ -34,18 +34,27 @@ CurODModelItem::CurODModelItem(
       CurODModelItem *parent, ProtectedCycle &cycle, uint8_t cNode, uint16_t odIndex, uint16_t odSubIndex)
     : p(parent), c(cycle), node(cNode), index(odIndex), subIndex(odSubIndex) {}
 
-CurODModelItem::~CurODModelItem() { qDeleteAll(childItems); }
-
-
-void CurODModelItem::setChildItems(QList<CurODModelItem *> items) {
-  qDeleteAll(childItems);
-  childItems = items;
-}
+CurODModelItem::~CurODModelItem() {}
 
 
 CurODModelItem *CurODModelItem::parent() { return p; }
 
-CurODModelItem *CurODModelItem::child(int row) { return childItems.value(row, nullptr); }
+CurODModelItem *CurODModelItem::child(size_t row) {
+  if (row > childItems.size())
+    return nullptr;
+
+  return childItems[row].get();
+}
+
+void CurODModelItem::push_back(std::unique_ptr<CurODModelItem> item) {
+  childIndexMap[item.get()] = childItems.size();
+  childItems.emplace_back(std::move(item));
+}
+
+void CurODModelItem::clear() {
+  childItems.clear();
+  childIndexMap.clear();
+}
 
 QVariant CurODModelItem::data(int column, Qt::ItemDataRole role) {
   if (role != Qt::DisplayRole)
@@ -68,16 +77,16 @@ QVariant CurODModelItem::data(int column, Qt::ItemDataRole role) {
   switch (column) {
     case 0: // INDEX
 
-      if (subIndex > UINT8_MAX) // This is a root OD item
-        return QVariant(static_cast<int>(index));
+      if (subIndex == UINT16_MAX) // This is a root OD item
+        return QVariant(QString().number(static_cast<int>(index), 16).prepend("0x"));
       else // This is a subIndex item
-        return QVariant(static_cast<int>(subIndex));
+        return QVariant(QString().number(static_cast<int>(subIndex), 16).prepend("0x"));
 
     case 1: // VALUE
 
-      if (subIndex > UINT8_MAX) { // This is a root OD item
-        if (entry->getArraySize() < 0) {
-          return QVariant("<ROOT INDEX>");
+      if (subIndex == UINT16_MAX) { // This is a root OD item
+        if (entry->getArraySize() >= 0) {
+          return QVariant();
         }
         return QVariant(entry->toString().c_str());
       } else { // This is a subIndex item
@@ -92,12 +101,22 @@ QVariant CurODModelItem::data(int column, Qt::ItemDataRole role) {
   }
 }
 
-QList<CurODModelItem *> *CurODModelItem::getChildren() { return &childItems; }
-int                      CurODModelItem::childCount() const { return childItems.size(); }
-int                      CurODModelItem::columnCount() const { return 2; }
-int                      CurODModelItem::row() const {
-  if (p)
-    return p->childItems.indexOf(const_cast<CurODModelItem *>(this));
+CurODModelItem::LIST *CurODModelItem::getChildren() { return &childItems; }
+int                   CurODModelItem::childCount() const { return static_cast<int>(childItems.size()); }
+int                   CurODModelItem::columnCount() const { return 2; }
 
-  return 0;
+
+size_t CurODModelItem::indexOf(CurODModelItem const *item) const { return childIndexMap.at(item); }
+
+size_t CurODModelItem::row() const {
+  if (!p)
+    return 0;
+
+  return p->indexOf(this);
 }
+
+Qt::ItemFlags CurODModelItem::flags() { return Qt::ItemIsEnabled; }
+
+bool CurODModelItem::hasChanged() { return true; }
+
+uint16_t CurODModelItem::getIndex() const { return index; }

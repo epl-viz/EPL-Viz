@@ -30,14 +30,13 @@
 #include "MainWindow.hpp"
 #include "EPLEnums.h"
 #include "QHeaderView"
-#include "QTableView"
 using namespace EPL_Viz;
 using namespace EPL_DataCollect;
 
-PythonLogModel::PythonLogModel(MainWindow *window) : BaseModel() {
+PythonLogModel::PythonLogModel(MainWindow *window, QTableView *widget) : BaseModel(window, widget) {
   qDebug() << "Updating PythonLogModel";
   log              = window->getCaptureInstance()->getEventLog();
-  QTableView *view = window->findChild<QTableView *>("pythonLogView");
+  QTableView *view = widget;
   view->setModel(this);
   view->verticalHeader()->hide();
 }

@@ -49,8 +49,10 @@ class CurrentODModel : public QAbstractItemModel, public BaseModel {
 
   // std::shared_ptr<CurODModelItem> getItem(const QModelIndex &index) const;
  public:
-  CurrentODModel(QMainWindow *window);
+  CurrentODModel(MainWindow *window, QWidget *widget);
+  CurrentODModel()  = delete;
   ~CurrentODModel() = default;
+
   void init() override;
 
   QModelIndex index(int row, int column, const QModelIndex &parent = QModelIndex()) const override;

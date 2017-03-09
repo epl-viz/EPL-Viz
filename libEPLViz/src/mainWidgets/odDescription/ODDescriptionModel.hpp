@@ -52,8 +52,10 @@ class ODDescriptionModel : public QObject, public BaseModel {
 
   // std::shared_ptr<CurODModelItem> getItem(const QModelIndex &index) const;
  public:
-  ODDescriptionModel(QMainWindow *window);
+  ODDescriptionModel(MainWindow *window, QTreeWidget *treeWidget);
+  ODDescriptionModel()  = delete;
   ~ODDescriptionModel() = default;
+
   void init() override;
 
  protected:

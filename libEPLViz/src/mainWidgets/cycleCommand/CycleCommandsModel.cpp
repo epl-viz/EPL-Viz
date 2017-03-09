@@ -33,14 +33,15 @@
 using namespace EPL_Viz;
 using namespace EPL_DataCollect;
 
-CycleCommandsModel::CycleCommandsModel(QObject *parent) : QAbstractItemModel(parent) {
+CycleCommandsModel::CycleCommandsModel(MainWindow *mw, QTreeView *widget)
+    : QAbstractItemModel(mw), BaseModel(mw, widget) {
   QVector<QVariant> rootData;
   rootData << "Command"
            << "Index"
            << "Value"
            << "Other";
   rootItem = new CyCoTreeItem(rootData);
-  view     = static_cast<MainWindow *>(parent)->findChild<QTreeView *>("cycleCommandsView");
+  view     = widget;
   view->setModel(this);
   view->setDisabled(true);
   view->setToolTip("Please start a capture or replay and select a Node");

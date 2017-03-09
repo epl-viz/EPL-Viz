@@ -135,11 +135,13 @@ class MainWindow : public QMainWindow {
   void addNode(EPL_DataCollect::Node *n);
   void externalUpdateCurOD(EPL_DataCollect::Cycle *cycle, int node);
   void externalUpdateODDescr(EPL_DataCollect::Cycle *cycle, int node);
+  void completeCycle();
 
  signals:
   void operate(const QString &);
   void close();
   void cycleChanged();
+  void eventsUpdated();
   void recordingStarted(EPL_DataCollect::CaptureInstance *);
   void nodeAdded(uint8_t id, NodeWidget *nw);
 };

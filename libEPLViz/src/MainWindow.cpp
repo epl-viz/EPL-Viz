@@ -66,6 +66,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
   modelThread = new ModelThread(this, &machineState, this);
   connect(modelThread, &ModelThread::resultReady, this, &MainWindow::handleResults);
   connect(modelThread, &ModelThread::finished, modelThread, &QObject::deleteLater);
+  connect(modelThread, SIGNAL(cycleHandled()), this, SLOT(completeCycle()));
   modelThread->start();
 
   connect(this,
@@ -78,6 +79,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
           ui->eventLog,
           SLOT(start(EPL_DataCollect::CaptureInstance *))); // Notify the eventLog of the start of recording
   connect(this, SIGNAL(close()), modelThread, SLOT(stop()));
+  connect(this, SIGNAL(eventsUpdated()), ui->eventLog, SLOT(updateEvents()));
 
   profileManager->getDefaultProfile()->readWindowSettings(this);
   captureInstance = std::make_unique<CaptureInstance>();
@@ -94,6 +96,12 @@ MainWindow::~MainWindow() {
   delete profileManager;
   delete ui;
   delete settingsWin;
+}
+
+void MainWindow::completeCycle() {
+  emit eventsUpdated();
+  qDebug() << "Completed cycle" << QString::number(curCycle);
+  curCycle++;
 }
 
 void MainWindow::addNode(Node *n) {
@@ -114,28 +122,35 @@ void MainWindow::addNode(Node *n) {
 
 void MainWindow::createModels() {
   // Create and add Models here
-  CycleCommandsModel *cyCoModel = new CycleCommandsModel(this);
+  CycleCommandsModel *cyCoModel          = new CycleCommandsModel(this, ui->cycleCommandsView);
+  QWTPlotModel *      qwtPlot            = new QWTPlotModel(this, ui->qwtPlot);
+  NetworkGraphModel * networkGraphModel  = new NetworkGraphModel(this, ui->networkGraphContents);
+  ODDescriptionModel *oddescrModel       = new ODDescriptionModel(this, ui->odDescriptionWidget);
+  CurrentODModel *    curODModel         = new CurrentODModel(this, ui->curNodeODWidget);
+  PythonLogModel *    pythonLogModel     = new PythonLogModel(this, ui->pythonLogView);
+  PacketHistoryModel *packetHistoryModel = new PacketHistoryModel(this, ui->packetHistoryTextEdit);
+
+  // Connect required signals
   connect(this, SIGNAL(cycleChanged()), cyCoModel, SLOT(updateNext()));
-
-  NetworkGraphModel *networkGraphModel = new NetworkGraphModel(this);
-
-  CurrentODModel *curODModel = new CurrentODModel(this);
   connect(this, SIGNAL(cycleChanged()), curODModel, SLOT(updateNext()));
+  connect(packetHistoryModel,
+          SIGNAL(textUpdated(QString, QPlainTextEdit *)),
+          ui->dockPacketHistory,
+          SLOT(updatePacketHistoryLog(QString, QPlainTextEdit *)));
+  connect(oddescrModel,
+          SIGNAL(updateExternal(EPL_DataCollect::Cycle *, int)),
+          this,
+          SLOT(externalUpdateODDescr(EPL_DataCollect::Cycle *, int)),
+          Qt::BlockingQueuedConnection);
 
-  ODDescriptionModel *oddescrModel = new ODDescriptionModel(this);
-  // connect(oddescrModel, SIGNAL(updateExternal(EPL_DataCollect::Cycle *, int)), this,
-  // SLOT(externalUpdateODDescr(EPL_DataCollect::Cycle *, int)), Qt::BlockingQueuedConnection);
-
-
-
-  models.append(new PacketHistoryModel(this));
-  // models.append(new PythonLogModel(this));
-  models.append(new QWTPlotModel(this));
+  // Append the nodes to a list for cleanup
+  models.append(packetHistoryModel);
+  models.append(pythonLogModel);
+  models.append(qwtPlot);
   models.append(curODModel);
   models.append(networkGraphModel);
   models.append(cyCoModel);
   models.append(oddescrModel);
-  models.append(ui->eventLog);
 
   ui->curNodeODWidget->setModel(curODModel);
 
@@ -456,8 +471,6 @@ void MainWindow::externalUpdateODDescr(EPL_DataCollect::Cycle *cycle, int node) 
   }
   qDebug() << "Finished updating CurrentODModel";
 }
-
-QWidget *MainWindow::getNetworkGraph() { return ui->networkGraphContents; }
 
 SettingsWindow *MainWindow::getSettingsWin() { return settingsWin; }
 

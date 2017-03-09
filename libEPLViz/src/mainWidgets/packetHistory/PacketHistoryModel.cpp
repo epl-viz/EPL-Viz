@@ -38,15 +38,12 @@ using namespace EPL_Viz;
 using namespace EPL_DataCollect;
 using namespace std;
 
-PacketHistoryModel::PacketHistoryModel(MainWindow *window) : BaseModel() {
+PacketHistoryModel::PacketHistoryModel(MainWindow *window, QPlainTextEdit *widget) : BaseModel(window, widget) {
+  (void)window;
+
   selectedPacket = UINT64_MAX;
-  textWindow     = window->findChild<QPlainTextEdit *>("packetHistoryTextEdit");
-  // connect update Text
-  connect(this,
-          SIGNAL(textUpdated(QString, QPlainTextEdit *)),
-          window->findChild<PacketHistoryWidget *>("dockPacketHistory"),
-          SLOT(updatePacketHistoryLog(QString, QPlainTextEdit *)));
-  needUpdate = true;
+  textWindow     = widget;
+  needUpdate     = true;
 }
 
 void PacketHistoryModel::update(ProtectedCycle &cycle) {

@@ -31,7 +31,10 @@
 using namespace EPL_Viz;
 using namespace EPL_DataCollect;
 
-TimeLineModel::TimeLineModel() {}
+TimeLineModel::TimeLineModel(MainWindow *mw, QWidget *widget) : BaseModel(mw, widget) {
+  (void)mw;
+  (void)widget;
+}
 
 void TimeLineModel::init() {}
 

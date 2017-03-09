@@ -36,7 +36,10 @@ using namespace EPL_Viz;
 using namespace EPL_DataCollect;
 using namespace std;
 
-CurrentODModel::CurrentODModel(QMainWindow *window) : QAbstractItemModel(window), BaseModel() {
+CurrentODModel::CurrentODModel(MainWindow *window, QWidget *widget)
+    : QAbstractItemModel(widget), BaseModel(window, widget) {
+  (void)window;
+  (void)widget;
   //  tree->setContextMenuPolicy(Qt::CustomContextMenu);
   //  connect(tree, SIGNAL(customContextMenuRequested(const QPoint &)), this, SLOT(showContextMenu(const QPoint &)));
   needUpdate = true;

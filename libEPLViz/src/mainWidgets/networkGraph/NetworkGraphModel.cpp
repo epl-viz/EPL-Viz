@@ -34,13 +34,12 @@
 using namespace EPL_Viz;
 using namespace EPL_DataCollect;
 
-NetworkGraphModel::NetworkGraphModel(MainWindow *mw) : BaseModel() {
-  graph = mw->getNetworkGraph();
+NetworkGraphModel::NetworkGraphModel(MainWindow *mw, NetworkGraphWidget *widget) : BaseModel(mw, widget) {
+  graph = widget;
+  // TODO: Move the connects to the MainWindow::createModels and connect to networkgraphcontents
   connect(this, SIGNAL(detectedNewNode(EPL_DataCollect::Node *)), mw, SLOT(addNode(EPL_DataCollect::Node *)));
   connect(mw, SIGNAL(nodeAdded(uint8_t, NodeWidget *)), this, SLOT(trackNodeWidget(uint8_t, NodeWidget *)));
 }
-
-NetworkGraphModel::~NetworkGraphModel() {}
 
 void NetworkGraphModel::init() {}
 

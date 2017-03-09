@@ -45,7 +45,9 @@ class PacketHistoryModel : public QObject, public BaseModel {
   bool            needUpdate;
 
  public:
-  PacketHistoryModel(MainWindow *window);
+  PacketHistoryModel(MainWindow *window, QPlainTextEdit *widget);
+  PacketHistoryModel()  = delete;
+  ~PacketHistoryModel() = default;
 
   void init() override;
 

@@ -29,6 +29,7 @@
 #pragma once
 
 #include "BaseModel.hpp"
+#include "NetworkGraphWidget.hpp"
 #include "NodeWidget.hpp"
 #include <QMap>
 
@@ -43,8 +44,9 @@ class NetworkGraphModel : public QObject, public BaseModel {
   QWidget *graph;
 
  public:
-  NetworkGraphModel(MainWindow *mw);
-  virtual ~NetworkGraphModel();
+  NetworkGraphModel(MainWindow *mw, NetworkGraphWidget *widget);
+  NetworkGraphModel()  = delete;
+  ~NetworkGraphModel() = default;
 
  protected:
   void init();

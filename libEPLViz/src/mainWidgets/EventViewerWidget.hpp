@@ -29,14 +29,13 @@
 
 #pragma once
 
-#include "BaseModel.hpp"
 #include "CaptureInstance.hpp"
 #include "EventLog.hpp"
 #include <QTreeWidget>
 
 namespace EPL_Viz {
 
-class EventViewerWidget : public QTreeWidget, public EPL_Viz::BaseModel {
+class EventViewerWidget : public QTreeWidget {
   Q_OBJECT
 
  private:
@@ -47,12 +46,8 @@ class EventViewerWidget : public QTreeWidget, public EPL_Viz::BaseModel {
   EventViewerWidget(QWidget *parent = nullptr);
   ~EventViewerWidget()              = default;
 
-  void init() override;
-
- protected:
-  void update(ProtectedCycle &cycle) override;
-
  public slots:
   void start(EPL_DataCollect::CaptureInstance *ci);
+  void updateEvents();
 };
 }

@@ -79,15 +79,18 @@ class ProtectedCycle final {
   inline EPL_DataCollect::Cycle *operator->() noexcept { return getCycle(); }
 };
 
+class ModelThread;
+
 class BaseModel {
 
  private:
   static QLinkedList<BaseModel *> *registeredModels;
   static uint32_t                  appID;
   static ProtectedCycle            cycle;
+  static MainWindow *              mainWindow;
 
  public:
-  BaseModel();
+  BaseModel(MainWindow *mw, QWidget *widget);
   virtual ~BaseModel();
 
   inline bool operator==(const BaseModel &other);
@@ -96,10 +99,16 @@ class BaseModel {
   virtual void update(ProtectedCycle &cycle) = 0;
   virtual void init()                        = 0;
 
- public:
-  static void updateAll(MainWindow *mw, EPL_DataCollect::CaptureInstance *instance, uint32_t cycleNum);
-  static void initAll();
   static void reg(BaseModel *model);
   static void dereg(BaseModel *model);
+
+  static MainWindow *getMainWindow();
+
+ private:
+  static void updateAll(EPL_DataCollect::CaptureInstance *instance, uint32_t cycleNum);
+  static void initAll();
+
+  friend MainWindow;  // Allow MainWindow to init
+  friend ModelThread; // Allow ModelThread to update
 };
 }

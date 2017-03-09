@@ -29,16 +29,24 @@
 
 #include "BaseModel.hpp"
 #include "MainWindow.hpp"
+
 using namespace EPL_Viz;
 using namespace EPL_DataCollect;
 
 QLinkedList<BaseModel *> *BaseModel::registeredModels = new QLinkedList<BaseModel *>;
 
-BaseModel::BaseModel() { reg(this); }
+BaseModel::BaseModel(MainWindow *mw, QWidget *widget) {
+  (void)widget;
+
+  reg(this);
+  mainWindow = mw;
+}
 
 BaseModel::~BaseModel() { dereg(this); }
 
-void BaseModel::updateAll(MainWindow *mw, CaptureInstance *instance, uint32_t cycleNum) {
+MainWindow *BaseModel::getMainWindow() { return mainWindow; }
+
+void BaseModel::updateAll(CaptureInstance *instance, uint32_t cycleNum) {
   if (instance == nullptr) {
     qDebug() << "CaptureInstance is a nullptr";
     return;
@@ -47,7 +55,7 @@ void BaseModel::updateAll(MainWindow *mw, CaptureInstance *instance, uint32_t cy
   // Get Cycle
   cycle.updateCycle(instance, cycleNum);
 
-  GUIState state = mw->getState();
+  GUIState state = mainWindow->getState();
 
   EventLog *log = instance->getEventLog();
 
@@ -67,13 +75,13 @@ void BaseModel::updateAll(MainWindow *mw, CaptureInstance *instance, uint32_t cy
         // Check if the GUI is running
         if (state == GUIState::RECORDING || state == GUIState::PLAYING) {
           // Pause recording/playing
-          mw->changeState(GUIState::PAUSED); // TODO: Add configuration option for pausing playing
+          mainWindow->changeState(GUIState::PAUSED); // TODO: Add configuration option for pausing playing
         }
         break;
       case EvType::VIEW_STARTCAP:
         // Check if the GUI is paused
         if (state == GUIState::PAUSED) {
-          mw->changeState(GUIState::PLAYING);
+          mainWindow->changeState(GUIState::PLAYING);
         }
         break;
       default: break;
@@ -117,3 +125,4 @@ bool BaseModel::operator==(const BaseModel &other) { return this == &other; }
 
 uint32_t       BaseModel::appID;
 ProtectedCycle BaseModel::cycle;
+MainWindow *   BaseModel::mainWindow;

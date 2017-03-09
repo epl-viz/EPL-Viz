@@ -25,7 +25,6 @@
  */
 /*!
  * \file NetworkGraphWidget.cpp
- * \todo Implement
  */
 
 #include "NetworkGraphWidget.hpp"

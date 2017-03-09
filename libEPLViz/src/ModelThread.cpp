@@ -67,13 +67,15 @@ void ModelThread::loop() {
           window->changeState(GUIState::UNINIT);
           return;
         }
-        BaseModel::updateAll(window, ci, window->getCycleNum());
+        BaseModel::updateAll(ci, window->getCycleNum());
         break;
       }
       case GUIState::PAUSED: break;
       case GUIState::STOPPED: yieldCurrentThread(); break;
     }
 
+    // TODO: Ensure that the cycle has been handled in order to correctly update the cyclenum
+    emit cycleHandled();
     // TODO Constant update time or something else?
     sleep(1);
   }

@@ -34,6 +34,7 @@
 #include "EvPluginText.hpp"
 #include "EventBase.hpp"
 #include "EventLog.hpp"
+#include "QTableView"
 #include "vector"
 #include <QAbstractTableModel>
 
@@ -49,7 +50,9 @@ class PythonLogModel : public QAbstractTableModel, public BaseModel {
   std::vector<EPL_DataCollect::EventBase *> events;
 
  public:
-  PythonLogModel(MainWindow *window);
+  PythonLogModel(MainWindow *window, QTableView *widget);
+  PythonLogModel()  = delete;
+  ~PythonLogModel() = default;
 
   void init() override;
 

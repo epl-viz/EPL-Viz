@@ -39,7 +39,8 @@ class CycleCommandsModel : public QAbstractItemModel, public BaseModel {
   Q_OBJECT
 
  public:
-  CycleCommandsModel(QObject *parent = 0);
+  CycleCommandsModel(MainWindow *mw, QTreeView *widget);
+  CycleCommandsModel() = delete;
   ~CycleCommandsModel();
 
   QVariant data(const QModelIndex &index, int role) const override;

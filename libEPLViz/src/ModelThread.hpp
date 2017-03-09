@@ -57,6 +57,7 @@ class ModelThread : public QThread {
 
  signals:
   void resultReady(const QString &result);
+  void cycleHandled();
  public slots:
   void stop();
 };

@@ -30,18 +30,19 @@
 #include "QWTPlotModel.hpp"
 #include "MainWindow.hpp"
 #include "QPointF"
+
 using namespace EPL_Viz;
 using namespace EPL_DataCollect;
 
-QWTPlotModel::QWTPlotModel(MainWindow *win) : BaseModel() {
+QWTPlotModel::QWTPlotModel(MainWindow *win, QwtPlot *widget) : BaseModel(win, widget) {
   window = win;
+  plot   = widget;
   curve  = new QwtPlotCurve();
 }
 
 QWTPlotModel::~QWTPlotModel() { delete curve; }
 
 void QWTPlotModel::init() {
-  plot = window->findChild<QwtPlot *>("qwtPlot");
   connect(this, SIGNAL(requestRedraw()), plot, SLOT(repaint()));
 
   CaptureInstance *ci     = window->getCaptureInstance();

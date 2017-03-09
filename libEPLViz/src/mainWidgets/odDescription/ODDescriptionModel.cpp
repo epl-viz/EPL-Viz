@@ -36,8 +36,8 @@ using namespace EPL_Viz;
 using namespace EPL_DataCollect;
 using namespace std;
 
-ODDescriptionModel::ODDescriptionModel(QMainWindow *window) : BaseModel() {
-  tree = window->findChild<QTreeWidget *>("odDescriptionWidget");
+ODDescriptionModel::ODDescriptionModel(MainWindow *window, QTreeWidget *treeWidget) : BaseModel(window, treeWidget) {
+  tree = treeWidget;
   tree->setContextMenuPolicy(Qt::CustomContextMenu);
   tree->setSortingEnabled(true);
   connect(tree, SIGNAL(customContextMenuRequested(const QPoint &)), this, SLOT(showContextMenu(const QPoint &)));

@@ -29,21 +29,19 @@
 #pragma once
 
 #include "BaseModel.hpp"
+#include "CSTimeSeriesPtr.hpp"
 #include "EPLVizDefines.hpp"
 #include "EventLog.hpp"
 #include "TimeSeries.hpp"
-
-#include "CSTimeSeriesPtr.hpp"
 #include <qwt_plot.h>
 #include <qwt_plot_curve.h>
-
 
 #include <QObject>
 
 class MainWindow;
 
 namespace EPL_Viz {
-class QWTPlotModel : public QObject, public EPL_Viz::BaseModel {
+class QWTPlotModel : public QObject, public BaseModel {
   Q_OBJECT
 
  private:
@@ -56,8 +54,10 @@ class QWTPlotModel : public QObject, public EPL_Viz::BaseModel {
   bool created = false;
 
  public:
-  QWTPlotModel(MainWindow *win);
+  QWTPlotModel(MainWindow *win, QwtPlot *widget);
+  QWTPlotModel() = delete;
   ~QWTPlotModel();
+
   void init() override;
 
  protected:

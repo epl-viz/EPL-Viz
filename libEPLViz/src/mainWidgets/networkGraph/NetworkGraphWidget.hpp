@@ -25,7 +25,6 @@
  */
 /*!
  * \file NetworkGraphWidget.hpp
- * \todo Implement
  */
 
 #pragma once

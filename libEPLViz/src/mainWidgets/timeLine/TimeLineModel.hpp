@@ -33,10 +33,12 @@
 #include "Cycle.hpp"
 
 namespace EPL_Viz {
-class TimeLineModel : public EPL_Viz::BaseModel {
+class TimeLineModel : public BaseModel {
  private:
  public:
-  TimeLineModel();
+  TimeLineModel(MainWindow *mw, QWidget *widget);
+  TimeLineModel()  = delete;
+  ~TimeLineModel() = default;
 
   void init() override;
 

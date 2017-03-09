@@ -45,7 +45,12 @@ void CurODModelItem::setChildItems(QList<CurODModelItem *> items) {
 
 CurODModelItem *CurODModelItem::parent() { return p; }
 
-QVariant CurODModelItem::data(int column) {
+CurODModelItem *CurODModelItem::child(int row) { return childItems.value(row, nullptr); }
+
+QVariant CurODModelItem::data(int column, Qt::ItemDataRole role) {
+  if (role != Qt::DisplayRole)
+    return QVariant();
+
   auto  lock = c.getLock();
   Node *n    = c->getNode(node);
   if (!n)
@@ -87,9 +92,10 @@ QVariant CurODModelItem::data(int column) {
   }
 }
 
-int CurODModelItem::childCount() const { return childItems.size(); }
-int CurODModelItem::columnCount() const { return 2; }
-int CurODModelItem::row() const {
+QList<CurODModelItem *> *CurODModelItem::getChildren() { return &childItems; }
+int                      CurODModelItem::childCount() const { return childItems.size(); }
+int                      CurODModelItem::columnCount() const { return 2; }
+int                      CurODModelItem::row() const {
   if (p)
     return p->childItems.indexOf(const_cast<CurODModelItem *>(this));
 

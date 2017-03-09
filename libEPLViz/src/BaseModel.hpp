@@ -41,9 +41,9 @@
 #include <QWidget>
 #include <shared_mutex>
 
-class MainWindow;
-
 namespace EPL_Viz {
+
+class MainWindow;
 
 class ProtectedCycle final {
  private:

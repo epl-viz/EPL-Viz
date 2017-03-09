@@ -38,6 +38,8 @@
 
 #include <QObject>
 
+namespace EPL_Viz {
+
 class MainWindow;
 
 namespace EPL_Viz {

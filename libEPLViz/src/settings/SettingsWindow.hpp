@@ -34,13 +34,13 @@
 #include <memory>
 #include <unordered_map>
 
-class MainWindow;
-
 namespace Ui {
 class SettingsWindow;
 }
 
 namespace EPL_Viz {
+
+class MainWindow;
 
 class SettingsWindow : public QDialog {
   Q_OBJECT

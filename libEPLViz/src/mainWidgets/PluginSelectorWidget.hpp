@@ -37,6 +37,8 @@
 #include <QListWidget>
 #include <QMap>
 
+namespace EPL_Viz {
+
 class PluginSelectorWidget : public QListWidget {
   Q_OBJECT
 
@@ -62,3 +64,4 @@ class PluginSelectorWidget : public QListWidget {
   void disableWidget();
   void addPlugins(QMap<QString, QString> map);
 };
+}

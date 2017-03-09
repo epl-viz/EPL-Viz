@@ -41,6 +41,13 @@
 #include <vector>
 #include <wiretap/wtap.h>
 
+// Namespace linker error fix
+void initResources();
+void cleanupResources();
+
+void initResources() { Q_INIT_RESOURCE(resources); }
+void cleanupResources() { Q_CLEANUP_RESOURCE(resources); }
+
 using namespace EPL_Viz;
 #include "ui_mainwindow.h"
 
@@ -48,7 +55,7 @@ using namespace EPL_DataCollect;
 
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow) {
-  Q_INIT_RESOURCE(resources);
+  initResources();
 
   machineState = GUIState::UNINIT;
 
@@ -91,7 +98,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 }
 
 MainWindow::~MainWindow() {
-  Q_CLEANUP_RESOURCE(resources);
+  cleanupResources();
   destroyModels();
   delete profileManager;
   delete ui;

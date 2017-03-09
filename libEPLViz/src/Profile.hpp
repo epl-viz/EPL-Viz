@@ -31,9 +31,10 @@
 #include <QSettings>
 #include <QString>
 
+namespace EPL_Viz {
+
 class MainWindow;
 
-namespace EPL_Viz {
 class Profile {
  public:
   Profile(QSettings *settings, QString name);

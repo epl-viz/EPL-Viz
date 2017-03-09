@@ -36,6 +36,8 @@
 #include <qwt_plot.h>
 #include <stdio.h>
 
+using namespace EPL_Viz;
+
 TimelineWidget::TimelineWidget(QWidget *parent) : QDockWidget(parent) { window = dynamic_cast<MainWindow *>(parent); }
 
 bool TimelineWidget::event(QEvent *event) {

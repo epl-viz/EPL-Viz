@@ -32,6 +32,8 @@
 #include <QDockWidget>
 #include <qwt_plot_picker.h>
 
+namespace EPL_Viz {
+
 class MainWindow;
 
 class TimelineWidget : public QDockWidget {
@@ -49,3 +51,4 @@ class TimelineWidget : public QDockWidget {
  public slots:
   void pointSelected(const QPointF &pa);
 };
+}

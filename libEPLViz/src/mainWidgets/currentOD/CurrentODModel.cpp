@@ -45,44 +45,100 @@ CurrentODModel::CurrentODModel(MainWindow *window, QWidget *widget)
   needUpdate = true;
 }
 
+CurrentODModel::~CurrentODModel() {
+  if (root)
+    delete root;
+}
+
 void CurrentODModel::init() {}
 
 
 
 QModelIndex CurrentODModel::index(int row, int column, const QModelIndex &parent) const {
-  (void)row;
-  (void)column;
-  (void)parent;
+  if (!hasIndex(row, column, parent))
+    return QModelIndex();
+
+  CurODModelItem *p;
+  CurODModelItem *c;
+
+  if (!parent.isValid())
+    p = root;
+  else
+    p = static_cast<CurODModelItem *>(parent.internalPointer());
+
+  c = p->child(row);
+  if (c) {
+    return createIndex(row, column, c);
+  }
+
   return QModelIndex();
 }
 
 QModelIndex CurrentODModel::parent(const QModelIndex &index) const {
-  (void)index;
-  return QModelIndex();
+  if (!index.isValid())
+    return QModelIndex();
+
+  CurODModelItem *c = static_cast<CurODModelItem *>(index.internalPointer());
+  CurODModelItem *p = c->parent();
+
+  if (p == root)
+    return QModelIndex();
+
+  return createIndex(p->row(), 0, p);
 }
 
 int CurrentODModel::rowCount(const QModelIndex &parent) const {
-  (void)parent;
-  return 0;
+  if (parent.column() > 0)
+    return 0;
+
+  if (!parent.isValid()) {
+    if (root) {
+      return root->childCount();
+    } else {
+      return 0;
+    }
+  }
+
+  return static_cast<CurODModelItem *>(parent.internalPointer())->childCount();
 }
 
 int CurrentODModel::columnCount(const QModelIndex &parent) const {
-  (void)parent;
-  return 0;
+  if (parent.column() > 0)
+    return 0;
+
+  if (!parent.isValid())
+    return root->columnCount();
+
+  return static_cast<CurODModelItem *>(parent.internalPointer())->columnCount();
 }
 
 QVariant CurrentODModel::data(const QModelIndex &index, int role) const {
-  (void)index;
-  (void)role;
-  return QVariant("TODO");
+  if (!index.isValid())
+    return QVariant();
+
+  CurODModelItem *item = static_cast<CurODModelItem *>(index.internalPointer());
+  return item->data(index.column(), static_cast<Qt::ItemDataRole>(role));
 }
 
 QVariant CurrentODModel::headerData(int section, Qt::Orientation orientation, int role) const {
-  (void)section;
-  (void)orientation;
-  (void)role;
-  return QVariant("TODO");
+  if (role == Qt::DisplayRole && orientation == Qt::Horizontal) {
+    switch (section) {
+      case 0: return QVariant("Index");
+      case 1: return QVariant("Value");
+      default: return QVariant("[ERROR: You should not see this]");
+    }
+  }
+
+  return QVariant();
 }
+
+Qt::ItemFlags CurrentODModel::flags(const QModelIndex &index) const {
+  if (!index.isValid())
+    return 0;
+
+  return Qt::ItemIsSelectable;
+}
+
 
 
 
@@ -92,8 +148,29 @@ void CurrentODModel::update(ProtectedCycle &cycle) {
 
   auto lock = cycle.getLock();
 
-  emit(updateExternal(*cycle, node));
-  qDebug() << "Block ended";
+  if (!root)
+    root = new CurODModelItem(nullptr, cycle, UINT8_MAX, UINT16_MAX, UINT16_MAX);
+
+  if (node != lastUpdatedNode) {
+    beginResetModel();
+    delete root;
+    root = new CurODModelItem(nullptr, cycle, UINT8_MAX, UINT16_MAX, UINT16_MAX);
+    endResetModel();
+  }
+
+  Node *n = cycle->getNode(node);
+  if (!n) {
+    qDebug() << "ERROR: CurrentODModel: Node " << static_cast<int>(node) << " is not valid";
+    return;
+  }
+
+  plf::colony<uint16_t> changedList = n->getOD()->getWrittenValues();
+  std::vector<uint16_t> changedVec;
+  changedVec.reserve(changedList.size());
+  changedVec.assign(changedList.begin(), changedList.end());
+  std::sort(changedVec.begin(), changedVec.end());
+
+  lastUpdatedNode = node;
 }
 
 void CurrentODModel::updateNext() { needUpdate = true; }

@@ -37,10 +37,10 @@ namespace EPL_Viz {
 
 class CurODModelItem {
  private:
-  CurODModelItem *        p;
+  CurODModelItem *        p = nullptr;
   ProtectedCycle &        c;
-  uint8_t                 node;
-  uint16_t                index;
+  uint8_t                 node     = UINT8_MAX;
+  uint16_t                index    = UINT16_MAX;
   uint16_t                subIndex = UINT16_MAX; // Values bigger UINT8_MAX: this is not a sub index
   QList<CurODModelItem *> childItems;
 
@@ -57,9 +57,12 @@ class CurODModelItem {
   void setChildItems(QList<CurODModelItem *> items);
 
   CurODModelItem *parent();
-  QVariant data(int column);
+  CurODModelItem *child(int row);
+  QVariant data(int column, Qt::ItemDataRole role);
   int childCount() const;
   int columnCount() const;
   int row() const;
+
+  QList<CurODModelItem *> *getChildren();
 };
 }

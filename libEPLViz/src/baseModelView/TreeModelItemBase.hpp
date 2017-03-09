@@ -24,12 +24,11 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 /*!
- * \file CurODModelItem.hpp
+ * \file TreeModelItemBase.hpp
  */
 
 #pragma once
 #include "BaseModel.hpp"
-#include "TreeModelItemBase.hpp"
 #include <memory>
 #include <stdint.h>
 #include <unordered_map>
@@ -37,27 +36,52 @@
 
 namespace EPL_Viz {
 
-class CurODModelItem : public TreeModelItemBase {
+class TreeModelItemBase {
+ public:
+  typedef std::vector<std::unique_ptr<TreeModelItemBase>> LIST;
+  typedef std::unordered_map<TreeModelItemBase const *, size_t> MAP;
+
  private:
-  ProtectedCycle &c;
-  uint8_t         node     = UINT8_MAX;
-  uint16_t        index    = UINT16_MAX;
-  uint16_t        subIndex = UINT16_MAX; // Values bigger UINT8_MAX: this is not a sub index
+  TreeModelItemBase *p = nullptr;
+  LIST               childItems;
+  MAP                childIndexMap;
 
  public:
-  CurODModelItem() = delete;
-  CurODModelItem(TreeModelItemBase *parent,
-                 ProtectedCycle &   cycle,
-                 uint8_t            cNode,
-                 uint16_t           odIndex,
-                 uint16_t           odSubIndex = UINT16_MAX);
+  TreeModelItemBase() = delete;
+  TreeModelItemBase(TreeModelItemBase *parent);
 
-  virtual ~CurODModelItem();
+  virtual ~TreeModelItemBase();
 
-  QVariant data(int column, Qt::ItemDataRole role) override;
-  bool          hasChanged() override;
-  Qt::ItemFlags flags() override;
+  TreeModelItemBase *parent();
+  TreeModelItemBase *child(size_t row);
+  int    childCount() const;
+  size_t row() const;
+  size_t indexOf(TreeModelItemBase const *item) const;
 
-  uint16_t getIndex() const;
+  virtual QVariant data(int column, Qt::ItemDataRole role) = 0;
+  virtual bool          hasChanged() = 0;
+  virtual Qt::ItemFlags flags()      = 0;
+  virtual int           columnCount() const;
+
+  LIST *getChildren();
+  void push_back(std::unique_ptr<TreeModelItemBase> item);
+  void clear();
+};
+
+class TreeModelRoot : public TreeModelItemBase {
+ private:
+  std::unordered_map<int, std::vector<QVariant>> hData;
+
+ public:
+  TreeModelRoot(std::unordered_map<int, std::vector<QVariant>> headerData)
+      : TreeModelItemBase(nullptr), hData(headerData) {}
+  virtual ~TreeModelRoot();
+
+  QVariant headerData(int section, Qt::Orientation orientation, int role);
+  int columnCount() const override;
+
+  QVariant      data(int, Qt::ItemDataRole) override { return QVariant(); }
+  bool          hasChanged() override { return false; }
+  Qt::ItemFlags flags() override { return 0; }
 };
 }

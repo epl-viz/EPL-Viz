@@ -31,30 +31,15 @@ using namespace EPL_Viz;
 using namespace EPL_DataCollect;
 
 CurODModelItem::CurODModelItem(
-      CurODModelItem *parent, ProtectedCycle &cycle, uint8_t cNode, uint16_t odIndex, uint16_t odSubIndex)
-    : p(parent), c(cycle), node(cNode), index(odIndex), subIndex(odSubIndex) {}
+      TreeModelItemBase *parent, ProtectedCycle &cycle, uint8_t cNode, uint16_t odIndex, uint16_t odSubIndex)
+    : TreeModelItemBase(parent), c(cycle), node(cNode), index(odIndex), subIndex(odSubIndex) {}
 
 CurODModelItem::~CurODModelItem() {}
 
 
-CurODModelItem *CurODModelItem::parent() { return p; }
-
-CurODModelItem *CurODModelItem::child(size_t row) {
-  if (row > childItems.size())
-    return nullptr;
-
-  return childItems[row].get();
-}
-
-void CurODModelItem::push_back(std::unique_ptr<CurODModelItem> item) {
-  childIndexMap[item.get()] = childItems.size();
-  childItems.emplace_back(std::move(item));
-}
-
-void CurODModelItem::clear() {
-  childItems.clear();
-  childIndexMap.clear();
-}
+Qt::ItemFlags CurODModelItem::flags() { return Qt::ItemIsEnabled; }
+bool          CurODModelItem::hasChanged() { return true; }
+uint16_t      CurODModelItem::getIndex() const { return index; }
 
 QVariant CurODModelItem::data(int column, Qt::ItemDataRole role) {
   if (role != Qt::DisplayRole)
@@ -100,23 +85,3 @@ QVariant CurODModelItem::data(int column, Qt::ItemDataRole role) {
     default: return QVariant("[INVALID COLUMN]");
   }
 }
-
-CurODModelItem::LIST *CurODModelItem::getChildren() { return &childItems; }
-int                   CurODModelItem::childCount() const { return static_cast<int>(childItems.size()); }
-int                   CurODModelItem::columnCount() const { return 2; }
-
-
-size_t CurODModelItem::indexOf(CurODModelItem const *item) const { return childIndexMap.at(item); }
-
-size_t CurODModelItem::row() const {
-  if (!p)
-    return 0;
-
-  return p->indexOf(this);
-}
-
-Qt::ItemFlags CurODModelItem::flags() { return Qt::ItemIsEnabled; }
-
-bool CurODModelItem::hasChanged() { return true; }
-
-uint16_t CurODModelItem::getIndex() const { return index; }

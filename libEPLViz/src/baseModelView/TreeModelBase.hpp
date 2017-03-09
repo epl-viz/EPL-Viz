@@ -24,40 +24,47 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 /*!
- * \file CurODModelItem.hpp
+ * \file TreeModelBase.hpp
  */
-
 #pragma once
+
 #include "BaseModel.hpp"
+#include "Cycle.hpp"
+#include "EPLVizDefines.hpp"
+#include "Packet.hpp"
 #include "TreeModelItemBase.hpp"
-#include <memory>
-#include <stdint.h>
+
+#include <QTreeWidget>
+#include <plf_colony.h>
 #include <unordered_map>
 #include <vector>
 
 namespace EPL_Viz {
+class TreeModelBase : public QAbstractItemModel {
+  Q_OBJECT
 
-class CurODModelItem : public TreeModelItemBase {
- private:
-  ProtectedCycle &c;
-  uint8_t         node     = UINT8_MAX;
-  uint16_t        index    = UINT16_MAX;
-  uint16_t        subIndex = UINT16_MAX; // Values bigger UINT8_MAX: this is not a sub index
+ protected:
+  TreeModelItemBase *root = nullptr;
 
  public:
-  CurODModelItem() = delete;
-  CurODModelItem(TreeModelItemBase *parent,
-                 ProtectedCycle &   cycle,
-                 uint8_t            cNode,
-                 uint16_t           odIndex,
-                 uint16_t           odSubIndex = UINT16_MAX);
+  TreeModelBase() = delete;
+  TreeModelBase(QWidget *widget) : QAbstractItemModel(widget) {}
+  virtual ~TreeModelBase();
 
-  virtual ~CurODModelItem();
+  TreeModelItemBase *getItem(const QModelIndex &index) const;
 
-  QVariant data(int column, Qt::ItemDataRole role) override;
-  bool          hasChanged() override;
-  Qt::ItemFlags flags() override;
+  QModelIndex index(int row, int column, const QModelIndex &parent = QModelIndex()) const override;
+  QModelIndex parent(const QModelIndex &index) const override;
+  int rowCount(const QModelIndex &parent) const override;
+  int columnCount(const QModelIndex &parent) const override;
+  QVariant data(const QModelIndex &index, int role) const override;
+  QVariant headerData(int section, Qt::Orientation orientation, int role) const override;
+  Qt::ItemFlags flags(const QModelIndex &index) const override;
 
-  uint16_t getIndex() const;
+  QModelIndex indexOf(TreeModelItemBase *item, int column = 0) const;
+  QModelIndex parentOf(TreeModelItemBase *item, int column = 0) const;
+
+  void emitRowChaned(QModelIndex index);
+  void emitRowChaned(TreeModelItemBase *item);
 };
 }

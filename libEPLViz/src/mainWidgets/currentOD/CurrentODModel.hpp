@@ -33,6 +33,7 @@
 #include "Cycle.hpp"
 #include "EPLVizDefines.hpp"
 #include "Packet.hpp"
+#include "TreeModelBase.hpp"
 
 #include <QList>
 #include <QTreeWidget>
@@ -40,7 +41,7 @@
 #include <unordered_map>
 
 namespace EPL_Viz {
-class CurrentODModel final : public QAbstractItemModel, public BaseModel {
+class CurrentODModel final : public TreeModelBase, public BaseModel {
   Q_OBJECT
 
  private:
@@ -48,30 +49,12 @@ class CurrentODModel final : public QAbstractItemModel, public BaseModel {
   uint8_t lastUpdatedNode = node;
   bool    wait            = true;
 
-  CurODModelItem *root = nullptr;
-
  public:
   CurrentODModel(MainWindow *window, QWidget *widget);
   CurrentODModel() = delete;
   ~CurrentODModel();
 
   void init() override;
-
-  CurODModelItem *getItem(const QModelIndex &index) const;
-
-  QModelIndex index(int row, int column, const QModelIndex &parent = QModelIndex()) const override;
-  QModelIndex parent(const QModelIndex &index) const override;
-  int rowCount(const QModelIndex &parent) const override;
-  int columnCount(const QModelIndex &parent) const override;
-  QVariant data(const QModelIndex &index, int role) const override;
-  QVariant headerData(int section, Qt::Orientation orientation, int role) const override;
-  Qt::ItemFlags flags(const QModelIndex &index) const override;
-
-  QModelIndex indexOf(CurODModelItem *item, int column = 0) const;
-  QModelIndex parentOf(CurODModelItem *item, int column = 0) const;
-
-  void emitRowChaned(QModelIndex index);
-  void emitRowChaned(CurODModelItem *item);
 
  protected:
   void update(ProtectedCycle &cycle) override;

@@ -36,7 +36,7 @@ using namespace EPL_Viz;
 using namespace EPL_DataCollect;
 using namespace std;
 
-ODDescpriptonModel::ODDescpriptonModel(QMainWindow *window) : BaseModel() {
+ODDescriptionModel::ODDescriptionModel(QMainWindow *window) : BaseModel() {
   tree = window->findChild<QTreeWidget *>("odDescriptionWidget");
   tree->setContextMenuPolicy(Qt::CustomContextMenu);
   tree->setSortingEnabled(true);
@@ -44,11 +44,11 @@ ODDescpriptonModel::ODDescpriptonModel(QMainWindow *window) : BaseModel() {
   needUpdate = true;
 }
 
-void ODDescpriptonModel::init() {}
+void ODDescriptionModel::init() {}
 
 
 
-void ODDescpriptonModel::update(ProtectedCycle &cycle) {
+void ODDescriptionModel::update(ProtectedCycle &cycle) {
   if (!needUpdate)
     return;
 
@@ -76,11 +76,11 @@ void ODDescpriptonModel::update(ProtectedCycle &cycle) {
   }*/
 }
 
-void ODDescpriptonModel::updateNext() { needUpdate = true; }
+void ODDescriptionModel::updateNext() { needUpdate = true; }
 
-void ODDescpriptonModel::changeNode(uint8_t n) { node = n; }
+void ODDescriptionModel::changeNode(uint8_t n) { node = n; }
 
-void ODDescpriptonModel::showContextMenu(const QPoint &pos) {
+void ODDescriptionModel::showContextMenu(const QPoint &pos) {
   QPoint globalPos = tree->mapToGlobal(pos);
 
   QList<QTreeWidgetItem *> selection = tree->selectedItems();

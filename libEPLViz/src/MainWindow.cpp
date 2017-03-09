@@ -127,7 +127,7 @@ void MainWindow::createModels() {
   NetworkGraphModel *networkGraphModel = new NetworkGraphModel(this);
   CurrentODModel *   curODModel        = new CurrentODModel(this);
 
-  ODDescpriptonModel *oddescrModel = new ODDescpriptonModel(this);
+  ODDescriptionModel *oddescrModel = new ODDescriptionModel(this);
   // connect(oddescrModel, SIGNAL(updateExternal(EPL_DataCollect::Cycle *, int)), this,
   // SLOT(externalUpdateODDescr(EPL_DataCollect::Cycle *, int)), Qt::BlockingQueuedConnection);
 

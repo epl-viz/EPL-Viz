@@ -230,7 +230,8 @@ QString NodeWidget::statusToBackground(EPL_DataCollect::NMTState _status) {
 
 /*!
  * \brief Updates the data of this node widget.
- * \param node The pointer to the node model
+ * \param nID The node ID of the node
+ * \param c   A reference to the cycle container
  */
 void NodeWidget::updateData(uint8_t nID, ProtectedCycle &c) {
   auto                   lock = c.getLock();

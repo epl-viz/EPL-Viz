@@ -85,7 +85,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
           SIGNAL(recordingStarted(EPL_DataCollect::CaptureInstance *)),
           ui->eventLog,
           SLOT(start(EPL_DataCollect::CaptureInstance *))); // Notify the eventLog of the start of recording
-  connect(this, SIGNAL(close()), modelThread, SLOT(stop()));
   connect(this, SIGNAL(eventsUpdated()), ui->eventLog, SLOT(updateEvents()));
 
   profileManager->getDefaultProfile()->readWindowSettings(this);
@@ -164,6 +163,14 @@ void MainWindow::createModels() {
   connect(network, SIGNAL(nodeChanged(uint8_t)), cyCoModel, SLOT(changeNode(uint8_t)));
   connect(network, SIGNAL(nodeChanged(uint8_t)), curODModel, SLOT(changeNode(uint8_t)));
   connect(network, SIGNAL(nodeChanged(uint8_t)), oddescrModel, SLOT(changeNode(uint8_t)));
+
+
+  modelThread = new ModelThread(this, &machineState, this);
+  connect(modelThread, &ModelThread::resultReady, this, &MainWindow::handleResults);
+  connect(modelThread, &ModelThread::finished, modelThread, &QObject::deleteLater);
+  // connect(modelThread, SIGNAL(cycleHandled()), this, SLOT(completeCycle()));
+  modelThread->start();
+  connect(this, SIGNAL(close()), modelThread, SLOT(stop()));
 }
 
 void MainWindow::destroyModels() {

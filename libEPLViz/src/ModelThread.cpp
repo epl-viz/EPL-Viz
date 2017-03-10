@@ -76,7 +76,7 @@ void ModelThread::loop() {
       case GUIState::STOPPED: yieldCurrentThread(); break;
     }
     // TODO Constant update time or something else?
-    SLEEP(milliseconds, 100);
+    SLEEP(milliseconds, window->getSettingsWin()->getConfig().guiThreadWaitTime);
   }
 }
 

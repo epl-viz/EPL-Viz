@@ -33,6 +33,7 @@
 #include "Cycle.hpp"
 #include "EPLVizDefines.hpp"
 #include "Packet.hpp"
+#include "TreeModelBase.hpp"
 
 #include <QList>
 #include <QTreeWidget>
@@ -40,19 +41,14 @@
 #include <unordered_map>
 
 namespace EPL_Viz {
-class ODDescriptionModel : public QObject, public BaseModel {
+class ODDescriptionModel final : public TreeModelBase, public BaseModel {
   Q_OBJECT
  private:
-  uint8_t                                 node = 1;
-  bool                                    needUpdate;
-  QTreeWidget *                           tree;
-  bool                                    wait = true;
-  plf::colony<uint16_t>                   oldValues;
-  QList<std::unique_ptr<QTreeWidgetItem>> topIndices;
+  uint8_t node            = 1;
+  uint8_t lastUpdatedNode = node;
 
-  // std::shared_ptr<CurODModelItem> getItem(const QModelIndex &index) const;
  public:
-  ODDescriptionModel(MainWindow *window, QTreeWidget *treeWidget);
+  ODDescriptionModel(MainWindow *window, QTreeView *treeWidget);
   ODDescriptionModel()  = delete;
   ~ODDescriptionModel() = default;
 
@@ -62,11 +58,6 @@ class ODDescriptionModel : public QObject, public BaseModel {
   void update(ProtectedCycle &cycle) override;
 
  public slots:
-  void updateNext();
   void changeNode(uint8_t);
-  void showContextMenu(const QPoint &);
- signals:
-  void drawingPlot(uint8_t nodeID, uint16_t index, uint8_t subIndex);
-  void updateExternal(EPL_DataCollect::Cycle *cycle, int node);
 };
 }

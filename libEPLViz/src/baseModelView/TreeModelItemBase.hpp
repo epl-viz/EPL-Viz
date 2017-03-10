@@ -54,9 +54,9 @@ class TreeModelItemBase {
 
   TreeModelItemBase *parent();
   TreeModelItemBase *child(size_t row);
-  int    childCount() const;
-  size_t row() const;
-  size_t indexOf(TreeModelItemBase const *item) const;
+  int    childCount();
+  size_t row();
+  size_t indexOf(TreeModelItemBase const *item);
 
   virtual QVariant data(int column, Qt::ItemDataRole role) = 0;
   virtual bool          hasChanged() = 0;

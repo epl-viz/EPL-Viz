@@ -33,6 +33,7 @@
 
 #pragma once
 
+#include "BaseModel.hpp"
 #include "EPLEnum2Str.hpp"
 #include "Node.hpp"
 #include "EPLEnums.h"
@@ -111,6 +112,6 @@ class NodeWidget : public QStackedWidget {
  public slots:
   void minimizeChange(bool minimized);
   void setHighlightingLevel(int level);
-  void updateData(EPL_DataCollect::Node *node);
+  void updateData(uint8_t nID, EPL_Viz::ProtectedCycle &c);
   void updateStyleSheet();
 };

@@ -35,13 +35,15 @@ using namespace EPL_DataCollect;
 
 PythonLogModel::PythonLogModel(MainWindow *window, QTableView *widget) : BaseModel(window, widget) {
   qDebug() << "Updating PythonLogModel";
-  log              = window->getCaptureInstance()->getEventLog();
   QTableView *view = widget;
   view->setModel(this);
   view->verticalHeader()->hide();
 }
 
-void PythonLogModel::init() { appid = log->getAppID(); }
+void PythonLogModel::init() {
+  log   = getMainWindow()->getCaptureInstance()->getEventLog();
+  appid = log->getAppID();
+}
 
 void PythonLogModel::update(ProtectedCycle &cycle) {
   (void)cycle;

@@ -47,10 +47,9 @@ class CurrentODModel final : public TreeModelBase, public BaseModel {
  private:
   uint8_t node            = 1;
   uint8_t lastUpdatedNode = node;
-  bool    wait            = true;
 
  public:
-  CurrentODModel(MainWindow *window, QWidget *widget);
+  CurrentODModel(MainWindow *window, QTreeView *widget);
   CurrentODModel() = delete;
   ~CurrentODModel();
 

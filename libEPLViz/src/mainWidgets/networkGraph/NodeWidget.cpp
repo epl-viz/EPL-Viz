@@ -30,6 +30,8 @@
 
 #include "NodeWidget.hpp"
 
+using namespace EPL_Viz;
+
 NodeWidget::NodeWidget(EPL_DataCollect::Node *node, QWidget *parent) : QStackedWidget(parent) {
   id       = node->getID();
   idString = QString::number(id);
@@ -230,7 +232,10 @@ QString NodeWidget::statusToBackground(EPL_DataCollect::NMTState _status) {
  * \brief Updates the data of this node widget.
  * \param node The pointer to the node model
  */
-void NodeWidget::updateData(EPL_DataCollect::Node *node) {
+void NodeWidget::updateData(uint8_t nID, ProtectedCycle &c) {
+  auto                   lock = c.getLock();
+  EPL_DataCollect::Node *node = c->getNode(nID);
+
   // Check if the node is the correct one
   if (node->getID() == id) {
     updateIdentityInfo(node->getIdentity());

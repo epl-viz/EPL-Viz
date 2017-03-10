@@ -6,13 +6,13 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1535</width>
-    <height>930</height>
+    <width>1920</width>
+    <height>1080</height>
    </rect>
   </property>
   <property name="sizePolicy">
    <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
-    <horstretch>0</horstretch>
+    <horstretch>2</horstretch>
     <verstretch>0</verstretch>
    </sizepolicy>
   </property>
@@ -43,6 +43,12 @@
        <layout class="QGridLayout" name="gridLayout_13">
         <item row="1" column="1">
          <widget class="QScrollArea" name="networkGraph">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+            <horstretch>4</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
           <property name="toolTip">
            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Wird alles dynamisch angepasst. Mit Qt und Mathematik&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
           </property>
@@ -66,8 +72,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>937</width>
-             <height>408</height>
+             <width>1023</width>
+             <height>502</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_15"/>
@@ -95,7 +101,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1535</width>
+     <width>1920</width>
      <height>30</height>
     </rect>
    </property>
@@ -228,6 +234,12 @@
      </item>
      <item row="1" column="0">
       <widget class="PluginSelectorWidget" name="pluginSelectorWidget">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+         <horstretch>1</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
        <property name="toolTip">
         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Plugins koennen hierr ein und ausgeschaltet werden.&lt;/p&gt;&lt;p&gt;Auch das overlay in der Timeline fuer den Plugin kann hier getoggelt werden.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
        </property>
@@ -251,7 +263,7 @@
     </layout>
    </widget>
   </widget>
-  <widget class="ODDescriptionWidget" name="dockOD">
+  <widget class="QDockWidget" name="dockOD">
    <property name="windowTitle">
     <string>OD Desc&amp;riptions</string>
    </property>
@@ -261,28 +273,7 @@
    <widget class="QWidget" name="dockWidgetContents_3">
     <layout class="QGridLayout" name="gridLayout_4">
      <item row="0" column="0">
-      <widget class="QTreeWidget" name="odDescriptionWidget">
-       <column>
-        <property name="text">
-         <string>Index</string>
-        </property>
-       </column>
-       <column>
-        <property name="text">
-         <string>Name</string>
-        </property>
-       </column>
-       <column>
-        <property name="text">
-         <string>Type</string>
-        </property>
-       </column>
-       <column>
-        <property name="text">
-         <string>Description</string>
-        </property>
-       </column>
-      </widget>
+      <widget class="QTreeView" name="odDescriptionWidget"/>
      </item>
     </layout>
    </widget>
@@ -393,8 +384,8 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>749</width>
-          <height>96</height>
+          <width>967</width>
+          <height>136</height>
          </rect>
         </property>
         <layout class="QGridLayout" name="gridLayout_22">
@@ -568,12 +559,6 @@
    <class>TimelineWidget</class>
    <extends>QDockWidget</extends>
    <header>TimeLineWidget.hpp</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>ODDescriptionWidget</class>
-   <extends>QDockWidget</extends>
-   <header>ODDescriptionWidget.hpp</header>
    <container>1</container>
   </customwidget>
   <customwidget>

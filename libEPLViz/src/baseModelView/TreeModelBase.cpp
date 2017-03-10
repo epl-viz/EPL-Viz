@@ -38,6 +38,7 @@ using namespace EPL_Viz;
 using namespace EPL_DataCollect;
 using namespace std;
 
+TreeModelBase::TreeModelBase(QAbstractItemView *widget) : QAbstractItemModel(widget) { widget->setModel(this); }
 TreeModelBase::~TreeModelBase() {
   if (root)
     delete root;
@@ -49,6 +50,8 @@ TreeModelItemBase *TreeModelBase::getItem(const QModelIndex &index) const {
     TreeModelItemBase *p = static_cast<TreeModelItemBase *>(index.internalPointer());
     if (p) {
       return p;
+    } else {
+      return nullptr;
     }
   }
 
@@ -95,7 +98,7 @@ int TreeModelBase::rowCount(const QModelIndex &parent) const {
     }
   }
 
-  return static_cast<TreeModelItemBase *>(parent.internalPointer())->childCount();
+  return getItem(parent)->childCount();
 }
 
 int TreeModelBase::columnCount(const QModelIndex &parent) const {

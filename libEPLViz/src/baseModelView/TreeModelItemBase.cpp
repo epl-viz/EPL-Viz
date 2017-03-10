@@ -47,8 +47,8 @@ TreeModelItemBase *TreeModelItemBase::child(size_t row) {
 }
 
 void TreeModelItemBase::push_back(std::unique_ptr<TreeModelItemBase> item) {
-  childIndexMap[item.get()] = childItems.size();
   childItems.emplace_back(std::move(item));
+  childIndexMap[childItems.back().get()] = childItems.size() - 1;
 }
 
 void TreeModelItemBase::clear() {
@@ -57,12 +57,19 @@ void TreeModelItemBase::clear() {
 }
 
 TreeModelItemBase::LIST *TreeModelItemBase::getChildren() { return &childItems; }
-int                      TreeModelItemBase::childCount() const { return static_cast<int>(childItems.size()); }
+int                      TreeModelItemBase::childCount() { return static_cast<int>(childItems.size()); }
 
 
-size_t TreeModelItemBase::indexOf(TreeModelItemBase const *item) const { return childIndexMap.at(item); }
+size_t TreeModelItemBase::indexOf(TreeModelItemBase const *item) {
+  if (childIndexMap.find(item) == childIndexMap.end()) {
+    qDebug() << "DATA STRUCTURE ERROR: CAN NOT CALCULTE INDEX OF ITEM";
+    return 0;
+  }
 
-size_t TreeModelItemBase::row() const {
+  return childIndexMap.at(item);
+}
+
+size_t TreeModelItemBase::row() {
   if (!p)
     return 0;
 

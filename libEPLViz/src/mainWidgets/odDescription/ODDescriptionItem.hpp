@@ -23,13 +23,35 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-/*!
- * \file ODDescriptionWidget.cpp
- * \todo Implement
- */
 
-#include "ODDescriptionWidget.hpp"
+#pragma once
 
-ODDescriptionWidget::ODDescriptionWidget(QWidget *parent) : QDockWidget(parent) {}
+#include "BaseModel.hpp"
+#include "TreeModelItemBase.hpp"
 
-void ODDescriptionWidget::changeNode(uint8_t n) { node = n; }
+namespace EPL_Viz {
+
+class ODDescriptionItem final : public TreeModelItemBase {
+ private:
+  ProtectedCycle &c;
+  uint8_t         node     = UINT8_MAX;
+  uint16_t        index    = UINT16_MAX;
+  uint16_t        subIndex = UINT16_MAX; // Values bigger UINT8_MAX: this is not a sub index
+
+ public:
+  ODDescriptionItem() = delete;
+  ODDescriptionItem(TreeModelItemBase *parent,
+                    ProtectedCycle &   cycle,
+                    uint8_t            cNode,
+                    uint16_t           odIndex,
+                    uint16_t           odSubIndex = UINT16_MAX);
+
+  virtual ~ODDescriptionItem();
+
+  QVariant data(int column, Qt::ItemDataRole role) override;
+  bool          hasChanged() override;
+  Qt::ItemFlags flags() override;
+
+  uint16_t getIndex() const;
+};
+}

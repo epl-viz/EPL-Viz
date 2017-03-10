@@ -37,10 +37,8 @@ using namespace EPL_Viz;
 using namespace EPL_DataCollect;
 using namespace std;
 
-CurrentODModel::CurrentODModel(MainWindow *window, QWidget *widget) : TreeModelBase(widget), BaseModel(window, widget) {
-  (void)window;
-  (void)widget;
-
+CurrentODModel::CurrentODModel(MainWindow *window, QTreeView *widget)
+    : TreeModelBase(widget), BaseModel(window, widget) {
   root = new TreeModelRoot({{Qt::DisplayRole, {QVariant("Index"), QVariant("Value")}}});
 
   //  tree->setContextMenuPolicy(Qt::CustomContextMenu);
@@ -58,8 +56,6 @@ void CurrentODModel::update(ProtectedCycle &cycle) {
   if (!n) {
     return;
   }
-
-  auto *children = root->getChildren();
 
   static std::vector<uint16_t> oldVec;
   static std::vector<uint16_t> chVec; // static: recycle heap memory
@@ -113,7 +109,6 @@ void CurrentODModel::update(ProtectedCycle &cycle) {
     beginResetModel();
 
     root->clear();
-    children = root->getChildren();
 
     for (auto i : chVec) {
       ODEntry *entry = n->getOD()->getEntry(i);

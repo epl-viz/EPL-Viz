@@ -111,7 +111,14 @@ void MainWindow::completeCycle() {
   curCycle++;
 }
 
-void MainWindow::addNode(Node *n) {
+void MainWindow::addNode(uint8_t nID, ProtectedCycle &c) {
+  auto  lock = c.getLock();
+  Node *n    = c->getNode(nID);
+  if (!n) {
+    qDebug() << "Invalid node " << static_cast<int>(nID);
+    return;
+  }
+
   NodeWidget * nw     = new NodeWidget(n, ui->networkGraphContents);
   QGridLayout *layout = qobject_cast<QGridLayout *>(ui->networkGraphContents->layout());
 
@@ -124,7 +131,7 @@ void MainWindow::addNode(Node *n) {
   int col = layout->columnCount();
 
   layout->addWidget(nw, col / 4, col % 4);
-  emit nodeAdded(n->getID(), nw);
+  emit nodeAdded(nID, nw);
 }
 
 void MainWindow::createModels() {
@@ -153,8 +160,6 @@ void MainWindow::createModels() {
   models.append(networkGraphModel);
   models.append(cyCoModel);
   models.append(oddescrModel);
-
-  ui->curNodeODWidget->setModel(curODModel);
 
   QWidget *network = ui->networkGraphContents;
   connect(network, SIGNAL(nodeChanged(uint8_t)), cyCoModel, SLOT(changeNode(uint8_t)));

@@ -33,6 +33,7 @@
 #include "EPLEnum2Str.hpp"
 #include "MainWindow.hpp"
 #include <QDebug>
+
 using namespace EPL_Viz;
 using namespace EPL_DataCollect;
 
@@ -77,7 +78,7 @@ void ModelThread::loop() {
     // TODO: Ensure that the cycle has been handled in order to correctly update the cyclenum
     // emit cycleHandled();
     // TODO Constant update time or something else?
-    sleep(1);
+    SLEEP(milliseconds, 100);
   }
 }
 

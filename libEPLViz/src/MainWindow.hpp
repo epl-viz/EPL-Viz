@@ -134,7 +134,7 @@ class MainWindow : public QMainWindow {
   void handleResults(const QString &);
   void startRecording();
   void stopRecording();
-  void addNode(EPL_DataCollect::Node *n);
+  void addNode(uint8_t nID, ProtectedCycle &c);
   void completeCycle();
 
  signals:

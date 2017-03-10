@@ -28,79 +28,82 @@
  */
 #include "ODDescriptionModel.hpp"
 #include "OD.hpp"
+#include "ODDescriptionItem.hpp"
 #include <QMenu>
 #include <QString>
-#include <QThread>
 #include <algorithm>
+
 using namespace EPL_Viz;
 using namespace EPL_DataCollect;
 using namespace std;
 
-ODDescriptionModel::ODDescriptionModel(MainWindow *window, QTreeWidget *treeWidget) : BaseModel(window, treeWidget) {
-  tree = treeWidget;
-  tree->setContextMenuPolicy(Qt::CustomContextMenu);
-  tree->setSortingEnabled(true);
-  connect(tree, SIGNAL(customContextMenuRequested(const QPoint &)), this, SLOT(showContextMenu(const QPoint &)));
-  needUpdate = true;
+ODDescriptionModel::ODDescriptionModel(MainWindow *window, QTreeView *treeWidget)
+    : TreeModelBase(treeWidget), BaseModel(window, treeWidget) {
+  root = new TreeModelRoot(
+        {{Qt::DisplayRole,
+          {QVariant("Index"), QVariant("Name"), QVariant("Type"), QVariant("Data Type"), QVariant("Default Value")}}});
 }
 
 void ODDescriptionModel::init() {}
 
-
-
 void ODDescriptionModel::update(ProtectedCycle &cycle) {
-  if (!needUpdate)
-    return;
-
   auto lock = cycle.getLock();
 
-  emit(updateExternal(*cycle, node));
-  qDebug() << "Block ended";
+  Node *n = cycle->getNode(node);
+  if (!n) {
+    return;
+  }
 
-  /*
-  for (auto i : entries) {
-    ODEntry *                       entry = od->getEntry(i);
-    std::shared_ptr<CurODModelItem> item;
-    if (entry->getArraySize() >= 0) {
-      item = std::make_shared<CurODModelItem>(i, true);
-      for (uint8_t subI = 0; subI < entry->getArraySize(); ++subI) {
-        item->setSubIndex(subI, QString::fromStdString(entry->toString(static_cast<uint8_t>(i))));
-        convertRow[counter++] = std::make_pair(i, subI);
+  static std::vector<uint16_t> oldVec;
+  static std::vector<uint16_t> chVec; // static: recycle heap memory
+  static std::vector<uint16_t> diff;
+  oldVec.clear();
+  chVec.clear();
+  diff.clear();
+
+  for (auto &i : *root->getChildren()) {
+    oldVec.emplace_back(dynamic_cast<ODDescriptionItem *>(i.get())->getIndex());
+  }
+
+  plf::colony<uint16_t> changedList = n->getOD()->getODDesc()->getEntriesList();
+
+  chVec.assign(changedList.begin(), changedList.end());
+  std::sort(chVec.begin(), chVec.end());
+  std::sort(oldVec.begin(), oldVec.end());
+  std::set_symmetric_difference(chVec.begin(), chVec.end(), oldVec.begin(), oldVec.end(), std::back_inserter(diff));
+
+  if (diff.empty() && node == lastUpdatedNode) {
+    // No entry changes
+
+    // Do nothing because the OD Description is static
+  } else {
+    // Rebuild entire model (new / deleted entries are rare)
+    beginResetModel();
+
+    root->clear();
+
+    for (auto i : chVec) {
+      ODEntryDescription *entry = n->getOD()->getODDesc()->getEntry(i);
+
+      if (!entry) {
+        qDebug() << "ERROR entry does not exist! " << i;
+        continue;
       }
-    } else {
-      item = std::make_shared<CurODModelItem>(i, false);
-      item->setSubIndex(0, QString::fromStdString(entry->toString(static_cast<uint8_t>(i))));
-      convertRow[counter++] = std::make_pair(i, 0);
+
+      auto               uPtr = std::make_unique<ODDescriptionItem>(root, cycle, node, i);
+      ODDescriptionItem *item = uPtr.get();
+      root->push_back(std::move(uPtr));
+
+      for (uint16_t j = 0; j < entry->subEntries.size(); ++j) {
+        item->push_back(std::make_unique<ODDescriptionItem>(item, cycle, node, i, j));
+      }
     }
-    odEntries.insert(i, item);
-  }*/
+
+    endResetModel();
+  }
+
+  lastUpdatedNode = node;
 }
 
-void ODDescriptionModel::updateNext() { needUpdate = true; }
 
 void ODDescriptionModel::changeNode(uint8_t n) { node = n; }
-
-void ODDescriptionModel::showContextMenu(const QPoint &pos) {
-  QPoint globalPos = tree->mapToGlobal(pos);
-
-  QList<QTreeWidgetItem *> selection = tree->selectedItems();
-
-  if (selection.size() != 1)
-    return;
-
-  QMenu myMenu;
-  myMenu.addAction("Draw Plot");
-
-  QAction *selectedItem = myMenu.exec(globalPos);
-  if (selectedItem) {
-    tree->selectedItems();
-    bool     ok;
-    uint16_t index = static_cast<uint16_t>(selection.first()->text(0).remove(0, 2).toInt(&ok, 16));
-    if (!ok) {
-      qDebug() << "Could not get index from text in curodmodel";
-      return;
-    }
-
-    emit drawingPlot(node, index, 0);
-  }
-}

@@ -54,8 +54,8 @@ class NetworkGraphModel : public QObject, public BaseModel {
   void update(ProtectedCycle &cycle);
 
  signals:
-  void detectedNewNode(EPL_DataCollect::Node *node);
-  void nodeUpdated(EPL_DataCollect::Node *node);
+  void detectedNewNode(uint8_t nID, ProtectedCycle &c);
+  void nodeUpdated(uint8_t nID, ProtectedCycle &c);
   void eventsDone();
 
  public slots:

@@ -37,7 +37,10 @@ using namespace EPL_DataCollect;
 NetworkGraphModel::NetworkGraphModel(MainWindow *mw, NetworkGraphWidget *widget) : BaseModel(mw, widget) {
   graph = widget;
   // TODO: Move the connects to the MainWindow::createModels and connect to networkgraphcontents
-  connect(this, SIGNAL(detectedNewNode(EPL_DataCollect::Node *)), mw, SLOT(addNode(EPL_DataCollect::Node *)));
+  connect(this,
+          SIGNAL(detectedNewNode(uint8_t nID, ProtectedCycle & c)),
+          mw,
+          SLOT(addNode(uint8_t nID, ProtectedCycle & c)));
   connect(mw, SIGNAL(nodeAdded(uint8_t, NodeWidget *)), this, SLOT(trackNodeWidget(uint8_t, NodeWidget *)));
 }
 
@@ -48,15 +51,14 @@ void NetworkGraphModel::update(ProtectedCycle &cycle) {
   auto list = cycle->getNodeList();
 
   for (uint8_t id : list) {
-    Node *n = cycle->getNode(id);
-    auto  s = nodeMap.find(id);
+    auto s = nodeMap.find(id);
 
     if (s == nodeMap.end() || s.key() != id) {
       // The node is not yet added as a widget and has to be created
-      emit detectedNewNode(n);
+      emit detectedNewNode(id, cycle);
     } else {
       // The node is added as widget and has to be updated
-      emit nodeUpdated(n);
+      emit nodeUpdated(id, cycle);
       // Reset highlighting
       nodeMap[id]->setHighlightingLevel(0);
     }
@@ -93,6 +95,9 @@ void NetworkGraphModel::update(ProtectedCycle &cycle) {
 
 void NetworkGraphModel::trackNodeWidget(uint8_t id, NodeWidget *nw) {
   nodeMap.insert(id, nw);
-  connect(this, SIGNAL(nodeUpdated(EPL_DataCollect::Node *)), nw, SLOT(updateData(EPL_DataCollect::Node *)));
+  connect(this,
+          SIGNAL(nodeUpdated(uint8_t nID, ProtectedCycle & c)),
+          nw,
+          SLOT(updateData(uint8_t nID, ProtectedCycle & c)));
   connect(this, SIGNAL(eventsDone()), nw, SLOT(updateStyleSheet()));
 }

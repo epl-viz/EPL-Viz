@@ -48,7 +48,7 @@ class TreeModelBase : public QAbstractItemModel {
 
  public:
   TreeModelBase() = delete;
-  TreeModelBase(QWidget *widget) : QAbstractItemModel(widget) {}
+  TreeModelBase(QAbstractItemView *widget);
   virtual ~TreeModelBase();
 
   TreeModelItemBase *getItem(const QModelIndex &index) const;

@@ -89,6 +89,7 @@ void SettingsWindow::updateView(bool updateNodes) {
   qDebug() << "Updating view for " << currentProfile.c_str() << " " << prof->cfg.backConf.ihConfig.eplFrameName.c_str();
   ui->G_XDDDir->setText(prof->cfg.backConf.xddDir.c_str());
   ui->G_PausePlay->setCheckState(prof->cfg.pauseWhilePlayingFile ? Qt::Checked : Qt::Unchecked);
+  ui->G_SleepTime->setValue(static_cast<int>(prof->cfg.guiThreadWaitTime.count()));
   ui->SM_interval->setValue(static_cast<int>(prof->cfg.backConf.smConfig.saveInterval));
   ui->PY_pluginDIR->setText(prof->cfg.pythonPluginsDir.c_str());
   ui->IH_EPLFrameName->setText(prof->cfg.backConf.ihConfig.eplFrameName.c_str());
@@ -124,6 +125,7 @@ void SettingsWindow::saveIntoProfiles() {
            << prof->cfg.backConf.ihConfig.eplFrameName.c_str();
   prof->cfg.backConf.xddDir                     = ui->G_XDDDir->text().toStdString();
   prof->cfg.pauseWhilePlayingFile               = ui->G_PausePlay->checkState() == Qt::Checked;
+  prof->cfg.guiThreadWaitTime                   = std::chrono::milliseconds(ui->G_SleepTime->value());
   prof->cfg.backConf.smConfig.saveInterval      = static_cast<uint32_t>(ui->SM_interval->value());
   prof->cfg.pythonPluginsDir                    = ui->PY_pluginDIR->text().toStdString();
   prof->cfg.backConf.ihConfig.eplFrameName      = ui->IH_EPLFrameName->text().toStdString();
@@ -166,6 +168,7 @@ void SettingsWindow::loadConfig() {
   Profile *sp                     = conf->getProfile(currentProfile.c_str());
   prof->cfg.backConf.xddDir       = sp->readCustomValue("EPL_DC/xddDir").toString().toStdString();
   prof->cfg.pauseWhilePlayingFile = sp->readCustomValue("pauseWhilePlayingFile").toBool();
+  prof->cfg.guiThreadWaitTime     = std::chrono::milliseconds(sp->readCustomValue("guiThreadWaitTime").toInt());
   prof->cfg.backConf.smConfig.saveInterval =
         static_cast<uint32_t>(sp->readCustomValue("EPL_DC/SM/saveInterval").toInt());
   prof->cfg.pythonPluginsDir               = sp->readCustomValue("pythonPluginsDir").toString().toStdString();
@@ -205,6 +208,7 @@ void SettingsWindow::saveConfig() {
   Profile *sp = conf->getProfile(currentProfile.c_str());
   sp->writeCustomValue("EPL_DC/xddDir", prof->cfg.backConf.xddDir.c_str());
   sp->writeCustomValue("pauseWhilePlayingFile", prof->cfg.pauseWhilePlayingFile);
+  sp->writeCustomValue("guiThreadWaitTime", static_cast<int>(prof->cfg.guiThreadWaitTime.count()));
   sp->writeCustomValue("EPL_DC/SM/saveInterval", prof->cfg.backConf.smConfig.saveInterval);
   sp->writeCustomValue("pythonPluginsDir", prof->cfg.pythonPluginsDir.c_str());
   sp->writeCustomValue("EPL_DC/IH/eplFrameName", prof->cfg.backConf.ihConfig.eplFrameName.c_str());

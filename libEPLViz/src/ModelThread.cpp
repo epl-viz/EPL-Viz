@@ -78,7 +78,7 @@ void ModelThread::loop() {
     // TODO: Ensure that the cycle has been handled in order to correctly update the cyclenum
     // emit cycleHandled();
     // TODO Constant update time or something else?
-    SLEEP(milliseconds, 100);
+    SLEEP(milliseconds, window->getSettingsWin()->getConfig().guiThreadWaitTime);
   }
 }
 

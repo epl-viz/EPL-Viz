@@ -39,9 +39,10 @@ class SettingsProfileItem final : public QListWidgetItem {
   struct Config {
     EPL_DataCollect::CaptureInstance::Config backConf;
     std::unordered_map<int, EPL_DataCollect::CaptureInstance::NodeConfig> nodes;
-    std::string pythonPluginsDir = "/opt";
-    int         currentNode;
-    bool        pauseWhilePlayingFile = true;
+    std::string               pythonPluginsDir = "/opt";
+    int                       currentNode;
+    bool                      pauseWhilePlayingFile = true;
+    std::chrono::milliseconds guiThreadWaitTime     = std::chrono::milliseconds(100);
   };
 
  private:

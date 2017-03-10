@@ -81,13 +81,6 @@
               <item>
                <widget class="QWidget" name="widget_2" native="true">
                 <layout class="QGridLayout" name="gridLayout">
-                 <item row="0" column="0">
-                  <widget class="QLabel" name="label">
-                   <property name="text">
-                    <string>XDD Directory</string>
-                   </property>
-                  </widget>
-                 </item>
                  <item row="0" column="2">
                   <widget class="QWidget" name="widget_3" native="true">
                    <layout class="QHBoxLayout" name="horizontalLayout_5">
@@ -108,18 +101,60 @@
                    </layout>
                   </widget>
                  </item>
-                 <item row="1" column="0">
+                 <item row="0" column="0">
+                  <widget class="QLabel" name="label">
+                   <property name="text">
+                    <string>XDD Directory</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="2" column="0">
                   <widget class="QLabel" name="label_10">
                    <property name="text">
                     <string>Pause on events while playing a recorde file</string>
                    </property>
                   </widget>
                  </item>
-                 <item row="1" column="2">
-                  <widget class="QCheckBox" name="G_PausePlay">
+                 <item row="1" column="0">
+                  <widget class="QLabel" name="label_11">
                    <property name="text">
-                    <string/>
+                    <string>Internal update thread sleep time</string>
                    </property>
+                  </widget>
+                 </item>
+                 <item row="1" column="2">
+                  <widget class="QWidget" name="widget_12" native="true">
+                   <layout class="QHBoxLayout" name="horizontalLayout_10">
+                    <item>
+                     <widget class="QSpinBox" name="G_SleepTime">
+                      <property name="toolTip">
+                       <string>Time in milliseconds the GUI update thread waits</string>
+                      </property>
+                      <property name="suffix">
+                       <string> ms</string>
+                      </property>
+                      <property name="minimum">
+                       <number>25</number>
+                      </property>
+                      <property name="maximum">
+                       <number>10000</number>
+                      </property>
+                     </widget>
+                    </item>
+                   </layout>
+                  </widget>
+                 </item>
+                 <item row="2" column="2">
+                  <widget class="QWidget" name="widget_13" native="true">
+                   <layout class="QHBoxLayout" name="horizontalLayout_11">
+                    <item>
+                     <widget class="QCheckBox" name="G_PausePlay">
+                      <property name="text">
+                       <string/>
+                      </property>
+                     </widget>
+                    </item>
+                   </layout>
                   </widget>
                  </item>
                 </layout>

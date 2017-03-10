@@ -73,7 +73,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
   modelThread = new ModelThread(this, &machineState, this);
   connect(modelThread, &ModelThread::resultReady, this, &MainWindow::handleResults);
   connect(modelThread, &ModelThread::finished, modelThread, &QObject::deleteLater);
-  // connect(modelThread, SIGNAL(cycleHandled()), this, SLOT(completeCycle()));
+  connect(modelThread, SIGNAL(cycleHandled()), this, SLOT(completeCycle()));
   modelThread->start();
 
   connect(this,
@@ -105,15 +105,14 @@ MainWindow::~MainWindow() {
   delete settingsWin;
 }
 
-void MainWindow::completeCycle() {
-  emit eventsUpdated();
-  qDebug() << "Completed cycle" << QString::number(curCycle);
-  curCycle++;
-}
+void MainWindow::completeCycle() { emit eventsUpdated(); }
 
 void MainWindow::addNode(uint8_t nID, ProtectedCycle &c) {
   auto  lock = c.getLock();
   Node *n    = c->getNode(nID);
+
+  qDebug() << "Creating new node " << QString::number(nID);
+
   if (!n) {
     qDebug() << "Invalid node " << static_cast<int>(nID);
     return;

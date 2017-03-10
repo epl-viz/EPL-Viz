@@ -87,7 +87,7 @@ class BaseModel {
   static QLinkedList<BaseModel *> *registeredModels;
   static uint32_t                  appID;
   static ProtectedCycle            cycle;
-  static MainWindow *              mainWindow;
+  MainWindow *                     mainWindow;
 
  public:
   BaseModel(MainWindow *mw, QWidget *widget);
@@ -102,10 +102,10 @@ class BaseModel {
   static void reg(BaseModel *model);
   static void dereg(BaseModel *model);
 
-  static MainWindow *getMainWindow();
+  MainWindow *getMainWindow();
 
  private:
-  static void updateAll(EPL_DataCollect::CaptureInstance *instance, uint32_t cycleNum);
+  static void updateAll(MainWindow *mw, EPL_DataCollect::CaptureInstance *instance);
   static void initAll();
 
   friend MainWindow;  // Allow MainWindow to init

@@ -46,19 +46,19 @@ BaseModel::~BaseModel() { dereg(this); }
 
 MainWindow *BaseModel::getMainWindow() { return mainWindow; }
 
-void BaseModel::updateAll(CaptureInstance *instance, uint32_t cycleNum) {
+void BaseModel::updateAll(MainWindow *mw, CaptureInstance *instance) {
   if (instance == nullptr) {
     qDebug() << "CaptureInstance is a nullptr";
     return;
   }
 
   // Get Cycle
-  cycle.updateCycle(instance, cycleNum);
+  cycle.updateCycle(instance, mw->getCycleNum());
 
   if (cycle->getCycleNum() == UINT32_MAX)
     return;
 
-  GUIState state = mainWindow->getState();
+  GUIState state = mw->getState();
 
   EventLog *log = instance->getEventLog();
 
@@ -78,13 +78,13 @@ void BaseModel::updateAll(CaptureInstance *instance, uint32_t cycleNum) {
         // Check if the GUI is running
         if (state == GUIState::RECORDING || state == GUIState::PLAYING) {
           // Pause recording/playing
-          mainWindow->changeState(GUIState::PAUSED); // TODO: Add configuration option for pausing playing
+          mw->changeState(GUIState::PAUSED); // TODO: Add configuration option for pausing playing
         }
         break;
       case EvType::VIEW_STARTCAP:
         // Check if the GUI is paused
         if (state == GUIState::PAUSED) {
-          mainWindow->changeState(GUIState::PLAYING);
+          mw->changeState(GUIState::PLAYING);
         }
         break;
       default: break;
@@ -128,4 +128,3 @@ bool BaseModel::operator==(const BaseModel &other) { return this == &other; }
 
 uint32_t       BaseModel::appID;
 ProtectedCycle BaseModel::cycle;
-MainWindow *   BaseModel::mainWindow;

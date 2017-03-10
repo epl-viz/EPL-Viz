@@ -37,10 +37,7 @@ using namespace EPL_DataCollect;
 NetworkGraphModel::NetworkGraphModel(MainWindow *mw, NetworkGraphWidget *widget) : BaseModel(mw, widget) {
   graph = widget;
   // TODO: Move the connects to the MainWindow::createModels and connect to networkgraphcontents
-  connect(this,
-          SIGNAL(detectedNewNode(uint8_t nID, ProtectedCycle & c)),
-          mw,
-          SLOT(addNode(uint8_t nID, ProtectedCycle & c)));
+  connect(this, SIGNAL(detectedNewNode(uint8_t, ProtectedCycle &)), mw, SLOT(addNode(uint8_t, ProtectedCycle &)));
   connect(mw, SIGNAL(nodeAdded(uint8_t, NodeWidget *)), this, SLOT(trackNodeWidget(uint8_t, NodeWidget *)));
 }
 

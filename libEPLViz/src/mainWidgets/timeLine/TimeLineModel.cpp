@@ -67,6 +67,5 @@ void TimeLineModel::update(ProtectedCycle &cycle) {
     markers.append(marker);
   }
 
-
   QwtBaseModel::update(cycle);
 }

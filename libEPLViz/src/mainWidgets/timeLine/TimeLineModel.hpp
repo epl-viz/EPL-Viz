@@ -39,10 +39,9 @@ namespace EPL_Viz {
 class TimeLineModel : public QwtBaseModel {
 
  private:
-  uint32_t                                  appid;
-  EPL_DataCollect::EventLog *               log;
-  std::vector<EPL_DataCollect::EventBase *> events;
-  QList<std::shared_ptr<QwtPlotMarker>>     markers;
+  uint32_t                              appid;
+  EPL_DataCollect::EventLog *           log;
+  QList<std::shared_ptr<QwtPlotMarker>> markers;
 
  public:
   TimeLineModel(MainWindow *mw, QwtPlot *widget);

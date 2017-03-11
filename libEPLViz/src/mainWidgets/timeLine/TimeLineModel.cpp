@@ -28,6 +28,7 @@
  */
 
 #include "TimeLineModel.hpp"
+#include "MainWindow.hpp"
 using namespace EPL_Viz;
 using namespace EPL_DataCollect;
 
@@ -37,3 +38,35 @@ TimeLineModel::TimeLineModel(MainWindow *mw, QwtPlot *widget) : QwtBaseModel(mw,
 }
 
 TimeLineModel::~TimeLineModel() {}
+
+void TimeLineModel::init() {
+  markers.clear();
+  log   = getMainWindow()->getCaptureInstance()->getEventLog();
+  appid = log->getAppID();
+
+  QwtBaseModel::init();
+}
+
+void TimeLineModel::update(ProtectedCycle &cycle) {
+  if (!created)
+    return;
+
+  // Add new markers
+  std::vector<EventBase *> nEvents = log->pollEvents(appid);
+  for (EventBase *ev : nEvents) {
+    std::shared_ptr<QwtPlotMarker> marker =
+          std::make_shared<QwtPlotMarker>(QString::fromStdString(ev->getDescription()));
+
+    marker->setLineStyle(QwtPlotMarker::VLine);
+
+    uint32_t x;
+    ev->getCycleRange(&x);
+    marker->setXValue(static_cast<double>(x));
+
+    marker->attach(plot);
+    markers.append(marker);
+  }
+
+
+  QwtBaseModel::update(cycle);
+}

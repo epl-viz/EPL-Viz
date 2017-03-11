@@ -41,8 +41,7 @@ class NetworkGraphModel : public QObject, public BaseModel {
   Q_OBJECT
 
  private:
-  QMap<uint8_t, NodeWidget *> nodeMap;
-  QWidget *graph;
+  NetworkGraphWidget *graph;
 
  public:
   NetworkGraphModel(MainWindow *mw, NetworkGraphWidget *widget);
@@ -52,13 +51,5 @@ class NetworkGraphModel : public QObject, public BaseModel {
  protected:
   void init();
   void update(ProtectedCycle &cycle);
-
- signals:
-  void detectedNewNode(uint8_t nID, ProtectedCycle &c);
-  void nodeUpdated(uint8_t nID, ProtectedCycle &c);
-  void eventsDone();
-
- public slots:
-  void trackNodeWidget(uint8_t id, NodeWidget *nw);
 };
 }

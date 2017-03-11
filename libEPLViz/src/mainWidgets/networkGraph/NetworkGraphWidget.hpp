@@ -29,17 +29,43 @@
 
 #pragma once
 
+#include "NodeWidget.hpp"
+#include <QGridLayout>
 #include <QWidget>
+
+namespace EPL_Viz {
+
+class NetworkGraphModel;
+}
 
 class NetworkGraphWidget : public QWidget {
   Q_OBJECT
+
+ private:
+  QGridLayout *layout = nullptr;
+  uint8_t      count;
+
+  QMap<uint8_t, NodeWidget *> nodeMap;
+
+  QList<uint8_t> createQueue;
+  QList<uint8_t> updateQueue;
 
  public:
   NetworkGraphWidget(QWidget *parent = nullptr);
   ~NetworkGraphWidget()              = default;
 
+  QMap<uint8_t, NodeWidget *> *getNodeWidgets();
+  void updateWidget(EPL_Viz::ProtectedCycle &c);
+
+
+ private:
+  void queueNodeCreation(uint8_t id);
+  void queueNodeUpdate(uint8_t id);
+
+  friend EPL_Viz::NetworkGraphModel;
+
  signals:
-  void nodeChanged(uint8_t node);
+  void nodeSelected(uint8_t node);
 
  public slots:
   void selectNode(uint8_t node);

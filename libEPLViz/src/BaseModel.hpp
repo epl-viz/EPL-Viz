@@ -102,6 +102,8 @@ class BaseModel {
   static void reg(BaseModel *model);
   static void dereg(BaseModel *model);
 
+  static ProtectedCycle &getCurrentCycle();
+
   MainWindow *getMainWindow();
 
  private:
@@ -110,5 +112,8 @@ class BaseModel {
 
   friend MainWindow;  // Allow MainWindow to init
   friend ModelThread; // Allow ModelThread to update
+
+ signals:
+  void updateCompleted(ProtectedCycle &);
 };
 }

@@ -107,8 +107,6 @@ class MainWindow : public QMainWindow {
    */
   EPL_DataCollect::CaptureInstance *getCaptureInstance();
 
-  QWidget *getNetworkGraph();
-
   static void fixQToolButtons(std::vector<QToolButton *> &btns);
   static void fixQToolButtons(std::vector<QAction *> &actions, QToolBar *bar);
 
@@ -123,6 +121,7 @@ class MainWindow : public QMainWindow {
   bool curODWidgetUpdateData(QTreeWidgetItem *item, QString newData);
   void odDescrWidgetUpdateData(QTreeWidgetItem *item, QVector<QString> newData);
 
+
  public slots:
   void setFullscreen(bool makeFullscreen);
   void openPluginEditor();
@@ -134,8 +133,8 @@ class MainWindow : public QMainWindow {
   void handleResults(const QString &);
   void startRecording();
   void stopRecording();
-  void addNode(uint8_t nID, ProtectedCycle &c);
-  void completeCycle();
+  void updateWidgets(ProtectedCycle &cycle);
+
 
  signals:
   void operate(const QString &);
@@ -143,6 +142,5 @@ class MainWindow : public QMainWindow {
   void cycleChanged();
   void eventsUpdated();
   void recordingStarted(EPL_DataCollect::CaptureInstance *);
-  void nodeAdded(uint8_t id, NodeWidget *nw);
 };
 }

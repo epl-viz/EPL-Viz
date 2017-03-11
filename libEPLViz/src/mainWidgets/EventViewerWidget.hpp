@@ -46,8 +46,9 @@ class EventViewerWidget : public QTreeWidget {
   EventViewerWidget(QWidget *parent = nullptr);
   ~EventViewerWidget()              = default;
 
+  void updateEvents();
+
  public slots:
   void start(EPL_DataCollect::CaptureInstance *ci);
-  void updateEvents();
 };
 }

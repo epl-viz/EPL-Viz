@@ -28,7 +28,67 @@
  */
 
 #include "NetworkGraphWidget.hpp"
+#include "Node.hpp"
 
-NetworkGraphWidget::NetworkGraphWidget(QWidget *parent) : QWidget(parent) {}
+NetworkGraphWidget::NetworkGraphWidget(QWidget *parent) : QWidget(parent) {
+  layout = new QGridLayout();
+  this->setLayout(layout);
+}
 
-void NetworkGraphWidget::selectNode(uint8_t node) { emit nodeChanged(node); }
+QMap<uint8_t, NodeWidget *> *NetworkGraphWidget::getNodeWidgets() { return &nodeMap; }
+
+
+void NetworkGraphWidget::updateWidget(EPL_Viz::ProtectedCycle &c) {
+  auto lock = c.getLock();
+
+  // TODO: Use an alternative for hiding unupdated nodes?
+  QMap<uint8_t, NodeWidget *> nodes(nodeMap); // Used to track untouched nodes
+
+  // Apply all queued updates
+  for (auto nID : updateQueue) {
+    NodeWidget *nw = nodeMap[nID];
+
+    nw->updateData(nID, c);
+    nw->show(); // Show the widget if it was hidden
+
+    nodes.remove(nID);
+  }
+
+  updateQueue.clear();
+
+  // Create queued widgets
+  for (auto nID : createQueue) {
+    EPL_DataCollect::Node *n = c->getNode(nID);
+
+    qDebug() << "Creating new node " << QString::number(nID);
+
+    if (!n) {
+      qDebug() << "Invalid node " << QString::number(nID);
+      return;
+    }
+
+    NodeWidget *nw = new NodeWidget(n, this);
+
+    connect(nw, SIGNAL(nodeClicked(uint8_t)), this, SLOT(selectNode(uint8_t)));
+    nodeMap.insert(nID, nw);
+
+    qDebug() << "Placing new node widget at row " << QString::number(count / 4) << " and column "
+             << QString::number(count % 4);
+
+    layout->addWidget(nw, count / 4, count % 4);
+    count++;
+  }
+
+  createQueue.clear();
+
+  // Hide widgets that were not updated (Allows jumps back in time)
+  for (auto nw : nodes.values()) {
+    nw->hide();
+  }
+}
+
+void NetworkGraphWidget::queueNodeUpdate(uint8_t node) { updateQueue.append(node); }
+
+void NetworkGraphWidget::queueNodeCreation(uint8_t node) { createQueue.append(node); }
+
+void NetworkGraphWidget::selectNode(uint8_t node) { emit nodeSelected(node); }

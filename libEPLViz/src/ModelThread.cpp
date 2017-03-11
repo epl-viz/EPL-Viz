@@ -69,7 +69,10 @@ void ModelThread::loop() {
           return;
         }
         BaseModel::updateAll(window, ci);
-        emit cycleHandled();
+
+        // Wait until the widgets are updated in the other thread
+        emit updateCompleted(BaseModel::getCurrentCycle());
+
         break;
       }
       case GUIState::PAUSED: break;

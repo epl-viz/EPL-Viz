@@ -38,7 +38,6 @@ NodeWidget::NodeWidget(EPL_DataCollect::Node *node, QWidget *parent) : QStackedW
 
   auto identity = node->getIdentity();
 
-  connect(this, SIGNAL(nodeChanged(uint8_t)), parent, SLOT(selectNode(uint8_t)));
   setObjectName(QStringLiteral("node") + idString);
 
   // Create widget for minimized view
@@ -237,11 +236,9 @@ void NodeWidget::updateData(uint8_t nID, ProtectedCycle &c) {
   auto                   lock = c.getLock();
   EPL_DataCollect::Node *node = c->getNode(nID);
 
-  // Check if the node is the correct one
-  if (node->getID() == id) {
-    updateIdentityInfo(node->getIdentity());
-    updateStatus(node->getStatus());
-  }
+  updateIdentityInfo(node->getIdentity());
+  updateStatus(node->getStatus());
+  updateStyleSheet();
 }
 
 void NodeWidget::setHighlightingLevel(int level) { highlightingLevel = level; }
@@ -332,7 +329,7 @@ void NodeWidget::updateStatus(EPL_DataCollect::NMTState newStatus) {
 void NodeWidget::mousePressEvent(QMouseEvent *event) {
   if (event->button() == Qt::LeftButton) {
     qDebug() << "Clicked the node " << idString;
-    emit nodeChanged(id);
+    emit nodeClicked(id);
   }
 }
 

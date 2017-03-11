@@ -70,12 +70,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
   btns.emplace_back(ui->actionOD_Filter_2);
   fixQToolButtons(btns, ui->toolBar);
 
-  modelThread = new ModelThread(this, &machineState, this);
-  connect(modelThread, &ModelThread::resultReady, this, &MainWindow::handleResults);
-  connect(modelThread, &ModelThread::finished, modelThread, &QObject::deleteLater);
-  connect(modelThread, SIGNAL(cycleHandled()), this, SLOT(completeCycle()));
-  modelThread->start();
-
   connect(this,
           SIGNAL(recordingStarted(EPL_DataCollect::CaptureInstance *)),
           ui->pluginSelectorWidget,
@@ -85,7 +79,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
           SIGNAL(recordingStarted(EPL_DataCollect::CaptureInstance *)),
           ui->eventLog,
           SLOT(start(EPL_DataCollect::CaptureInstance *))); // Notify the eventLog of the start of recording
-  connect(this, SIGNAL(eventsUpdated()), ui->eventLog, SLOT(updateEvents()));
 
   profileManager->getDefaultProfile()->readWindowSettings(this);
   captureInstance = std::make_unique<CaptureInstance>();
@@ -102,34 +95,6 @@ MainWindow::~MainWindow() {
   delete profileManager;
   delete ui;
   delete settingsWin;
-}
-
-void MainWindow::completeCycle() { emit eventsUpdated(); }
-
-void MainWindow::addNode(uint8_t nID, ProtectedCycle &c) {
-  auto  lock = c.getLock();
-  Node *n    = c->getNode(nID);
-
-  qDebug() << "Creating new node " << QString::number(nID);
-
-  if (!n) {
-    qDebug() << "Invalid node " << static_cast<int>(nID);
-    return;
-  }
-
-  NodeWidget * nw     = new NodeWidget(n, ui->networkGraphContents);
-  QGridLayout *layout = qobject_cast<QGridLayout *>(ui->networkGraphContents->layout());
-
-  if (!layout) {
-    layout = new QGridLayout();
-    ui->networkGraphContents->setLayout(layout);
-    qDebug() << "NetworkGraphWidget was broken";
-  }
-
-  int col = layout->columnCount();
-
-  layout->addWidget(nw, col / 4, col % 4);
-  emit nodeAdded(nID, nw);
 }
 
 void MainWindow::createModels() {
@@ -160,15 +125,20 @@ void MainWindow::createModels() {
   models.append(oddescrModel);
 
   QWidget *network = ui->networkGraphContents;
-  connect(network, SIGNAL(nodeChanged(uint8_t)), cyCoModel, SLOT(changeNode(uint8_t)));
-  connect(network, SIGNAL(nodeChanged(uint8_t)), curODModel, SLOT(changeNode(uint8_t)));
-  connect(network, SIGNAL(nodeChanged(uint8_t)), oddescrModel, SLOT(changeNode(uint8_t)));
+  connect(network, SIGNAL(nodeSelected(uint8_t)), cyCoModel, SLOT(changeNode(uint8_t)));
+  connect(network, SIGNAL(nodeSelected(uint8_t)), curODModel, SLOT(changeNode(uint8_t)));
+  connect(network, SIGNAL(nodeSelected(uint8_t)), oddescrModel, SLOT(changeNode(uint8_t)));
 
 
   modelThread = new ModelThread(this, &machineState, this);
   connect(modelThread, &ModelThread::resultReady, this, &MainWindow::handleResults);
   connect(modelThread, &ModelThread::finished, modelThread, &QObject::deleteLater);
-  // connect(modelThread, SIGNAL(cycleHandled()), this, SLOT(completeCycle()));
+  connect(modelThread,
+          SIGNAL(updateCompleted(ProtectedCycle &)),
+          this,
+          SLOT(updateWidgets(ProtectedCycle &)),
+          Qt::BlockingQueuedConnection);
+
   modelThread->start();
   connect(this, SIGNAL(close()), modelThread, SLOT(stop()));
 }
@@ -177,6 +147,12 @@ void MainWindow::destroyModels() {
   while (!models.isEmpty()) {
     delete models.takeFirst();
   }
+}
+
+void MainWindow::updateWidgets(ProtectedCycle &cycle) {
+  // TODO: Check if this can be done in a cleaner way
+  ui->networkGraphContents->updateWidget(cycle);
+  ui->eventLog->updateEvents();
 }
 
 void MainWindow::fixQToolButtons(std::vector<QToolButton *> &btns) {

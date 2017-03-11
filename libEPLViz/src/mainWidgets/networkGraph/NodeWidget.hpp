@@ -104,7 +104,7 @@ class NodeWidget : public QStackedWidget {
   void mousePressEvent(QMouseEvent *event) override;
 
  signals:
-  void nodeChanged(uint8_t node);
+  void nodeClicked(uint8_t node);
 
  private slots:
   void fixTree(QTreeWidgetItem *item);

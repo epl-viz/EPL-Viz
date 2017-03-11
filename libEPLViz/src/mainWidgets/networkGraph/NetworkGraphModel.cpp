@@ -36,9 +36,6 @@ using namespace EPL_DataCollect;
 
 NetworkGraphModel::NetworkGraphModel(MainWindow *mw, NetworkGraphWidget *widget) : BaseModel(mw, widget) {
   graph = widget;
-  // TODO: Move the connects to the MainWindow::createModels and connect to networkgraphcontents
-  connect(this, SIGNAL(detectedNewNode(uint8_t, ProtectedCycle &)), mw, SLOT(addNode(uint8_t, ProtectedCycle &)));
-  connect(mw, SIGNAL(nodeAdded(uint8_t, NodeWidget *)), this, SLOT(trackNodeWidget(uint8_t, NodeWidget *)));
 }
 
 void NetworkGraphModel::init() {}
@@ -47,17 +44,19 @@ void NetworkGraphModel::update(ProtectedCycle &cycle) {
   auto lock = cycle.getLock();
   auto list = cycle->getNodeList();
 
-  for (uint8_t id : list) {
-    auto s = nodeMap.find(id);
+  QMap<uint8_t, NodeWidget *> *nodeMap = graph->getNodeWidgets();
 
-    if (s == nodeMap.end() || s.key() != id) {
+  for (uint8_t id : list) {
+    auto s = nodeMap->find(id);
+
+    if (s == nodeMap->end() || s.key() != id) {
       // The node is not yet added as a widget and has to be created
-      emit detectedNewNode(id, cycle);
+      graph->queueNodeCreation(id);
     } else {
       // The node is added as widget and has to be updated
-      emit nodeUpdated(id, cycle);
+      graph->queueNodeUpdate(id);
       // Reset highlighting
-      nodeMap[id]->setHighlightingLevel(0);
+      s.value()->setHighlightingLevel(0);
     }
   }
 
@@ -68,33 +67,29 @@ void NetworkGraphModel::update(ProtectedCycle &cycle) {
     switch (event->getType()) {
       case EvType::VIEW_EV_HIGHLIGHT_MN:
       case EvType::VIEW_EV_HIGHLIGHT_CN: {
-        uint64_t node  = event->getEventFlags();             // EventFlags is the NodeID for these events
-        int      level = std::stoi(event->getDescription()); // Description is the highlighting level for these events
+        uint8_t node  = static_cast<uint8_t>(event->getEventFlags()); // EventFlags is the NodeID for these events
+        int     level = std::stoi(event->getDescription()); // Description is the highlighting level for these events
 
         // Invalid node
-        if (cycle->getNode(static_cast<uint8_t>(node)) == nullptr)
+        if (cycle->getNode(node) == nullptr)
           break;
 
         // Check if event is valid
         if ((event->getType() == EvType::VIEW_EV_HIGHLIGHT_CN && node < 240) ||
             (event->getType() == EvType::VIEW_EV_HIGHLIGHT_CN && node == 240)) {
+
+          auto n = nodeMap->find(node);
+
+          // The node may not have been added yet
+          if (n == nodeMap->end())
+            break;
+
           // Set highlighting
-          nodeMap[static_cast<uint8_t>(node)]->setHighlightingLevel(level);
+          n.value()->setHighlightingLevel(level);
         }
         break;
       }
       default: break;
     }
   }
-
-  emit eventsDone();
-}
-
-void NetworkGraphModel::trackNodeWidget(uint8_t id, NodeWidget *nw) {
-  nodeMap.insert(id, nw);
-  connect(this,
-          SIGNAL(nodeUpdated(uint8_t nID, ProtectedCycle & c)),
-          nw,
-          SLOT(updateData(uint8_t nID, ProtectedCycle & c)));
-  connect(this, SIGNAL(eventsDone()), nw, SLOT(updateStyleSheet()));
 }

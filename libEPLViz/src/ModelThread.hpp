@@ -36,6 +36,7 @@
 namespace EPL_Viz {
 
 class MainWindow;
+class ProtectedCycle;
 
 class ModelThread : public QThread {
   Q_OBJECT
@@ -58,7 +59,7 @@ class ModelThread : public QThread {
 
  signals:
   void resultReady(const QString &result);
-  void cycleHandled();
+  void updateCompleted(ProtectedCycle &cycle);
  public slots:
   void stop();
 };

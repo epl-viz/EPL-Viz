@@ -102,6 +102,8 @@ void BaseModel::updateAll(MainWindow *mw, CaptureInstance *instance) {
   }
 }
 
+ProtectedCycle &BaseModel::getCurrentCycle() { return cycle; }
+
 void BaseModel::initAll() {
   QLinkedListIterator<BaseModel *> iterator(*registeredModels);
   appID = UINT32_MAX; // Initialize appID with a dummy value

@@ -54,6 +54,7 @@ class PythonLogModel : public QAbstractTableModel, public BaseModel {
   PythonLogModel(MainWindow *window, QTableView *widget);
   PythonLogModel()  = delete;
   ~PythonLogModel() = default;
+  QString getName() override { return "PythonLogModel"; }
 
   void init() override;
 

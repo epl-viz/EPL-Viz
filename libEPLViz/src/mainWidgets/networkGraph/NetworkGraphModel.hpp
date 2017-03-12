@@ -47,9 +47,10 @@ class NetworkGraphModel : public QObject, public BaseModel {
   NetworkGraphModel(MainWindow *mw, NetworkGraphWidget *widget);
   NetworkGraphModel()  = delete;
   ~NetworkGraphModel() = default;
+  QString getName() override { return "NetworkGraphModel"; }
 
  protected:
-  void init();
-  void update(ProtectedCycle &cycle);
+  void init() override;
+  void update(ProtectedCycle &cycle) override;
 };
 }

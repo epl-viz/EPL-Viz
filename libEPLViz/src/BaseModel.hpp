@@ -84,16 +84,17 @@ class ModelThread;
 class BaseModel {
 
  private:
-  static QLinkedList<BaseModel *> *registeredModels;
-  static uint32_t                  appID;
-  static ProtectedCycle            cycle;
-  MainWindow *                     mainWindow;
+  static QLinkedList<BaseModel *> registeredModels;
+  static uint32_t                 appID;
+  static ProtectedCycle           cycle;
+  MainWindow *                    mainWindow;
 
  public:
   BaseModel(MainWindow *mw, QWidget *widget);
   virtual ~BaseModel();
 
   inline bool operator==(const BaseModel &other);
+  virtual QString getName() = 0;
 
  protected:
   virtual void update(ProtectedCycle &cycle) = 0;

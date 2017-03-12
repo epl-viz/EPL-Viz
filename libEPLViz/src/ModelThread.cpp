@@ -83,7 +83,10 @@ void ModelThread::loop() {
   }
 }
 
-void ModelThread::run() { ModelThread::loop(); }
+void ModelThread::run() {
+  running = true;
+  ModelThread::loop();
+}
 
 void ModelThread::stop() {
   qDebug() << "Stopping";

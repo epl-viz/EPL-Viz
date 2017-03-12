@@ -50,7 +50,8 @@ class QwtBaseModel : public QObject, public BaseModel {
   QwtBaseModel()  = delete;
   ~QwtBaseModel() = default;
 
-  void init() override;
+  void    init() override;
+  QString getName() override { return "QwtBaseModel"; }
 
  protected:
   MainWindow *                                          window;

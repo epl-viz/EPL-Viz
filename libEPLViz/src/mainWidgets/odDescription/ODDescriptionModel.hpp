@@ -52,6 +52,8 @@ class ODDescriptionModel final : public TreeModelBase, public BaseModel {
   ODDescriptionModel()  = delete;
   ~ODDescriptionModel() = default;
 
+  QString getName() override { return "ODDescriptionModel"; }
+
   void init() override;
 
  protected:

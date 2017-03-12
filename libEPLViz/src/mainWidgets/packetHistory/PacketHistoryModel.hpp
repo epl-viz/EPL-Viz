@@ -49,6 +49,7 @@ class PacketHistoryModel : public QObject, public BaseModel {
   PacketHistoryModel(MainWindow *window, QPlainTextEdit *widget);
   PacketHistoryModel()  = delete;
   ~PacketHistoryModel() = default;
+  QString getName() override { return "PacketHistoryModel"; }
 
   void init() override;
 

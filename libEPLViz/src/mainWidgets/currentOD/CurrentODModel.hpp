@@ -53,7 +53,8 @@ class CurrentODModel final : public TreeModelBase, public BaseModel {
   CurrentODModel() = delete;
   ~CurrentODModel();
 
-  void init() override;
+  void    init() override;
+  QString getName() override { return "CurrentODModel"; }
 
  protected:
   void update(ProtectedCycle &cycle) override;

@@ -39,6 +39,9 @@ class CycleCommandsModel : public QAbstractItemModel, public BaseModel {
   Q_OBJECT
 
  public:
+  QString getName() override { return "CycleCommandsModel"; }
+
+ public:
   CycleCommandsModel(MainWindow *mw, QTreeView *widget);
   CycleCommandsModel() = delete;
   ~CycleCommandsModel();

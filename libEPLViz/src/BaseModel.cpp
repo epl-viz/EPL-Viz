@@ -33,7 +33,7 @@
 using namespace EPL_Viz;
 using namespace EPL_DataCollect;
 
-QLinkedList<BaseModel *> *BaseModel::registeredModels = new QLinkedList<BaseModel *>;
+QLinkedList<BaseModel *> BaseModel::registeredModels;
 
 BaseModel::BaseModel(MainWindow *mw, QWidget *widget) {
   (void)widget;
@@ -96,33 +96,35 @@ void BaseModel::updateAll(MainWindow *mw, CaptureInstance *instance) {
     return;
 
   // Update models
-  QLinkedListIterator<BaseModel *> iterator(*registeredModels);
-  while (iterator.hasNext()) {
-    iterator.next()->update(cycle);
+  for (auto &i : registeredModels) {
+    //    qDebug() << "[" << cycle->getCycleNum() << "] Updating " << i->getName();
+    i->update(cycle);
+    //    qDebug() << "[" << cycle->getCycleNum() << "] DONE     " << i->getName();
   }
 }
 
 ProtectedCycle &BaseModel::getCurrentCycle() { return cycle; }
 
 void BaseModel::initAll() {
-  QLinkedListIterator<BaseModel *> iterator(*registeredModels);
   appID = UINT32_MAX; // Initialize appID with a dummy value
 
-  while (iterator.hasNext()) {
-    iterator.next()->init();
+  for (auto &i : registeredModels) {
+    //    qDebug() << "[INIT] Updating " << i->getName();
+    i->init();
+    //    qDebug() << "[INIT] DONE     " << i->getName();
   }
 }
 
 void BaseModel::reg(BaseModel *model) {
-  if (!registeredModels->contains(model)) {
+  if (!registeredModels.contains(model)) {
     qDebug() << "Registered a model";
-    registeredModels->append(model);
+    registeredModels.append(model);
   } else
     throw std::runtime_error("Cannot add a model twice!");
 }
 
 void BaseModel::dereg(BaseModel *model) {
-  registeredModels->removeOne(model);
+  registeredModels.removeOne(model);
   qDebug() << "Deregistered a model";
 }
 

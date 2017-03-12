@@ -33,12 +33,24 @@
 #include "Cycle.hpp"
 #include "QwtBaseModel.hpp"
 
+#include "qwt_plot_marker.h"
+
 namespace EPL_Viz {
 class TimeLineModel : public QwtBaseModel {
+
+ private:
+  uint32_t                              appid;
+  EPL_DataCollect::EventLog *           log;
+  QList<std::shared_ptr<QwtPlotMarker>> markers;
 
  public:
   TimeLineModel(MainWindow *mw, QwtPlot *widget);
   TimeLineModel() = delete;
   virtual ~TimeLineModel();
+
+  void init() override;
+
+ protected:
+  void update(ProtectedCycle &cycle) override;
 };
 }

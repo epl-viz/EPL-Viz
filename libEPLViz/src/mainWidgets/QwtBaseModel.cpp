@@ -91,5 +91,5 @@ void QwtBaseModel::setXMin(uint32_t min) {
 }
 
 void QwtBaseModel::setXMax(uint32_t max) {
-  plot->setAxisScale(QwtPlot::xBottom,plot->axisScaleDiv(QwtPlot::xBottom).lowerBound(), static_cast<double>(max));
+  plot->setAxisScale(QwtPlot::xBottom, plot->axisScaleDiv(QwtPlot::xBottom).lowerBound(), static_cast<double>(max));
 }

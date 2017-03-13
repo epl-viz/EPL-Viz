@@ -43,7 +43,7 @@ void TimeLineModel::init() {
   markers.clear();
   viewportSize = 1000;
   curCycleMarker.setLineStyle(QwtPlotMarker::VLine);
-  curCycleMarker.setLinePen(QColor(0,0,0), 2, Qt::PenStyle::DotLine);
+  curCycleMarker.setLinePen(QColor(0, 0, 0), 2, Qt::PenStyle::DotLine);
   curCycleMarker.setXValue(static_cast<double>(0));
   curCycleMarker.attach(plot);
   log   = getMainWindow()->getCaptureInstance()->getEventLog();
@@ -79,20 +79,20 @@ void TimeLineModel::update(ProtectedCycle &cycle) {
 }
 
 void TimeLineModel::updateViewport(int value) {
-  int64_t nmin = (static_cast<int64_t>(value) - viewportSize/2);
-  int64_t nmax = (static_cast<int64_t>(value) + viewportSize/2);
+  int64_t nmin = (static_cast<int64_t>(value) - viewportSize / 2);
+  int64_t nmax = (static_cast<int64_t>(value) + viewportSize / 2);
 
   qDebug() << "Changing viewport to [" + QString::number(nmin) + "-" + QString::number(nmax) + "]";
 
   if (nmin < 0) {
     nmax += std::abs(nmin);
-    nmin  = 0;
+    nmin = 0;
   }
 
-  uint32_t max =  static_cast<uint32_t>(plot->axisScaleDiv(QwtPlot::xBottom).upperBound());
+  uint32_t max = static_cast<uint32_t>(plot->axisScaleDiv(QwtPlot::xBottom).upperBound());
   if (nmax > max) {
     nmin -= (nmax - max);
-    nmax  = max;
+    nmax = max;
   }
   plot->setAxisScale(QwtPlot::xBottom, static_cast<double>(nmin), static_cast<double>(nmax));
   plot->replot();

@@ -58,7 +58,7 @@ class TimeLineModel : public QwtBaseModel {
  signals:
   void maxChanged(int notUsed, int nMax);
 
-public slots:
+ public slots:
   void updateViewport(int value);
 };
 }

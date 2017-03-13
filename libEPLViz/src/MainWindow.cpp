@@ -33,10 +33,10 @@
 #include "InterfacePicker.hpp"
 #include "NetworkGraphModel.hpp"
 #include "ODDescriptionModel.hpp"
-#include "TimeLineModel.hpp"
 #include "PluginsWindow.hpp"
 #include "SettingsWindow.hpp"
 #include "SettingsWindow.hpp"
+#include "TimeLineModel.hpp"
 #include "TimeSeriesBuilder.hpp"
 #include <memory>
 #include <vector>
@@ -120,7 +120,7 @@ void MainWindow::createModels() {
   connect(ui->scrBarTimeline, SIGNAL(valueChanged(int)), timeLineModel, SLOT(updateViewport(int)));
   connect(timeLineModel, SIGNAL(maxValueChanged), ui->scrBarTimeline, SLOT(setRange(int, int)));
   // TODO update timeline value
-  //connect(this, SIGNAL(cycleChanged()), ui->scrBarTimeline, SLOT(setValue(int)))
+  // connect(this, SIGNAL(cycleChanged()), ui->scrBarTimeline, SLOT(setValue(int)))
 
   // Append the nodes to a list for cleanup
   models.append(packetHistoryModel);
@@ -366,12 +366,11 @@ bool MainWindow::curODWidgetUpdateData(QTreeWidgetItem *item, QString newData) {
 SettingsWindow *MainWindow::getSettingsWin() { return settingsWin; }
 
 void MainWindow::userEnteredCycle() {
-  bool ok;
+  bool     ok;
   uint32_t parsedCycle = static_cast<uint32_t>(ui->lineEditCycle->text().toULong(&ok));
   if (ok) {
     changeCycle(parsedCycle);
-  }
-  else {
+  } else {
     // TODO do something if wrong?
     qDebug() << "Wrong formatted input for cycle";
   }

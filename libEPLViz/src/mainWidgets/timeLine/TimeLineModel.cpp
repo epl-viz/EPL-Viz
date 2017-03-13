@@ -41,6 +41,10 @@ TimeLineModel::~TimeLineModel() {}
 
 void TimeLineModel::init() {
   markers.clear();
+  curCycleMarker.setLineStyle(QwtPlotMarker::VLine);
+  curCycleMarker.setLinePen(QColor(0,0,0), 2, Qt::PenStyle::DotLine);
+  curCycleMarker.setXValue(static_cast<double>(0));
+  curCycleMarker.attach(plot);
   log   = getMainWindow()->getCaptureInstance()->getEventLog();
   appid = log->getAppID();
 
@@ -50,6 +54,9 @@ void TimeLineModel::init() {
 void TimeLineModel::update(ProtectedCycle &cycle) {
   if (!created)
     return;
+
+  // Change cyclemarker position
+  curCycleMarker.setXValue(static_cast<double>(window->getCycleNum()));
 
   // Add new markers
   std::vector<EventBase *> nEvents = log->pollEvents(appid);

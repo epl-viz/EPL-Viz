@@ -42,6 +42,7 @@ class TimeLineModel : public QwtBaseModel {
   uint32_t                              appid;
   EPL_DataCollect::EventLog *           log;
   QList<std::shared_ptr<QwtPlotMarker>> markers;
+  QwtPlotMarker                         curCycleMarker;
 
  public:
   TimeLineModel(MainWindow *mw, QwtPlot *widget);

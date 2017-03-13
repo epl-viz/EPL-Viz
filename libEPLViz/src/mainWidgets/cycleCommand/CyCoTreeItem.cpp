@@ -47,7 +47,7 @@ QVariant CyCoTreeItem::dataDisplay(int column) {
   if (pIndex >= c->getPackets().size())
     return QVariant();
 
-  Packet &                 packet = c->getPackets().at(pIndex);
+  Packet                   packet = c->getPackets().at(pIndex);
   system_clock::time_point SoC    = c->getPackets().at(0).getTimeStamp();
   system_clock::time_point last;
   if (pIndex == 0) {

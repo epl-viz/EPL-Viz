@@ -47,8 +47,8 @@ QVariant CyCoTreeItem::dataDisplay(int column) {
   if (pIndex >= c->getPackets().size())
     return QVariant();
 
-  Packet &                 p   = c->getPackets().at(pIndex);
-  system_clock::time_point SoC = c->getPackets().at(0).getTimeStamp();
+  Packet &                 packet = c->getPackets().at(pIndex);
+  system_clock::time_point SoC    = c->getPackets().at(0).getTimeStamp();
   system_clock::time_point last;
   if (pIndex == 0) {
     last = SoC;
@@ -58,15 +58,15 @@ QVariant CyCoTreeItem::dataDisplay(int column) {
 
   switch (column) {
     case 0: // TYPE
-      return QVariant(EPLEnum2Str::toStr(p.getType()).c_str());
+      return QVariant(EPLEnum2Str::toStr(packet.getType()).c_str());
     case 1: // SOURCE
-      return QVariant(static_cast<int>(p.getSrcNode()));
+      return QVariant(static_cast<int>(packet.getSrcNode()));
     case 2: // DEST
-      return QVariant(static_cast<int>(p.getDestNode()));
+      return QVariant(static_cast<int>(packet.getDestNode()));
     case 3: // Relative SoC
-      return QVariant(std::to_string((p.getTimeStamp() - SoC).count()).c_str());
+      return QVariant(std::to_string((packet.getTimeStamp() - SoC).count()).c_str());
     case 4: // Relative lasts
-      return QVariant(std::to_string((p.getTimeStamp() - last).count()).c_str());
+      return QVariant(std::to_string((packet.getTimeStamp() - last).count()).c_str());
     default: return QVariant();
   }
 }

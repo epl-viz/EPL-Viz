@@ -30,29 +30,29 @@
  */
 #pragma once
 
+#include "Packet.hpp"
+#include "TreeModelItemBase.hpp"
 #include <QList>
 #include <QVariant>
 #include <QVector>
 
 namespace EPL_Viz {
-class CyCoTreeItem {
- public:
-  CyCoTreeItem(const QVector<QVariant> &data, CyCoTreeItem *par = 0);
-  ~CyCoTreeItem();
-
-  CyCoTreeItem *child(int number);
-  int      childCount() const;
-  int      columnCount() const;
-  QVariant data(int column) const;
-  bool insertChildren(int position, int count);
-  CyCoTreeItem *parent();
-  bool removeChildren(int position, int count);
-  int  childNumber() const;
-  bool setData(int column, const QVariant &value);
-
+class CyCoTreeItem final : public TreeModelItemBase {
  private:
-  QList<CyCoTreeItem *> childItems;
-  QVector<QVariant>     itemData;
-  CyCoTreeItem *        parentItem;
+  ProtectedCycle &c;
+  size_t          pIndex;
+
+
+  QVariant dataDisplay(int column);
+  QVariant dataTooltip(int column);
+
+ public:
+  CyCoTreeItem() = delete;
+  CyCoTreeItem(TreeModelItemBase *parent, ProtectedCycle &cycle, size_t packetIndexs);
+  virtual ~CyCoTreeItem();
+
+  QVariant data(int column, Qt::ItemDataRole role) override;
+  bool          hasChanged() override;
+  Qt::ItemFlags flags() override;
 };
 }

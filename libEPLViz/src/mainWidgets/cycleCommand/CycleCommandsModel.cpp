@@ -34,138 +34,44 @@ using namespace EPL_Viz;
 using namespace EPL_DataCollect;
 
 CycleCommandsModel::CycleCommandsModel(MainWindow *mw, QTreeView *widget)
-    : QAbstractItemModel(mw), BaseModel(mw, widget) {
-  QVector<QVariant> rootData;
-  rootData << "Command"
-           << "Index"
-           << "Value"
-           << "Other";
-  rootItem = new CyCoTreeItem(rootData);
-  view     = widget;
-  view->setModel(this);
-  view->setDisabled(true);
-  view->setToolTip("Please start a capture or replay and select a Node");
-  needUpdate = false;
+    : TreeModelBase(widget), BaseModel(mw, widget) {
+  root = new TreeModelRoot({{Qt::DisplayRole,
+                             {QVariant("Type"),
+                              QVariant("Source"),
+                              QVariant("Destination"),
+                              QVariant("Relative SoC"),
+                              QVariant("Relative last")}},
+                            {Qt::ToolTipRole,
+                             {QVariant("The packet type"),
+                              QVariant("The ID of the sending node"),
+                              QVariant("The ID of the reciving node"),
+                              QVariant("Time passed since last Start of Cycle"),
+                              QVariant("Time passed since last packet")}}});
 }
 
-CycleCommandsModel::~CycleCommandsModel() { delete rootItem; }
-
-CyCoTreeItem *CycleCommandsModel::getItem(const QModelIndex &index) const {
-  if (index.isValid()) {
-    CyCoTreeItem *item = static_cast<CyCoTreeItem *>(index.internalPointer());
-    if (item)
-      return item;
-  }
-
-  return rootItem;
-}
-
-int CycleCommandsModel::rowCount(const QModelIndex &parent) const {
-  CyCoTreeItem *parentItem = getItem(parent);
-
-  return parentItem->childCount();
-}
-
-int CycleCommandsModel::columnCount(const QModelIndex &) const { return rootItem->columnCount(); }
-
-Qt::ItemFlags CycleCommandsModel::flags(const QModelIndex &index) const {
-  if (!index.isValid())
-    return 0;
-
-  return QAbstractItemModel::flags(index);
-}
-
-QModelIndex CycleCommandsModel::index(int row, int column, const QModelIndex &parent) const {
-  if (parent.isValid() && parent.column() != 0)
-    return QModelIndex();
-
-  CyCoTreeItem *parentItem = getItem(parent);
-  CyCoTreeItem *childItem  = parentItem->child(row);
-
-  if (childItem)
-    return createIndex(row, column, childItem);
-  else
-    return QModelIndex();
-}
-
-QModelIndex CycleCommandsModel::parent(const QModelIndex &index) const {
-  if (!index.isValid())
-    return QModelIndex();
-
-  CyCoTreeItem *childItem  = getItem(index);
-  CyCoTreeItem *parentItem = childItem->parent();
-
-  if (parentItem == rootItem)
-    return QModelIndex();
-
-  return createIndex(parentItem->childNumber(), 0, parentItem);
-}
-
-QVariant CycleCommandsModel::headerData(int section, Qt::Orientation orientation, int role) const {
-  if (orientation == Qt::Horizontal && role == Qt::DisplayRole)
-    return rootItem->data(section);
-
-  return QVariant();
-}
-
-bool CycleCommandsModel::insertRows(int position, int rows, const QModelIndex &parent) {
-  CyCoTreeItem *parentItem = getItem(parent);
-  bool          success;
-  beginInsertColumns(parent, position, position + rows - 1);
-  success = parentItem->insertChildren(position, rows);
-  endInsertRows();
-
-  return success;
-}
-
-bool CycleCommandsModel::removeRows(int position, int rows, const QModelIndex &parent) {
-  CyCoTreeItem *parentItem = getItem(parent);
-  bool          success    = true;
-
-  beginRemoveRows(parent, position, position + rows - 1);
-  success = parentItem->removeChildren(position, rows);
-  endRemoveRows();
-
-  return success;
-}
-
-QVariant CycleCommandsModel::data(const QModelIndex &index, int role) const {
-  if (!index.isValid())
-    return QVariant();
-
-  if (role != Qt::DisplayRole)
-    return QVariant();
-
-  CyCoTreeItem *item = getItem(index);
-  return item->data(index.column());
-}
-
+CycleCommandsModel::~CycleCommandsModel() {}
 void CycleCommandsModel::init() {}
 
+
 void CycleCommandsModel::update(ProtectedCycle &cycle) {
-  if (!needUpdate)
+  auto lock = cycle.getLock();
+
+  if (lastCycle == cycle->getCycleNum())
     return;
 
-  auto                lock    = cycle.getLock();
-  std::vector<Packet> packets = cycle->getPackets();
+  size_t numPackets = cycle->getPackets().size();
 
   // Delete old tree and add new
   beginResetModel();
-  rootItem->removeChildren(0, rootItem->childCount());
+  root->clear();
 
-  for (uint32_t i = 0; i < packets.size(); ++i) {
-    rootItem->insertChildren(static_cast<int>(i), 1);
-    // Root Packets
-    rootItem->child(static_cast<int>(i))->setData(0, QVariant("Frame " + QString::number(i)));
-    // TODO set children
+  for (size_t i = 0; i < numPackets; ++i) {
+    root->push_back(std::make_unique<CyCoTreeItem>(root, cycle, i));
   }
+
   endResetModel();
+  lastCycle = cycle->getCycleNum();
 }
 
-void CycleCommandsModel::updateNext() { needUpdate = true; }
 
-void CycleCommandsModel::changeNode(uint8_t newNode) {
-  selectedNode = newNode;
-  view->setEnabled(true);
-  updateNext();
-}
+void CycleCommandsModel::changeNode(uint8_t) {}

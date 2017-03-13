@@ -31,6 +31,7 @@
 #include "QWTPlotWidget.hpp"
 #include <QDebug>
 #include <QEvent>
+#include <QLineEdit>
 #include <qwt_event_pattern.h>
 #include <qwt_picker_machine.h>
 #include <qwt_plot.h>
@@ -63,6 +64,9 @@ bool TimelineWidget::event(QEvent *event) {
 
       connect(point, SIGNAL(selected(QPointF)), this, SLOT(pointSelected(QPointF)));
       connect(area, SIGNAL(selected(QRectF)), window->findChild<QWTPlotWidget *>("tabGraph"), SLOT(changeArea(QRectF)));
+
+      QLineEdit *textEdit = window->findChild<QLineEdit *>("lineEditCycle");
+      textEdit->setValidator(new QIntValidator(0, INT32_MAX, this));
 
     } else {
       qDebug() << "PlotTimeline not found, this is ok";

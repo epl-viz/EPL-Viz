@@ -53,5 +53,11 @@ class TimeLineModel : public QwtBaseModel {
 
  protected:
   void update(ProtectedCycle &cycle) override;
+
+ signals:
+  void maxChanged(uint32_t max);
+
+public slots:
+  void updateViewport(uint32_t min, uint32_t max);
 };
 }

@@ -357,4 +357,17 @@ bool MainWindow::curODWidgetUpdateData(QTreeWidgetItem *item, QString newData) {
 
 SettingsWindow *MainWindow::getSettingsWin() { return settingsWin; }
 
+void MainWindow::userEnteredCycle() {
+  bool ok;
+  uint32_t parsedCycle = static_cast<uint32_t>(ui->lineEditCycle->text().toULong(&ok));
+  if (ok) {
+    changeCycle(parsedCycle);
+  }
+  else {
+    // TODO do something if wrong?
+    qDebug() << "Wrong formatted input for cycle";
+  }
+  ui->lineEditCycle->clear();
+}
+
 void MainWindow::handleResults(const QString &result) { qDebug() << "The result is\"" << result << "\""; }

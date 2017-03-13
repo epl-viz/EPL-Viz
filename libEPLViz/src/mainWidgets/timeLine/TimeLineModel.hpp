@@ -40,6 +40,7 @@ class TimeLineModel : public QwtBaseModel {
 
  private:
   uint32_t                              appid;
+  uint32_t                              viewportSize;
   EPL_DataCollect::EventLog *           log;
   QList<std::shared_ptr<QwtPlotMarker>> markers;
   QwtPlotMarker                         curCycleMarker;
@@ -55,9 +56,9 @@ class TimeLineModel : public QwtBaseModel {
   void update(ProtectedCycle &cycle) override;
 
  signals:
-  void maxChanged(uint32_t max);
+  void maxChanged(int notUsed, int nMax);
 
 public slots:
-  void updateViewport(uint32_t min, uint32_t max);
+  void updateViewport(int value);
 };
 }

@@ -285,7 +285,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QScrollBar" name="horizontalScrollBar">
+      <widget class="QScrollBar" name="scrBarTimeline">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>

@@ -33,6 +33,7 @@
 #include "InterfacePicker.hpp"
 #include "NetworkGraphModel.hpp"
 #include "ODDescriptionModel.hpp"
+#include "TimeLineModel.hpp"
 #include "PluginsWindow.hpp"
 #include "SettingsWindow.hpp"
 #include "SettingsWindow.hpp"
@@ -106,6 +107,7 @@ void MainWindow::createModels() {
   CurrentODModel *    curODModel         = new CurrentODModel(this, ui->curNodeODWidget);
   PythonLogModel *    pythonLogModel     = new PythonLogModel(this, ui->pythonLogView);
   PacketHistoryModel *packetHistoryModel = new PacketHistoryModel(this, ui->packetHistoryTextEdit);
+  TimeLineModel *     timeLineModel      = new TimeLineModel(this, ui->qwtPlot);
 
   // Connect required signals
   connect(this, SIGNAL(cycleChanged()), cyCoModel, SLOT(updateNext()));
@@ -114,6 +116,11 @@ void MainWindow::createModels() {
           SIGNAL(textUpdated(QString, QPlainTextEdit *)),
           ui->dockPacketHistory,
           SLOT(updatePacketHistoryLog(QString, QPlainTextEdit *)));
+  // TODO need to emit
+  connect(ui->scrBarTimeline, SIGNAL(valueChanged(int)), timeLineModel, SLOT(updateViewport(int)));
+  connect(timeLineModel, SIGNAL(maxValueChanged), ui->scrBarTimeline, SLOT(setRange(int, int)));
+  // TODO update timeline value
+  //connect(this, SIGNAL(cycleChanged()), ui->scrBarTimeline, SLOT(setValue(int)))
 
   // Append the nodes to a list for cleanup
   models.append(packetHistoryModel);
@@ -123,6 +130,7 @@ void MainWindow::createModels() {
   models.append(networkGraphModel);
   models.append(cyCoModel);
   models.append(oddescrModel);
+  models.append(timeLineModel);
 
   QWidget *network = ui->networkGraphContents;
   connect(network, SIGNAL(nodeSelected(uint8_t)), cyCoModel, SLOT(changeNode(uint8_t)));

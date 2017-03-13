@@ -85,3 +85,11 @@ void QwtBaseModel::update(ProtectedCycle &cycle) {
   }
   emit requestRedraw();
 }
+
+void QwtBaseModel::setXMin(uint32_t min) {
+  plot->setAxisScale(QwtPlot::xBottom, static_cast<double>(min), plot->axisScaleDiv(QwtPlot::xBottom).upperBound());
+}
+
+void QwtBaseModel::setXMax(uint32_t max) {
+  plot->setAxisScale(QwtPlot::xBottom,plot->axisScaleDiv(QwtPlot::xBottom).lowerBound(), static_cast<double>(max));
+}

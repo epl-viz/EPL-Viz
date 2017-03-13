@@ -31,50 +31,30 @@
 
 #include "BaseModel.hpp"
 #include "CyCoTreeItem.hpp"
+#include "TreeModelBase.hpp"
 #include <QAbstractItemModel>
 #include <QTreeView>
 
 namespace EPL_Viz {
-class CycleCommandsModel : public QAbstractItemModel, public BaseModel {
+class CycleCommandsModel : public TreeModelBase, public BaseModel {
   Q_OBJECT
 
- public:
-  QString getName() override { return "CycleCommandsModel"; }
+ private:
+  uint32_t lastCycle = 0;
+
+ protected:
+  mockable void update(ProtectedCycle &cycle) override;
 
  public:
   CycleCommandsModel(MainWindow *mw, QTreeView *widget);
   CycleCommandsModel() = delete;
   ~CycleCommandsModel();
 
-  QVariant data(const QModelIndex &index, int role) const override;
-  QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;
-  QModelIndex index(int row, int column, const QModelIndex &parent = QModelIndex()) const override;
-  QModelIndex parent(const QModelIndex &index) const override;
-  int rowCount(const QModelIndex &parent = QModelIndex()) const override;
-  int columnCount(const QModelIndex &parent = QModelIndex()) const override;
-
-  Qt::ItemFlags flags(const QModelIndex &index) const override;
-  // bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole) override;
-  // bool setHeaderData(int section, Qt::Orientation orientation, const QVariant &value, int role = Qt::EditRole)
-  // override;
-  bool insertRows(int position, int rows, const QModelIndex &parent = QModelIndex()) override;
-  bool removeRows(int position, int rows, const QModelIndex &parent = QModelIndex()) override;
-
   void init() override;
 
- private:
-  uint8_t       selectedNode = 0;
-  bool          needUpdate   = 0;
-  CyCoTreeItem *rootItem     = nullptr;
-  QTreeView *   view         = nullptr;
-
-  CyCoTreeItem *getItem(const QModelIndex &index) const;
-
- protected:
-  mockable void update(ProtectedCycle &cycle) override;
+  QString getName() override { return "CycleCommandsModel"; }
 
  public slots:
-  void updateNext();
   void changeNode(uint8_t newNode);
 };
 }

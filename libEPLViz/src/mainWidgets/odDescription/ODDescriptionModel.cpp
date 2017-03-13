@@ -41,7 +41,12 @@ ODDescriptionModel::ODDescriptionModel(MainWindow *window, QTreeView *treeWidget
     : TreeModelBase(treeWidget), BaseModel(window, treeWidget) {
   root = new TreeModelRoot(
         {{Qt::DisplayRole,
-          {QVariant("Index"), QVariant("Name"), QVariant("Type"), QVariant("Data Type"), QVariant("Default Value")}}});
+          {QVariant("Index"), QVariant("Name"), QVariant("Type"), QVariant("Data Type"), QVariant("Default Value")}},
+         {Qt::ToolTipRole,
+          {QVariant("The HEX index of the OD entry"),
+           QVariant("The type of the OD entry"),
+           QVariant("The data type of the OD entry"),
+           QVariant("The default value specified in the XDD (0 if not specified)")}}});
 }
 
 void ODDescriptionModel::init() {}

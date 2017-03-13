@@ -27,57 +27,73 @@
  * \file CyCoTreeItem.cpp
  */
 #include "CyCoTreeItem.hpp"
+#include "EPLEnum2Str.hpp"
+
+using namespace EPL_DataCollect;
 using namespace EPL_Viz;
+using namespace std::chrono;
 
-CyCoTreeItem::CyCoTreeItem(const QVector<QVariant> &data, CyCoTreeItem *parent) {
-  parentItem = parent;
-  itemData   = data;
-}
+CyCoTreeItem::CyCoTreeItem(TreeModelItemBase *parent, ProtectedCycle &cycle, size_t packetIndexs)
+    : TreeModelItemBase(parent), c(cycle), pIndex(packetIndexs) {}
 
-CyCoTreeItem::~CyCoTreeItem() { qDeleteAll(childItems); }
+CyCoTreeItem::~CyCoTreeItem() {}
 
-CyCoTreeItem *CyCoTreeItem::parent() { return parentItem; }
+Qt::ItemFlags CyCoTreeItem::flags() { return Qt::ItemIsEnabled; }
+bool          CyCoTreeItem::hasChanged() { return false; }
 
-CyCoTreeItem *CyCoTreeItem::child(int number) { return childItems.value(number); }
+QVariant CyCoTreeItem::dataDisplay(int column) {
+  auto lock = c.getLock();
 
-int CyCoTreeItem::childCount() const { return childItems.count(); }
+  if (pIndex >= c->getPackets().size())
+    return QVariant();
 
-int CyCoTreeItem::childNumber() const {
-  if (parentItem)
-    return parentItem->childItems.indexOf(const_cast<CyCoTreeItem *>(this));
-  return 0;
-}
-int CyCoTreeItem::columnCount() const { return itemData.count(); }
-
-QVariant CyCoTreeItem::data(int column) const { return itemData.value(column); }
-
-bool CyCoTreeItem::setData(int column, const QVariant &value) {
-  if (column < 0 || column >= itemData.size())
-    return false;
-
-  itemData[column] = value;
-  return true;
-}
-
-bool CyCoTreeItem::insertChildren(int position, int count) {
-  if (position < 0 || position > childItems.size())
-    return false;
-
-  for (int row = 0; row < count; ++row) {
-    QVector<QVariant> data(columnCount());
-    CyCoTreeItem *    item = new CyCoTreeItem(data, this);
-    childItems.insert(position, item);
+  Packet                   packet = c->getPackets().at(pIndex);
+  system_clock::time_point SoC    = c->getPackets().at(0).getTimeStamp();
+  system_clock::time_point last;
+  if (pIndex == 0) {
+    last = SoC;
+  } else {
+    last = c->getPackets().at(pIndex - 1).getTimeStamp();
   }
 
-  return true;
+  switch (column) {
+    case 0: // TYPE
+      return QVariant(EPLEnum2Str::toStr(packet.getType()).c_str());
+    case 1: // SOURCE
+      return QVariant(static_cast<int>(packet.getSrcNode()));
+    case 2: // DEST
+      return QVariant(static_cast<int>(packet.getDestNode()));
+    case 3: // Relative SoC
+      return QVariant(std::to_string((packet.getTimeStamp() - SoC).count()).c_str());
+    case 4: // Relative lasts
+      return QVariant(std::to_string((packet.getTimeStamp() - last).count()).c_str());
+    default: return QVariant();
+  }
 }
 
-bool CyCoTreeItem::removeChildren(int position, int count) {
-  if (position < 0 || position + count > childItems.size())
-    return false;
+QVariant CyCoTreeItem::dataTooltip(int column) {
+  switch (column) {
+    case 0: // TYPE
+      return QVariant("The packet type of the current entry");
+    case 1: // SOURCE
+      return QVariant("The source of the current packet");
+    case 2: // DEST
+      return QVariant("The destination of the current packet");
+    case 3: // Relative SoC
+      return QVariant("The time passed since the last SoC");
+    case 4: // Relative lasts
+      return QVariant("The time passed since the last packet");
+    default: return QVariant();
+  }
+}
 
-  for (int row = 0; row < count; ++row)
-    delete childItems.takeAt(position);
+QVariant CyCoTreeItem::data(int column, Qt::ItemDataRole role) {
+  if (role != Qt::DisplayRole)
+    return QVariant();
 
-  return true;
+  switch (role) {
+    case Qt::DisplayRole: return dataDisplay(column);
+    case Qt::ToolTipRole: return dataTooltip(column);
+    default: return QVariant();
+  }
 }

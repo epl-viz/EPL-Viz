@@ -72,8 +72,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>1316</width>
-             <height>421</height>
+             <width>1322</width>
+             <height>413</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_15"/>
@@ -410,7 +410,7 @@
     </layout>
    </widget>
   </widget>
-  <widget class="CycleCommandsWidget" name="dockPaketView">
+  <widget class="QDockWidget" name="dockPaketView">
    <property name="toolTip">
     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Zeigt die commands des ausgwaehlten Cycles an&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
    </property>
@@ -462,8 +462,8 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>959</width>
-          <height>89</height>
+          <width>947</width>
+          <height>96</height>
          </rect>
         </property>
         <layout class="QGridLayout" name="gridLayout_22">
@@ -637,12 +637,6 @@
    <class>TimelineWidget</class>
    <extends>QDockWidget</extends>
    <header>TimeLineWidget.hpp</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>CycleCommandsWidget</class>
-   <extends>QDockWidget</extends>
-   <header>CycleCommandsWidget.hpp</header>
    <container>1</container>
   </customwidget>
   <customwidget>

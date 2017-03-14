@@ -54,6 +54,7 @@ void CycleCommandsModel::init() {}
 
 
 void CycleCommandsModel::update(ProtectedCycle &cycle) {
+  auto l    = getLock();
   auto lock = cycle.getLock();
 
   if (lastCycle == cycle->getCycleNum())

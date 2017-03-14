@@ -50,6 +50,7 @@ CurrentODModel::~CurrentODModel() {}
 void CurrentODModel::init() {}
 
 void CurrentODModel::update(ProtectedCycle &cycle) {
+  auto l    = getLock();
   auto lock = cycle.getLock();
 
   Node *n = cycle->getNode(node);

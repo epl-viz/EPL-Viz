@@ -32,7 +32,10 @@ using namespace EPL_Viz;
 using namespace EPL_DataCollect;
 
 TreeModelItemBase::TreeModelItemBase(TreeModelItemBase *parent) : p(parent) {}
-TreeModelItemBase::~TreeModelItemBase() {}
+TreeModelItemBase::~TreeModelItemBase() {
+  for (auto i : childItems)
+    delete i;
+}
 
 TreeModelRoot::~TreeModelRoot() {}
 
@@ -54,6 +57,9 @@ void TreeModelItemBase::push_back(TreeModelItemBase *item) {
 TreeModelItemBase *TreeModelItemBase::back() { return childItems.back(); }
 
 void TreeModelItemBase::clear() {
+  for (auto i : childItems)
+    delete i;
+
   childItems.clear();
   childIndexMap.clear();
 }

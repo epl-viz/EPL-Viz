@@ -40,16 +40,18 @@ TreeModelRoot::~TreeModelRoot() {}
 TreeModelItemBase *TreeModelItemBase::parent() { return p; }
 
 TreeModelItemBase *TreeModelItemBase::child(size_t row) {
-  if (row > childItems.size())
+  if (row >= childItems.size())
     return nullptr;
 
-  return childItems[row].get();
+  return childItems[row];
 }
 
-void TreeModelItemBase::push_back(std::unique_ptr<TreeModelItemBase> item) {
-  childItems.emplace_back(std::move(item));
-  childIndexMap[childItems.back().get()] = childItems.size() - 1;
+void TreeModelItemBase::push_back(TreeModelItemBase *item) {
+  childItems.emplace_back(item);
+  childIndexMap[childItems.back()] = childItems.size() - 1;
 }
+
+TreeModelItemBase *TreeModelItemBase::back() { return childItems.back(); }
 
 void TreeModelItemBase::clear() {
   childItems.clear();

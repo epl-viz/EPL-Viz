@@ -52,6 +52,7 @@ ODDescriptionModel::ODDescriptionModel(MainWindow *window, QTreeView *treeWidget
 void ODDescriptionModel::init() {}
 
 void ODDescriptionModel::update(ProtectedCycle &cycle) {
+  auto l    = getLock();
   auto lock = cycle.getLock();
 
   Node *n = cycle->getNode(node);
@@ -67,7 +68,7 @@ void ODDescriptionModel::update(ProtectedCycle &cycle) {
   diff.clear();
 
   for (auto &i : *root->getChildren()) {
-    oldVec.emplace_back(dynamic_cast<ODDescriptionItem *>(i.get())->getIndex());
+    oldVec.emplace_back(dynamic_cast<ODDescriptionItem *>(i)->getIndex());
   }
 
   plf::colony<uint16_t> changedList = n->getOD()->getODDesc()->getEntriesList();
@@ -95,12 +96,11 @@ void ODDescriptionModel::update(ProtectedCycle &cycle) {
         continue;
       }
 
-      auto               uPtr = std::make_unique<ODDescriptionItem>(root, cycle, node, i);
-      ODDescriptionItem *item = uPtr.get();
-      root->push_back(std::move(uPtr));
+      root->push_back(new ODDescriptionItem(root, cycle, node, i));
+      auto *item = root->back();
 
       for (uint16_t j = 0; j < entry->subEntries.size(); ++j) {
-        item->push_back(std::make_unique<ODDescriptionItem>(item, cycle, node, i, j));
+        item->push_back(new ODDescriptionItem(item, cycle, node, i, j));
       }
     }
 

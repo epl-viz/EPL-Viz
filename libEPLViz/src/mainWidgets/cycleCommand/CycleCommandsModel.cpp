@@ -66,7 +66,7 @@ void CycleCommandsModel::update(ProtectedCycle &cycle) {
   root->clear();
 
   for (size_t i = 0; i < numPackets; ++i) {
-    root->push_back(std::make_unique<CyCoTreeItem>(root, cycle, i));
+    root->push_back(new CyCoTreeItem(root, cycle, i));
   }
 
   endResetModel();

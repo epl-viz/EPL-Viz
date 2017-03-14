@@ -65,7 +65,7 @@ void CurrentODModel::update(ProtectedCycle &cycle) {
   diff.clear();
 
   for (auto &i : *root->getChildren()) {
-    oldVec.emplace_back(dynamic_cast<CurODModelItem *>(i.get())->getIndex());
+    oldVec.emplace_back(dynamic_cast<CurODModelItem *>(i)->getIndex());
   }
 
   plf::colony<uint16_t> changedList = n->getOD()->getWrittenValues();
@@ -78,17 +78,16 @@ void CurrentODModel::update(ProtectedCycle &cycle) {
   if (diff.empty() && node == lastUpdatedNode) {
     // No entry changes
     for (auto &i : *root->getChildren()) {
-      ODEntry *entry = n->getOD()->getEntry(dynamic_cast<CurODModelItem *>(i.get())->getIndex());
+      ODEntry *entry = n->getOD()->getEntry(dynamic_cast<CurODModelItem *>(i)->getIndex());
       if (entry->getArraySize() >= 0 && i->childCount() != entry->getArraySize()) {
-        QModelIndex index = indexOf(i.get());
+        QModelIndex index = indexOf(i);
         beginRemoveRows(index, 0, i->childCount() - 1);
         i->clear();
         endRemoveRows();
 
         beginInsertRows(index, 0, entry->getArraySize() - 1);
         for (uint16_t j = 0; j < entry->getArraySize(); ++j) {
-          i->push_back(std::make_unique<CurODModelItem>(
-                i.get(), cycle, node, dynamic_cast<CurODModelItem *>(i.get())->getIndex(), j));
+          i->push_back(new CurODModelItem(i, cycle, node, dynamic_cast<CurODModelItem *>(i)->getIndex(), j));
         }
         endInsertRows();
         continue;
@@ -96,12 +95,12 @@ void CurrentODModel::update(ProtectedCycle &cycle) {
 
       for (auto &j : *i->getChildren()) {
         if (j->hasChanged()) {
-          emitRowChaned(j.get());
+          emitRowChaned(j);
         }
       }
 
       if (i->hasChanged()) {
-        emitRowChaned(i.get());
+        emitRowChaned(i);
       }
     }
   } else {
@@ -118,12 +117,11 @@ void CurrentODModel::update(ProtectedCycle &cycle) {
         continue;
       }
 
-      auto            uPtr = std::make_unique<CurODModelItem>(root, cycle, node, i);
-      CurODModelItem *item = uPtr.get();
-      root->push_back(std::move(uPtr));
+      root->push_back(new CurODModelItem(root, cycle, node, i));
+      auto *item = root->back();
 
       for (uint16_t j = 0; j < entry->getArraySize() && j <= 0xFF; ++j) {
-        item->push_back(std::make_unique<CurODModelItem>(item, cycle, node, i, j));
+        item->push_back(new CurODModelItem(item, cycle, node, i, j));
       }
     }
 

@@ -38,7 +38,7 @@ namespace EPL_Viz {
 
 class TreeModelItemBase {
  public:
-  typedef std::vector<std::unique_ptr<TreeModelItemBase>> LIST;
+  typedef std::vector<TreeModelItemBase *> LIST;
   typedef std::unordered_map<TreeModelItemBase const *, size_t> MAP;
 
  private:
@@ -64,8 +64,9 @@ class TreeModelItemBase {
   virtual int           columnCount() const;
 
   LIST *getChildren();
-  void push_back(std::unique_ptr<TreeModelItemBase> item);
-  void clear();
+  void push_back(TreeModelItemBase *item);
+  TreeModelItemBase *back();
+  void               clear();
 };
 
 class TreeModelRoot : public TreeModelItemBase {

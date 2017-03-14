@@ -35,6 +35,7 @@
 #include "TreeModelItemBase.hpp"
 
 #include <QTreeWidget>
+#include <mutex>
 #include <plf_colony.h>
 #include <unordered_map>
 #include <vector>
@@ -44,7 +45,10 @@ class TreeModelBase : public QAbstractItemModel {
   Q_OBJECT
 
  protected:
-  TreeModelItemBase *root = nullptr;
+  TreeModelItemBase *  root = nullptr;
+  std::recursive_mutex mutex;
+
+  std::unique_lock<std::recursive_mutex> getLock() const;
 
  public:
   TreeModelBase() = delete;

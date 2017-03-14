@@ -45,7 +45,13 @@ TreeModelBase::~TreeModelBase() {
 }
 
 
+std::unique_lock<std::recursive_mutex> TreeModelBase::getLock() const {
+  return std::unique_lock<std::recursive_mutex>(*const_cast<std::recursive_mutex *>(&mutex));
+}
+
 TreeModelItemBase *TreeModelBase::getItem(const QModelIndex &index) const {
+  auto l = getLock();
+
   if (index.isValid()) {
     TreeModelItemBase *p = static_cast<TreeModelItemBase *>(index.internalPointer());
     if (p) {
@@ -60,6 +66,8 @@ TreeModelItemBase *TreeModelBase::getItem(const QModelIndex &index) const {
 
 
 QModelIndex TreeModelBase::index(int row, int column, const QModelIndex &parent) const {
+  auto l = getLock();
+
   if (parent.isValid() && parent.column() != 0)
     return QModelIndex();
 
@@ -74,6 +82,8 @@ QModelIndex TreeModelBase::index(int row, int column, const QModelIndex &parent)
 }
 
 QModelIndex TreeModelBase::parent(const QModelIndex &index) const {
+  auto l = getLock();
+
   if (!index.isValid())
     return QModelIndex();
 
@@ -87,6 +97,8 @@ QModelIndex TreeModelBase::parent(const QModelIndex &index) const {
 }
 
 int TreeModelBase::rowCount(const QModelIndex &parent) const {
+  auto l = getLock();
+
   if (parent.column() > 0)
     return 0;
 
@@ -102,6 +114,8 @@ int TreeModelBase::rowCount(const QModelIndex &parent) const {
 }
 
 int TreeModelBase::columnCount(const QModelIndex &parent) const {
+  auto l = getLock();
+
   if (parent.column() > 0)
     return 0;
 
@@ -117,6 +131,8 @@ int TreeModelBase::columnCount(const QModelIndex &parent) const {
 }
 
 QVariant TreeModelBase::data(const QModelIndex &index, int role) const {
+  auto l = getLock();
+
   if (!index.isValid())
     return QVariant();
 
@@ -125,6 +141,8 @@ QVariant TreeModelBase::data(const QModelIndex &index, int role) const {
 }
 
 QVariant TreeModelBase::headerData(int section, Qt::Orientation orientation, int role) const {
+  auto l = getLock();
+
   TreeModelRoot *rp = dynamic_cast<TreeModelRoot *>(root);
 
   if (!rp)
@@ -134,6 +152,8 @@ QVariant TreeModelBase::headerData(int section, Qt::Orientation orientation, int
 }
 
 Qt::ItemFlags TreeModelBase::flags(const QModelIndex &index) const {
+  auto l = getLock();
+
   if (index.isValid())
     return getItem(index)->flags();
 
@@ -141,6 +161,8 @@ Qt::ItemFlags TreeModelBase::flags(const QModelIndex &index) const {
 }
 
 QModelIndex TreeModelBase::indexOf(TreeModelItemBase *item, int column) const {
+  auto l = getLock();
+
   if (!item)
     return QModelIndex();
 
@@ -148,6 +170,8 @@ QModelIndex TreeModelBase::indexOf(TreeModelItemBase *item, int column) const {
 }
 
 QModelIndex TreeModelBase::parentOf(TreeModelItemBase *item, int column) const {
+  auto l = getLock();
+
   if (!item)
     return QModelIndex();
 

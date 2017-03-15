@@ -45,26 +45,22 @@
 #include <QPushButton>
 #include <QRadioButton>
 #include <QSize>
-#include <QStackedWidget>
 #include <QString>
 #include <QTreeWidget>
 #include <QTreeWidgetItem>
 #include <QVBoxLayout>
 #include <QWidget>
 
-class NodeWidget : public QStackedWidget {
+class NodeWidget : public QFrame {
   Q_OBJECT
 
  private:
   // clang-format off
-  const QString styleFormat = QString("#node-%1%2 { background-color: %3; border-color: rgb(%4, 0, 0); border-style: %5;  border-width: 3px;}"); //TODO: Add border for stylesheet
+  const QString styleFormat = QString("#node%1 { background-color: %2; border-color: rgb(%3, 0, 0); border-style: %4; border-width: 5px; }");
 
-  const QString statusFormat = QString("Status: %1"); //%1 is the status string
-  const QString nameFormat = QString("%1 #%2");        //%1 is the node name, %2 its ID
-
-  const QSize maxSizeMax = QSize(300, 300);
-  const QSize maxSizeMin = QSize(300, 100);
-  const QSize minSize = QSize(150, 150);
+  const QString typeFormat    = QString("%1");      //%1 is the type string
+  const QString statusFormat  = QString("%1");      //%1 is the status string
+  const QString nameFormat    = QString("<html><b>%1</b> #%2</html>");  //%1 is the node name, %2 its ID
   // clang-format on
 
   uint8_t                   id;
@@ -74,19 +70,12 @@ class NodeWidget : public QStackedWidget {
   int  highlightingLevel = 0;
   bool selected          = false;
 
-  QWidget *     minWidget;
-  QWidget *     maxWidget;
   QFrame *      line;
-  QLabel *      nameLabelMax;
-  QLabel *      nameLabelMin;
+  QLabel *      nameLabel;
   QLabel *      statusLabel;
   QTreeWidget * advancedInfo;
   QLabel *      typeLabel;
-  QPushButton * minimizeButton;
-  QPushButton * maximizeButton;
   QRadioButton *advanced;
-
-  bool isMinimized = false;
 
  public:
   NodeWidget(EPL_DataCollect::Node *node, QWidget *parent = nullptr);
@@ -104,6 +93,7 @@ class NodeWidget : public QStackedWidget {
   QString borderStyle();
   QString validateUInt(uint16_t val);
   QString validateUInt(uint32_t val);
+  QString validateString(std::string string);
 
  protected:
   void mousePressEvent(QMouseEvent *event) override;
@@ -112,7 +102,6 @@ class NodeWidget : public QStackedWidget {
   void nodeClicked(uint8_t node);
 
  public slots:
-  void minimizeChange(bool minimized);
   void setHighlightingLevel(int level);
   void updateData(uint8_t nID, EPL_Viz::ProtectedCycle &c);
   void updateStyleSheet();

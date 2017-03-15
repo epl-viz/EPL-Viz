@@ -139,21 +139,21 @@ void CurrentODModel::showContextMenu(const QPoint &pos) {
   myMenu.addAction("Draw Plot");
 
   QModelIndex index = view->indexAt(pos);
-      if (index.isValid()) {
-          QAction *selectedAction = myMenu.exec(view->mapToGlobal(pos));
-          if (selectedAction) {
-            // TODO get real data
-            /*
-            ->selectedItems();
-            bool     ok;
-            uint16_t i = static_cast<uint16_t>(tion.first()->text(0).remove(0, 2).toInt(&ok, 16));
-            if (!ok) {
-              qDebug() << "Could not get index from text in curodmodel";
-              return;
-            }
-
-            emit drawingPlot(node, index.data, 0);
-            */
-          }
+  if (index.isValid()) {
+    QAction *selectedAction = myMenu.exec(view->mapToGlobal(pos));
+    if (selectedAction) {
+      // TODO get real data
+      /*
+      ->selectedItems();
+      bool     ok;
+      uint16_t i = static_cast<uint16_t>(tion.first()->text(0).remove(0, 2).toInt(&ok, 16));
+      if (!ok) {
+        qDebug() << "Could not get index from text in curodmodel";
+        return;
       }
+
+      emit drawingPlot(node, index.data, 0);
+      */
+    }
+  }
 }

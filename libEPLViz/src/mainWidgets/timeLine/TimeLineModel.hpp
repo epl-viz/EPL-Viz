@@ -47,7 +47,7 @@ class TimeLineModel : public QwtBaseModel {
   QwtPlotMarker                         curCycleMarker;
 
  public:
-  const static uint32_t                        DEF_VIEWPORT_SIZE = 100;
+  const static uint32_t DEF_VIEWPORT_SIZE = 100;
 
   TimeLineModel(MainWindow *mw, QwtPlot *widget);
   TimeLineModel() = delete;

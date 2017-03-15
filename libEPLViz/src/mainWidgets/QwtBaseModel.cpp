@@ -35,8 +35,8 @@ using namespace EPL_Viz;
 using namespace EPL_DataCollect;
 
 QwtBaseModel::QwtBaseModel(MainWindow *win, QwtPlot *widget) : BaseModel(win, widget) {
-  window = win;
-  plot   = widget;
+  window    = win;
+  plot      = widget;
   maxXValue = 800;
 }
 

@@ -126,7 +126,10 @@ void MainWindow::createModels() {
 
   // Activate and connect rightclick menu for Drawing Plots
   ui->curNodeODWidget->setContextMenuPolicy(Qt::CustomContextMenu);
-  connect(ui->curNodeODWidget, SIGNAL(customContextMenuRequested(const QPoint &)), curODModel, SLOT(showContextMenu(const QPoint &)));
+  connect(ui->curNodeODWidget,
+          SIGNAL(customContextMenuRequested(const QPoint &)),
+          curODModel,
+          SLOT(showContextMenu(const QPoint &)));
 
   // Append the nodes to a list for cleanup
   models.append(packetHistoryModel);

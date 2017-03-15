@@ -46,7 +46,7 @@ class QwtBaseModel : public QObject, public BaseModel {
   Q_OBJECT
 
  public:
-  uint32_t                                              maxXValue;
+  uint32_t maxXValue;
 
   QwtBaseModel(MainWindow *win, QwtPlot *widget);
   QwtBaseModel()  = delete;

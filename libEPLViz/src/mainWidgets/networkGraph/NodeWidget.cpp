@@ -190,9 +190,6 @@ NodeWidget::NodeWidget(EPL_DataCollect::Node *node, QWidget *parent) : QStackedW
   connect(minimizeButton, SIGNAL(toggled(bool)), this, SLOT(minimizeChange(bool)));
   connect(maximizeButton, SIGNAL(toggled(bool)), this, SLOT(minimizeChange(bool)));
   connect(advanced, SIGNAL(toggled(bool)), advancedInfo, SLOT(setVisible(bool)));
-  connect(advancedInfo, SIGNAL(itemExpanded(QTreeWidgetItem *)), this, SLOT(fixTree(QTreeWidgetItem *)));
-  connect(advancedInfo, SIGNAL(itemCollapsed(QTreeWidgetItem *)), this, SLOT(fixTree(QTreeWidgetItem *)));
-
 
   // Add the two states of the widget to this one
   addWidget(maxWidget);
@@ -228,6 +225,20 @@ QString NodeWidget::statusToBackground(EPL_DataCollect::NMTState _status) {
 }
 
 /*!
+ * \brief Returns the currently required border style
+ *
+ * If the node is selected, then display it with a 'double' border, otherwise use 'outset' to show highlighting.
+ *
+ * \return The string representing the type of border currently required
+ */
+QString NodeWidget::borderStyle() {
+  if (selected)
+    return "solid";
+  else
+    return "dashed";
+}
+
+/*!
  * \brief Updates the data of this node widget.
  * \param nID The node ID of the node
  * \param c   A reference to the cycle container
@@ -243,12 +254,23 @@ void NodeWidget::updateData(uint8_t nID, ProtectedCycle &c) {
 
 void NodeWidget::setHighlightingLevel(int level) { highlightingLevel = level; }
 
+void NodeWidget::setSelected(bool sel) {
+  if (sel != selected) {
+    selected = sel;
+    updateStyleSheet();
+  }
+}
+
+bool NodeWidget::isSelected() { return selected; }
+
+
+
 void NodeWidget::updateStyleSheet() {
   QString statusColor = statusToBackground(status);
   QString highlight   = QString::number(static_cast<int>(255 * (static_cast<double>(highlightingLevel) / 100)));
 
-  maxWidget->setStyleSheet(styleFormat.arg("max", idString, statusColor, highlight));
-  minWidget->setStyleSheet(styleFormat.arg("min", idString, statusColor, highlight));
+  maxWidget->setStyleSheet(styleFormat.arg("max", idString, statusColor, highlight, borderStyle()));
+  minWidget->setStyleSheet(styleFormat.arg("min", idString, statusColor, highlight, borderStyle()));
 }
 
 /*!
@@ -304,11 +326,6 @@ QString NodeWidget::validateUInt(uint32_t val) {
     return QString::number(val);
 }
 
-void NodeWidget::fixTree(QTreeWidgetItem *item) {
-  int column = advancedInfo->indexOfTopLevelItem(item);
-  advancedInfo->resizeColumnToContents(column);
-}
-
 /*!
  * \brief Updates the status of this node widget.
  * \param newStatus The new node status
@@ -322,8 +339,6 @@ void NodeWidget::updateStatus(EPL_DataCollect::NMTState newStatus) {
 
   statusLabel->setText(
         statusFormat.arg(QString::fromStdString(EPL_DataCollect::EPLEnum2Str::toStr(status)))); // Update label
-
-  updateStyleSheet(); // TODO: Remove this
 }
 
 void NodeWidget::mousePressEvent(QMouseEvent *event) {

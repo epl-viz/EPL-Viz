@@ -31,8 +31,13 @@
 #include "Node.hpp"
 
 NetworkGraphWidget::NetworkGraphWidget(QWidget *parent) : QWidget(parent) {
-  layout = new QGridLayout();
-  this->setLayout(layout);
+  grid = qobject_cast<QGridLayout *>(layout());
+
+  // Ensure that a layout is present
+  if (!grid) {
+    grid = new QGridLayout();
+    this->setLayout(grid);
+  }
 }
 
 QMap<uint8_t, NodeWidget *> *NetworkGraphWidget::getNodeWidgets() { return &nodeMap; }
@@ -75,7 +80,7 @@ void NetworkGraphWidget::updateWidget(EPL_Viz::ProtectedCycle &c) {
     qDebug() << "Placing new node widget at row " << QString::number(count / 4) << " and column "
              << QString::number(count % 4);
 
-    layout->addWidget(nw, count / 4, count % 4);
+    grid->addWidget(nw, count / 4, count % 4);
     count++;
   }
 
@@ -83,6 +88,12 @@ void NetworkGraphWidget::updateWidget(EPL_Viz::ProtectedCycle &c) {
 
   // Hide widgets that were not updated (Allows jumps back in time)
   for (auto nw : nodes.values()) {
+    // Unselect the node if it is hidden and notify others
+    if (nw->isSelected()) {
+      nw->setSelected(false);
+      current = UINT8_MAX;
+      emit nodeSelected(current);
+    }
     nw->hide();
   }
 }
@@ -91,4 +102,19 @@ void NetworkGraphWidget::queueNodeUpdate(uint8_t node) { updateQueue.append(node
 
 void NetworkGraphWidget::queueNodeCreation(uint8_t node) { createQueue.append(node); }
 
-void NetworkGraphWidget::selectNode(uint8_t node) { emit nodeSelected(node); }
+void NetworkGraphWidget::selectNode(uint8_t node) {
+  // Check if there is currently a selected node
+  if (current != UINT8_MAX) {
+    // Check if the same node is trying to be selected
+    if (current == node)
+      return;
+
+    // Unselect old node
+    nodeMap[current]->setSelected(false);
+  }
+
+  // Update current node
+  current = node;
+  nodeMap[current]->setSelected(true);
+  emit nodeSelected(current);
+}

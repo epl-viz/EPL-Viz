@@ -42,8 +42,10 @@ class NetworkGraphWidget : public QWidget {
   Q_OBJECT
 
  private:
-  QGridLayout *layout = nullptr;
-  uint8_t      count;
+  QGridLayout *grid  = nullptr;
+  uint8_t      count = 0;
+
+  uint8_t current = UINT8_MAX;
 
   QMap<uint8_t, NodeWidget *> nodeMap;
 

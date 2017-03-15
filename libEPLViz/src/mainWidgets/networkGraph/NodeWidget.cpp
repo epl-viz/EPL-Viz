@@ -32,7 +32,7 @@
 
 using namespace EPL_Viz;
 
-NodeWidget::NodeWidget(EPL_DataCollect::Node *node, QWidget *parent) : QStackedWidget(parent) {
+NodeWidget::NodeWidget(EPL_DataCollect::Node *node, QWidget *parent) : QFrame(parent) {
   id       = node->getID();
   idString = QString::number(id);
 
@@ -40,27 +40,30 @@ NodeWidget::NodeWidget(EPL_DataCollect::Node *node, QWidget *parent) : QStackedW
 
   setObjectName(QStringLiteral("node") + idString);
 
-  // Create widget for minimized view
-  minWidget = new QWidget(this);
-  minWidget->setObjectName(QStringLiteral("node-min") + idString);
-
-  // Create widget for maximized view
-  maxWidget = new QWidget(this);
-  maxWidget->setObjectName(QStringLiteral("node-max") + idString);
-
   // Create seperator line
-  line = new QFrame(maxWidget);
+  line = new QFrame(this);
   line->setObjectName(QStringLiteral("line") + idString);
   line->setFrameShadow(QFrame::Plain);
   line->setFrameShape(QFrame::HLine);
 
+  // Create name label
+  nameLabel = new QLabel(this);
+  nameLabel->setObjectName(QStringLiteral("name") + idString);
+  nameLabel->setToolTip(QString("The host name of this node and its node ID."));
+
+  // Create type label
+  typeLabel = new QLabel(this);
+  typeLabel->setObjectName(QStringLiteral("type") + idString);
+  typeLabel->setStyleSheet(QStringLiteral(""));
+  typeLabel->setToolTip(QString("The device profile used by this node."));
+
   // Create status label
-  statusLabel = new QLabel(maxWidget);
+  statusLabel = new QLabel(this);
   statusLabel->setObjectName(QStringLiteral("status") + idString);
-  statusLabel->setObjectName(statusFormat.arg(QString::fromStdString(EPL_DataCollect::EPLEnum2Str::toStr(status))));
+  statusLabel->setToolTip("Shows the current state machine status of the node.");
 
   // Create advanced information tree
-  advancedInfo = new QTreeWidget(maxWidget);
+  advancedInfo = new QTreeWidget(this);
   advancedInfo->setObjectName(QStringLiteral("advancedInfo") + idString);
   advancedInfo->setEnabled(true);
   advancedInfo->setAutoFillBackground(false);
@@ -100,105 +103,40 @@ NodeWidget::NodeWidget(EPL_DataCollect::Node *node, QWidget *parent) : QStackedW
   QTreeWidgetItem *gtw = new QTreeWidgetItem(net);
   gtw->setText(0, QString("Default Gateway"));
 
-  // Create name label for the maximized version
-  nameLabelMax = new QLabel(maxWidget);
-  nameLabelMax->setObjectName(QStringLiteral("name-max") + idString);
-
-  // Create name label for the minimized version
-  nameLabelMin = new QLabel(minWidget);
-  nameLabelMin->setObjectName(QStringLiteral("name-min") + idString);
-
-  // Create type label
-  typeLabel = new QLabel(maxWidget);
-  typeLabel->setObjectName(QStringLiteral("type") + idString);
-  typeLabel->setStyleSheet(QStringLiteral(""));
-
   // Update the information
   updateIdentityInfo(identity);
 
-  // Add icons for maximizing (Box is checked) and minimizing (Box is unchecked)
-  QIcon minmaxIcon;
-  minmaxIcon.addFile(QStringLiteral(":/icons/resources/minimize.png"), QSize(), QIcon::Normal, QIcon::Off);
-  minmaxIcon.addFile(QStringLiteral(":/icons/resources/maximize.png"), QSize(), QIcon::Normal, QIcon::On);
-
-  // Create the maximize button
-  maximizeButton = new QPushButton(maxWidget);
-  maximizeButton->setObjectName(QStringLiteral("maximizeButton") + idString);
-  maximizeButton->setMinimumSize(QSize(13, 13));
-  maximizeButton->setMaximumSize(QSize(13, 13));
-  maximizeButton->setStyleSheet(QStringLiteral(""));
-  maximizeButton->setIcon(minmaxIcon);
-  maximizeButton->setIconSize(QSize(13, 13));
-  maximizeButton->setCheckable(true);
-  maximizeButton->setChecked(false);
-
-  // Create the minimize button
-  minimizeButton = new QPushButton(minWidget);
-  minimizeButton->setObjectName(QStringLiteral("minimizeButton") + idString);
-  minimizeButton->setMinimumSize(QSize(13, 13));
-  minimizeButton->setMaximumSize(QSize(13, 13));
-  minimizeButton->setStyleSheet(QStringLiteral(""));
-  minimizeButton->setIcon(minmaxIcon);
-  minimizeButton->setIconSize(QSize(13, 13));
-  minimizeButton->setCheckable(true);
-  minimizeButton->setChecked(false);
-
   // Create the advanced button
-  advanced = new QRadioButton(maxWidget);
+  advanced = new QRadioButton(this);
   advanced->setObjectName(QStringLiteral("advanced") + idString);
   advanced->setText("Show advanced information...");
   advanced->setStyleSheet(QStringLiteral(""));
   advanced->setChecked(false);
+  advanced->setToolTip("Provides additional information about the node.");
 
   // Create the layout for the maximized widget
-  QGridLayout *maximizedLayout = new QGridLayout(maxWidget);
-  maximizedLayout->setSpacing(6);
-  maximizedLayout->setContentsMargins(11, 11, 11, 11);
-  maximizedLayout->setObjectName(QStringLiteral("maximizedLayout") + idString);
+  QGridLayout *gridLayout = new QGridLayout(this);
+  gridLayout->setSpacing(6);
+  gridLayout->setContentsMargins(11, 11, 11, 11);
+  gridLayout->setObjectName(QStringLiteral("gridLayout") + idString);
 
   // Add all widgets to the maximized layout
-  maximizedLayout->addWidget(line, 2, 0, 1, 3);
-  maximizedLayout->addWidget(nameLabelMax, 0, 0, 1, 1, Qt::AlignLeft | Qt::AlignTop);
-  maximizedLayout->addWidget(statusLabel, 1, 0, 1, 1, Qt::AlignLeft | Qt::AlignVCenter);
-  maximizedLayout->addWidget(advancedInfo, 5, 0, 1, 3);
-  maximizedLayout->addWidget(typeLabel, 1, 2, 1, 1, Qt::AlignRight | Qt::AlignVCenter);
-  maximizedLayout->addWidget(minimizeButton, 0, 2, 1, 1, Qt::AlignRight | Qt::AlignTop);
-  maximizedLayout->addWidget(advanced, 4, 0, 1, 3);
+  gridLayout->addWidget(line, 2, 0, 1, 3);
+  gridLayout->addWidget(nameLabel, 0, 0, 1, 1, Qt::AlignLeft | Qt::AlignTop);
+  gridLayout->addWidget(statusLabel, 1, 0, 1, 1, Qt::AlignLeft | Qt::AlignVCenter);
+  gridLayout->addWidget(advancedInfo, 5, 0, 1, 3);
+  gridLayout->addWidget(typeLabel, 1, 2, 1, 1, Qt::AlignRight | Qt::AlignVCenter);
+  gridLayout->addWidget(advanced, 4, 0, 1, 3);
 
-  maximizedLayout->setSizeConstraint(QLayout::SetFixedSize);
+  gridLayout->setSizeConstraint(QLayout::SetFixedSize);
 
   // Add the layout to the maximized Widget
-  maxWidget->setLayout(maximizedLayout);
-
-  // Create the layout for the minimized layout
-  QVBoxLayout *minimizedLayout = new QVBoxLayout(minWidget);
-  minimizedLayout->setSpacing(6);
-  minimizedLayout->setObjectName(QStringLiteral("minimizedLayout") + idString);
-  minimizedLayout->setContentsMargins(2, 2, 2, 2);
-
-  minimizedLayout->setSizeConstraint(QLayout::SetFixedSize);
-
-
-  // Add members of the minimized layout
-  minimizedLayout->addWidget(maximizeButton, 0, Qt::AlignRight | Qt::AlignTop);
-  minimizedLayout->addWidget(nameLabelMin, 0, Qt::AlignHCenter | Qt::AlignBottom);
-
-  // Add the layout to the minimized Widget
-  minWidget->setLayout(minimizedLayout);
+  setLayout(gridLayout);
 
   // Connect the signals of the buttons
-  connect(minimizeButton, SIGNAL(toggled(bool)), this, SLOT(minimizeChange(bool)));
-  connect(maximizeButton, SIGNAL(toggled(bool)), this, SLOT(minimizeChange(bool)));
   connect(advanced, SIGNAL(toggled(bool)), advancedInfo, SLOT(setVisible(bool)));
 
-  // Add the two states of the widget to this one
-  addWidget(maxWidget);
-  addWidget(minWidget);
-
   updateStatus(node->getStatus());
-
-  widget(1)->hide();
-  widget(0)->show(); // Show the maximized widget when starting
 }
 
 /*
@@ -269,8 +207,7 @@ void NodeWidget::updateStyleSheet() {
   QString statusColor = statusToBackground(status);
   QString highlight   = QString::number(static_cast<int>(255 * (static_cast<double>(highlightingLevel) / 100)));
 
-  maxWidget->setStyleSheet(styleFormat.arg("max", idString, statusColor, highlight, borderStyle()));
-  minWidget->setStyleSheet(styleFormat.arg("min", idString, statusColor, highlight, borderStyle()));
+  setStyleSheet(styleFormat.arg(idString, statusColor, highlight, borderStyle()));
 }
 
 /*!
@@ -278,14 +215,14 @@ void NodeWidget::updateStyleSheet() {
  * \param identity The node identity to retrieve the information from
  */
 void NodeWidget::updateIdentityInfo(EPL_DataCollect::Node::IDENT identity) {
-  QString name = QString::fromStdString(identity.HostName);
+  QString name = validateString(identity.HostName);
+  QString type = validateUInt(identity.Profile);
 
   // Update name
-  nameLabelMin->setText(nameFormat.arg(name, idString));
-  nameLabelMax->setText(nameFormat.arg(name, idString));
+  nameLabel->setText(nameFormat.arg(name, idString));
 
   // Update type
-  typeLabel->setText(validateUInt(identity.Profile));
+  typeLabel->setText(typeFormat.arg(type));
 
   QTreeWidgetItem *dev = advancedInfo->topLevelItem(0);
   QTreeWidgetItem *net = advancedInfo->topLevelItem(1);
@@ -297,9 +234,9 @@ void NodeWidget::updateIdentityInfo(EPL_DataCollect::Node::IDENT identity) {
   dev->child(3)->setText(1, validateUInt(identity.RevisionNumber));
 
   // Update Networking information
-  net->child(0)->setText(1, QString::fromStdString(identity.IPAddress));
-  net->child(1)->setText(1, QString::fromStdString(identity.SubnetMask));
-  net->child(2)->setText(1, QString::fromStdString(identity.DefaultGateway));
+  net->child(0)->setText(1, validateString(identity.IPAddress));
+  net->child(1)->setText(1, validateString(identity.SubnetMask));
+  net->child(2)->setText(1, validateString(identity.DefaultGateway));
 }
 
 /*!
@@ -326,6 +263,13 @@ QString NodeWidget::validateUInt(uint32_t val) {
     return QString::number(val);
 }
 
+QString NodeWidget::validateString(std::string string) {
+  if (string == "")
+    return "<N/A>";
+  else
+    return QString::fromStdString(string);
+}
+
 /*!
  * \brief Updates the status of this node widget.
  * \param newStatus The new node status
@@ -346,27 +290,4 @@ void NodeWidget::mousePressEvent(QMouseEvent *event) {
     qDebug() << "Clicked the node " << idString;
     emit nodeClicked(id);
   }
-}
-
-void NodeWidget::minimizeChange(bool minimized) {
-  qDebug() << "Minimize changed to " << minimized << " from " << isMinimized;
-  // Prevent unnecessary changes
-  if (isMinimized == minimized)
-    return;
-
-  // Call the correct function for the size change
-  if (minimized) {
-    widget(0)->hide();
-    widget(1)->show();
-  } else {
-    widget(1)->hide();
-    widget(0)->show();
-  }
-
-  // Update minimize value
-  isMinimized = minimized;
-
-  // Synchronize buttons
-  minimizeButton->setChecked(isMinimized);
-  maximizeButton->setChecked(isMinimized);
 }

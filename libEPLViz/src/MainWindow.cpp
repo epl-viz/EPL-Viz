@@ -124,6 +124,10 @@ void MainWindow::createModels() {
   // Set timeline max value once, since we can't do this in the constructor of the model and want to do it before init
   emit timeLineModel->maxValueChanged(0, static_cast<int>(timeLineModel->maxXValue));
 
+  // Activate and connect rightclick menu for Drawing Plots
+  ui->curNodeODWidget->setContextMenuPolicy(Qt::CustomContextMenu);
+  connect(ui->curNodeODWidget, SIGNAL(customContextMenuRequested(const QPoint &)), curODModel, SLOT(showContextMenu(const QPoint &)));
+
   // Append the nodes to a list for cleanup
   models.append(packetHistoryModel);
   models.append(pythonLogModel);

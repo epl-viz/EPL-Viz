@@ -40,9 +40,7 @@ using namespace std;
 CurrentODModel::CurrentODModel(MainWindow *window, QTreeView *widget)
     : TreeModelBase(widget), BaseModel(window, widget) {
   root = new TreeModelRoot({{Qt::DisplayRole, {QVariant("Index"), QVariant("Value")}}});
-
-  //  tree->setContextMenuPolicy(Qt::CustomContextMenu);
-  //  connect(tree, SIGNAL(customContextMenuRequested(const QPoint &)), this, SLOT(showContextMenu(const QPoint &)));
+  view = widget;
 }
 
 CurrentODModel::~CurrentODModel() {}
@@ -137,29 +135,25 @@ void CurrentODModel::updateNext() {}
 void CurrentODModel::changeNode(uint8_t n) { node = n; }
 
 void CurrentODModel::showContextMenu(const QPoint &pos) {
-  (void)pos;
-#if 0
-  QPoint globalPos = tree->mapToGlobal(pos);
-
-  QList<QTreeWidgetItem *> selection = tree->selectedItems();
-
-  if (selection.size() != 1)
-    return;
-
   QMenu myMenu;
   myMenu.addAction("Draw Plot");
 
-  QAction *selectedItem = myMenu.exec(globalPos);
-  if (selectedItem) {
-    tree->selectedItems();
-    bool     ok;
-    uint16_t index = static_cast<uint16_t>(selection.first()->text(0).remove(0, 2).toInt(&ok, 16));
-    if (!ok) {
-      qDebug() << "Could not get index from text in curodmodel";
-      return;
-    }
+  QModelIndex index = view->indexAt(pos);
+      if (index.isValid()) {
+          QAction *selectedAction = myMenu.exec(view->mapToGlobal(pos));
+          if (selectedAction) {
+            // TODO get real data
+            /*
+            ->selectedItems();
+            bool     ok;
+            uint16_t i = static_cast<uint16_t>(tion.first()->text(0).remove(0, 2).toInt(&ok, 16));
+            if (!ok) {
+              qDebug() << "Could not get index from text in curodmodel";
+              return;
+            }
 
-    emit drawingPlot(node, index, 0);
-  }
-#endif
+            emit drawingPlot(node, index.data, 0);
+            */
+          }
+      }
 }

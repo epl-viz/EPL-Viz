@@ -57,6 +57,8 @@ class CurrentODModel final : public TreeModelBase, public BaseModel {
   QString getName() override { return "CurrentODModel"; }
 
  protected:
+  QTreeView *view;
+
   void update(ProtectedCycle &cycle) override;
 
  public slots:

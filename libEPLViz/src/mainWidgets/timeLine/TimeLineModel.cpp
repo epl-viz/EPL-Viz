@@ -35,13 +35,15 @@ using namespace EPL_DataCollect;
 TimeLineModel::TimeLineModel(MainWindow *mw, QwtPlot *widget) : QwtBaseModel(mw, widget) {
   (void)mw;
   (void)widget;
+  viewportSize = DEF_VIEWPORT_SIZE;
+  widget->setAxisAutoScale(QwtPlot::xTop, false);
 }
 
 TimeLineModel::~TimeLineModel() {}
 
 void TimeLineModel::init() {
   markers.clear();
-  viewportSize = 1000;
+  viewportSize = DEF_VIEWPORT_SIZE;
   curCycleMarker.setLineStyle(QwtPlotMarker::VLine);
   curCycleMarker.setLinePen(QColor(0, 0, 0), 2, Qt::PenStyle::DotLine);
   curCycleMarker.setXValue(static_cast<double>(0));
@@ -82,18 +84,18 @@ void TimeLineModel::updateViewport(int value) {
   int64_t nmin = (static_cast<int64_t>(value) - viewportSize / 2);
   int64_t nmax = (static_cast<int64_t>(value) + viewportSize / 2);
 
-  qDebug() << "Changing viewport to [" + QString::number(nmin) + "-" + QString::number(nmax) + "]";
-
   if (nmin < 0) {
     nmax += std::abs(nmin);
     nmin = 0;
   }
 
-  uint32_t max = static_cast<uint32_t>(plot->axisScaleDiv(QwtPlot::xBottom).upperBound());
-  if (nmax > max) {
-    nmin -= (nmax - max);
-    nmax = max;
+  if (nmax > maxXValue) {
+    nmin -= (nmax - maxXValue);
+    nmax = maxXValue;
   }
-  plot->setAxisScale(QwtPlot::xBottom, static_cast<double>(nmin), static_cast<double>(nmax));
+
+  qDebug() << "Changing viewport to [" + QString::number(nmin) + "-" + QString::number(nmax) + "]";
+
+  plot->setAxisScale(plot->xTop, static_cast<double>(nmin), static_cast<double>(nmax));
   plot->replot();
 }

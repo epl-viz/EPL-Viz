@@ -37,6 +37,7 @@
 
 namespace EPL_Viz {
 class TimeLineModel : public QwtBaseModel {
+  Q_OBJECT
 
  private:
   uint32_t                              appid;
@@ -46,6 +47,8 @@ class TimeLineModel : public QwtBaseModel {
   QwtPlotMarker                         curCycleMarker;
 
  public:
+  const static uint32_t                        DEF_VIEWPORT_SIZE = 100;
+
   TimeLineModel(MainWindow *mw, QwtPlot *widget);
   TimeLineModel() = delete;
   virtual ~TimeLineModel();
@@ -55,8 +58,6 @@ class TimeLineModel : public QwtBaseModel {
  protected:
   void update(ProtectedCycle &cycle) override;
 
- signals:
-  void maxChanged(int notUsed, int nMax);
 
  public slots:
   void updateViewport(int value);

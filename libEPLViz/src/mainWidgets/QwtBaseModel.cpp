@@ -37,6 +37,7 @@ using namespace EPL_DataCollect;
 QwtBaseModel::QwtBaseModel(MainWindow *win, QwtPlot *widget) : BaseModel(win, widget) {
   window = win;
   plot   = widget;
+  maxXValue = 800;
 }
 
 void QwtBaseModel::init() {
@@ -83,7 +84,11 @@ void QwtBaseModel::update(ProtectedCycle &cycle) {
     double y = static_cast<double>(values[i]);
     curve->setSamples(&x, &y, 1);
   }
+
+  maxXValue = static_cast<uint32_t>(values.size());
+
   emit requestRedraw();
+  emit maxValueChanged(0, static_cast<int>(maxXValue));
 }
 
 void QwtBaseModel::setXMin(uint32_t min) {

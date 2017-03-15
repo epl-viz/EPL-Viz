@@ -46,6 +46,8 @@ class QwtBaseModel : public QObject, public BaseModel {
   Q_OBJECT
 
  public:
+  uint32_t                                              maxXValue;
+
   QwtBaseModel(MainWindow *win, QwtPlot *widget);
   QwtBaseModel()  = delete;
   ~QwtBaseModel() = default;
@@ -66,6 +68,7 @@ class QwtBaseModel : public QObject, public BaseModel {
 
  signals:
   void requestRedraw();
+  void maxValueChanged(int notUsed, int nMax);
 
  public slots:
   virtual void createPlot(uint8_t nodeID, uint16_t index, uint8_t subIndex);

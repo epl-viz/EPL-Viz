@@ -57,7 +57,7 @@ class NodeWidget : public QStackedWidget {
 
  private:
   // clang-format off
-  const QString styleFormat = QString("#node-%1%2 { background-color: %3; border-color: rgb(%4, 0, 0); border-style: outset;  border-width: 2px;}"); //TODO: Add border for stylesheet
+  const QString styleFormat = QString("#node-%1%2 { background-color: %3; border-color: rgb(%4, 0, 0); border-style: %5;  border-width: 3px;}"); //TODO: Add border for stylesheet
 
   const QString statusFormat = QString("Status: %1"); //%1 is the status string
   const QString nameFormat = QString("%1 #%2");        //%1 is the node name, %2 its ID
@@ -71,7 +71,8 @@ class NodeWidget : public QStackedWidget {
   QString                   idString;
   EPL_DataCollect::NMTState status;
 
-  int highlightingLevel = 0;
+  int  highlightingLevel = 0;
+  bool selected          = false;
 
   QWidget *     minWidget;
   QWidget *     maxWidget;
@@ -93,10 +94,14 @@ class NodeWidget : public QStackedWidget {
 
   static QString statusToBackground(EPL_DataCollect::NMTState status);
 
+  bool isSelected();
+  void setSelected(bool sel);
+
  private:
   void updateIdentityInfo(EPL_DataCollect::Node::IDENT identity);
   void updateStatus(EPL_DataCollect::NMTState newStatus);
 
+  QString borderStyle();
   QString validateUInt(uint16_t val);
   QString validateUInt(uint32_t val);
 
@@ -105,9 +110,6 @@ class NodeWidget : public QStackedWidget {
 
  signals:
   void nodeClicked(uint8_t node);
-
- private slots:
-  void fixTree(QTreeWidgetItem *item);
 
  public slots:
   void minimizeChange(bool minimized);

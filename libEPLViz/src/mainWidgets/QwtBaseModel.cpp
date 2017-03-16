@@ -90,6 +90,8 @@ void QwtBaseModel::update(ProtectedCycle &cycle) {
 
   maxXValue = static_cast<uint32_t>(values.size());
 
+  plot->replot();
+
   emit requestRedraw();
   emit maxValueChanged(0, static_cast<int>(maxXValue));
 }

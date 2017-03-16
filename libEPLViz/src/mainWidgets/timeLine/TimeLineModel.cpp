@@ -55,11 +55,11 @@ void TimeLineModel::init() {
 }
 
 void TimeLineModel::update(ProtectedCycle &cycle) {
-  if (!created)
-    return;
-
   // Change cyclemarker position
-  curCycleMarker.setXValue(static_cast<double>(window->getCycleNum()));
+  uint32_t cycleNum = window->getCycleNum();
+  if (cycleNum == UINT32_MAX)
+    cycleNum = cycle->getCycleNum();
+  curCycleMarker.setXValue(static_cast<double>(cycleNum));
 
   // Add new markers
   std::vector<EventBase *> nEvents = log->pollEvents(appid);
@@ -77,6 +77,7 @@ void TimeLineModel::update(ProtectedCycle &cycle) {
     markers.append(marker);
   }
 
+  plot->replot();
   QwtBaseModel::update(cycle);
 }
 

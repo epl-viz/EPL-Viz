@@ -234,6 +234,17 @@ void SettingsWindow::apply() {
   updateView();
 }
 
+void SettingsWindow::applyOn(EPL_DataCollect::CaptureInstance *ci) {
+  SettingsProfileItem *prof = profiles[currentProfile].get();
+  ci->setConfig(prof->cfg.backConf);
+  for (auto i : prof->cfg.nodes) {
+    if (i.first < 0)
+      continue;
+
+    ci->setNodeConfig(static_cast<uint8_t>(i.first), i.second);
+  }
+}
+
 void SettingsWindow::reset() {
   SettingsProfileItem *prof = profiles[currentProfile].get();
   prof->cfg                 = startCFG;

@@ -355,6 +355,7 @@ void MainWindow::changeState(GUIState nState) {
 void MainWindow::config() {
   curCycle = UINT32_MAX;
   emit recordingStarted(getCaptureInstance());
+  settingsWin->applyOn(captureInstance.get());
   captureInstance->getPluginManager()->addPlugin(std::make_shared<plugins::TimeSeriesBuilder>());
   captureInstance->registerCycleStorage<plugins::CSTimeSeriesPtr>(
         EPL_DataCollect::constants::EPL_DC_PLUGIN_TIME_SERIES_CSID);

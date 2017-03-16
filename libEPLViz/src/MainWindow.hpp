@@ -41,6 +41,7 @@
 #include "SettingsWindow.hpp"
 #include <QAction>
 #include <QDebug>
+#include <QErrorMessage>
 #include <QLabel>
 #include <QLinkedList>
 #include <QMainWindow>
@@ -72,6 +73,8 @@ class MainWindow : public QMainWindow {
   QString                           interface;
   std::string                       file;
   SettingsWindow *                  settingsWin;
+
+  QString saveFile;
 
  public:
   explicit MainWindow(QWidget *parent = nullptr);

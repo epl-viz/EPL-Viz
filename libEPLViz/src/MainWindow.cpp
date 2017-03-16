@@ -153,7 +153,6 @@ void MainWindow::createModels() {
   models.append(timeLineModel);
 
   QWidget *network = ui->networkGraphContents;
-  connect(network, SIGNAL(nodeSelected(uint8_t)), cyCoModel, SLOT(changeNode(uint8_t)));
   connect(network, SIGNAL(nodeSelected(uint8_t)), curODModel, SLOT(changeNode(uint8_t)));
   connect(network, SIGNAL(nodeSelected(uint8_t)), oddescrModel, SLOT(changeNode(uint8_t)));
 
@@ -259,22 +258,64 @@ CaptureInstance *MainWindow::getCaptureInstance() { return captureInstance.get()
 
 
 void MainWindow::save() {
-  // TODO
-}
-void MainWindow::saveAs() {
-  // TODO
-}
-void MainWindow::open() {
-  QString filenames = "Wireshark Files (";
-  for (GSList *types = wtap_get_all_file_extensions_list(); types; types = types->next) {
-    filenames.append("*.");
-    filenames.append(static_cast<char *>(types->data));
-    filenames.append(" ");
+  // Abort when the captureInstance is invalid
+  if (!captureInstance)
+    return;
+
+  // Check if a save file has been set yet
+  if (saveFile == QString()) {
+    // Get a file name
+    saveAs();
+    return;
   }
 
-  filenames.append(")");
+  // Delete the old save file if it exists
+  if (QFile::exists(saveFile)) {
+    QFile::remove(saveFile);
+  }
 
-  QString curFile = QFileDialog::getOpenFileName(this, tr("Open Captured File"), "", filenames);
+  // The file could not be written
+  if (!QFile::copy(QString::fromStdString(captureInstance->getCurrentFilePath()), saveFile)) {
+    QErrorMessage error(this);
+
+    error.showMessage("Could not save to file '" + saveFile + "'.");
+  }
+}
+
+void MainWindow::saveAs() {
+  // Abort when the captureInstance is invalid
+  if (!captureInstance)
+    return;
+
+  QString ws = "Wireshark Files (";
+  for (GSList *types = wtap_get_all_file_extensions_list(); types; types = types->next) {
+    ws.append("*.");
+    ws.append(static_cast<char *>(types->data));
+    ws.append(" ");
+  }
+
+  ws.append(")");
+
+  QString fileName = QFileDialog::getSaveFileName(this, tr("Save Recording"), "", ws);
+
+  // Check if user selected a file
+  if (fileName == QString::null)
+    return;
+
+  saveFile = fileName;
+  save();
+}
+void MainWindow::open() {
+  QString ws = "Wireshark Files (";
+  for (GSList *types = wtap_get_all_file_extensions_list(); types; types = types->next) {
+    ws.append("*.");
+    ws.append(static_cast<char *>(types->data));
+    ws.append(" ");
+  }
+
+  ws.append(")");
+
+  QString curFile = QFileDialog::getOpenFileName(this, tr("Open Capture File"), "", ws);
   if (curFile == QString::null)
     return;
 

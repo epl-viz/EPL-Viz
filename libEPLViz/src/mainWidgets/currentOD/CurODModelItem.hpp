@@ -43,6 +43,12 @@ class CurODModelItem : public TreeModelItemBase {
   uint8_t         node     = UINT8_MAX;
   uint16_t        index    = UINT16_MAX;
   uint16_t        subIndex = UINT16_MAX; // Values bigger UINT8_MAX: this is not a sub index
+  bool            hasColor = false;
+  QColor          color;
+
+  QVariant dataDisplay(int column);
+  QVariant dataTooltip(int column);
+  QVariant dataBackground(int colummn);
 
  public:
   CurODModelItem() = delete;
@@ -50,13 +56,18 @@ class CurODModelItem : public TreeModelItemBase {
                  ProtectedCycle &   cycle,
                  uint8_t            cNode,
                  uint16_t           odIndex,
-                 uint16_t           odSubIndex = UINT16_MAX);
+                 uint16_t           odSubIndex = UINT16_MAX,
+                 bool               isColor    = false,
+                 QColor             col        = QColor());
 
   virtual ~CurODModelItem();
 
   QVariant data(int column, Qt::ItemDataRole role) override;
   bool          hasChanged() override;
   Qt::ItemFlags flags() override;
+
+  void resetColor();
+  void setColor(QColor col);
 
   uint16_t getIndex() const;
 };

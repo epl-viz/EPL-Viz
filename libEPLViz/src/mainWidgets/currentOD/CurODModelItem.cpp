@@ -30,9 +30,20 @@
 using namespace EPL_Viz;
 using namespace EPL_DataCollect;
 
-CurODModelItem::CurODModelItem(
-      TreeModelItemBase *parent, ProtectedCycle &cycle, uint8_t cNode, uint16_t odIndex, uint16_t odSubIndex)
-    : TreeModelItemBase(parent), c(cycle), node(cNode), index(odIndex), subIndex(odSubIndex) {}
+CurODModelItem::CurODModelItem(TreeModelItemBase *parent,
+                               ProtectedCycle &   cycle,
+                               uint8_t            cNode,
+                               uint16_t           odIndex,
+                               uint16_t           odSubIndex,
+                               bool               isColor,
+                               QColor             col)
+    : TreeModelItemBase(parent),
+      c(cycle),
+      node(cNode),
+      index(odIndex),
+      subIndex(odSubIndex),
+      hasColor(isColor),
+      color(col) {}
 
 CurODModelItem::~CurODModelItem() {}
 
@@ -40,13 +51,14 @@ CurODModelItem::~CurODModelItem() {}
 Qt::ItemFlags CurODModelItem::flags() { return Qt::ItemIsEnabled; }
 bool          CurODModelItem::hasChanged() { return true; }
 uint16_t      CurODModelItem::getIndex() const { return index; }
+void          CurODModelItem::resetColor() { hasColor = false; }
+void CurODModelItem::setColor(QColor col) {
+  color    = col;
+  hasColor = true;
+}
 
-QVariant CurODModelItem::data(int column, Qt::ItemDataRole role) {
-  if (role != Qt::DisplayRole)
-    return QVariant();
-
-  auto  lock = c.getLock();
-  Node *n    = c->getNode(node);
+QVariant CurODModelItem::dataDisplay(int column) {
+  Node *n = c->getNode(node);
   if (!n)
     return QVariant("[INVALID NODE]");
 
@@ -83,5 +95,31 @@ QVariant CurODModelItem::data(int column, Qt::ItemDataRole role) {
       }
 
     default: return QVariant("[INVALID COLUMN]");
+  }
+}
+
+QVariant CurODModelItem::dataTooltip(int column) {
+  switch (column) {
+    case 0: return QVariant("The OD index");
+    case 1: return QVariant("The Value");
+    default: return QVariant();
+  }
+}
+
+QVariant CurODModelItem::dataBackground(int) {
+  if (hasColor)
+    return QBrush(color);
+
+  return QVariant();
+}
+
+QVariant CurODModelItem::data(int column, Qt::ItemDataRole role) {
+  auto lock = c.getLock();
+
+  switch (role) {
+    case Qt::DisplayRole: return dataDisplay(column);
+    case Qt::ToolTipRole: return dataTooltip(column);
+    case Qt::BackgroundRole: return dataBackground(column);
+    default: return QVariant();
   }
 }

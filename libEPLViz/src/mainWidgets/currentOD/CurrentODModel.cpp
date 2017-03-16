@@ -74,6 +74,17 @@ void CurrentODModel::update(ProtectedCycle &cycle) {
   std::sort(oldVec.begin(), oldVec.end());
   std::set_symmetric_difference(chVec.begin(), chVec.end(), oldVec.begin(), oldVec.end(), std::back_inserter(diff));
 
+  std::vector<uint32_t> toHighLight;
+
+  auto events = cycle->getActiveEvents();
+  for (auto i : events) {
+    if (i->getType() == EvType::VIEW_EV_HIGHLIGHT_OD_ENTRY) {
+      for (auto j : i->getAffectedIndices()) {
+        toHighLight.push_back(j.first);
+      }
+    }
+  }
+
   if (diff.empty() && node == lastUpdatedNode) {
     // No entry changes
     for (auto &i : *root->getChildren()) {
@@ -93,13 +104,20 @@ void CurrentODModel::update(ProtectedCycle &cycle) {
       }
 
       for (auto &j : *i->getChildren()) {
+        dynamic_cast<CurODModelItem *>(j)->resetColor();
         if (j->hasChanged()) {
           emitRowChaned(j);
         }
       }
 
+      dynamic_cast<CurODModelItem *>(i)->resetColor();
       if (i->hasChanged()) {
         emitRowChaned(i);
+      }
+
+      if (std::find(toHighLight.begin(), toHighLight.end(), dynamic_cast<CurODModelItem *>(i)->getIndex()) !=
+          toHighLight.end()) {
+        dynamic_cast<CurODModelItem *>(i)->setColor(QColor(0x7c, 0xd1, 0xd9));
       }
     }
   } else {
@@ -121,6 +139,11 @@ void CurrentODModel::update(ProtectedCycle &cycle) {
 
       for (uint16_t j = 0; j < entry->getArraySize() && j <= 0xFF; ++j) {
         item->push_back(new CurODModelItem(item, cycle, node, i, j));
+      }
+
+      if (std::find(toHighLight.begin(), toHighLight.end(), dynamic_cast<CurODModelItem *>(item)->getIndex()) !=
+          toHighLight.end()) {
+        dynamic_cast<CurODModelItem *>(item)->setColor(QColor(0x7c, 0xd1, 0xd9));
       }
     }
 

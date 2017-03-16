@@ -2,6 +2,7 @@
 
 #include <QWidget>
 #include <QWidgetAction>
+#include <chrono>
 
 namespace Ui {
 class CycleSetter;
@@ -15,8 +16,10 @@ class CycleSetter : public QWidget {
   Q_OBJECT
 
  private:
-  Ui::CycleSetter *ui;
-  MainWindow *     mw;
+  Ui::CycleSetter *                     ui;
+  MainWindow *                          mw;
+  bool                                  pointerInWindow = false;
+  std::chrono::system_clock::time_point leaveTP         = std::chrono::system_clock::now();
 
  public:
   explicit CycleSetter(QWidget *parent, MainWindow *main);
@@ -24,6 +27,10 @@ class CycleSetter : public QWidget {
 
   uint32_t value();
   void setValue(uint32_t val);
+
+ protected:
+  void enterEvent(QEvent *) override;
+  void leaveEvent(QEvent *) override;
 
  public slots:
   void changeCycle();

@@ -137,7 +137,6 @@ class MainWindow : public QMainWindow {
   void startRecording();
   void stopRecording();
   void updateWidgets(ProtectedCycle &cycle);
-  void userEnteredCycle();
 
 
  signals:

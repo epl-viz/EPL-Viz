@@ -34,7 +34,6 @@
 #include "NetworkGraphModel.hpp"
 #include "ODDescriptionModel.hpp"
 #include "PluginsWindow.hpp"
-#include "ProtocolValidator.hpp"
 #include "SettingsWindow.hpp"
 #include "SettingsWindow.hpp"
 #include "TimeLineModel.hpp"
@@ -143,7 +142,7 @@ void MainWindow::createModels() {
           SIGNAL(drawingPlot(uint8_t, uint16_t, uint16_t)),
           qwtPlot,
           SLOT(createPlot(uint8_t, uint16_t, uint16_t)));
-  connect(ui->btnSetupPlot, SIGNAL(clicked()), timeLineModel, SLOT(setupPlotting()));
+  connect(ui->actionSetup_Plot, SIGNAL(triggered()), timeLineModel, SLOT(setupPlotting()));
 
 
   // Append the nodes to a list for cleanup
@@ -356,14 +355,9 @@ void MainWindow::changeState(GUIState nState) {
 void MainWindow::config() {
   curCycle = UINT32_MAX;
   emit recordingStarted(getCaptureInstance());
-
-  auto plgManager = captureInstance->getPluginManager();
-
-  plgManager->addPlugin(std::make_shared<plugins::TimeSeriesBuilder>());
-  plgManager->addPlugin(std::make_shared<plugins::ProtocolValidator>());
+  captureInstance->getPluginManager()->addPlugin(std::make_shared<plugins::TimeSeriesBuilder>());
   captureInstance->registerCycleStorage<plugins::CSTimeSeriesPtr>(
         EPL_DataCollect::constants::EPL_DC_PLUGIN_TIME_SERIES_CSID);
-
   ui->actionStart_Recording->setEnabled(false);
   ui->actionStop_Recording->setEnabled(true);
   ui->actionLoad->setEnabled(false);
@@ -388,17 +382,5 @@ bool MainWindow::curODWidgetUpdateData(QTreeWidgetItem *item, QString newData) {
 
 SettingsWindow *   MainWindow::getSettingsWin() { return settingsWin; }
 CycleSetterAction *MainWindow::getCycleSetter() { return CS; }
-
-void MainWindow::userEnteredCycle() {
-  bool     ok;
-  uint32_t parsedCycle = static_cast<uint32_t>(ui->lineEditCycle->text().toULong(&ok));
-  if (ok) {
-    changeCycle(parsedCycle);
-  } else {
-    // TODO do something if wrong?
-    qDebug() << "Wrong formatted input for cycle";
-  }
-  ui->lineEditCycle->clear();
-}
 
 void MainWindow::handleResults(const QString &result) { qDebug() << "The result is\"" << result << "\""; }

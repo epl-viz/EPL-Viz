@@ -7,7 +7,7 @@
 TimeLineMagnifier::TimeLineMagnifier(uint32_t *maxVal, QWidget *canvas) : QwtPlotMagnifier(canvas) { max = maxVal; }
 /**
  * @brief TimeLineMagnifier::rescale Copied from qwt and changed to stop at boundries
- * @param factor
+ * @param factor Factor
  */
 void TimeLineMagnifier::rescale(double factor) {
   QwtPlot *plt = plot();

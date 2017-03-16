@@ -38,6 +38,7 @@
 #include "SettingsWindow.hpp"
 #include "TimeLineModel.hpp"
 #include "TimeSeriesBuilder.hpp"
+#include <QWidgetAction>
 #include <memory>
 #include <vector>
 #include <wiretap/wtap.h>
@@ -70,6 +71,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
   std::vector<QAction *> btns;
   btns.emplace_back(ui->actionOD_Filter_2);
   fixQToolButtons(btns, ui->toolBar);
+
+  CS = new CycleSetterAction(ui->toolBar, this);
+  ui->toolBar->addAction(CS);
 
   connect(this,
           SIGNAL(recordingStarted(EPL_DataCollect::CaptureInstance *)),
@@ -376,7 +380,8 @@ bool MainWindow::curODWidgetUpdateData(QTreeWidgetItem *item, QString newData) {
   return true;
 }
 
-SettingsWindow *MainWindow::getSettingsWin() { return settingsWin; }
+SettingsWindow *   MainWindow::getSettingsWin() { return settingsWin; }
+CycleSetterAction *MainWindow::getCycleSetter() { return CS; }
 
 void MainWindow::userEnteredCycle() {
   bool     ok;

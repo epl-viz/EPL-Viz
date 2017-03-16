@@ -165,6 +165,10 @@ void CurrentODModel::showContextMenu(const QPoint &pos) {
   if (index.isValid()) {
     QAction *selectedAction = myMenu.exec(view->mapToGlobal(pos));
     if (selectedAction) {
+      // QModelIndex indexCol = createIndex(index.row(), 0, index.internalPointer());
+      // QVariant dataCol = data(indexCol, Qt::DisplayRole);
+      CurODModelItem *item = static_cast<CurODModelItem *>(index.internalPointer());
+      emit            drawingPlot(node, item->getIndex(), item->getSubIndex());
       // TODO get real data
       /*
       ->selectedItems();

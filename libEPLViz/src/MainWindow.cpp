@@ -130,6 +130,15 @@ void MainWindow::createModels() {
           SIGNAL(customContextMenuRequested(const QPoint &)),
           curODModel,
           SLOT(showContextMenu(const QPoint &)));
+  connect(curODModel,
+          SIGNAL(drawingPlot(uint8_t, uint16_t, uint16_t)),
+          timeLineModel,
+          SLOT(createPlot(uint8_t, uint16_t, uint16_t)));
+  connect(curODModel,
+          SIGNAL(drawingPlot(uint8_t, uint16_t, uint16_t)),
+          qwtPlot,
+          SLOT(createPlot(uint8_t, uint16_t, uint16_t)));
+
 
   // Append the nodes to a list for cleanup
   models.append(packetHistoryModel);

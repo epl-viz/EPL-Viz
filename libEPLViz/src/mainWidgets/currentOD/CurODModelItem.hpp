@@ -70,5 +70,6 @@ class CurODModelItem : public TreeModelItemBase {
   void setColor(QColor col);
 
   uint16_t getIndex() const;
+  uint16_t getSubIndex() const;
 };
 }

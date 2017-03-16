@@ -66,7 +66,7 @@ class CurrentODModel final : public TreeModelBase, public BaseModel {
   void changeNode(uint8_t);
   void showContextMenu(const QPoint &);
  signals:
-  void drawingPlot(uint8_t nodeID, uint16_t index, uint8_t subIndex);
+  void drawingPlot(uint8_t nodeID, uint16_t index, uint16_t subIndex);
   void updateExternal(EPL_DataCollect::Cycle *cycle, int node);
 };
 }

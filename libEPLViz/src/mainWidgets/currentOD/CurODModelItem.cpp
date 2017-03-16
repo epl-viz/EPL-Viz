@@ -51,6 +51,7 @@ CurODModelItem::~CurODModelItem() {}
 Qt::ItemFlags CurODModelItem::flags() { return Qt::ItemIsEnabled; }
 bool          CurODModelItem::hasChanged() { return true; }
 uint16_t      CurODModelItem::getIndex() const { return index; }
+uint16_t      CurODModelItem::getSubIndex() const { return subIndex; }
 void          CurODModelItem::resetColor() { hasColor = false; }
 void CurODModelItem::setColor(QColor col) {
   color    = col;

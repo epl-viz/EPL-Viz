@@ -38,6 +38,7 @@ QwtBaseModel::QwtBaseModel(MainWindow *win, QwtPlot *widget) : BaseModel(win, wi
   window    = win;
   plot      = widget;
   maxXValue = 800;
+  plot->setAxisAutoScale(QwtPlot::yLeft, true);
 }
 
 void QwtBaseModel::init() {
@@ -47,12 +48,14 @@ void QwtBaseModel::init() {
   Cycle *          startC = ci->getStartCycle();
   auto *           cs     = startC->getCycleStorage(EPL_DataCollect::constants::EPL_DC_PLUGIN_TIME_SERIES_CSID);
   tsp                     = dynamic_cast<plugins::CSTimeSeriesPtr *>(cs);
+  created                 = false;
 }
 
-// TODO: Connect this slot to the signal of the OD Widget
-void QwtBaseModel::createPlot(uint8_t nodeID, uint16_t index, uint8_t subIndex) {
-  curve      = std::make_shared<QwtPlotCurve>();
-  timeSeries = std::make_shared<plugins::TimeSeries>(nodeID, index, subIndex);
+void QwtBaseModel::createPlot(uint8_t nodeID, uint16_t index, uint16_t subIndex) {
+  curve = std::make_shared<QwtPlotCurve>();
+  if (subIndex > UINT8_MAX)
+    subIndex = 0;
+  timeSeries = std::make_shared<plugins::TimeSeries>(nodeID, index, static_cast<uint8_t>(subIndex));
   tsp->addTS(timeSeries);
 
   curve->attach(plot);

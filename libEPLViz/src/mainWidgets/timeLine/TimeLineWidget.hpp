@@ -51,9 +51,6 @@ class TimelineWidget : public QDockWidget {
   TimelineWidget(QWidget *parent = nullptr);
   bool event(QEvent *event) override;
 
- signals:
-  void zoom(QPoint angle);
-
  public slots:
   void pointSelected(const QPointF &pa);
 };

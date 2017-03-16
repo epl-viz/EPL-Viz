@@ -60,11 +60,19 @@ class QwtBaseModel : public QObject, public BaseModel {
   QwtPlot *                                             plot;
   std::shared_ptr<QwtPlotCurve>                         curve;
   std::shared_ptr<EPL_DataCollect::plugins::TimeSeries> timeSeries;
-  EPL_DataCollect::plugins::CSTimeSeriesPtr *           tsp;
+
+  bool     setup;
+
+  uint8_t     node;
+  uint16_t    index;
+  uint16_t    subindex;
+  bool        odTS;
+  std::string csName;
 
   bool created = false;
 
   virtual void update(ProtectedCycle &cycle) override;
+  void initTS();
 
  signals:
   void requestRedraw();
@@ -74,5 +82,6 @@ class QwtBaseModel : public QObject, public BaseModel {
   virtual void createPlot(uint8_t nodeID, uint16_t index, uint16_t subIndex);
   virtual void setXMin(uint32_t min);
   virtual void setXMax(uint32_t max);
+  void setupPlotting();
 };
 }

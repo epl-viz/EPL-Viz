@@ -48,8 +48,10 @@ class TimeLineModel : public QwtBaseModel {
   QwtPlotMarker                         curCycleMarker;
   std::unique_ptr<TimeLineMagnifier>    zoomer;
 
+  void resetAxes();
+
  public:
-  const static uint32_t DEF_VIEWPORT_SIZE = 100;
+  const static uint32_t DEF_VIEWPORT_SIZE = 10;
 
   TimeLineModel(MainWindow *mw, QwtPlot *widget);
   TimeLineModel() = delete;
@@ -63,6 +65,5 @@ class TimeLineModel : public QwtBaseModel {
 
  public slots:
   void updateViewport(int value);
-  void zoom(QPoint angle);
 };
 }

@@ -30,6 +30,7 @@
 #include "TimeLineModel.hpp"
 #include "MainWindow.hpp"
 #include "TimeLineWidget.hpp"
+#include "PlotCreator.hpp"
 using namespace EPL_Viz;
 using namespace EPL_DataCollect;
 
@@ -42,7 +43,13 @@ TimeLineModel::TimeLineModel(MainWindow *mw, QwtPlot *widget) : QwtBaseModel(mw,
   zoomer = std::make_unique<TimeLineMagnifier>(&maxXValue, widget->canvas());
   zoomer->setAxisEnabled(QwtPlot::xTop, QwtPlot::yRight);
 
-  connect(mw->findChild<TimelineWidget *>("dockTime"), SIGNAL(zoom(QPoint)), this, SLOT(zoom(QPoint)));
+  //connect(mw->findChild<TimelineWidget *>("dockTime"), SIGNAL(zoom(QPoint)), this, SLOT(zoom(QPoint)));
+
+  widget->setAxisScale(QwtPlot::yLeft, 0, 10);
+  widget->setAxisAutoScale(QwtPlot::yLeft, true);
+
+  widget->setAxisScale(QwtPlot::xTop, 0, maxXValue, 1);
+  resetAxes();
 }
 
 TimeLineModel::~TimeLineModel() {}
@@ -111,11 +118,12 @@ void TimeLineModel::updateViewport(int value) {
 
   qDebug() << "Changing viewport to [" + QString::number(nmin) + "-" + QString::number(nmax) + "]";
 
-  plot->setAxisScale(plot->xTop, static_cast<double>(nmin), static_cast<double>(nmax));
+  plot->setAxisScale(plot->xTop, static_cast<double>(nmin), static_cast<double>(nmax), 1);
+  resetAxes();
   plot->replot();
   emit requestRedraw();
 }
-
+/*
 void TimeLineModel::zoom(QPoint angle) {
   // zoomer->zoom(angle.y());
   qDebug() << "Wrong zoom called";
@@ -142,3 +150,13 @@ void TimeLineModel::zoom(QPoint angle) {
   plot->replot();
   emit requestRedraw();
 }
+*/
+void TimeLineModel::resetAxes() {
+
+  plot->setAxisAutoScale(QwtPlot::xTop, false);
+  plot->setAxisMaxMajor(QwtPlot::xTop, 1);
+  plot->setAxisMaxMinor(QwtPlot::xTop, 0);
+}
+
+
+

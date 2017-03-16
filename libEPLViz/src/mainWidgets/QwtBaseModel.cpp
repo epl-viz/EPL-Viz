@@ -30,39 +30,72 @@
 #include "QwtBaseModel.hpp"
 #include "MainWindow.hpp"
 #include "QPointF"
+#include "PlotCreator.hpp"
 
 using namespace EPL_Viz;
 using namespace EPL_DataCollect;
+using namespace EPL_DataCollect::constants;
 
 QwtBaseModel::QwtBaseModel(MainWindow *win, QwtPlot *widget) : BaseModel(win, widget) {
   window    = win;
   plot      = widget;
-  maxXValue = 800;
-  plot->setAxisAutoScale(QwtPlot::yLeft, true);
+  maxXValue = 50;
+  setup     = false;
 }
 
 void QwtBaseModel::init() {
   connect(this, SIGNAL(requestRedraw()), plot, SLOT(repaint()));
 
-  CaptureInstance *ci     = window->getCaptureInstance();
-  Cycle *          startC = ci->getStartCycle();
-  auto *           cs     = startC->getCycleStorage(EPL_DataCollect::constants::EPL_DC_PLUGIN_TIME_SERIES_CSID);
-  tsp                     = dynamic_cast<plugins::CSTimeSeriesPtr *>(cs);
-  created                 = false;
+  created = false;
+  setup = false;
 }
 
-void QwtBaseModel::createPlot(uint8_t nodeID, uint16_t index, uint16_t subIndex) {
+void QwtBaseModel::createPlot(uint8_t nodeID, uint16_t mainIndex, uint16_t subIndex) {
+  if (setup) {
+    return;
+  }
   curve = std::make_shared<QwtPlotCurve>();
   if (subIndex > UINT8_MAX)
     subIndex = 0;
-  timeSeries = std::make_shared<plugins::TimeSeries>(nodeID, index, static_cast<uint8_t>(subIndex));
-  tsp->addTS(timeSeries);
+
+  node = nodeID;
+  index = mainIndex;
+  subindex = subIndex;
+
+  initTS();
 
   curve->attach(plot);
+}
+
+void QwtBaseModel::initTS() {
+  auto              ptr = window->getCaptureInstance()->getCycleContainer()->pollCyclePTR();
+  CycleStorageBase *cs;
+
+  if (window->getCaptureInstance()->getState() != CaptureInstance::CIstate::RUNNING) {
+    cs = window->getCaptureInstance()->getStartCycle()->getCycleStorage(EPL_DC_PLUGIN_TIME_SERIES_CSID);
+  } else {
+    cs = ptr->getCycleStorage(EPL_DC_PLUGIN_TIME_SERIES_CSID);
+  }
+
+  auto *tsp  = dynamic_cast<plugins::CSTimeSeriesPtr *>(cs);
+  if (odTS)
+    timeSeries = std::make_shared<plugins::TimeSeries>(node, index, static_cast<uint8_t>(subindex));
+  else
+    timeSeries = std::make_shared<plugins::TimeSeries>(node, csName);
+  tsp->addTS(timeSeries);
+
   created = true;
 }
 
 void QwtBaseModel::update(ProtectedCycle &cycle) {
+  if (setup) {
+    initTS();
+
+    curve = std::make_shared<QwtPlotCurve>();
+    curve->attach(plot);
+
+    setup = false;
+  }
   // Abort when the QWTPlot has not been created
   if (!created)
     return;
@@ -102,4 +135,17 @@ void QwtBaseModel::setXMin(uint32_t min) {
 
 void QwtBaseModel::setXMax(uint32_t max) {
   plot->setAxisScale(QwtPlot::xBottom, plot->axisScaleDiv(QwtPlot::xBottom).lowerBound(), static_cast<double>(max));
+}
+
+void QwtBaseModel::setupPlotting() {
+  PlotCreator::PlotCreatorData data = PlotCreator::getNewPlot();
+  if (data.isOK) {
+    node = data.node;
+    index = data.index;
+    subindex = data.subIndex;
+    odTS = data.defaultODPlot;
+    csName = data.csName;
+
+    setup = true;
+  }
 }

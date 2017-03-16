@@ -138,6 +138,7 @@ void MainWindow::createModels() {
           SIGNAL(drawingPlot(uint8_t, uint16_t, uint16_t)),
           qwtPlot,
           SLOT(createPlot(uint8_t, uint16_t, uint16_t)));
+  connect(ui->btnSetupPlot, SIGNAL(clicked()), timeLineModel, SLOT(setupPlotting()));
 
 
   // Append the nodes to a list for cleanup
@@ -198,12 +199,6 @@ void MainWindow::fixQToolButtons(std::vector<QAction *> &actions, QToolBar *bar)
     btns.emplace_back(dynamic_cast<QToolButton *>(bar->widgetForAction(i)));
   }
   fixQToolButtons(btns);
-}
-
-bool MainWindow::changeTime(double t) {
-  // TODO convert to cycle
-  (void)t;
-  return false;
 }
 
 bool MainWindow::changeCycle(uint32_t cycle) {

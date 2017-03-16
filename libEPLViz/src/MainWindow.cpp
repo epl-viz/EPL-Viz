@@ -235,8 +235,9 @@ void MainWindow::openPluginEditor() {
 }
 
 void MainWindow::openInterfacePicker() {
-  InterfacePicker *picker = new InterfacePicker(this, getCaptureInstance());
-  picker->show();
+  QString name = InterfacePicker::getInterface(this, captureInstance.get());
+  if (!name.isEmpty())
+    interface = name;
 }
 
 void MainWindow::openSettings() { settingsWin->show(); }
@@ -306,6 +307,8 @@ void MainWindow::changeState(GUIState nState) {
     case GUIState::PAUSED: break;
     case GUIState::STOPPED: break;
   }
+
+  std::string interfaceName;
   // switch with new state
   int backendState;
   switch (nState) {
@@ -330,7 +333,11 @@ void MainWindow::changeState(GUIState nState) {
       break;
     case GUIState::RECORDING:
       config();
-      backendState = captureInstance->startRecording(interface.toStdString());
+      if (interface.isEmpty())
+        interfaceName = nullptr;
+      else
+        interfaceName = interface.toStdString();
+      backendState    = captureInstance->startRecording(interfaceName);
       if (backendState != 0) {
         qDebug() << QString("Backend error Code ") + QString::number(backendState);
         changeState(GUIState::UNINIT);

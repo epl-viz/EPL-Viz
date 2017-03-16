@@ -31,6 +31,7 @@
 #include "MainWindow.hpp"
 #include "PlotCreator.hpp"
 #include "QPointF"
+#include "QtDebug"
 
 using namespace EPL_Viz;
 using namespace EPL_DataCollect;
@@ -41,13 +42,16 @@ QwtBaseModel::QwtBaseModel(MainWindow *win, QwtPlot *widget) : BaseModel(win, wi
   plot      = widget;
   maxXValue = 50;
   setup     = false;
+  odTS      = true;
 }
 
 void QwtBaseModel::init() {
   connect(this, SIGNAL(requestRedraw()), plot, SLOT(repaint()));
 
   created = false;
-  setup   = false;
+  // TODO change back from debug
+  setup = true;
+  odTS  = true;
 }
 
 void QwtBaseModel::createPlot(uint8_t nodeID, uint16_t mainIndex, uint16_t subIndex) {
@@ -68,6 +72,8 @@ void QwtBaseModel::createPlot(uint8_t nodeID, uint16_t mainIndex, uint16_t subIn
 }
 
 void QwtBaseModel::initTS() {
+  qDebug() << "Initializing Timeseries with " + QString::number(node) + "/" + QString::number(index) + "/" +
+                    QString::number(subindex);
   auto              ptr = window->getCaptureInstance()->getCycleContainer()->pollCyclePTR();
   CycleStorageBase *cs;
 
@@ -78,9 +84,10 @@ void QwtBaseModel::initTS() {
   }
 
   auto *tsp = dynamic_cast<plugins::CSTimeSeriesPtr *>(cs);
-  if (odTS)
-    timeSeries = std::make_shared<plugins::TimeSeries>(node, index, static_cast<uint8_t>(subindex));
-  else
+  if (odTS) {
+    qDebug() << "Setting timeseries hardcoded";
+    timeSeries = std::make_shared<plugins::TimeSeries>(1, 0x6200, 1);
+  } else
     timeSeries = std::make_shared<plugins::TimeSeries>(node, csName);
   tsp->addTS(timeSeries);
 
@@ -88,6 +95,8 @@ void QwtBaseModel::initTS() {
 }
 
 void QwtBaseModel::update(ProtectedCycle &cycle) {
+  (void)cycle;
+  /*
   if (setup) {
     initTS();
 
@@ -109,9 +118,11 @@ void QwtBaseModel::update(ProtectedCycle &cycle) {
   size_t              oldDataCount = curve->data()->size();
   size_t              newDataCount = values.size();
   size_t              start        = 0;
-
+  qDebug() << "Updating BaseModel with timeseries data of the size " + QString::number(newDataCount) + "and " +
+  QString::number(oldDataCount) + " old values";
   if (oldDataCount == newDataCount)
     return;
+  qDebug() << "===========> Got data <==========";
   if (oldDataCount < newDataCount)
     start = oldDataCount;
 
@@ -123,10 +134,12 @@ void QwtBaseModel::update(ProtectedCycle &cycle) {
 
   maxXValue = static_cast<uint32_t>(values.size());
 
-  plot->replot();
+  // TODO replotting in different thread
+  //plot->replot();
 
   emit requestRedraw();
   emit maxValueChanged(0, static_cast<int>(maxXValue));
+  */
 }
 
 void QwtBaseModel::setXMin(uint32_t min) {

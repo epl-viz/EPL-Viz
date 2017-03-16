@@ -48,7 +48,8 @@ TimeLineModel::TimeLineModel(MainWindow *mw, QwtPlot *widget) : QwtBaseModel(mw,
   widget->setAxisScale(QwtPlot::yLeft, 0, 10);
   widget->setAxisAutoScale(QwtPlot::yLeft, true);
 
-  widget->setAxisScale(QwtPlot::xTop, 0, maxXValue, 1);
+  widget->setAxisAutoScale(QwtPlot::xTop, false);
+  widget->setAxisScale(QwtPlot::xTop, 0, DEF_VIEWPORT_SIZE, 1);
   resetAxes();
 }
 
@@ -89,29 +90,30 @@ void TimeLineModel::update(ProtectedCycle &cycle) {
     cycleNum = cycle->getCycleNum();
   curCycleMarker.setXValue(static_cast<double>(cycleNum));
 
-  // Add new markers
-  std::vector<EventBase *> nEvents = log->pollEvents(appid);
-  for (EventBase *ev : nEvents) {
-    std::shared_ptr<QwtPlotMarker> marker =
-          std::make_shared<QwtPlotMarker>(QString::fromStdString(ev->getDescription()));
-
-    marker->setLineStyle(QwtPlotMarker::VLine);
-
-    uint32_t x;
-    ev->getCycleRange(&x);
-    marker->setXValue(static_cast<double>(x));
-
-    marker->attach(plot);
-    markers.append(marker);
-  }
-
   // Set newest Cycle marker
   uint32_t newest = window->getCaptureInstance()->getCycleContainer()->pollCycle().getCycleNum();
   newestCycleMarker.setXValue(static_cast<double>(newest));
   maxXValue = newest;
+  /*
+    // Add new markers
+    std::vector<EventBase *> nEvents = log->pollEvents(appid);
+    for (EventBase *ev : nEvents) {
+      std::shared_ptr<QwtPlotMarker> marker =
+            std::make_shared<QwtPlotMarker>(QString::fromStdString(ev->getDescription()));
+
+      marker->setLineStyle(QwtPlotMarker::VLine);
+
+      uint32_t x;
+      ev->getCycleRange(&x);
+      marker->setXValue(static_cast<double>(x));
+
+      marker->attach(plot);
+      markers.append(marker);
+    }
+  */
   plot->replot();
-  emit requestRedraw();
-  QwtBaseModel::update(cycle);
+  // emit requestRedraw();
+  // QwtBaseModel::update(cycle);
 }
 
 void TimeLineModel::updateViewport(int value) {
@@ -128,11 +130,11 @@ void TimeLineModel::updateViewport(int value) {
     nmax = maxXValue;
   }
 
-  qDebug() << "Changing viewport to [" + QString::number(nmin) + "-" + QString::number(nmax) + "]";
+  // qDebug() << "Changing viewport to [" + QString::number(nmin) + "-" + QString::number(nmax) + "]";
 
   plot->setAxisScale(plot->xTop, static_cast<double>(nmin), static_cast<double>(nmax), 1);
   resetAxes();
-  plot->replot();
+  // plot->replot();
   emit requestRedraw();
 }
 /*
@@ -164,8 +166,6 @@ void TimeLineModel::zoom(QPoint angle) {
 }
 */
 void TimeLineModel::resetAxes() {
-
-  plot->setAxisAutoScale(QwtPlot::xTop, false);
-  plot->setAxisMaxMajor(QwtPlot::xTop, 1);
-  plot->setAxisMaxMinor(QwtPlot::xTop, 0);
+  // plot->setAxisMaxMajor(QwtPlot::xTop, 1);
+  // plot->setAxisMaxMinor(QwtPlot::xTop, 0);
 }

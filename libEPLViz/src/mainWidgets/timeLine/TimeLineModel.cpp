@@ -59,10 +59,18 @@ void TimeLineModel::init() {
   viewportSize = DEF_VIEWPORT_SIZE;
 
   curCycleMarker.setLineStyle(QwtPlotMarker::VLine);
-  curCycleMarker.setLinePen(QColor(255, 0, 0), 2, Qt::PenStyle::DotLine);
+  curCycleMarker.setLinePen(QColor(0, 0, 0), 2, Qt::PenStyle::DotLine);
   curCycleMarker.setXAxis(QwtPlot::xTop);
   curCycleMarker.setXValue(static_cast<double>(0));
+  curCycleMarker.setLabel(QwtText("View"));
   curCycleMarker.attach(plot);
+
+  newestCycleMarker.setLineStyle(QwtPlotMarker::VLine);
+  newestCycleMarker.setLinePen(QColor(255, 0, 0), 2, Qt::PenStyle::DotLine);
+  newestCycleMarker.setXAxis(QwtPlot::xTop);
+  newestCycleMarker.setXValue(static_cast<double>(0));
+  newestCycleMarker.setLabel(QwtText("Backend"));
+  newestCycleMarker.attach(plot);
 
   zoomer = std::make_unique<TimeLineMagnifier>(&maxXValue, plot->canvas());
   zoomer->setAxisEnabled(QwtPlot::xTop, true);
@@ -97,6 +105,10 @@ void TimeLineModel::update(ProtectedCycle &cycle) {
     markers.append(marker);
   }
 
+  // Set newest Cycle marker
+  uint32_t newest = window->getCaptureInstance()->getCycleContainer()->pollCycle().getCycleNum();
+  newestCycleMarker.setXValue(static_cast<double>(newest));
+  maxXValue = newest;
   plot->replot();
   emit requestRedraw();
   QwtBaseModel::update(cycle);

@@ -24,7 +24,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 /*!
- * \file pyhonlogmodel.cpp
+ * \file PythonLogModel.cpp
  */
 #include "PythonLogModel.hpp"
 #include "MainWindow.hpp"
@@ -34,7 +34,6 @@ using namespace EPL_Viz;
 using namespace EPL_DataCollect;
 
 PythonLogModel::PythonLogModel(MainWindow *window, QTableView *widget) : BaseModel(window, widget) {
-  qDebug() << "Updating PythonLogModel";
   QTableView *view = widget;
   view->setModel(this);
   view->verticalHeader()->hide();
@@ -47,9 +46,17 @@ void PythonLogModel::init() {
 
 void PythonLogModel::update(ProtectedCycle &cycle) {
   (void)cycle;
-  events                             = log->getAllEvents();
+
   std::vector<EventBase *> newEvents = log->pollEvents(appid);
-  insertRows(static_cast<int>(events.size()), static_cast<int>(newEvents.size()));
+  int                      newSize   = static_cast<int>(newEvents.size());
+  int                      lastRow   = static_cast<int>(events.size());
+
+  // Check if an update is necessary
+  if (newSize > 0) {
+    events = log->getAllEvents();
+
+    insertRows(lastRow, newSize);
+  }
 }
 
 int PythonLogModel::rowCount(const QModelIndex &parent) const {
@@ -64,7 +71,7 @@ int PythonLogModel::columnCount(const QModelIndex &parent) const {
 
 QVariant PythonLogModel::data(const QModelIndex &index, int role) const {
   if (role == Qt::DisplayRole) {
-    EventBase *ev = events[static_cast<uint8_t>(index.row())];
+    EventBase *ev = events[index.row()];
     switch (index.column()) {
       case 0:
         uint32_t start;

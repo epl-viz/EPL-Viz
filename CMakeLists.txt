@@ -103,8 +103,8 @@ set( EPL_VIZ_QT_COMPONENTS Core Widgets )
 find_package( ECM 1.1.0 REQUIRED NO_MODULE )
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${ECM_MODULE_PATH} ${ECM_KDE_MODULE_DIR} )
 
-find_package( Qt5 5.7 COMPONENTS ${EPL_VIZ_QT_COMPONENTS} REQUIRED )
-find_package( KF5    REQUIRED COMPONENTS TextEditor)
+find_package( Qt5 5.5 COMPONENTS ${EPL_VIZ_QT_COMPONENTS} REQUIRED )
+find_package( KF5     REQUIRED COMPONENTS TextEditor)
 find_package( Qwt              REQUIRED )
 find_package( PythonInterp 3.5 REQUIRED ) # Exec python with PYTHON_EXECUTABLE
 find_package( PythonLibs   3.5 REQUIRED )

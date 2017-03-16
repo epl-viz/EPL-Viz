@@ -675,7 +675,7 @@
    <sender>actionSave</sender>
    <signal>triggered()</signal>
    <receiver>MainWindow</receiver>
-   <slot>setFocus()</slot>
+   <slot>save()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>-1</x>
@@ -783,6 +783,54 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>lineEditCycle</sender>
+   <signal>returnPressed()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>userEnteredCycle()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1752</x>
+     <y>100</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>959</x>
+     <y>539</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>btnEnterCycle</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>userEnteredCycle()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1869</x>
+     <y>100</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>959</x>
+     <y>539</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionSave_As</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>saveAs()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>959</x>
+     <y>539</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>openPluginEditor()</slot>
@@ -792,5 +840,7 @@
   <slot>stopRecording()</slot>
   <slot>open()</slot>
   <slot>openSettings()</slot>
+  <slot>save()</slot>
+  <slot>saveAs()</slot>
  </slots>
 </ui>

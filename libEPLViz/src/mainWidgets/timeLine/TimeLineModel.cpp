@@ -29,6 +29,7 @@
 
 #include "TimeLineModel.hpp"
 #include "MainWindow.hpp"
+#include "TimeLineWidget.hpp"
 using namespace EPL_Viz;
 using namespace EPL_DataCollect;
 
@@ -37,6 +38,11 @@ TimeLineModel::TimeLineModel(MainWindow *mw, QwtPlot *widget) : QwtBaseModel(mw,
   (void)widget;
   viewportSize = DEF_VIEWPORT_SIZE;
   widget->setAxisAutoScale(QwtPlot::xTop, false);
+
+  zoomer = std::make_unique<TimeLineMagnifier>(&maxXValue, widget->canvas());
+  zoomer->setAxisEnabled(QwtPlot::xTop, QwtPlot::yRight);
+
+  connect(mw->findChild<TimelineWidget *>("dockTime"), SIGNAL(zoom(QPoint)), this, SLOT(zoom(QPoint)));
 }
 
 TimeLineModel::~TimeLineModel() {}
@@ -44,10 +50,17 @@ TimeLineModel::~TimeLineModel() {}
 void TimeLineModel::init() {
   markers.clear();
   viewportSize = DEF_VIEWPORT_SIZE;
+
   curCycleMarker.setLineStyle(QwtPlotMarker::VLine);
   curCycleMarker.setLinePen(QColor(0, 0, 0), 2, Qt::PenStyle::DotLine);
+  curCycleMarker.setXAxis(QwtPlot::xTop);
   curCycleMarker.setXValue(static_cast<double>(0));
   curCycleMarker.attach(plot);
+
+  zoomer = std::make_unique<TimeLineMagnifier>(&maxXValue, plot->canvas());
+  zoomer->setAxisEnabled(QwtPlot::xTop, true);
+  zoomer->setAxisEnabled(QwtPlot::yLeft, false);
+
   log   = getMainWindow()->getCaptureInstance()->getEventLog();
   appid = log->getAppID();
 
@@ -78,6 +91,7 @@ void TimeLineModel::update(ProtectedCycle &cycle) {
   }
 
   plot->replot();
+  emit requestRedraw();
   QwtBaseModel::update(cycle);
 }
 
@@ -99,4 +113,32 @@ void TimeLineModel::updateViewport(int value) {
 
   plot->setAxisScale(plot->xTop, static_cast<double>(nmin), static_cast<double>(nmax));
   plot->replot();
+  emit requestRedraw();
+}
+
+void TimeLineModel::zoom(QPoint angle) {
+  // zoomer->zoom(angle.y());
+  qDebug() << "Wrong zoom called";
+
+  int    size     = 10;
+  double oldLower = plot->axisScaleDiv(QwtPlot::xTop).lowerBound();
+  double oldUpper = plot->axisScaleDiv(QwtPlot::xTop).upperBound();
+
+  double newLower = oldLower;
+  double newUpper = oldUpper;
+
+  newLower -= size * angle.y();
+  newUpper += size * angle.y();
+
+  if (newLower < 0)
+    newLower = 0;
+  if (newLower > maxXValue)
+    newLower = maxXValue;
+  if (newUpper < 0)
+    newLower = 0;
+  if (newUpper > maxXValue)
+    newUpper = maxXValue;
+  plot->setAxisScale(plot->xTop, newLower, newUpper);
+  plot->replot();
+  emit requestRedraw();
 }

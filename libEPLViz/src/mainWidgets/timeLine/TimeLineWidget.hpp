@@ -44,9 +44,15 @@ class TimelineWidget : public QDockWidget {
   QwtPlotPicker *area;
   MainWindow *   window;
 
+ protected:
+  void wheelEvent(QWheelEvent *event) override;
+
  public:
   TimelineWidget(QWidget *parent = nullptr);
-  bool event(QEvent *event);
+  bool event(QEvent *event) override;
+
+ signals:
+  void zoom(QPoint angle);
 
  public slots:
   void pointSelected(const QPointF &pa);

@@ -75,6 +75,19 @@ bool TimelineWidget::event(QEvent *event) {
   return QWidget::event(event);
 }
 
+void TimelineWidget::wheelEvent(QWheelEvent *event) {
+  /*
+  QPoint numDegrees = event->angleDelta() / 8;
+
+  if (!numDegrees.isNull()) {
+    emit zoom(numDegrees);
+  }
+
+  event->accept();
+  */
+  event->ignore();
+}
+
 void TimelineWidget::pointSelected(const QPointF &pa) {
   qDebug() << "Clicked on Timeline at point " << pa.x();
   window->changeCycle(static_cast<uint32_t>(pa.x()));

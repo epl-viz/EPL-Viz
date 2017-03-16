@@ -32,8 +32,9 @@
 #include "BaseModel.hpp"
 #include "Cycle.hpp"
 #include "QwtBaseModel.hpp"
+#include "TimeLineMagnifier.hpp"
 
-#include "qwt_plot_marker.h"
+#include <qwt_plot_marker.h>
 
 namespace EPL_Viz {
 class TimeLineModel : public QwtBaseModel {
@@ -45,6 +46,7 @@ class TimeLineModel : public QwtBaseModel {
   EPL_DataCollect::EventLog *           log;
   QList<std::shared_ptr<QwtPlotMarker>> markers;
   QwtPlotMarker                         curCycleMarker;
+  std::unique_ptr<TimeLineMagnifier>    zoomer;
 
  public:
   const static uint32_t DEF_VIEWPORT_SIZE = 100;
@@ -61,5 +63,6 @@ class TimeLineModel : public QwtBaseModel {
 
  public slots:
   void updateViewport(int value);
+  void zoom(QPoint angle);
 };
 }

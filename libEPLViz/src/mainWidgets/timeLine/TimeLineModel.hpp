@@ -46,6 +46,7 @@ class TimeLineModel : public QwtBaseModel {
   EPL_DataCollect::EventLog *           log;
   QList<std::shared_ptr<QwtPlotMarker>> markers;
   QwtPlotMarker                         curCycleMarker;
+  QwtPlotMarker                         newestCycleMarker;
   std::unique_ptr<TimeLineMagnifier>    zoomer;
 
   void resetAxes();

@@ -30,15 +30,7 @@
 #include "NetworkGraphWidget.hpp"
 #include "Node.hpp"
 
-NetworkGraphWidget::NetworkGraphWidget(QWidget *parent) : QWidget(parent) {
-  grid = qobject_cast<QGridLayout *>(layout());
-
-  // Ensure that a layout is present
-  if (!grid) {
-    grid = new QGridLayout();
-    this->setLayout(grid);
-  }
-}
+NetworkGraphWidget::NetworkGraphWidget(QWidget *parent) : QWidget(parent) {}
 
 QMap<uint8_t, NodeWidget *> *NetworkGraphWidget::getNodeWidgets() { return &nodeMap; }
 
@@ -60,6 +52,17 @@ void NetworkGraphWidget::updateWidget(EPL_Viz::ProtectedCycle &c) {
   }
 
   updateQueue.clear();
+
+  // Ensure that a layout is present
+  if (!grid) {
+    grid = qobject_cast<QGridLayout *>(layout());
+
+    // Create a new one if it is still missing
+    if (!grid) {
+      grid = new QGridLayout();
+      this->setLayout(grid);
+    }
+  }
 
   // Create queued widgets
   for (auto nID : createQueue) {

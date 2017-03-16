@@ -34,11 +34,11 @@
 #include "NetworkGraphModel.hpp"
 #include "ODDescriptionModel.hpp"
 #include "PluginsWindow.hpp"
-#include "ProtocolValidator.hpp"
 #include "SettingsWindow.hpp"
 #include "SettingsWindow.hpp"
 #include "TimeLineModel.hpp"
 #include "TimeSeriesBuilder.hpp"
+#include <QWidgetAction>
 #include <memory>
 #include <vector>
 #include <wiretap/wtap.h>
@@ -71,6 +71,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
   std::vector<QAction *> btns;
   btns.emplace_back(ui->actionOD_Filter_2);
   fixQToolButtons(btns, ui->toolBar);
+
+  CS = new CycleSetterAction(ui->toolBar, this);
+  ui->toolBar->addAction(CS);
 
   connect(this,
           SIGNAL(recordingStarted(EPL_DataCollect::CaptureInstance *)),
@@ -139,7 +142,7 @@ void MainWindow::createModels() {
           SIGNAL(drawingPlot(uint8_t, uint16_t, uint16_t)),
           qwtPlot,
           SLOT(createPlot(uint8_t, uint16_t, uint16_t)));
-  connect(ui->btnSetupPlot, SIGNAL(clicked()), timeLineModel, SLOT(setupPlotting()));
+  connect(ui->actionSetup_Plot, SIGNAL(triggered()), timeLineModel, SLOT(setupPlotting()));
 
 
   // Append the nodes to a list for cleanup
@@ -234,8 +237,9 @@ void MainWindow::openPluginEditor() {
 }
 
 void MainWindow::openInterfacePicker() {
-  InterfacePicker *picker = new InterfacePicker(this, getCaptureInstance());
-  picker->show();
+  QString name = InterfacePicker::getInterface(this, captureInstance.get());
+  if (!name.isEmpty())
+    interface = name;
 }
 
 void MainWindow::openSettings() { settingsWin->show(); }
@@ -347,6 +351,8 @@ void MainWindow::changeState(GUIState nState) {
     case GUIState::PAUSED: break;
     case GUIState::STOPPED: break;
   }
+
+  std::string interfaceName;
   // switch with new state
   int backendState;
   switch (nState) {
@@ -371,7 +377,11 @@ void MainWindow::changeState(GUIState nState) {
       break;
     case GUIState::RECORDING:
       config();
-      backendState = captureInstance->startRecording(interface.toStdString());
+      if (interface.isEmpty())
+        interfaceName = nullptr;
+      else
+        interfaceName = interface.toStdString();
+      backendState    = captureInstance->startRecording(interfaceName);
       if (backendState != 0) {
         qDebug() << QString("Backend error Code ") + QString::number(backendState);
         changeState(GUIState::UNINIT);
@@ -393,14 +403,9 @@ void MainWindow::changeState(GUIState nState) {
 void MainWindow::config() {
   curCycle = UINT32_MAX;
   emit recordingStarted(getCaptureInstance());
-
-  auto plgManager = captureInstance->getPluginManager();
-
-  plgManager->addPlugin(std::make_shared<plugins::TimeSeriesBuilder>());
-  plgManager->addPlugin(std::make_shared<plugins::ProtocolValidator>());
+  captureInstance->getPluginManager()->addPlugin(std::make_shared<plugins::TimeSeriesBuilder>());
   captureInstance->registerCycleStorage<plugins::CSTimeSeriesPtr>(
         EPL_DataCollect::constants::EPL_DC_PLUGIN_TIME_SERIES_CSID);
-
   ui->actionStart_Recording->setEnabled(false);
   ui->actionStop_Recording->setEnabled(true);
   ui->actionLoad->setEnabled(false);
@@ -423,18 +428,7 @@ bool MainWindow::curODWidgetUpdateData(QTreeWidgetItem *item, QString newData) {
   return true;
 }
 
-SettingsWindow *MainWindow::getSettingsWin() { return settingsWin; }
-
-void MainWindow::userEnteredCycle() {
-  bool     ok;
-  uint32_t parsedCycle = static_cast<uint32_t>(ui->lineEditCycle->text().toULong(&ok));
-  if (ok) {
-    changeCycle(parsedCycle);
-  } else {
-    // TODO do something if wrong?
-    qDebug() << "Wrong formatted input for cycle";
-  }
-  ui->lineEditCycle->clear();
-}
+SettingsWindow *   MainWindow::getSettingsWin() { return settingsWin; }
+CycleSetterAction *MainWindow::getCycleSetter() { return CS; }
 
 void MainWindow::handleResults(const QString &result) { qDebug() << "The result is\"" << result << "\""; }

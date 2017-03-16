@@ -34,16 +34,21 @@
 #include <QDialog>
 #include <QEvent>
 
+
 namespace Ui {
 class InterfacePicker;
 }
 namespace EPL_Viz {
+class MainWindow;
+
 class InterfacePicker : public QDialog {
   Q_OBJECT
 
  public:
-  explicit InterfacePicker(QWidget *parent, EPL_DataCollect::CaptureInstance *ci);
+  explicit InterfacePicker(MainWindow *parent, EPL_DataCollect::CaptureInstance *ci);
   ~InterfacePicker();
+
+  static QString getInterface(MainWindow *parent, EPL_DataCollect::CaptureInstance *ci);
 
  protected:
   bool event(QEvent *event) override;
@@ -51,9 +56,11 @@ class InterfacePicker : public QDialog {
  private:
   Ui::InterfacePicker *             ui;
   EPL_DataCollect::CaptureInstance *captureInstance;
+  MainWindow *                      mw;
+
+  QString getSelection();
 
  public slots:
   void updateList();
-  void saveInterface();
 };
 }

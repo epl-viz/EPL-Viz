@@ -30,6 +30,7 @@
 #include "BaseModel.hpp"
 #include "CaptureInstance.hpp"
 #include "CurrentODModel.hpp"
+#include "CycleSetter.hpp"
 #include "EPLVizDefines.hpp"
 #include "GUIState.hpp"
 #include "ModelThread.hpp"
@@ -64,6 +65,7 @@ class MainWindow : public QMainWindow {
 
  private:
   Ui::MainWindow *                  ui;
+  CycleSetterAction *               CS;
   ProfileManager *                  profileManager;
   GUIState                          machineState;
   uint32_t                          curCycle = UINT32_MAX;
@@ -100,7 +102,8 @@ class MainWindow : public QMainWindow {
    */
   mockable EPL_Viz::GUIState getState();
 
-  EPL_Viz::SettingsWindow *getSettingsWin();
+  SettingsWindow *   getSettingsWin();
+  CycleSetterAction *getCycleSetter();
 
   mockable uint32_t getCycleNum();
   /**
@@ -137,7 +140,6 @@ class MainWindow : public QMainWindow {
   void startRecording();
   void stopRecording();
   void updateWidgets(ProtectedCycle &cycle);
-  void userEnteredCycle();
 
 
  signals:

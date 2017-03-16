@@ -28,13 +28,16 @@
  */
 
 #include "InterfacePicker.hpp"
+#include "MainWindow.hpp"
 #include "ui_interfacepicker.h"
 using namespace EPL_Viz;
 using namespace EPL_DataCollect;
 
-InterfacePicker::InterfacePicker(QWidget *parent, CaptureInstance *ci) : QDialog(parent), ui(new Ui::InterfacePicker) {
+InterfacePicker::InterfacePicker(MainWindow *parent, CaptureInstance *ci)
+    : QDialog(parent), ui(new Ui::InterfacePicker) {
   captureInstance = ci;
   ui->setupUi(this);
+  mw = parent;
 }
 
 InterfacePicker::~InterfacePicker() { delete ui; }
@@ -52,7 +55,24 @@ void InterfacePicker::updateList() {
   std::vector<std::string> interfaces = captureInstance->getDevices();
   for (std::string s : interfaces) {
     list->addItem(QString::fromStdString(s));
+    qDebug() << "Added" + QString::fromStdString(s);
   }
 }
 
-void InterfacePicker::saveInterface() {}
+QString InterfacePicker::getSelection() {
+  QList<QListWidgetItem *> items = ui->interfaceList->selectedItems();
+  if (items.isEmpty())
+    return "";
+
+  return items[0]->data(Qt::DisplayRole).toString();
+}
+
+
+QString InterfacePicker::getInterface(MainWindow *parent, CaptureInstance *ci) {
+  InterfacePicker picker(parent, ci);
+  int             res = picker.exec();
+  if (res != QDialog::Accepted)
+    return "";
+  else
+    return picker.getSelection();
+}

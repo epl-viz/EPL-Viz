@@ -101,6 +101,8 @@ void BaseModel::updateAll(MainWindow *mw, CaptureInstance *instance) {
     i->update(cycle);
     //    qDebug() << "[" << cycle->getCycleNum() << "] DONE     " << i->getName();
   }
+
+  mw->getCycleSetter()->getWidget()->setValue(cycle->getCycleNum());
 }
 
 ProtectedCycle &BaseModel::getCurrentCycle() { return cycle; }

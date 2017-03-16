@@ -71,7 +71,7 @@ int PythonLogModel::columnCount(const QModelIndex &parent) const {
 
 QVariant PythonLogModel::data(const QModelIndex &index, int role) const {
   if (role == Qt::DisplayRole) {
-    EventBase *ev = events[index.row()];
+    EventBase *ev = events[static_cast<size_t>(index.row())];
     switch (index.column()) {
       case 0:
         uint32_t start;

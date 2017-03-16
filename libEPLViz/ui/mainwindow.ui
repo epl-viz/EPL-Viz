@@ -316,7 +316,7 @@
         </sizepolicy>
        </property>
        <property name="toolTip">
-        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Plugins koennen hierr ein und ausgeschaltet werden.&lt;/p&gt;&lt;p&gt;Auch das overlay in der Timeline fuer den Plugin kann hier getoggelt werden.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Shows a list of python plugins that can be enabled.&lt;/p&gt;&lt;p&gt;Plugins with an enabled checkbox will be loaded when starting a recording/loading a capture.&lt;/p&gt;&lt;p&gt;Disabling a plugin during a recording/playback will not allow you to re-enable it.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
        </property>
       </widget>
      </item>
@@ -450,32 +450,16 @@
    <widget class="QWidget" name="dockWidgetContents_10">
     <layout class="QGridLayout" name="gridLayout_21">
      <item row="0" column="0">
-      <widget class="QScrollArea" name="scrollArea_4">
-       <property name="widgetResizable">
+      <widget class="QPlainTextEdit" name="packetHistoryTextEdit">
+       <property name="readOnly">
         <bool>true</bool>
        </property>
-       <widget class="QWidget" name="scrollAreaWidgetContents_4">
-        <property name="geometry">
-         <rect>
-          <x>0</x>
-          <y>0</y>
-          <width>947</width>
-          <height>96</height>
-         </rect>
-        </property>
-        <layout class="QGridLayout" name="gridLayout_22">
-         <item row="0" column="0">
-          <widget class="QPlainTextEdit" name="packetHistoryTextEdit">
-           <property name="readOnly">
-            <bool>true</bool>
-           </property>
-           <property name="textInteractionFlags">
-            <set>Qt::NoTextInteraction</set>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </widget>
+       <property name="plainText">
+        <string/>
+       </property>
+       <property name="textInteractionFlags">
+        <set>Qt::NoTextInteraction</set>
+       </property>
       </widget>
      </item>
     </layout>

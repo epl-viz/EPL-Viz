@@ -27,6 +27,7 @@
  * \file CurrentODModel.cpp
  */
 #include "CurrentODModel.hpp"
+#include "CurODCycleStorage.hpp"
 #include "OD.hpp"
 #include <QMenu>
 #include <QString>
@@ -56,15 +57,32 @@ void CurrentODModel::update(ProtectedCycle &cycle) {
     return;
   }
 
-  static std::vector<uint16_t> oldVec;
-  static std::vector<uint16_t> chVec; // static: recycle heap memory
-  static std::vector<uint16_t> diff;
+  static std::vector<uint16_t>    oldVec;
+  static std::vector<std::string> oldVecCS;
+  static std::vector<uint16_t>    chVec; // static: recycle heap memory
+  static std::vector<std::string> chVecCS;
+  static std::vector<uint16_t>    diff;
+  static std::vector<std::string> diffCS;
   oldVec.clear();
+  oldVecCS.clear();
   chVec.clear();
+  chVecCS.clear();
   diff.clear();
+  diffCS.clear();
 
   for (auto &i : *root->getChildren()) {
-    oldVec.emplace_back(dynamic_cast<CurODModelItem *>(i)->getIndex());
+    CurODModelItem *   od = dynamic_cast<CurODModelItem *>(i);
+    CurODCycleStorage *cs = dynamic_cast<CurODCycleStorage *>(i);
+
+    if (od) {
+      oldVec.emplace_back(od->getIndex());
+    } else if (cs) {
+      oldVecCS.emplace_back(cs->getIndex());
+    }
+  }
+
+  for (auto &i : *cycle->getAllCycleStorage()) {
+    chVecCS.emplace_back(i.first);
   }
 
   plf::colony<uint16_t> changedList = n->getOD()->getWrittenValues();
@@ -72,7 +90,9 @@ void CurrentODModel::update(ProtectedCycle &cycle) {
   chVec.assign(changedList.begin(), changedList.end());
   std::sort(chVec.begin(), chVec.end());
   std::sort(oldVec.begin(), oldVec.end());
-  std::set_symmetric_difference(chVec.begin(), chVec.end(), oldVec.begin(), oldVec.end(), std::back_inserter(diff));
+  set_symmetric_difference(chVec.begin(), chVec.end(), oldVec.begin(), oldVec.end(), back_inserter(diff));
+  set_symmetric_difference(chVecCS.begin(), chVecCS.end(), oldVecCS.begin(), oldVecCS.end(), back_inserter(diffCS));
+
 
   std::vector<uint32_t> toHighLight;
 
@@ -80,15 +100,28 @@ void CurrentODModel::update(ProtectedCycle &cycle) {
   for (auto i : events) {
     if (i->getType() == EvType::VIEW_EV_HIGHLIGHT_OD_ENTRY) {
       for (auto j : i->getAffectedIndices()) {
-        toHighLight.push_back(j.first);
+        toHighLight.push_back(static_cast<uint32_t>(j.first));
       }
     }
   }
 
-  if (diff.empty() && node == lastUpdatedNode) {
+  if (diff.empty() && diffCS.empty() && node == lastUpdatedNode) {
     // No entry changes
     for (auto &i : *root->getChildren()) {
-      ODEntry *entry = n->getOD()->getEntry(dynamic_cast<CurODModelItem *>(i)->getIndex());
+      CurODModelItem *od = dynamic_cast<CurODModelItem *>(i);
+      if (!od) {
+        CurODCycleStorage *cs = dynamic_cast<CurODCycleStorage *>(i);
+
+        if (!cs)
+          continue;
+
+        if (cs->hasChanged())
+          emitRowChaned(i);
+
+        continue;
+      }
+
+      ODEntry *entry = n->getOD()->getEntry(od->getIndex());
       if (entry->getArraySize() >= 0 && i->childCount() != entry->getArraySize()) {
         QModelIndex index = indexOf(i);
         beginRemoveRows(index, 0, i->childCount() - 1);
@@ -97,7 +130,7 @@ void CurrentODModel::update(ProtectedCycle &cycle) {
 
         beginInsertRows(index, 0, entry->getArraySize() - 1);
         for (uint16_t j = 0; j < entry->getArraySize(); ++j) {
-          i->push_back(new CurODModelItem(i, cycle, node, dynamic_cast<CurODModelItem *>(i)->getIndex(), j));
+          i->push_back(new CurODModelItem(i, cycle, node, od->getIndex(), j));
         }
         endInsertRows();
         continue;
@@ -110,14 +143,13 @@ void CurrentODModel::update(ProtectedCycle &cycle) {
         }
       }
 
-      dynamic_cast<CurODModelItem *>(i)->resetColor();
+      od->resetColor();
       if (i->hasChanged()) {
         emitRowChaned(i);
       }
 
-      if (std::find(toHighLight.begin(), toHighLight.end(), dynamic_cast<CurODModelItem *>(i)->getIndex()) !=
-          toHighLight.end()) {
-        dynamic_cast<CurODModelItem *>(i)->setColor(QColor(0x7c, 0xd1, 0xd9));
+      if (std::find(toHighLight.begin(), toHighLight.end(), od->getIndex()) != toHighLight.end()) {
+        od->setColor(QColor(0x7c, 0xd1, 0xd9));
       }
     }
   } else {
@@ -145,6 +177,17 @@ void CurrentODModel::update(ProtectedCycle &cycle) {
           toHighLight.end()) {
         dynamic_cast<CurODModelItem *>(item)->setColor(QColor(0x7c, 0xd1, 0xd9));
       }
+    }
+
+    for (auto i : chVecCS) {
+      CycleStorageBase *cs = cycle->getCycleStorage(i);
+
+      if (!cs) {
+        qDebug() << "ERROR Cycle storage " << i.c_str() << " does not exist!";
+        continue;
+      }
+
+      root->push_back(new CurODCycleStorage(root, cycle, i));
     }
 
     endResetModel();

@@ -34,6 +34,7 @@
 #include "NetworkGraphModel.hpp"
 #include "ODDescriptionModel.hpp"
 #include "PluginsWindow.hpp"
+#include "ProtocolValidator.hpp"
 #include "SettingsWindow.hpp"
 #include "SettingsWindow.hpp"
 #include "TimeLineModel.hpp"
@@ -355,9 +356,14 @@ void MainWindow::changeState(GUIState nState) {
 void MainWindow::config() {
   curCycle = UINT32_MAX;
   emit recordingStarted(getCaptureInstance());
-  captureInstance->getPluginManager()->addPlugin(std::make_shared<plugins::TimeSeriesBuilder>());
+
+  auto plgManager = captureInstance->getPluginManager();
+
+  plgManager->addPlugin(std::make_shared<plugins::TimeSeriesBuilder>());
+  plgManager->addPlugin(std::make_shared<plugins::ProtocolValidator>());
   captureInstance->registerCycleStorage<plugins::CSTimeSeriesPtr>(
         EPL_DataCollect::constants::EPL_DC_PLUGIN_TIME_SERIES_CSID);
+
   ui->actionStart_Recording->setEnabled(false);
   ui->actionStop_Recording->setEnabled(true);
   ui->actionLoad->setEnabled(false);

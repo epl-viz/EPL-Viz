@@ -30,6 +30,7 @@
 #include "PluginSelectorWidget.hpp"
 #include "PythonInit.hpp"
 #include <algorithm>
+#include <regex>
 
 using namespace EPL_Viz;
 
@@ -51,7 +52,7 @@ void PluginSelectorWidget::addPlugins(QMap<QString, QString> map) {
   QMapIterator<QString, QString> i(map);
   QString pluginPath = QDir::currentPath();
 
-  if (!main)
+  if (main)
     pluginPath = QString::fromStdString(main->getSettingsWin()->getConfig().pythonPluginsDir);
 
   EPL_DataCollect::plugins::PythonInit::addPath(pluginPath.toStdString());
@@ -81,6 +82,10 @@ void PluginSelectorWidget::addPlugins(QMap<QString, QString> map) {
       qDebug() << "Moved file to " << newPath;
     }
 
+    // Remove python file extensions
+    std::regex ex("\\.pyc?$");
+    plugin = QString::fromStdString(std::regex_replace(plugin.toStdString(), ex, ""));
+
     addItem(plugin);
   }
 }
@@ -99,9 +104,11 @@ void PluginSelectorWidget::changeState(int state) {
     // Remove invalid mnemonics
     name.erase(std::remove(name.begin(), name.end(), '&'), name.end());
 
-    // Plugins can only be disabled while a recording is active
-    pluginManager->removePlugin(name);
     sender->setEnabled(false);
+
+    // Plugins can only be disabled while a recording is active
+    if (!pluginManager->removePlugin(name))
+      qDebug() << "Could not disable " << QString::fromStdString(name);
   }
 }
 

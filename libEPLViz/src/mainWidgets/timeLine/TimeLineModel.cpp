@@ -29,8 +29,8 @@
 
 #include "TimeLineModel.hpp"
 #include "MainWindow.hpp"
-#include "TimeLineWidget.hpp"
 #include "PlotCreator.hpp"
+#include "TimeLineWidget.hpp"
 using namespace EPL_Viz;
 using namespace EPL_DataCollect;
 
@@ -43,7 +43,7 @@ TimeLineModel::TimeLineModel(MainWindow *mw, QwtPlot *widget) : QwtBaseModel(mw,
   zoomer = std::make_unique<TimeLineMagnifier>(&maxXValue, widget->canvas());
   zoomer->setAxisEnabled(QwtPlot::xTop, QwtPlot::yRight);
 
-  //connect(mw->findChild<TimelineWidget *>("dockTime"), SIGNAL(zoom(QPoint)), this, SLOT(zoom(QPoint)));
+  // connect(mw->findChild<TimelineWidget *>("dockTime"), SIGNAL(zoom(QPoint)), this, SLOT(zoom(QPoint)));
 
   widget->setAxisScale(QwtPlot::yLeft, 0, 10);
   widget->setAxisAutoScale(QwtPlot::yLeft, true);
@@ -59,7 +59,7 @@ void TimeLineModel::init() {
   viewportSize = DEF_VIEWPORT_SIZE;
 
   curCycleMarker.setLineStyle(QwtPlotMarker::VLine);
-  curCycleMarker.setLinePen(QColor(0, 0, 0), 2, Qt::PenStyle::DotLine);
+  curCycleMarker.setLinePen(QColor(255, 0, 0), 2, Qt::PenStyle::DotLine);
   curCycleMarker.setXAxis(QwtPlot::xTop);
   curCycleMarker.setXValue(static_cast<double>(0));
   curCycleMarker.attach(plot);
@@ -157,6 +157,3 @@ void TimeLineModel::resetAxes() {
   plot->setAxisMaxMajor(QwtPlot::xTop, 1);
   plot->setAxisMaxMinor(QwtPlot::xTop, 0);
 }
-
-
-

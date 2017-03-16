@@ -29,8 +29,8 @@
 
 #include "QwtBaseModel.hpp"
 #include "MainWindow.hpp"
-#include "QPointF"
 #include "PlotCreator.hpp"
+#include "QPointF"
 
 using namespace EPL_Viz;
 using namespace EPL_DataCollect;
@@ -47,7 +47,7 @@ void QwtBaseModel::init() {
   connect(this, SIGNAL(requestRedraw()), plot, SLOT(repaint()));
 
   created = false;
-  setup = false;
+  setup   = false;
 }
 
 void QwtBaseModel::createPlot(uint8_t nodeID, uint16_t mainIndex, uint16_t subIndex) {
@@ -58,8 +58,8 @@ void QwtBaseModel::createPlot(uint8_t nodeID, uint16_t mainIndex, uint16_t subIn
   if (subIndex > UINT8_MAX)
     subIndex = 0;
 
-  node = nodeID;
-  index = mainIndex;
+  node     = nodeID;
+  index    = mainIndex;
   subindex = subIndex;
 
   initTS();
@@ -77,7 +77,7 @@ void QwtBaseModel::initTS() {
     cs = ptr->getCycleStorage(EPL_DC_PLUGIN_TIME_SERIES_CSID);
   }
 
-  auto *tsp  = dynamic_cast<plugins::CSTimeSeriesPtr *>(cs);
+  auto *tsp = dynamic_cast<plugins::CSTimeSeriesPtr *>(cs);
   if (odTS)
     timeSeries = std::make_shared<plugins::TimeSeries>(node, index, static_cast<uint8_t>(subindex));
   else
@@ -140,11 +140,11 @@ void QwtBaseModel::setXMax(uint32_t max) {
 void QwtBaseModel::setupPlotting() {
   PlotCreator::PlotCreatorData data = PlotCreator::getNewPlot();
   if (data.isOK) {
-    node = data.node;
-    index = data.index;
+    node     = data.node;
+    index    = data.index;
     subindex = data.subIndex;
-    odTS = data.defaultODPlot;
-    csName = data.csName;
+    odTS     = data.defaultODPlot;
+    csName   = data.csName;
 
     setup = true;
   }

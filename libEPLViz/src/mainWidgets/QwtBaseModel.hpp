@@ -61,7 +61,7 @@ class QwtBaseModel : public QObject, public BaseModel {
   std::shared_ptr<QwtPlotCurve>                         curve;
   std::shared_ptr<EPL_DataCollect::plugins::TimeSeries> timeSeries;
 
-  bool     setup;
+  bool setup;
 
   uint8_t     node;
   uint16_t    index;

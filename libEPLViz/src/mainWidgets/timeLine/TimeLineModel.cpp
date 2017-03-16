@@ -94,23 +94,24 @@ void TimeLineModel::update(ProtectedCycle &cycle) {
   uint32_t newest = window->getCaptureInstance()->getCycleContainer()->pollCycle().getCycleNum();
   newestCycleMarker.setXValue(static_cast<double>(newest));
   maxXValue = newest;
-  /*
-    // Add new markers
-    std::vector<EventBase *> nEvents = log->pollEvents(appid);
-    for (EventBase *ev : nEvents) {
-      std::shared_ptr<QwtPlotMarker> marker =
-            std::make_shared<QwtPlotMarker>(QString::fromStdString(ev->getDescription()));
 
-      marker->setLineStyle(QwtPlotMarker::VLine);
+  // Add new markers
+  std::vector<EventBase *> nEvents = log->pollEvents(appid);
+  for (EventBase *ev : nEvents) {
+    std::shared_ptr<QwtPlotMarker> marker =
+          std::make_shared<QwtPlotMarker>(QString::fromStdString(ev->getDescription()));
 
-      uint32_t x;
-      ev->getCycleRange(&x);
-      marker->setXValue(static_cast<double>(x));
+    marker->setLineStyle(QwtPlotMarker::VLine);
+    marker->setLabel(QString::fromStdString(ev->getName()));
 
-      marker->attach(plot);
-      markers.append(marker);
-    }
-  */
+    uint32_t x;
+    ev->getCycleRange(&x);
+    marker->setXValue(static_cast<double>(x));
+
+    marker->attach(plot);
+    markers.append(marker);
+  }
+
   plot->replot();
   // emit requestRedraw();
   // QwtBaseModel::update(cycle);

@@ -415,6 +415,9 @@ void MainWindow::config() {
   curCycle = UINT32_MAX;
   emit recordingStarted(getCaptureInstance());
 
+  settingsWin->applyOn(captureInstance.get());
+
+
   auto plgManager = captureInstance->getPluginManager();
 
   plgManager->addPlugin(std::make_shared<plugins::TimeSeriesBuilder>());

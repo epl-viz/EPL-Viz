@@ -60,6 +60,7 @@ class SettingsWindow : public QDialog {
   SettingsProfileItem::Config startCFG;
 
  public slots:
+  void applyOn(EPL_DataCollect::CaptureInstance *ci);
   void apply();
   void reset();
 

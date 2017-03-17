@@ -130,11 +130,12 @@ void MainWindow::createModels() {
           SIGNAL(textUpdated(QString, QPlainTextEdit *)),
           ui->dockPacketHistory,
           SLOT(updatePacketHistoryLog(QString, QPlainTextEdit *)));
-  // TODO need to emit
   connect(ui->scrBarTimeline, SIGNAL(valueChanged(int)), timeLineModel, SLOT(updateViewport(int)));
   connect(timeLineModel, SIGNAL(maxValueChanged(int, int)), ui->scrBarTimeline, SLOT(setRange(int, int)));
+  connect(this, SIGNAL(cycleChanged()), timeLineModel, SLOT(replot()));
   // TODO update timeline value
   // connect(this, SIGNAL(cycleChanged()), ui->scrBarTimeline, SLOT(setValue(int)))
+
   // Set timeline max value once, since we can't do this in the constructor of the model and want to do it before init
   emit timeLineModel->maxValueChanged(0, static_cast<int>(timeLineModel->maxXValue));
 

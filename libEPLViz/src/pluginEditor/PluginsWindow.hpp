@@ -37,18 +37,25 @@ namespace Ui {
 class PluginsWindow;
 }
 
+namespace EPL_Viz {
+
+class MainWindow;
+class SettingsWindow;
+
 class PluginsWindow : public QMainWindow {
   Q_OBJECT
 
+ private:
+  Ui::PluginsWindow *ui;
+  SettingsWindow *   settings;
+
  public:
-  explicit PluginsWindow(QWidget *parent = 0);
+  explicit PluginsWindow(MainWindow *mw);
   ~PluginsWindow();
 
   PluginEditorWidget *getEditor();
 
  private:
-  Ui::PluginsWindow *ui;
-
   void closeEvent(QCloseEvent *event);
 
  signals:
@@ -57,4 +64,6 @@ class PluginsWindow : public QMainWindow {
 
  public slots:
   void open();
+  void closeFile();
 };
+}

@@ -40,6 +40,7 @@ void PluginSelectorWidget::addItem(QString plugin) {
   QListWidgetItem *it  = new QListWidgetItem(this);
   QCheckBox *      box = new QCheckBox(plugin, this);
 
+  plugins.append(plugin);
 
   QObject::connect(box, SIGNAL(stateChanged(int)), this, SLOT(changeState(int)));
 
@@ -52,9 +53,23 @@ void PluginSelectorWidget::addPlugins(QMap<QString, QString> map) {
   QMapIterator<QString, QString> i(map);
   QString pluginPath = QDir::currentPath();
 
-  if (main)
+  // Try to obtain the user plugin directory
+  if (main) {
     pluginPath = QString::fromStdString(main->getSettingsWin()->getConfig().pythonPluginsDir);
 
+    QDir pluginFolder(pluginPath);
+
+    // Check if plugin folder exists
+    if (!pluginFolder.exists())
+      // Try to create the full path to the folder
+      if (!pluginFolder.mkpath(".")) {
+        QErrorMessage error(this);
+        error.showMessage("Could not create plugin folder.");
+        pluginPath = QDir::currentPath(); // Reset plugin path
+      }
+  }
+
+  // Add the plugin path to the python runtime paths
   EPL_DataCollect::plugins::PythonInit::addPath(pluginPath.toStdString());
 
   while (i.hasNext()) {
@@ -63,28 +78,65 @@ void PluginSelectorWidget::addPlugins(QMap<QString, QString> map) {
     QString plugin = i.key();
     QString path   = i.value();
 
+    // Remove python file extensions
+    std::regex ex("\\.pyc?$");
+    plugin = QString::fromStdString(std::regex_replace(plugin.toStdString(), ex, ""));
+
+    // Check if the plugin is already listed
+    if (plugins.contains(plugin))
+      continue;
+
     QString newPath = pluginPath + "/" + plugin;
 
     if (newPath != path) {
       if (QFile::exists(newPath)) {
-        qDebug() << "File already exists! Removing it...";
-        QFile::remove(newPath);
-        // TODO: Add a dialog to warn for overwriting the file
+        QMessageBox  msg(this);
+        QPushButton *owBtn     = msg.addButton("Overwrite", QMessageBox::ActionRole);
+        QPushButton *rnBtn     = msg.addButton("Rename", QMessageBox::ActionRole);
+        QPushButton *cancelBtn = msg.addButton("Cancel", QMessageBox::ActionRole);
+
+        msg.setText("The file '" + plugin + "' is already present in the plugin folder.");
+        msg.setInformativeText("Would you like to overwrite or rename the old file?");
+        msg.exec();
+
+        QPushButton *clicked = dynamic_cast<QPushButton *>(msg.clickedButton());
+
+        if (clicked == owBtn) {
+          // Remove old file
+          QFile::remove(newPath);
+        } else if (clicked == rnBtn) {
+          // Rename the old file
+          QString  renamed = newPath + "0";
+          uint16_t counter = 1;
+
+          // Sensibly try to find a fitting name for the renamed file
+          while (QFile::exists(renamed) || counter == UINT16_MAX) {
+            renamed = newPath + QString::number(counter);
+            counter++;
+          }
+
+          if (counter == UINT16_MAX) {
+            QFile::remove(renamed);
+          } else {
+            QFile::rename(newPath, renamed);
+          }
+        } else if (clicked == cancelBtn) {
+          // Cancelling skips this plugin
+          continue;
+        }
       }
 
       qDebug() << "Trying to move " << path << " to " << newPath;
 
       if (!QFile::copy(path, newPath)) {
-        qDebug() << "Failed to move file!";
+        QErrorMessage error(this);
+        error.showMessage("Unable to create file '" + newPath + "'.\n" +
+                          "Please check if you have permissions to access the plugin folder.");
         continue;
       }
 
       qDebug() << "Moved file to " << newPath;
     }
-
-    // Remove python file extensions
-    std::regex ex("\\.pyc?$");
-    plugin = QString::fromStdString(std::regex_replace(plugin.toStdString(), ex, ""));
 
     addItem(plugin);
   }

@@ -53,6 +53,9 @@ class PluginEditorWidget : public QWidget {
   void loadDocument(QUrl fileName = QUrl());
   void createWidget();
 
+ public:
+  void closeDocument(QString name);
+
  signals:
   void nameChanged(QString name);
   void urlChanged(QString url);

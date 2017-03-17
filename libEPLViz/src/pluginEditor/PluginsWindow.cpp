@@ -28,12 +28,28 @@
  */
 
 #include "PluginsWindow.hpp"
+#include "MainWindow.hpp"
 #include "ui_pluginswindow.h"
 #include <QCloseEvent>
 
-PluginsWindow::PluginsWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::PluginsWindow) {
+using namespace EPL_Viz;
+
+PluginsWindow::PluginsWindow(MainWindow *mw) : QMainWindow(mw), ui(new Ui::PluginsWindow) {
   ui->setupUi(this);
   setAttribute(Qt::WA_QuitOnClose);
+
+  QString pluginPath   = QString::fromStdString(mw->getSettingsWin()->getConfig().pythonPluginsDir);
+  QDir    pluginFolder = QDir(pluginPath);
+
+  if (pluginFolder.exists()) {
+    // Load plugins in the plugin folder
+    QStringListIterator plugins(pluginFolder.entryList(QDir::Files));
+
+    // Open plugins in the plugin folder
+    while (plugins.hasNext()) {
+      emit fileOpened(QUrl::fromLocalFile(pluginPath + "/" + plugins.next()));
+    }
+  }
 }
 
 PluginsWindow::~PluginsWindow() { delete ui; }
@@ -52,4 +68,17 @@ void PluginsWindow::open() {
     return;
 
   emit fileOpened(file);
+}
+
+void PluginsWindow::closeFile() {
+  QListWidgetItem *item = ui->pluginList->currentItem();
+  if (item) {
+    QString name = item->text();
+
+    if (name.endsWith('*'))
+      name.chop(1);
+
+    ui->editor->closeDocument(name);
+    delete ui->pluginList->takeItem(ui->pluginList->row(item));
+  }
 }

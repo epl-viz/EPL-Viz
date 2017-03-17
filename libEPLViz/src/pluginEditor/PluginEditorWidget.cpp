@@ -78,6 +78,9 @@ void PluginEditorWidget::loadDocument(QUrl fileName) {
 }
 
 void PluginEditorWidget::createWidget() {
+  if (!doc)
+    return;
+
   // Check if there is a widget already
   if (view) {
     // Remove the old widget
@@ -95,19 +98,69 @@ void PluginEditorWidget::createWidget() {
   layout->addWidget(view);
 }
 
-void PluginEditorWidget::modified() { emit modifiedChanged(doc->isModified()); }
+void PluginEditorWidget::modified() {
+  if (doc)
+    emit modifiedChanged(doc->isModified());
+}
 
 void PluginEditorWidget::statusBarToggled(bool enabled) {
+  if (!view)
+    return;
+
   if (view->isStatusBarEnabled() != enabled) {
     showStatusBar = enabled;
 
     // Update the widget if it exists
-    if (view) {
-      view->setStatusBarEnabled(enabled);
-      emit view->statusBarEnabledChanged(view, enabled);
-    }
+    view->setStatusBarEnabled(enabled);
+    emit view->statusBarEnabledChanged(view, enabled);
   }
 }
+
+void PluginEditorWidget::closeDocument(QString name) {
+  KTextEditor::Document *d = nullptr;
+
+  auto list = KTextEditor::Editor::instance()->documents();
+
+  // Try to locate the document to close
+  for (auto cur : list) {
+    if (cur->documentName() == name) {
+      d = cur;
+      break;
+    }
+  }
+
+  // Document not found
+  if (!d)
+    return;
+
+  if (d->isModified()) {
+    QMessageBox  msg(this);
+    QPushButton *saveButton = msg.addButton("Save", QMessageBox::ActionRole);
+    msg.addButton("Discard", QMessageBox::ActionRole);
+
+    msg.setText("The current file has unsaved changes.");
+    msg.setInformativeText("Would you like to save them?");
+    msg.setDefaultButton(saveButton);
+
+    msg.exec();
+
+    QPushButton *clicked = dynamic_cast<QPushButton *>(msg.clickedButton());
+
+    if (clicked == saveButton) {
+      // Save the changes to this document
+      d->documentSave();
+    }
+  }
+
+  if (view && doc == d) {
+    delete view;
+    view = nullptr;
+    doc  = nullptr;
+  }
+
+  delete d;
+}
+
 void PluginEditorWidget::configEditor() { KTextEditor::Editor::instance()->configDialog(this); }
 
 void PluginEditorWidget::nameChange() { emit nameChanged(doc->documentName()); }
@@ -133,7 +186,7 @@ void PluginEditorWidget::newFile() { loadDocument(); }
 void PluginEditorWidget::openFile(QUrl file) { loadDocument(file); }
 
 void PluginEditorWidget::cleanUp() {
-  QMessageBox  msg;
+  QMessageBox  msg(this);
   QPushButton *saveButton       = msg.addButton("Save", QMessageBox::ActionRole);
   QPushButton *saveAllButton    = msg.addButton("Save All", QMessageBox::ActionRole);
   QPushButton *discardButton    = msg.addButton("Discard", QMessageBox::ActionRole);

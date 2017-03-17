@@ -36,6 +36,7 @@
 #include <QFile>
 #include <QListWidget>
 #include <QMap>
+#include <QMessageBox>
 
 namespace EPL_Viz {
 
@@ -46,6 +47,8 @@ class PluginSelectorWidget : public QListWidget {
   bool                            recording = false;
   EPL_DataCollect::PluginManager *pluginManager;
   MainWindow *                    main;
+
+  QList<QString> plugins;
 
  public:
   PluginSelectorWidget(QWidget *parent = nullptr);

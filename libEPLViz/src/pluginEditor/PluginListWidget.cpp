@@ -28,11 +28,15 @@
  */
 
 #include "PluginListWidget.hpp"
+#include <QDebug>
 
 PluginListWidget::PluginListWidget(QWidget *parent) : QListWidget(parent) {}
 
 void PluginListWidget::selectedChanged(QListWidgetItem *current, QListWidgetItem *previous) {
   (void)previous;
+
+  if (!current)
+    return;
 
   QString name = current->text();
 
@@ -87,6 +91,8 @@ void PluginListWidget::fileAdded(QUrl file) {
   if (currentItem())
     currentItem()->setSelected(false);
 
+  qDebug() << "Adding file...";
+
   // Create a QFileInfo to extract name and path of file
   QFileInfo fileInfo(file.toLocalFile());
 
@@ -102,6 +108,9 @@ void PluginListWidget::fileAdded(QUrl file) {
 }
 
 void PluginListWidget::fileModified(bool newState) {
+  if (!currentItem())
+    return;
+
   if (modified != newState) {
     QString name = currentItem()->text();
     QFont   font = currentItem()->font();

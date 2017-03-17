@@ -67,11 +67,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
   ui->setupUi(this);
   tabifyDockWidget(ui->dockCurrent, ui->dockOD);
   tabifyDockWidget(ui->dockPlugins, ui->dockEvents);
-  ui->actionOD_Filter_2->setMenu(ui->menuOD_Filter);
-
-  std::vector<QAction *> btns;
-  btns.emplace_back(ui->actionOD_Filter_2);
-  fixQToolButtons(btns, ui->toolBar);
 
   CS = new CycleSetterAction(ui->toolBar, this);
   ui->toolBar->addAction(CS);
@@ -433,6 +428,12 @@ void MainWindow::config() {
   ui->pushButton->setEnabled(false);
   ui->actionPlugins->setEnabled(false);
   BaseModel::initAll(); // TODO do we need to do this here
+}
+
+void MainWindow::setFilters(std::vector<EPL_DataCollect::CSViewFilters::Filter> f) { (void)f; }
+
+EPL_DataCollect::CSViewFilters::Filter MainWindow::getFilter() {
+  return CSViewFilters::Filter(FilterType::EXCLUDE, "All");
 }
 
 void MainWindow::closeEvent(QCloseEvent *event) {

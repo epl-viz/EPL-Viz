@@ -121,7 +121,6 @@
     </property>
     <addaction name="actionSettings"/>
     <addaction name="actionPlugins"/>
-    <addaction name="actionInterfaces"/>
     <addaction name="actionSetup_Plot"/>
    </widget>
    <widget class="QMenu" name="menuView">
@@ -135,18 +134,9 @@
      <addaction name="actionStuff1"/>
      <addaction name="actionStuff2"/>
     </widget>
-    <widget class="QMenu" name="menuOD_Filter">
-     <property name="title">
-      <string>&amp;OD Filter</string>
-     </property>
-     <addaction name="actionALL"/>
-     <addaction name="actionFancy"/>
-     <addaction name="actionBest"/>
-    </widget>
     <addaction name="actionFullscreen"/>
     <addaction name="separator"/>
     <addaction name="menuWidgets"/>
-    <addaction name="menuOD_Filter"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
@@ -178,7 +168,6 @@
    <addaction name="actionStart_Recording"/>
    <addaction name="actionStop_Recording"/>
    <addaction name="separator"/>
-   <addaction name="actionOD_Filter_2"/>
   </widget>
   <widget class="TimelineWidget" name="dockTime">
    <property name="baseSize">
@@ -516,39 +505,13 @@
     <string>&amp;ALL</string>
    </property>
   </action>
-  <action name="actionOD_Filter_2">
+  <action name="actionSetup_Plot">
    <property name="icon">
-    <iconset theme="view-filter">
+    <iconset theme="contact-new">
      <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
-    <string>OD Filter</string>
-   </property>
-  </action>
-  <action name="actionFancy">
-   <property name="text">
-    <string>&amp;Fancy</string>
-   </property>
-  </action>
-  <action name="actionBest">
-   <property name="text">
-    <string>&amp;Best</string>
-   </property>
-  </action>
-  <action name="actionInterfaces">
-   <property name="text">
-    <string>&amp;Interfaces</string>
-   </property>
-   <property name="toolTip">
-    <string>Setup Interfaces</string>
-   </property>
-  </action>
-  <action name="actionSetup_Plot">
-   <property name="icon">
-    <iconset theme="contact-new"/>
-   </property>
-   <property name="text">
-    <string>Setup Plot</string>
+    <string>S&amp;etup Plot</string>
    </property>
   </action>
  </widget>
@@ -688,22 +651,6 @@
    </hints>
   </connection>
   <connection>
-   <sender>actionInterfaces</sender>
-   <signal>triggered()</signal>
-   <receiver>MainWindow</receiver>
-   <slot>openInterfacePicker()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>-1</x>
-     <y>-1</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>767</x>
-     <y>464</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
    <sender>actionStart_Recording</sender>
    <signal>triggered()</signal>
    <receiver>MainWindow</receiver>
@@ -780,38 +727,6 @@
     <hint type="destinationlabel">
      <x>767</x>
      <y>464</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>lineEditCycle</sender>
-   <signal>returnPressed()</signal>
-   <receiver>MainWindow</receiver>
-   <slot>userEnteredCycle()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>1752</x>
-     <y>100</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>959</x>
-     <y>539</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>btnEnterCycle</sender>
-   <signal>clicked()</signal>
-   <receiver>MainWindow</receiver>
-   <slot>userEnteredCycle()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>1869</x>
-     <y>100</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>959</x>
-     <y>539</y>
     </hint>
    </hints>
   </connection>

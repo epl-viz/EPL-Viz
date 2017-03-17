@@ -29,6 +29,7 @@
 
 #pragma once
 #include "BaseModel.hpp"
+#include "ODFilter.hpp"
 #include "TreeModelItemBase.hpp"
 #include <memory>
 #include <stdint.h>

@@ -40,7 +40,10 @@ using namespace std;
 
 CurrentODModel::CurrentODModel(MainWindow *window, QTreeView *widget)
     : TreeModelBase(widget), BaseModel(window, widget) {
-  root = new TreeModelRoot({{Qt::DisplayRole, {QVariant("Index"), QVariant("Value")}}});
+  root   = new TreeModelRoot({{Qt::DisplayRole, {QVariant("Index"), QVariant("Value")}}});
+  filter = new ODFilter(this, window);
+  filter->setSourceModel(this);
+  widget->setModel(filter);
   view = widget;
 }
 
@@ -56,6 +59,8 @@ void CurrentODModel::update(ProtectedCycle &cycle) {
   if (!n) {
     return;
   }
+
+  filter->updateFilter();
 
   static std::vector<uint16_t>    oldVec;
   static std::vector<std::string> oldVecCS;

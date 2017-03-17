@@ -47,6 +47,10 @@ ODDescriptionModel::ODDescriptionModel(MainWindow *window, QTreeView *treeWidget
            QVariant("The type of the OD entry"),
            QVariant("The data type of the OD entry"),
            QVariant("The default value specified in the XDD (0 if not specified)")}}});
+
+  filter = new ODFilterDesc(treeWidget, window);
+  filter->setSourceModel(this);
+  treeWidget->setModel(filter);
 }
 
 void ODDescriptionModel::init() {}

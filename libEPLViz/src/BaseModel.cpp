@@ -65,7 +65,15 @@ void BaseModel::updateAll(MainWindow *mw, CaptureInstance *instance) {
   CycleStorageBase *b   = cycle->getCycleStorage(EPL_DC_PLUGIN_VIEW_FILTERS_CSID);
   CSViewFilters *   csF = dynamic_cast<CSViewFilters *>(b);
 
-  auto filters = csF->getFilters();
+  if (!b)
+    qDebug() << "Not registered " << EPL_DC_PLUGIN_VIEW_FILTERS_CSID.c_str();
+
+  if (csF == nullptr) {
+    qDebug() << "No filters set";
+  } else {
+    auto filters = csF->getFilters();
+    mw->setFilters(filters);
+  }
 
   GUIState state = mw->getState();
 

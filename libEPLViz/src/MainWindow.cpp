@@ -28,7 +28,9 @@
  */
 #include "MainWindow.hpp"
 #include "CSTimeSeriesPtr.hpp"
+#include "CSViewFilters.hpp"
 #include "CycleCommandsModel.hpp"
+#include "DefaultFilter.hpp"
 #include "EPLVizEnum2Str.hpp"
 #include "InterfacePicker.hpp"
 #include "NetworkGraphModel.hpp"
@@ -55,6 +57,8 @@ using namespace EPL_Viz;
 #include "ui_mainwindow.h"
 
 using namespace EPL_DataCollect;
+using namespace EPL_DataCollect::constants;
+using namespace EPL_DataCollect::plugins;
 
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow) {
@@ -409,17 +413,18 @@ void MainWindow::changeState(GUIState nState) {
 void MainWindow::config() {
   curCycle = UINT32_MAX;
   emit recordingStarted(getCaptureInstance());
+  CS->getWidget()->clearFilters();
 
   settingsWin->applyOn(captureInstance.get());
 
 
-  auto plgManager = captureInstance->getPluginManager();
+  auto *plgManager = captureInstance->getPluginManager();
 
-  plgManager->addPlugin(std::make_shared<plugins::TimeSeriesBuilder>());
-  plgManager->addPlugin(std::make_shared<plugins::ProtocolValidator>());
+  plgManager->addPlugin(std::make_shared<TimeSeriesBuilder>());
+  plgManager->addPlugin(std::make_shared<ProtocolValidator>());
+  plgManager->addPlugin(std::make_shared<DefaultFilter>());
 
-  captureInstance->registerCycleStorage<plugins::CSTimeSeriesPtr>(
-        EPL_DataCollect::constants::EPL_DC_PLUGIN_TIME_SERIES_CSID);
+  captureInstance->registerCycleStorage<CSTimeSeriesPtr>(EPL_DC_PLUGIN_TIME_SERIES_CSID);
   ui->actionStart_Recording->setEnabled(false);
   ui->actionStop_Recording->setEnabled(true);
   ui->actionLoad->setEnabled(false);
@@ -430,9 +435,20 @@ void MainWindow::config() {
   BaseModel::initAll(); // TODO do we need to do this here
 }
 
-void MainWindow::setFilters(std::vector<EPL_DataCollect::CSViewFilters::Filter> f) { (void)f; }
+void MainWindow::setFilters(std::vector<EPL_DataCollect::CSViewFilters::Filter> f) {
+  filters = f;
+  CS->getWidget()->setFilters(filters);
+}
 
 EPL_DataCollect::CSViewFilters::Filter MainWindow::getFilter() {
+  std::string filter = CS->getWidget()->getCurrentFilter();
+
+  for (auto &i : filters) {
+    if (i.getName() == filter) {
+      return i;
+    }
+  }
+
   return CSViewFilters::Filter(FilterType::EXCLUDE, "All");
 }
 

@@ -44,7 +44,7 @@ CycleCommandsModel::CycleCommandsModel(MainWindow *mw, QTreeView *widget)
                             {Qt::ToolTipRole,
                              {QVariant("The packet type"),
                               QVariant("The ID of the sending node"),
-                              QVariant("The ID of the reciving node"),
+                              QVariant("The ID of the receiving node"),
                               QVariant("Time passed since last Start of Cycle"),
                               QVariant("Time passed since last packet")}}});
 }
@@ -74,5 +74,4 @@ void CycleCommandsModel::update(ProtectedCycle &cycle) {
   lastCycle = cycle->getCycleNum();
 }
 
-
-void CycleCommandsModel::changeNode(uint8_t) {}
+void CycleCommandsModel::changeSelection(QModelIndex index) { emit packetChanged(static_cast<uint64_t>(index.row())); }

@@ -117,6 +117,16 @@ void MainWindow::createModels() {
   // Connect required signals
   connect(this, SIGNAL(cycleChanged()), cyCoModel, SLOT(updateNext()));
   connect(this, SIGNAL(cycleChanged()), curODModel, SLOT(updateNext()));
+
+  connect(ui->cycleCommandsView,
+          SIGNAL(clicked(QModelIndex)),
+          cyCoModel,
+          SLOT(changeSelection(QModelIndex))); // Notify the cycle viewer model that the selection changed
+  connect(cyCoModel,
+          SIGNAL(packetChanged(uint64_t)),
+          packetHistoryModel,
+          SLOT(changePacket(uint64_t))); // Notify the packet viewer of changing packets
+
   connect(packetHistoryModel,
           SIGNAL(textUpdated(QString, QPlainTextEdit *)),
           ui->dockPacketHistory,

@@ -54,7 +54,10 @@ class CycleCommandsModel : public TreeModelBase, public BaseModel {
 
   QString getName() override { return "CycleCommandsModel"; }
 
- public slots:
-  void changeNode(uint8_t newNode);
+ private slots:
+  void changeSelection(QModelIndex index);
+
+ signals:
+  void packetChanged(uint64_t);
 };
 }

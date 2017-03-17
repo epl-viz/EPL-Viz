@@ -344,6 +344,18 @@ void MainWindow::open() {
   changeState(GUIState::PLAYING);
 }
 
+void MainWindow::showAbout() {
+  QMessageBox msgBox;
+  msgBox.setText("Created by EPL-Vizards. Copyright (c) 2017");
+  msgBox.exec();
+}
+
+void MainWindow::showLicense() {
+  QMessageBox msgBox;
+  msgBox.setText(""); // TODO: Add License
+  msgBox.exec();
+}
+
 void MainWindow::startRecording() {
   qDebug() << "start Recording";
   changeState(GUIState::RECORDING);
@@ -377,7 +389,7 @@ void MainWindow::changeState(GUIState nState) {
       if (machineState == GUIState::STOPPED) {
         // Reset all models back to their initial state
         BaseModel::initAll();
-        CS->setValue(0);
+        CS->getWidget()->setValue(0);
         emit resetGUI();
       }
 

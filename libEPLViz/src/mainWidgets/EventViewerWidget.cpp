@@ -34,6 +34,17 @@ using namespace EPL_DataCollect;
 
 EventViewerWidget::EventViewerWidget(QWidget *parent) : QTreeWidget(parent) { setEnabled(false); }
 
+void EventViewerWidget::reset() {
+  setEnabled(false);
+
+  // Delete all entries
+  while (topLevelItemCount() > 0) {
+    delete takeTopLevelItem(0);
+  }
+
+  log   = nullptr;
+  appID = UINT32_MAX;
+}
 
 void EventViewerWidget::start(CaptureInstance *ci) {
   log   = ci->getEventLog();
@@ -43,7 +54,7 @@ void EventViewerWidget::start(CaptureInstance *ci) {
 
 void EventViewerWidget::updateEvents() {
   // Don't update if the widget is not ready yet
-  if (!isEnabled())
+  if (!isEnabled() || !log)
     return;
 
   auto events = log->pollEvents(appID);

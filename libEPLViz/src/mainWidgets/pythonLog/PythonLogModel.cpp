@@ -40,8 +40,19 @@ PythonLogModel::PythonLogModel(MainWindow *window, QTableView *widget) : BaseMod
 }
 
 void PythonLogModel::init() {
-  log   = getMainWindow()->getCaptureInstance()->getEventLog();
-  appid = log->getAppID();
+  log      = getMainWindow()->getCaptureInstance()->getEventLog();
+  appid    = log->getAppID();
+  int size = static_cast<int>(events.size());
+
+  if (size != 0) {
+
+    beginResetModel();
+    events.clear();
+    endResetModel();
+
+    beginRemoveRows(QModelIndex(), 0, size - 1);
+    endRemoveRows();
+  }
 }
 
 void PythonLogModel::update(ProtectedCycle &cycle) {

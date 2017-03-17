@@ -50,7 +50,14 @@ CycleCommandsModel::CycleCommandsModel(MainWindow *mw, QTreeView *widget)
 }
 
 CycleCommandsModel::~CycleCommandsModel() {}
-void CycleCommandsModel::init() {}
+
+void CycleCommandsModel::init() {
+  lastCycle = 0;
+
+  beginResetModel();
+  root->clear();
+  endResetModel();
+}
 
 
 void CycleCommandsModel::update(ProtectedCycle &cycle) {

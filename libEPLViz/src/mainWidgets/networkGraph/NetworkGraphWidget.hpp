@@ -71,4 +71,5 @@ class NetworkGraphWidget : public QWidget {
 
  public slots:
   void selectNode(uint8_t node);
+  void reset();
 };

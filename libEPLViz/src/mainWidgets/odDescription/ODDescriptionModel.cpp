@@ -53,7 +53,14 @@ ODDescriptionModel::ODDescriptionModel(MainWindow *window, QTreeView *treeWidget
   treeWidget->setModel(filter);
 }
 
-void ODDescriptionModel::init() {}
+void ODDescriptionModel::init() {
+  node            = 1;
+  lastUpdatedNode = node;
+
+  beginResetModel();
+  root->clear();
+  endResetModel();
+}
 
 void ODDescriptionModel::update(ProtectedCycle &cycle) {
   auto l    = getLock();

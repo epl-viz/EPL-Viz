@@ -50,5 +50,6 @@ class EventViewerWidget : public QTreeWidget {
 
  public slots:
   void start(EPL_DataCollect::CaptureInstance *ci);
+  void reset();
 };
 }

@@ -92,6 +92,7 @@ class QwtBaseModel : public QObject, public BaseModel {
  signals:
   void requestRedraw();
   void maxValueChanged(int notUsed, int nMax);
+  void setNodes(uint8_t nodeID, uint16_t index, uint16_t subIndex);
 
  public slots:
   virtual void createPlot(uint8_t nodeID, uint16_t index, uint16_t subIndex);

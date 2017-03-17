@@ -47,10 +47,6 @@ QwtBaseModel::QwtBaseModel(MainWindow *win, QwtPlot *widget) : BaseModel(win, wi
 
 void QwtBaseModel::init() {
   connect(this, SIGNAL(requestRedraw()), plot, SLOT(repaint()));
-
-  created = false;
-  setup   = false;
-  odTS    = true;
 }
 
 void QwtBaseModel::createPlot(uint8_t nodeID, uint16_t mainIndex, uint16_t subIndex) {

@@ -97,12 +97,21 @@ void TimeLineModel::update(ProtectedCycle &cycle) {
 
   // Add new markers
   std::vector<EventBase *> nEvents = log->pollEvents(appid);
+  qDebug() << "number of new Events to timeline: " + QString::number(nEvents.size());
   for (EventBase *ev : nEvents) {
     std::shared_ptr<QwtPlotMarker> marker =
           std::make_shared<QwtPlotMarker>(QString::fromStdString(ev->getDescription()));
 
     marker->setLineStyle(QwtPlotMarker::VLine);
-    marker->setLabel(QString::fromStdString(ev->getName()));
+
+    QColor col;
+    switch (ev->getType()) {
+      case EvType::ERROR: col   = QColor(200, 0, 0); break;
+      case EvType::WARNING: col = QColor(250, 250, 0); break;
+      case EvType::INFO: col    = QColor(0, 200, 0); break;
+      default: col              = QColor(0, 0, 0);
+    }
+    marker->setLinePen(col);
 
     uint32_t x;
     ev->getCycleRange(&x);

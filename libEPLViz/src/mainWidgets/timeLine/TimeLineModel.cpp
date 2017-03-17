@@ -73,7 +73,7 @@ void TimeLineModel::init() {
   newestCycleMarker.setLabel(QwtText("Backend"));
   newestCycleMarker.attach(plot);
 
-  zoomer = std::make_unique<TimeLineMagnifier>(&maxXValue, plot->canvas());
+  zoomer = std::make_unique<TimeLineMagnifier>(this, &maxXValue, plot->canvas());
   zoomer->setAxisEnabled(QwtPlot::xTop, true);
   zoomer->setAxisEnabled(QwtPlot::yLeft, false);
 

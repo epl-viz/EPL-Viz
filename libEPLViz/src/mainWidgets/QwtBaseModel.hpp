@@ -88,7 +88,6 @@ class QwtBaseModel : public QObject, public BaseModel {
     };
     QCoreApplication::postEvent(obj, new Event(std::forward<F>(fun)));
   }
-  void replot();
 
  signals:
   void requestRedraw();
@@ -99,5 +98,6 @@ class QwtBaseModel : public QObject, public BaseModel {
   virtual void setXMin(uint32_t min);
   virtual void setXMax(uint32_t max);
   void setupPlotting();
+  void replot();
 };
 }

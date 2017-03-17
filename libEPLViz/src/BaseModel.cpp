@@ -28,10 +28,13 @@
  */
 
 #include "BaseModel.hpp"
+#include "DefaultFilter.hpp"
 #include "MainWindow.hpp"
 
 using namespace EPL_Viz;
 using namespace EPL_DataCollect;
+using namespace EPL_DataCollect::constants;
+using namespace plugins;
 
 QLinkedList<BaseModel *> BaseModel::registeredModels;
 
@@ -57,6 +60,20 @@ void BaseModel::updateAll(MainWindow *mw, CaptureInstance *instance) {
 
   if (cycle->getCycleNum() == UINT32_MAX)
     return;
+
+  // Filter
+  CycleStorageBase *b   = cycle->getCycleStorage(EPL_DC_PLUGIN_VIEW_FILTERS_CSID);
+  CSViewFilters *   csF = dynamic_cast<CSViewFilters *>(b);
+
+  if (!b)
+    qDebug() << "Not registered " << EPL_DC_PLUGIN_VIEW_FILTERS_CSID.c_str();
+
+  if (csF == nullptr) {
+    qDebug() << "No filters set";
+  } else {
+    auto filters = csF->getFilters();
+    mw->setFilters(filters);
+  }
 
   GUIState state = mw->getState();
 

@@ -28,6 +28,7 @@
  */
 #pragma once
 #include "BaseModel.hpp"
+#include "CSViewFilters.hpp"
 #include "CaptureInstance.hpp"
 #include "CurrentODModel.hpp"
 #include "CycleSetter.hpp"
@@ -78,6 +79,8 @@ class MainWindow : public QMainWindow {
 
   QString saveFile;
 
+  std::vector<EPL_DataCollect::CSViewFilters::Filter> filters;
+
  public:
   explicit MainWindow(QWidget *parent = nullptr);
   ~MainWindow();
@@ -115,6 +118,9 @@ class MainWindow : public QMainWindow {
 
   static void fixQToolButtons(std::vector<QToolButton *> &btns);
   static void fixQToolButtons(std::vector<QAction *> &actions, QToolBar *bar);
+
+  void setFilters(std::vector<EPL_DataCollect::CSViewFilters::Filter> f);
+  EPL_DataCollect::CSViewFilters::Filter getFilter();
 
  protected:
   void closeEvent(QCloseEvent *event) override;

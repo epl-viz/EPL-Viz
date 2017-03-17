@@ -94,9 +94,15 @@ void QwtBaseModel::initTS() {
   created = true;
 }
 
+
+void QwtBaseModel::replot() {
+  postToThread([&] { plot->replot(); }, plot);
+  emit requestRedraw();
+}
+
 void QwtBaseModel::update(ProtectedCycle &cycle) {
   (void)cycle;
-  /*
+
   if (setup) {
     initTS();
 
@@ -106,8 +112,10 @@ void QwtBaseModel::update(ProtectedCycle &cycle) {
     setup = false;
   }
   // Abort when the QWTPlot has not been created
-  if (!created)
+  if (!created) {
+    replot();
     return;
+  }
 
   (void)cycle;
 
@@ -119,7 +127,7 @@ void QwtBaseModel::update(ProtectedCycle &cycle) {
   size_t              newDataCount = values.size();
   size_t              start        = 0;
   qDebug() << "Updating BaseModel with timeseries data of the size " + QString::number(newDataCount) + "and " +
-  QString::number(oldDataCount) + " old values";
+                    QString::number(oldDataCount) + " old values";
   if (oldDataCount == newDataCount)
     return;
   qDebug() << "===========> Got data <==========";
@@ -134,20 +142,28 @@ void QwtBaseModel::update(ProtectedCycle &cycle) {
 
   maxXValue = static_cast<uint32_t>(values.size());
 
-  // TODO replotting in different thread
-  //plot->replot();
+  replot();
 
   emit requestRedraw();
   emit maxValueChanged(0, static_cast<int>(maxXValue));
-  */
 }
 
 void QwtBaseModel::setXMin(uint32_t min) {
-  plot->setAxisScale(QwtPlot::xBottom, static_cast<double>(min), plot->axisScaleDiv(QwtPlot::xBottom).upperBound());
+  postToThread(
+        [&] {
+          plot->setAxisScale(
+                QwtPlot::xBottom, static_cast<double>(min), plot->axisScaleDiv(QwtPlot::xBottom).upperBound());
+        },
+        plot);
 }
 
 void QwtBaseModel::setXMax(uint32_t max) {
-  plot->setAxisScale(QwtPlot::xBottom, plot->axisScaleDiv(QwtPlot::xBottom).lowerBound(), static_cast<double>(max));
+  postToThread(
+        [&] {
+          plot->setAxisScale(
+                QwtPlot::xBottom, plot->axisScaleDiv(QwtPlot::xBottom).lowerBound(), static_cast<double>(max));
+        },
+        plot);
 }
 
 void QwtBaseModel::setupPlotting() {

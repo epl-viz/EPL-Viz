@@ -30,6 +30,21 @@ void CycleSetter::leaveEvent(QEvent *) {
 
 void CycleSetter::changeCycle() { mw->changeCycle(value()); }
 
+void CycleSetter::clearFilters() { ui->filters->clear(); }
+
+void CycleSetter::setFilters(std::vector<EPL_DataCollect::CSViewFilters::Filter> &f) {
+  if (ui->filters->count() != 0 || f.empty())
+    return;
+
+  ui->filters->addItem("All", QVariant("All STR"));
+
+  for (auto &i : f) {
+    ui->filters->addItem(i.getName().c_str(), QVariant(QString(i.getName().c_str())));
+  }
+}
+
+std::string CycleSetter::getCurrentFilter() { return ui->filters->currentData().toString().toStdString(); }
+
 
 CycleSetterAction::CycleSetterAction(QWidget *parent, MainWindow *main) : QWidgetAction(parent), mw(main) {}
 CycleSetterAction::~CycleSetterAction() {

@@ -122,7 +122,6 @@
     </property>
     <addaction name="actionSettings"/>
     <addaction name="actionPlugins"/>
-    <addaction name="actionInterfaces"/>
     <addaction name="actionSetup_Plot"/>
    </widget>
    <widget class="QMenu" name="menuView">
@@ -136,18 +135,9 @@
      <addaction name="actionStuff1"/>
      <addaction name="actionStuff2"/>
     </widget>
-    <widget class="QMenu" name="menuOD_Filter">
-     <property name="title">
-      <string>&amp;OD Filter</string>
-     </property>
-     <addaction name="actionALL"/>
-     <addaction name="actionFancy"/>
-     <addaction name="actionBest"/>
-    </widget>
     <addaction name="actionFullscreen"/>
     <addaction name="separator"/>
     <addaction name="menuWidgets"/>
-    <addaction name="menuOD_Filter"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
@@ -180,7 +170,6 @@
    <addaction name="actionStart_Recording"/>
    <addaction name="actionStop_Recording"/>
    <addaction name="separator"/>
-   <addaction name="actionOD_Filter_2"/>
   </widget>
   <widget class="TimelineWidget" name="dockTime">
    <property name="baseSize">
@@ -518,13 +507,13 @@
     <string>&amp;ALL</string>
    </property>
   </action>
-  <action name="actionOD_Filter_2">
+  <action name="actionSetup_Plot">
    <property name="icon">
-    <iconset theme="view-filter">
+    <iconset theme="contact-new">
      <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
-    <string>OD Filter</string>
+    <string>S&amp;etup Plot</string>
    </property>
   </action>
   <action name="actionFancy">
@@ -694,22 +683,6 @@
     <hint type="destinationlabel">
      <x>604</x>
      <y>380</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>actionInterfaces</sender>
-   <signal>triggered()</signal>
-   <receiver>MainWindow</receiver>
-   <slot>openInterfacePicker()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>-1</x>
-     <y>-1</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>767</x>
-     <y>464</y>
     </hint>
    </hints>
   </connection>

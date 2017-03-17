@@ -32,6 +32,7 @@
 #include "CurODModelItem.hpp"
 #include "Cycle.hpp"
 #include "EPLVizDefines.hpp"
+#include "ODFilterDesc.hpp"
 #include "Packet.hpp"
 #include "TreeModelBase.hpp"
 
@@ -46,6 +47,8 @@ class ODDescriptionModel final : public TreeModelBase, public BaseModel {
  private:
   uint8_t node            = 1;
   uint8_t lastUpdatedNode = node;
+
+  ODFilterDesc *filter;
 
  public:
   ODDescriptionModel(MainWindow *window, QTreeView *treeWidget);

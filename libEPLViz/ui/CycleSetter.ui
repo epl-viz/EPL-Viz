@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>187</width>
+    <width>310</width>
     <height>44</height>
    </rect>
   </property>
@@ -35,6 +35,16 @@
       </size>
      </property>
     </spacer>
+   </item>
+   <item>
+    <widget class="QLabel" name="label_2">
+     <property name="text">
+      <string>Filter</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QComboBox" name="filters"/>
    </item>
    <item>
     <widget class="QLabel" name="label">

@@ -47,6 +47,10 @@ ODDescriptionModel::ODDescriptionModel(MainWindow *window, QTreeView *treeWidget
            QVariant("The type of the OD entry"),
            QVariant("The data type of the OD entry"),
            QVariant("The default value specified in the XDD (0 if not specified)")}}});
+
+  filter = new ODFilterDesc(treeWidget, window);
+  filter->setSourceModel(this);
+  treeWidget->setModel(filter);
 }
 
 void ODDescriptionModel::init() {
@@ -67,6 +71,8 @@ void ODDescriptionModel::update(ProtectedCycle &cycle) {
     return;
   }
 
+  bool hasFilterChanged = filter->updateFilter();
+
   static std::vector<uint16_t> oldVec;
   static std::vector<uint16_t> chVec; // static: recycle heap memory
   static std::vector<uint16_t> diff;
@@ -85,7 +91,7 @@ void ODDescriptionModel::update(ProtectedCycle &cycle) {
   std::sort(oldVec.begin(), oldVec.end());
   std::set_symmetric_difference(chVec.begin(), chVec.end(), oldVec.begin(), oldVec.end(), std::back_inserter(diff));
 
-  if (diff.empty() && node == lastUpdatedNode) {
+  if (diff.empty() && node == lastUpdatedNode && !hasFilterChanged) {
     // No entry changes
 
     // Do nothing because the OD Description is static

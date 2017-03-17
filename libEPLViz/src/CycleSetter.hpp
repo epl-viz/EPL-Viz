@@ -1,5 +1,6 @@
 #pragma once
 
+#include "CSViewFilters.hpp"
 #include <QWidget>
 #include <QWidgetAction>
 #include <chrono>
@@ -27,6 +28,10 @@ class CycleSetter : public QWidget {
 
   uint32_t value();
   void setValue(uint32_t val);
+
+  void clearFilters();
+  void setFilters(std::vector<EPL_DataCollect::CSViewFilters::Filter> &f);
+  std::string getCurrentFilter();
 
  protected:
   void enterEvent(QEvent *) override;

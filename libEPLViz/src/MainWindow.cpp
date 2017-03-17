@@ -28,7 +28,9 @@
  */
 #include "MainWindow.hpp"
 #include "CSTimeSeriesPtr.hpp"
+#include "CSViewFilters.hpp"
 #include "CycleCommandsModel.hpp"
+#include "DefaultFilter.hpp"
 #include "EPLVizEnum2Str.hpp"
 #include "InterfacePicker.hpp"
 #include "NetworkGraphModel.hpp"
@@ -55,6 +57,8 @@ using namespace EPL_Viz;
 #include "ui_mainwindow.h"
 
 using namespace EPL_DataCollect;
+using namespace EPL_DataCollect::constants;
+using namespace EPL_DataCollect::plugins;
 
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow) {
@@ -67,11 +71,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
   ui->setupUi(this);
   tabifyDockWidget(ui->dockCurrent, ui->dockOD);
   tabifyDockWidget(ui->dockPlugins, ui->dockEvents);
-  ui->actionOD_Filter_2->setMenu(ui->menuOD_Filter);
-
-  std::vector<QAction *> btns;
-  btns.emplace_back(ui->actionOD_Filter_2);
-  fixQToolButtons(btns, ui->toolBar);
 
   CS = new CycleSetterAction(ui->toolBar, this);
   ui->toolBar->addAction(CS);
@@ -461,15 +460,17 @@ void MainWindow::config() {
   curCycle = UINT32_MAX;
   // Notify widgets that recording/playback has started
   emit recordingStarted(getCaptureInstance());
+  CS->getWidget()->clearFilters();
 
   // Apply settings
   settingsWin->applyOn(captureInstance.get());
 
-  auto plgManager = captureInstance->getPluginManager();
 
-  // Add default plugins
-  plgManager->addPlugin(std::make_shared<plugins::TimeSeriesBuilder>());
-  plgManager->addPlugin(std::make_shared<plugins::ProtocolValidator>());
+  auto *plgManager = captureInstance->getPluginManager();
+
+  plgManager->addPlugin(std::make_shared<TimeSeriesBuilder>());
+  plgManager->addPlugin(std::make_shared<ProtocolValidator>());
+  plgManager->addPlugin(std::make_shared<DefaultFilter>());
 
   // Register timeseries cycle storage
   captureInstance->registerCycleStorage<plugins::CSTimeSeriesPtr>(
@@ -477,6 +478,23 @@ void MainWindow::config() {
 
   // Initialize all Models
   BaseModel::initAll(); // TODO do we need to do this here
+}
+
+void MainWindow::setFilters(std::vector<EPL_DataCollect::CSViewFilters::Filter> f) {
+  filters = f;
+  CS->getWidget()->setFilters(filters);
+}
+
+EPL_DataCollect::CSViewFilters::Filter MainWindow::getFilter() {
+  std::string filter = CS->getWidget()->getCurrentFilter();
+
+  for (auto &i : filters) {
+    if (i.getName() == filter) {
+      return i;
+    }
+  }
+
+  return CSViewFilters::Filter(FilterType::EXCLUDE, "All");
 }
 
 void MainWindow::closeEvent(QCloseEvent *event) {

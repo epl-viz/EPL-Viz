@@ -46,7 +46,14 @@ CurrentODModel::CurrentODModel(MainWindow *window, QTreeView *widget)
 
 CurrentODModel::~CurrentODModel() {}
 
-void CurrentODModel::init() {}
+void CurrentODModel::init() {
+  node            = 1;
+  lastUpdatedNode = node;
+
+  beginResetModel();
+  root->clear();
+  endResetModel();
+}
 
 void CurrentODModel::update(ProtectedCycle &cycle) {
   auto l    = getLock();

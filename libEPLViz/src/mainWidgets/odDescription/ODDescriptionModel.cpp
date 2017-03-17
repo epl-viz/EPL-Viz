@@ -49,7 +49,14 @@ ODDescriptionModel::ODDescriptionModel(MainWindow *window, QTreeView *treeWidget
            QVariant("The default value specified in the XDD (0 if not specified)")}}});
 }
 
-void ODDescriptionModel::init() {}
+void ODDescriptionModel::init() {
+  node            = 1;
+  lastUpdatedNode = node;
+
+  beginResetModel();
+  root->clear();
+  endResetModel();
+}
 
 void ODDescriptionModel::update(ProtectedCycle &cycle) {
   auto l    = getLock();

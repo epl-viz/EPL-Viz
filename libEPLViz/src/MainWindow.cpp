@@ -180,6 +180,11 @@ void MainWindow::createModels() {
           SLOT(updateWidgets(ProtectedCycle &)),
           Qt::BlockingQueuedConnection);
 
+  // Connect reset signal to widgets requiring it
+  connect(this, SIGNAL(resetGUI()), ui->networkGraphContents, SLOT(reset()));
+  connect(this, SIGNAL(resetGUI()), ui->eventLog, SLOT(reset()));
+
+
   modelThread->start();
   connect(this, SIGNAL(close()), modelThread, SLOT(stop()));
 }
@@ -351,9 +356,6 @@ void MainWindow::stopRecording() {
 }
 
 void MainWindow::changeState(GUIState nState) {
-  if (nState == machineState) // TODO: Allow changing to the same state?
-    return;
-
   std::string test =
         "Change state from " + EPLVizEnum2Str::toStr(machineState) + " to " + EPLVizEnum2Str::toStr(nState);
   qDebug() << QString::fromStdString(test);
@@ -374,7 +376,10 @@ void MainWindow::changeState(GUIState nState) {
       ui->actionSave_As->setEnabled(false);
 
       if (machineState == GUIState::STOPPED) {
-        emit resetGUI(); // TODO: Connect to all widgets/models that need to be reset and add handler code
+        // Reset all models back to their initial state
+        BaseModel::initAll();
+        CS->setValue(0);
+        emit resetGUI();
       }
 
       captureInstance = std::make_unique<CaptureInstance>();

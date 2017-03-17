@@ -41,9 +41,13 @@ using namespace std;
 PacketHistoryModel::PacketHistoryModel(MainWindow *window, QPlainTextEdit *widget) : BaseModel(window, widget) {
   (void)window;
 
-  selectedPacket = UINT64_MAX;
-  textWindow     = widget;
+  textWindow = widget;
+}
+
+void PacketHistoryModel::init() {
   needUpdate     = true;
+  selectedPacket = UINT64_MAX;
+  emit textUpdated("No packets available yet", textWindow);
 }
 
 void PacketHistoryModel::update(ProtectedCycle &cycle) {
@@ -69,5 +73,3 @@ void PacketHistoryModel::changePacket(uint64_t packet) {
   needUpdate     = true;
   selectedPacket = packet;
 }
-
-void PacketHistoryModel::init() {}

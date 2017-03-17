@@ -35,6 +35,23 @@ NetworkGraphWidget::NetworkGraphWidget(QWidget *parent) : QWidget(parent) {}
 QMap<uint8_t, NodeWidget *> *NetworkGraphWidget::getNodeWidgets() { return &nodeMap; }
 
 
+void NetworkGraphWidget::reset() {
+  count = 0;
+
+  current = UINT8_MAX;
+
+  for (auto nw : nodeMap.values()) {
+    grid->removeWidget(nw);
+    delete nw;
+  }
+
+  nodeMap.clear();
+
+  createQueue.clear();
+  updateQueue.clear();
+}
+
+
 void NetworkGraphWidget::updateWidget(EPL_Viz::ProtectedCycle &c) {
   auto lock = c.getLock();
 

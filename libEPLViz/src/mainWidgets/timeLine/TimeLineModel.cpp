@@ -94,6 +94,7 @@ void TimeLineModel::update(ProtectedCycle &cycle) {
   uint32_t newest = window->getCaptureInstance()->getCycleContainer()->pollCycle().getCycleNum();
   newestCycleMarker.setXValue(static_cast<double>(newest));
   maxXValue = newest;
+  emit maxValueChanged(0, static_cast<int>(maxXValue));
 
   // Add new markers
   std::vector<EventBase *> nEvents = log->pollEvents(appid);

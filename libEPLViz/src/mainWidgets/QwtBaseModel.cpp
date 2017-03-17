@@ -122,30 +122,22 @@ void QwtBaseModel::update(ProtectedCycle &cycle) {
   // We're only using the newest cycle
   Cycle curCycle = window->getCaptureInstance()->getCycleContainer()->pollCycle();
 
-  std::vector<double> values       = timeSeries->tsData;
-  size_t              oldDataCount = curve->data()->size();
-  size_t              newDataCount = values.size();
-  size_t              start        = 0;
+  size_t oldDataCount = curve->dataSize();
+  size_t newDataCount = timeSeries->tsData.size();
   qDebug() << "Updating BaseModel with timeseries data of the size " + QString::number(newDataCount) + "and " +
                     QString::number(oldDataCount) + " old values";
   if (oldDataCount == newDataCount)
     return;
-  qDebug() << "===========> Got data <==========";
-  if (oldDataCount < newDataCount)
-    start = oldDataCount;
 
-  for (size_t i = start; i < newDataCount; ++i) {
-    double x = static_cast<double>(i);
-    double y = static_cast<double>(values[i]);
-    curve->setSamples(&x, &y, 1);
+  std::vector<double> xValues(newDataCount);
+  for (size_t i = 0; i < newDataCount; ++i) {
+    xValues[i] = static_cast<double>(i);
   }
 
-  maxXValue = static_cast<uint32_t>(values.size());
+  curve->setSamples(xValues.data(), timeSeries->tsData.data(), static_cast<int>(newDataCount));
+  curve->attach(plot);
 
   replot();
-
-  emit requestRedraw();
-  emit maxValueChanged(0, static_cast<int>(maxXValue));
 }
 
 void QwtBaseModel::setXMin(uint32_t min) {

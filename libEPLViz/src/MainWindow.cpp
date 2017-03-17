@@ -133,7 +133,10 @@ void MainWindow::createModels() {
   connect(ui->scrBarTimeline, SIGNAL(valueChanged(int)), timeLineModel, SLOT(updateViewport(int)));
   connect(timeLineModel, SIGNAL(maxValueChanged(int, int)), ui->scrBarTimeline, SLOT(setRange(int, int)));
   connect(this, SIGNAL(cycleChanged()), timeLineModel, SLOT(replot()));
-  connect(timeLineModel, SIGNAL(setNodes(uint8_t, uint16_t, uint16_t)), qwtPlot, SLOT(createPlot(uint8_t, uint16_t, uint16_t)));
+  connect(timeLineModel,
+          SIGNAL(setNodes(uint8_t, uint16_t, uint16_t)),
+          qwtPlot,
+          SLOT(createPlot(uint8_t, uint16_t, uint16_t)));
   // TODO update timeline value
   // connect(this, SIGNAL(cycleChanged()), ui->scrBarTimeline, SLOT(setValue(int)))
 

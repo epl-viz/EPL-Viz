@@ -22,7 +22,10 @@ bool ODFilterDesc::filterAcceptsRow(int sourceRow, const QModelIndex &sourcePare
   return const_cast<CSViewFilters::Filter *>(&filter)->includeIndex(d->getIndex());
 }
 
-void ODFilterDesc::updateFilter() {
+bool ODFilterDesc::updateFilter() {
   std::lock_guard<std::recursive_mutex> lock(mutex);
-  filter = mw->getFilter();
+
+  std::string oldFilter = filter.getName();
+  filter                = mw->getFilter();
+  return filter.getName() != oldFilter;
 }

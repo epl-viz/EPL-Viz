@@ -21,6 +21,6 @@ class ODFilter : public QSortFilterProxyModel {
   ODFilter() = delete;
   ODFilter(QObject *parent, MainWindow *main);
 
-  void updateFilter();
+  bool updateFilter();
 };
 }

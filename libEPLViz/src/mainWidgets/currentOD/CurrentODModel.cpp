@@ -60,7 +60,7 @@ void CurrentODModel::update(ProtectedCycle &cycle) {
     return;
   }
 
-  filter->updateFilter();
+  bool hasFilterChanged = filter->updateFilter();
 
   static std::vector<uint16_t>    oldVec;
   static std::vector<std::string> oldVecCS;
@@ -110,7 +110,7 @@ void CurrentODModel::update(ProtectedCycle &cycle) {
     }
   }
 
-  if (diff.empty() && diffCS.empty() && node == lastUpdatedNode) {
+  if (diff.empty() && diffCS.empty() && node == lastUpdatedNode && !hasFilterChanged) {
     // No entry changes
     for (auto &i : *root->getChildren()) {
       CurODModelItem *od = dynamic_cast<CurODModelItem *>(i);

@@ -21,6 +21,6 @@ class ODFilterDesc : public QSortFilterProxyModel {
   ODFilterDesc() = delete;
   ODFilterDesc(QObject *parent, MainWindow *main);
 
-  void updateFilter();
+  bool updateFilter();
 };
 }

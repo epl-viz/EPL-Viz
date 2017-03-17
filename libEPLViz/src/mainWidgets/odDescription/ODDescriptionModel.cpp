@@ -64,6 +64,8 @@ void ODDescriptionModel::update(ProtectedCycle &cycle) {
     return;
   }
 
+  bool hasFilterChanged = filter->updateFilter();
+
   static std::vector<uint16_t> oldVec;
   static std::vector<uint16_t> chVec; // static: recycle heap memory
   static std::vector<uint16_t> diff;
@@ -82,7 +84,7 @@ void ODDescriptionModel::update(ProtectedCycle &cycle) {
   std::sort(oldVec.begin(), oldVec.end());
   std::set_symmetric_difference(chVec.begin(), chVec.end(), oldVec.begin(), oldVec.end(), std::back_inserter(diff));
 
-  if (diff.empty() && node == lastUpdatedNode) {
+  if (diff.empty() && node == lastUpdatedNode && !hasFilterChanged) {
     // No entry changes
 
     // Do nothing because the OD Description is static

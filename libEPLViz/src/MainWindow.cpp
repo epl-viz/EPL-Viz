@@ -102,6 +102,8 @@ MainWindow::~MainWindow() {
   delete settingsWin;
 }
 
+bool MainWindow::changeTime(double) { return true; }
+
 void MainWindow::createModels() {
   // Create and add Models here
   CycleCommandsModel *cyCoModel          = new CycleCommandsModel(this, ui->cycleCommandsView);

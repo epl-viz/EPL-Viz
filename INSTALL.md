@@ -124,6 +124,7 @@ mkdir build
 cd build
 cmake \
   -DCMAKE_INSTALL_PREFIX="${PREFIX}" \
+  -DUSE_SYSTEM_PACKETS=ON \
   -DWireshark_DIR="${PREFIX}/lib/wireshark" \
   -DPCAP_HINTS="${PREFIX}" \
   -DQWT_ROOT="${PREFIX}" \

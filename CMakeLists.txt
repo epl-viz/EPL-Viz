@@ -111,6 +111,8 @@ find_package( PythonLibs   3.5 REQUIRED )
 find_package( Wireshark        REQUIRED )
 find_package( PCAP             REQUIRED )
 find_package( PkgConfig        REQUIRED )
+find_package( Threads          REQUIRED )
+find_package( TinyXML2     4.0 REQUIRED )
 pkg_search_module(GLIB REQUIRED glib-2.0)
 
 link_directories( ${Wireshark_LIB_DIR} )
@@ -282,7 +284,7 @@ new_project_executable(
 if( NOT DISABLE_TESTS )
   new_project_executable(
     PATH         "${PROJECT_SOURCE_DIR}/tests"
-    NAME         "tests"
+    NAME         "testExec"
     TEMPLATE     "${EPL_VIZ_TEMPLATES_DIR}/CMakeLists.exe.txt"
     DEPENDENCIES
       ${Wireshark_LIBRARY} ${GLIB_LIBRARIES} capchild caputils ${PCAP_LIBRARIES}
@@ -332,11 +334,13 @@ foreach( I IN LISTS EPL-Viz_SUBDIR_LIST )
 endforeach( I IN LISTS EPL-Viz_SUBDIR_LIST )
 
 if( NOT DISABLE_TESTS )
-  add_dependencies( tests catch FakeIt )
-  add_custom_target( check COMMAND tests )
+  add_dependencies( testExec catch FakeIt )
+  add_custom_target( check COMMAND testExec )
 endif( NOT DISABLE_TESTS )
 
-add_dependencies( libEPLViz EPL_DataCollect )
+if( NOT USE_SYSTEM_PACKETS )
+  add_dependencies( libEPLViz EPL_DataCollect )
+endif( NOT USE_SYSTEM_PACKETS )
 
 ##################
 # Generate Files #

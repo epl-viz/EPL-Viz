@@ -49,13 +49,13 @@ void QwtBaseModel::init() {
   connect(this, SIGNAL(requestRedraw()), plot, SLOT(repaint()));
 
   created = false;
-  // TODO change back from debug
-  setup = true;
-  odTS  = true;
+  setup   = false;
+  odTS    = true;
 }
 
 void QwtBaseModel::createPlot(uint8_t nodeID, uint16_t mainIndex, uint16_t subIndex) {
   if (setup) {
+    qDebug() << "Already created";
     return;
   }
   curve = std::make_shared<QwtPlotCurve>();
@@ -86,7 +86,7 @@ void QwtBaseModel::initTS() {
   auto *tsp = dynamic_cast<plugins::CSTimeSeriesPtr *>(cs);
   if (odTS) {
     qDebug() << "Setting timeseries hardcoded";
-    timeSeries = std::make_shared<plugins::TimeSeries>(1, 0x6200, 1);
+    timeSeries = std::make_shared<plugins::TimeSeries>(node, index, subindex);
   } else
     timeSeries = std::make_shared<plugins::TimeSeries>(node, csName);
   tsp->addTS(timeSeries);
@@ -102,7 +102,7 @@ void QwtBaseModel::replot() {
 
 void QwtBaseModel::update(ProtectedCycle &cycle) {
   (void)cycle;
-
+  // If setup widget has been used used, initialize timeseries now
   if (setup) {
     initTS();
 
@@ -116,11 +116,6 @@ void QwtBaseModel::update(ProtectedCycle &cycle) {
     replot();
     return;
   }
-
-  (void)cycle;
-
-  // We're only using the newest cycle
-  Cycle curCycle = window->getCaptureInstance()->getCycleContainer()->pollCycle();
 
   size_t oldDataCount = curve->dataSize();
   size_t newDataCount = timeSeries->tsData.size();

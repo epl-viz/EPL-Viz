@@ -40,7 +40,7 @@ TimeLineModel::TimeLineModel(MainWindow *mw, QwtPlot *widget) : QwtBaseModel(mw,
   viewportSize = DEF_VIEWPORT_SIZE;
   widget->setAxisAutoScale(QwtPlot::xTop, false);
 
-  zoomer = std::make_unique<TimeLineMagnifier>(&maxXValue, widget->canvas());
+  zoomer = std::make_unique<TimeLineMagnifier>(this, &maxXValue, widget->canvas());
   zoomer->setAxisEnabled(QwtPlot::xTop, QwtPlot::yRight);
 
   // connect(mw->findChild<TimelineWidget *>("dockTime"), SIGNAL(zoom(QPoint)), this, SLOT(zoom(QPoint)));
@@ -98,7 +98,7 @@ void TimeLineModel::update(ProtectedCycle &cycle) {
 
   // Add new markers
   std::vector<EventBase *> nEvents = log->pollEvents(appid);
-  qDebug() << "number of new Events to timeline: " + QString::number(nEvents.size());
+  qDebug() << "number of new Events adding to timeline: " + QString::number(nEvents.size());
   for (EventBase *ev : nEvents) {
     std::shared_ptr<QwtPlotMarker> marker =
           std::make_shared<QwtPlotMarker>(QString::fromStdString(ev->getDescription()));
@@ -145,36 +145,7 @@ void TimeLineModel::updateViewport(int value) {
   replot();
 }
 
-/*
-void TimeLineModel::zoom(QPoint angle) {
-  // zoomer->zoom(angle.y());
-  qDebug() << "Wrong zoom called";
-
-  int    size     = 10;
-  double oldLower = plot->axisScaleDiv(QwtPlot::xTop).lowerBound();
-  double oldUpper = plot->axisScaleDiv(QwtPlot::xTop).upperBound();
-
-  double newLower = oldLower;
-  double newUpper = oldUpper;
-
-  newLower -= size * angle.y();
-  newUpper += size * angle.y();
-
-  if (newLower < 0)
-    newLower = 0;
-  if (newLower > maxXValue)
-    newLower = maxXValue;
-  if (newUpper < 0)
-    newLower = 0;
-  if (newUpper > maxXValue)
-    newUpper = maxXValue;
-  plot->setAxisScale(plot->xTop, newLower, newUpper);
-  plot->replot();
-  emit requestRedraw();
-}
-*/
 void TimeLineModel::resetAxes() {
-  // plot->setAxisMaxMajor(QwtPlot::xTop, 1);
   postToThread([&] { plot->setAxisMaxMinor(QwtPlot::xTop, 0); }, plot);
   postToThread([&] { plot->setAxisScale(QwtPlot::xTop, 0, maxXValue); }, plot);
 }

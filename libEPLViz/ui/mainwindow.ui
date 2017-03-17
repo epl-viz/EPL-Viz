@@ -106,6 +106,7 @@
     <property name="title">
      <string>Fi&amp;le</string>
     </property>
+    <addaction name="actionNew"/>
     <addaction name="actionLoad"/>
     <addaction name="actionSave"/>
     <addaction name="actionSave_As"/>
@@ -171,6 +172,7 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
+   <addaction name="actionNew"/>
    <addaction name="actionLoad"/>
    <addaction name="actionSave"/>
    <addaction name="actionSave_As"/>
@@ -243,7 +245,7 @@
    <widget class="QWidget" name="dockWidgetContents">
     <layout class="QGridLayout" name="gridLayout_5">
      <item row="0" column="0">
-      <widget class="QPushButton" name="pushButton">
+      <widget class="QPushButton" name="pluginEditorButton">
        <property name="text">
         <string>Plugin Editor</string>
        </property>
@@ -551,6 +553,14 @@
     <string>Setup Plot</string>
    </property>
   </action>
+  <action name="actionNew">
+   <property name="text">
+    <string>New</string>
+   </property>
+   <property name="toolTip">
+    <string>Create a new session</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
@@ -656,7 +666,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>pushButton</sender>
+   <sender>pluginEditorButton</sender>
    <signal>clicked()</signal>
    <receiver>MainWindow</receiver>
    <slot>openPluginEditor()</slot>
@@ -784,42 +794,26 @@
    </hints>
   </connection>
   <connection>
-   <sender>lineEditCycle</sender>
-   <signal>returnPressed()</signal>
-   <receiver>MainWindow</receiver>
-   <slot>userEnteredCycle()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>1752</x>
-     <y>100</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>959</x>
-     <y>539</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>btnEnterCycle</sender>
-   <signal>clicked()</signal>
-   <receiver>MainWindow</receiver>
-   <slot>userEnteredCycle()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>1869</x>
-     <y>100</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>959</x>
-     <y>539</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
    <sender>actionSave_As</sender>
    <signal>triggered()</signal>
    <receiver>MainWindow</receiver>
    <slot>saveAs()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>959</x>
+     <y>539</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionNew</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>newSession()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>-1</x>
@@ -842,5 +836,6 @@
   <slot>openSettings()</slot>
   <slot>save()</slot>
   <slot>saveAs()</slot>
+  <slot>newSession()</slot>
  </slots>
 </ui>

@@ -191,7 +191,6 @@ void MainWindow::destroyModels() {
 }
 
 void MainWindow::updateWidgets(ProtectedCycle &cycle) {
-  // TODO: Check if this can be done in a cleaner way
   ui->networkGraphContents->updateWidget(cycle);
   ui->eventLog->updateEvents();
 }
@@ -272,6 +271,8 @@ uint32_t MainWindow::getCycleNum() { return curCycle; }
 CaptureInstance *MainWindow::getCaptureInstance() { return captureInstance.get(); }
 
 
+void MainWindow::newSession() { changeState(GUIState::UNINIT); }
+
 void MainWindow::save() {
   // Abort when the captureInstance is invalid
   if (!captureInstance)
@@ -350,36 +351,50 @@ void MainWindow::stopRecording() {
 }
 
 void MainWindow::changeState(GUIState nState) {
+  if (nState == machineState) // TODO: Allow changing to the same state?
+    return;
+
   std::string test =
         "Change state from " + EPLVizEnum2Str::toStr(machineState) + " to " + EPLVizEnum2Str::toStr(nState);
   qDebug() << QString::fromStdString(test);
-  // TODO other states (and maybe implement a real state machine in ModelThread)
-  // switch with old state
-  switch (machineState) {
-    case GUIState::UNINIT: break;
-    case GUIState::RECORDING:
-    case GUIState::PLAYING:
-    case GUIState::PAUSED: break;
-    case GUIState::STOPPED: break;
-  }
 
   std::string interfaceName;
   // switch with new state
   int backendState;
   switch (nState) {
     case GUIState::UNINIT:
-      captureInstance = std::make_unique<CaptureInstance>();
+      // Update GUI button states
       ui->actionStart_Recording->setEnabled(true);
       ui->actionStop_Recording->setEnabled(false);
-      ui->pushButton->setEnabled(true);
+      ui->pluginEditorButton->setEnabled(true);
       ui->actionPlugins->setEnabled(true);
+      ui->actionNew->setEnabled(true);
       ui->actionLoad->setEnabled(true);
       ui->actionSave->setEnabled(false);
       ui->actionSave_As->setEnabled(false);
+
+      if (machineState == GUIState::STOPPED) {
+        emit resetGUI(); // TODO: Connect to all widgets/models that need to be reset and add handler code
+      }
+
+      captureInstance = std::make_unique<CaptureInstance>();
       break;
     case GUIState::PLAYING:
+      // Update GUI button states
+      ui->actionStart_Recording->setEnabled(false);
+      ui->actionStop_Recording->setEnabled(true);
+      ui->pluginEditorButton->setEnabled(false);
+      ui->actionPlugins->setEnabled(false);
+      ui->actionNew->setEnabled(false);
+      ui->actionLoad->setEnabled(false);
+      ui->actionSave->setEnabled(false); // Saving is not available during playback
+      ui->actionSave_As->setEnabled(false);
+
       config();
+
       backendState = captureInstance->loadPCAP(file);
+
+      // Handle Backend errors
       if (backendState != 0) {
         qDebug() << QString("Backend error Code ") + QString::number(backendState);
         changeState(GUIState::UNINIT);
@@ -387,25 +402,51 @@ void MainWindow::changeState(GUIState nState) {
       }
       break;
     case GUIState::RECORDING:
+      // Update GUI button states
+      ui->actionStart_Recording->setEnabled(false);
+      ui->actionStop_Recording->setEnabled(true);
+      ui->pluginEditorButton->setEnabled(false);
+      ui->actionPlugins->setEnabled(false);
+      ui->actionNew->setEnabled(false);
+      ui->actionLoad->setEnabled(false);
+      ui->actionSave->setEnabled(true);
+      ui->actionSave_As->setEnabled(true);
+
       config();
+
       if (interface.isEmpty())
         interfaceName = nullptr;
       else
         interfaceName = interface.toStdString();
-      backendState    = captureInstance->startRecording(interfaceName);
+
+      backendState = captureInstance->startRecording(interfaceName);
+
+      // Handle Backend errors
       if (backendState != 0) {
         qDebug() << QString("Backend error Code ") + QString::number(backendState);
         changeState(GUIState::UNINIT);
         return;
       }
       break;
-    case GUIState::PAUSED: break;
-    case GUIState::STOPPED:
-      ui->actionStart_Recording->setEnabled(false); // TODO: Do not allow until a reset has been done
+    case GUIState::PAUSED:
+      // Update GUI button states
+      ui->actionStart_Recording->setEnabled(true);
       ui->actionStop_Recording->setEnabled(false);
-      captureInstance->stopRecording();
-      ui->actionSave->setEnabled(true);
-      ui->actionSave_As->setEnabled(true);
+      ui->pluginEditorButton->setEnabled(false);
+      ui->actionPlugins->setEnabled(false);
+      ui->actionNew->setEnabled(false);
+      ui->actionLoad->setEnabled(false);
+      break;
+    case GUIState::STOPPED:
+      // Update GUI button states
+      ui->actionStart_Recording->setEnabled(false);
+      ui->actionStop_Recording->setEnabled(false);
+      ui->pluginEditorButton->setEnabled(false);
+      ui->actionPlugins->setEnabled(false);
+      ui->actionNew->setEnabled(true);
+      ui->actionLoad->setEnabled(false);
+
+      ui->pluginSelectorWidget->setEnabled(false);
       break;
   }
   machineState = nState;
@@ -413,25 +454,23 @@ void MainWindow::changeState(GUIState nState) {
 
 void MainWindow::config() {
   curCycle = UINT32_MAX;
+  // Notify widgets that recording/playback has started
   emit recordingStarted(getCaptureInstance());
 
+  // Apply settings
   settingsWin->applyOn(captureInstance.get());
-
 
   auto plgManager = captureInstance->getPluginManager();
 
+  // Add default plugins
   plgManager->addPlugin(std::make_shared<plugins::TimeSeriesBuilder>());
   plgManager->addPlugin(std::make_shared<plugins::ProtocolValidator>());
 
+  // Register timeseries cycle storage
   captureInstance->registerCycleStorage<plugins::CSTimeSeriesPtr>(
         EPL_DataCollect::constants::EPL_DC_PLUGIN_TIME_SERIES_CSID);
-  ui->actionStart_Recording->setEnabled(false);
-  ui->actionStop_Recording->setEnabled(true);
-  ui->actionLoad->setEnabled(false);
-  ui->actionSave->setEnabled(false);
-  ui->actionSave_As->setEnabled(false);
-  ui->pushButton->setEnabled(false);
-  ui->actionPlugins->setEnabled(false);
+
+  // Initialize all Models
   BaseModel::initAll(); // TODO do we need to do this here
 }
 

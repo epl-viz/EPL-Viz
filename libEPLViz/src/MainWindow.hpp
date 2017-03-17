@@ -133,6 +133,7 @@ class MainWindow : public QMainWindow {
   void openPluginEditor();
   void openInterfacePicker();
   void openSettings();
+  void newSession();
   void save();
   void saveAs();
   void open();
@@ -148,5 +149,6 @@ class MainWindow : public QMainWindow {
   void cycleChanged();
   void eventsUpdated();
   void recordingStarted(EPL_DataCollect::CaptureInstance *);
+  void resetGUI();
 };
 }

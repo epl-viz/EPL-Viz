@@ -191,5 +191,3 @@ void PluginSelectorWidget::loadPlugins(EPL_DataCollect::CaptureInstance *ci) {
     }
   }
 }
-
-void PluginSelectorWidget::disableWidget() { setEnabled(false); }

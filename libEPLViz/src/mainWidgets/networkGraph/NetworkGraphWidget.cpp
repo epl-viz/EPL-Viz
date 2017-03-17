@@ -38,7 +38,6 @@ QMap<uint8_t, NodeWidget *> *NetworkGraphWidget::getNodeWidgets() { return &node
 void NetworkGraphWidget::updateWidget(EPL_Viz::ProtectedCycle &c) {
   auto lock = c.getLock();
 
-  // TODO: Use an alternative for hiding unupdated nodes?
   QMap<uint8_t, NodeWidget *> nodes(nodeMap); // Used to track untouched nodes
 
   // Apply all queued updates

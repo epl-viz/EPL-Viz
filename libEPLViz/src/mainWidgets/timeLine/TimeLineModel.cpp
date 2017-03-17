@@ -112,9 +112,7 @@ void TimeLineModel::update(ProtectedCycle &cycle) {
     markers.append(marker);
   }
 
-  plot->replot();
-  // emit requestRedraw();
-  // QwtBaseModel::update(cycle);
+  QwtBaseModel::update(cycle);
 }
 
 void TimeLineModel::updateViewport(int value) {
@@ -133,11 +131,10 @@ void TimeLineModel::updateViewport(int value) {
 
   // qDebug() << "Changing viewport to [" + QString::number(nmin) + "-" + QString::number(nmax) + "]";
 
-  plot->setAxisScale(plot->xTop, static_cast<double>(nmin), static_cast<double>(nmax), 1);
-  resetAxes();
-  // plot->replot();
-  emit requestRedraw();
+  postToThread([&] { plot->setAxisScale(plot->xTop, static_cast<double>(nmin), static_cast<double>(nmax), 1); }, plot);
+  replot();
 }
+
 /*
 void TimeLineModel::zoom(QPoint angle) {
   // zoomer->zoom(angle.y());
@@ -168,5 +165,6 @@ void TimeLineModel::zoom(QPoint angle) {
 */
 void TimeLineModel::resetAxes() {
   // plot->setAxisMaxMajor(QwtPlot::xTop, 1);
-  // plot->setAxisMaxMinor(QwtPlot::xTop, 0);
+  postToThread([&] { plot->setAxisMaxMinor(QwtPlot::xTop, 0); }, plot);
+  postToThread([&] { plot->setAxisScale(QwtPlot::xTop, 0, maxXValue); }, plot);
 }

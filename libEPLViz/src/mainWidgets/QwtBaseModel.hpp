@@ -36,6 +36,9 @@
 #include <qwt_plot.h>
 #include <qwt_plot_curve.h>
 
+
+#include "QCoreApplication"
+#include <QEvent>
 #include <QObject>
 
 namespace EPL_Viz {
@@ -73,6 +76,19 @@ class QwtBaseModel : public QObject, public BaseModel {
 
   virtual void update(ProtectedCycle &cycle) override;
   void initTS();
+
+  template <typename F>
+  static void postToThread(F &&fun, QObject *obj) {
+    struct Event : public QEvent {
+      using Fun = typename std::decay<F>::type;
+      Fun funEl;
+      Event(Fun &&funny) : QEvent(QEvent::None), funEl(std::move(funny)) {}
+      Event(const Fun &funny) : QEvent(QEvent::None), funEl(funny) {}
+      ~Event() { funEl(); }
+    };
+    QCoreApplication::postEvent(obj, new Event(std::forward<F>(fun)));
+  }
+  void replot();
 
  signals:
   void requestRedraw();

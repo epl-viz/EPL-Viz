@@ -46,13 +46,17 @@ class PluginsWindow : public QMainWindow {
   Q_OBJECT
 
  private:
-  Ui::PluginsWindow *ui;
-  SettingsWindow *   settings;
+  Ui::PluginsWindow *   ui;
+  SettingsWindow *      settings;
+  static PluginsWindow *instance;
+
+  explicit PluginsWindow(MainWindow *mw);
 
  public:
-  explicit PluginsWindow(MainWindow *mw);
+  PluginsWindow() = delete;
   ~PluginsWindow();
 
+  static PluginsWindow *create(MainWindow *mw);
   PluginEditorWidget *getEditor();
 
  private:

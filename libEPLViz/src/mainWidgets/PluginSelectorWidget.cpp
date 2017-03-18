@@ -36,9 +36,29 @@ using namespace EPL_Viz;
 
 PluginSelectorWidget::PluginSelectorWidget(QWidget *parent) : QListWidget(parent) {}
 
+void PluginSelectorWidget::reset() {
+  recording = false;
+  setEnabled(true);
+
+  // Reenable all boxes
+  for (int i = 0; i < count(); i++) {
+    QListWidgetItem *qwi = item(i);
+
+    QCheckBox *box = qobject_cast<QCheckBox *>(itemWidget(qwi));
+
+    // Check if object is valid
+    if (!box)
+      continue;
+
+    box->setEnabled(true);
+  }
+}
+
 void PluginSelectorWidget::addItem(QString plugin) {
   QListWidgetItem *it  = new QListWidgetItem(this);
   QCheckBox *      box = new QCheckBox(plugin, this);
+
+  box->setToolTip(plugin);
 
   plugins.append(plugin);
 
@@ -50,8 +70,12 @@ void PluginSelectorWidget::addItem(QString plugin) {
 void PluginSelectorWidget::setMainWindow(MainWindow *mw) { main = mw; }
 
 void PluginSelectorWidget::addPlugins(QMap<QString, QString> map) {
+  // Discard the event as adding plugins during runtime is unsafe
+  if (recording)
+    return;
+
   QMapIterator<QString, QString> i(map);
-  QString pluginPath = QDir::currentPath();
+  QString pluginPath = QString();
 
   // Try to obtain the user plugin directory
   if (main) {
@@ -63,10 +87,18 @@ void PluginSelectorWidget::addPlugins(QMap<QString, QString> map) {
     if (!pluginFolder.exists())
       // Try to create the full path to the folder
       if (!pluginFolder.mkpath(".")) {
-        QErrorMessage error(this);
-        error.showMessage("Could not create plugin folder.");
-        pluginPath = QDir::currentPath(); // Reset plugin path
+        pluginPath = QString(); // Reset plugin path
       }
+  }
+
+  if (pluginPath == QString()) {
+
+    QMessageBox::critical(0,
+                          "Error",
+                          tr("Could not create plugin folder at '%1'. "
+                             "Ensure you have access to the folder and try again.")
+                                .arg(QString::fromStdString(main->getSettingsWin()->getConfig().pythonPluginsDir)));
+    return;
   }
 
   // Add the plugin path to the python runtime paths
@@ -129,9 +161,12 @@ void PluginSelectorWidget::addPlugins(QMap<QString, QString> map) {
       qDebug() << "Trying to move " << path << " to " << newPath;
 
       if (!QFile::copy(path, newPath)) {
-        QErrorMessage error(this);
-        error.showMessage("Unable to create file '" + newPath + "'.\n" +
-                          "Please check if you have permissions to access the plugin folder.");
+
+        QMessageBox::critical(0,
+                              "Error",
+                              tr("Unable to create file '%1'. "
+                                 "Please ensure that you have the required permissions to access the plugin folder.")
+                                    .arg(path));
         continue;
       }
 
@@ -151,16 +186,14 @@ void PluginSelectorWidget::changeState(int state) {
     if (!sender || state != 0)
       return;
 
-    std::string name = sender->text().toStdString();
-
-    // Remove invalid mnemonics
-    name.erase(std::remove(name.begin(), name.end(), '&'), name.end());
+    std::string name = sender->toolTip().toStdString();
 
     sender->setEnabled(false);
 
     // Plugins can only be disabled while a recording is active
-    if (!pluginManager->removePlugin(name))
-      qDebug() << "Could not disable " << QString::fromStdString(name);
+    if (!pluginManager->removePlugin(name)) {
+      QMessageBox::critical(0, "Error", tr("Could not disable the plugin '%1'!").arg(sender->toolTip()));
+    }
   }
 }
 
@@ -179,15 +212,12 @@ void PluginSelectorWidget::loadPlugins(EPL_DataCollect::CaptureInstance *ci) {
 
     if (box->isChecked()) {
       // Plugin is enabled, load it in the backend
-      std::string name = box->text().toStdString();
-
-      // Remove invalid mnemonics
-      name.erase(std::remove(name.begin(), name.end(), '&'), name.end());
-
-      pluginManager->addPlugin(std::make_shared<EPL_DataCollect::plugins::PythonPlugin>(name));
+      pluginManager->addPlugin(std::make_shared<EPL_DataCollect::plugins::PythonPlugin>(plugins[i].toStdString()));
     } else {
       // Plugin is not enabled, disable the checkbox to prevent activation during recording
       box->setEnabled(false);
     }
   }
+
+  recording = true;
 }

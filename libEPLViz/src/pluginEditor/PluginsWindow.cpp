@@ -34,9 +34,21 @@
 
 using namespace EPL_Viz;
 
+PluginsWindow *PluginsWindow::create(MainWindow *mw) {
+  if (instance) {
+    // The window already exists, focus it
+    QApplication::setActiveWindow(instance);
+    return nullptr;
+  } else {
+    // The window needs to be created
+    instance = new PluginsWindow(mw);
+    return instance;
+  }
+}
+
 PluginsWindow::PluginsWindow(MainWindow *mw) : QMainWindow(mw), ui(new Ui::PluginsWindow) {
   ui->setupUi(this);
-  setAttribute(Qt::WA_QuitOnClose);
+  setAttribute(Qt::WA_QuitOnClose); // Quit the application if this is the last window
 
   QString pluginPath   = QString::fromStdString(mw->getSettingsWin()->getConfig().pythonPluginsDir);
   QDir    pluginFolder = QDir(pluginPath);
@@ -52,13 +64,17 @@ PluginsWindow::PluginsWindow(MainWindow *mw) : QMainWindow(mw), ui(new Ui::Plugi
   }
 }
 
-PluginsWindow::~PluginsWindow() { delete ui; }
+PluginsWindow::~PluginsWindow() {
+  instance = nullptr;
+  delete ui;
+}
 
 PluginEditorWidget *PluginsWindow::getEditor() { return ui->editor; }
 
 void PluginsWindow::closeEvent(QCloseEvent *event) {
   emit cleanUp();
-  event->accept();
+  event->accept(); // The application will now quit if this is the last window
+  delete this;     // Delete this window
 }
 
 void PluginsWindow::open() {
@@ -82,3 +98,5 @@ void PluginsWindow::closeFile() {
     delete ui->pluginList->takeItem(ui->pluginList->row(item));
   }
 }
+
+PluginsWindow *PluginsWindow::instance;

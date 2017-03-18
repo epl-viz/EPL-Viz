@@ -183,15 +183,39 @@ endif( NOT DISABLE_TESTS )
 #############################
 
 if( USE_SYSTEM_PACKETS )
+
+  # Use the EPL_DataCollect version installed on the system
   find_package( EPL_DataCollect REQUIRED )
+
 else( USE_SYSTEM_PACKETS )
   set( EPL_DC_PREFIX         "${PROJECT_BINARY_DIR}/EPL_DataCollect" )
   set( EPL_DC_BUILD_DIR      "${EPL_DC_PREFIX}/build" )
   set( EPL_DC_INSTALL_DIR    "${EPL_DC_PREFIX}/install_dir" )
   set( EPL_DC_LIB_DIR        "${EPL_DC_INSTALL_DIR}/lib/eplViz" )
-  set( EPL_DC_LIB_WS_LIB_DIR "${EPL_DC_BUILD_DIR}/liblibwireshark/install_dir/lib" )
+  set( EPL_DC_LIB_WS_LIB_DIR "${EPL_DC_INSTALL_DIR}/lib" )
 
   set( EPL_DataCollect_INCLUDE_DIRS "${EPL_DC_INSTALL_DIR}/include/eplViz" )
+
+  macro( importLibs )
+    foreach( I IN ITEMS ${ARGV} )
+      set( LIB_DIR "${EPL_DC_LIB_DIR}" )
+      set( SHARED_SUFFIX "_shared" )
+
+      if( NOT "${I}" MATCHES "epl.?[a-zA-Z0-9]+" )
+        set( LIB_DIR "${EPL_DC_LIB_WS_LIB_DIR}" )
+        set( SHARED_SUFFIX "" )
+      endif( NOT "${I}" MATCHES "epl.?[a-zA-Z0-9]+" )
+
+      string( APPEND EPL_BYPRODUCT_STR "${LIB_DIR}/${CMAKE_SHARED_LIBRARY_PREFIX}${I}${CMAKE_SHARED_LIBRARY_SUFFIX}" )
+      string( APPEND EPL_BYPRODUCT_STR "${LIB_DIR}/${CMAKE_STATIC_LIBRARY_PREFIX}${I}${CMAKE_STATIC_LIBRARY_SUFFIX}" )
+      add_library( ${I}${SHARED_SUFFIX} SHARED IMPORTED )
+      add_library( ${I}_static          STATIC IMPORTED )
+      set_target_properties( ${I}${SHARED_SUFFIX} PROPERTIES IMPORTED_LOCATION "${LIB_DIR}/${CMAKE_SHARED_LIBRARY_PREFIX}${I}${CMAKE_SHARED_LIBRARY_SUFFIX}" )
+      set_target_properties( ${I}_static          PROPERTIES IMPORTED_LOCATION "${LIB_DIR}/${CMAKE_STATIC_LIBRARY_PREFIX}${I}${CMAKE_STATIC_LIBRARY_SUFFIX}" )
+    endforeach( I IN ITEMS ${ARGV} )
+  endmacro( importLibs )
+
+  importLibs( epl_DataCollect eplp_timeSeries eplp_protocolValidator eplp_python eplp_defaultFilter libwireshark )
 
   ExternalProject_Add( EPL_DataCollect
     SOURCE_DIR        "${PROJECT_SOURCE_DIR}/external/EPL_DataCollect"
@@ -209,49 +233,8 @@ else( USE_SYSTEM_PACKETS )
       "-DWireshark_DIR=${Wireshark_DIR}"
       "-DPCAP_HINTS=${PCAP_HINTS}"
       "-DTinyXML2_ROOT=${TinyXML2_ROOT}"
-
-    BUILD_BYPRODUCTS
-      "${EPL_DC_LIB_DIR}/${CMAKE_SHARED_LIBRARY_PREFIX}epl_DataCollect${CMAKE_SHARED_LIBRARY_SUFFIX}"
-      "${EPL_DC_LIB_DIR}/${CMAKE_STATIC_LIBRARY_PREFIX}epl_DataCollect${CMAKE_STATIC_LIBRARY_SUFFIX}"
-      "${EPL_DC_LIB_DIR}/${CMAKE_SHARED_LIBRARY_PREFIX}eplp_timeSeries${CMAKE_SHARED_LIBRARY_SUFFIX}"
-      "${EPL_DC_LIB_DIR}/${CMAKE_STATIC_LIBRARY_PREFIX}eplp_timeSeries${CMAKE_STATIC_LIBRARY_SUFFIX}"
-      "${EPL_DC_LIB_DIR}/${CMAKE_SHARED_LIBRARY_PREFIX}eplp_python${CMAKE_SHARED_LIBRARY_SUFFIX}"
-      "${EPL_DC_LIB_DIR}/${CMAKE_STATIC_LIBRARY_PREFIX}eplp_python${CMAKE_STATIC_LIBRARY_SUFFIX}"
-      "${EPL_DC_LIB_DIR}/${CMAKE_SHARED_LIBRARY_PREFIX}eplp_protocolValidator${CMAKE_SHARED_LIBRARY_SUFFIX}"
-      "${EPL_DC_LIB_DIR}/${CMAKE_STATIC_LIBRARY_PREFIX}eplp_protocolValidator${CMAKE_STATIC_LIBRARY_SUFFIX}"
-      "${EPL_DC_LIB_DIR}/${CMAKE_SHARED_LIBRARY_PREFIX}eplp_defaultFilter${CMAKE_SHARED_LIBRARY_SUFFIX}"
-      "${EPL_DC_LIB_DIR}/${CMAKE_STATIC_LIBRARY_PREFIX}eplp_defaultFilter${CMAKE_STATIC_LIBRARY_SUFFIX}"
-
-      "${EPL_DC_LIB_WS_LIB_DIR}/${CMAKE_SHARED_LIBRARY_PREFIX}libwireshark${CMAKE_SHARED_LIBRARY_SUFFIX}"
-      "${EPL_DC_LIB_WS_LIB_DIR}/${CMAKE_STATIC_LIBRARY_PREFIX}libwireshark${CMAKE_STATIC_LIBRARY_SUFFIX}"
-
+    BUILD_BYPRODUCTS ${EPL_BYPRODUCT_STR}
   )
-
-  add_library( epl_DataCollect_shared SHARED IMPORTED )
-  add_library( epl_DataCollect_static STATIC IMPORTED )
-  add_library( eplp_timeSeries_shared SHARED IMPORTED )
-  add_library( eplp_timeSeries_static STATIC IMPORTED )
-  add_library( eplp_protocolValidator_shared SHARED IMPORTED )
-  add_library( eplp_protocolValidator_static STATIC IMPORTED )
-  add_library( eplp_python_shared SHARED IMPORTED )
-  add_library( eplp_python_static STATIC IMPORTED )
-  add_library( eplp_defaultFilter_shared SHARED IMPORTED )
-  add_library( eplp_defaultFilter_static STATIC IMPORTED )
-  add_library( libwireshark        SHARED IMPORTED )
-  add_library( libwireshark_static STATIC IMPORTED )
-  set_target_properties( libwireshark                     PROPERTIES IMPORTED_LOCATION "${EPL_DC_LIB_WS_LIB_DIR}/${CMAKE_SHARED_LIBRARY_PREFIX}libwireshark${CMAKE_SHARED_LIBRARY_SUFFIX}" )
-  set_target_properties( libwireshark_static              PROPERTIES IMPORTED_LOCATION "${EPL_DC_LIB_WS_LIB_DIR}/${CMAKE_STATIC_LIBRARY_PREFIX}libwireshark${CMAKE_STATIC_LIBRARY_SUFFIX}" )
-  set_target_properties( epl_DataCollect_shared           PROPERTIES IMPORTED_LOCATION "${EPL_DC_LIB_DIR}/${CMAKE_SHARED_LIBRARY_PREFIX}epl_DataCollect${CMAKE_SHARED_LIBRARY_SUFFIX}" )
-  set_target_properties( epl_DataCollect_static           PROPERTIES IMPORTED_LOCATION "${EPL_DC_LIB_DIR}/${CMAKE_STATIC_LIBRARY_PREFIX}epl_DataCollect${CMAKE_STATIC_LIBRARY_SUFFIX}" )
-  set_target_properties( eplp_timeSeries_shared           PROPERTIES IMPORTED_LOCATION "${EPL_DC_LIB_DIR}/${CMAKE_SHARED_LIBRARY_PREFIX}eplp_timeSeries${CMAKE_SHARED_LIBRARY_SUFFIX}" )
-  set_target_properties( eplp_timeSeries_static           PROPERTIES IMPORTED_LOCATION "${EPL_DC_LIB_DIR}/${CMAKE_STATIC_LIBRARY_PREFIX}eplp_timeSeries${CMAKE_STATIC_LIBRARY_SUFFIX}" )
-  set_target_properties( eplp_protocolValidator_shared    PROPERTIES IMPORTED_LOCATION "${EPL_DC_LIB_DIR}/${CMAKE_SHARED_LIBRARY_PREFIX}eplp_protocolValidator${CMAKE_SHARED_LIBRARY_SUFFIX}" )
-  set_target_properties( eplp_protocolValidator_static    PROPERTIES IMPORTED_LOCATION "${EPL_DC_LIB_DIR}/${CMAKE_STATIC_LIBRARY_PREFIX}eplp_protocolValidator${CMAKE_STATIC_LIBRARY_SUFFIX}" )
-  set_target_properties( eplp_python_shared               PROPERTIES IMPORTED_LOCATION "${EPL_DC_LIB_DIR}/${CMAKE_SHARED_LIBRARY_PREFIX}eplp_python${CMAKE_SHARED_LIBRARY_SUFFIX}" )
-  set_target_properties( eplp_python_static               PROPERTIES IMPORTED_LOCATION "${EPL_DC_LIB_DIR}/${CMAKE_STATIC_LIBRARY_PREFIX}eplp_python${CMAKE_STATIC_LIBRARY_SUFFIX}" )
-  set_target_properties( eplp_defaultFilter_shared        PROPERTIES IMPORTED_LOCATION "${EPL_DC_LIB_DIR}/${CMAKE_SHARED_LIBRARY_PREFIX}eplp_defaultFilter${CMAKE_SHARED_LIBRARY_SUFFIX}" )
-  set_target_properties( eplp_defaultFilter_static        PROPERTIES IMPORTED_LOCATION "${EPL_DC_LIB_DIR}/${CMAKE_STATIC_LIBRARY_PREFIX}eplp_defaultFilter${CMAKE_STATIC_LIBRARY_SUFFIX}" )
-
 endif( USE_SYSTEM_PACKETS )
 
 ####################
@@ -267,7 +250,7 @@ new_project_library(
   NAME         "libEPLViz"
   TEMPLATE     "${EPL_VIZ_TEMPLATES_DIR}/CMakeLists.lib.txt"
   DEPENDENCIES ${EPL_VIZ_QT_DEP_LIST}
-    ${Wireshark_LIBRARY} ${GLIB_LIBRARIES} capchild caputils ${PCAP_LIBRARIES}
+    ${Wireshark_LIBRARY} ${GLIB_LIBRARIES} capchild caputils ${PCAP_LIBRARIES} libwireshark
     epl_DataCollect_shared Qwt::Qwt KF5::TextEditor
     eplp_timeSeries_shared eplp_python_shared eplp_protocolValidator_shared eplp_defaultFilter_shared
 )

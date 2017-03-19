@@ -90,6 +90,16 @@
         </item>
        </layout>
       </widget>
+      <widget class="QWidget" name="packets">
+       <attribute name="title">
+        <string>Packets</string>
+       </attribute>
+       <layout class="QVBoxLayout" name="verticalLayout_2">
+        <item>
+         <widget class="QTreeView" name="packetsView"/>
+        </item>
+       </layout>
+      </widget>
      </widget>
     </item>
    </layout>
@@ -550,7 +560,8 @@ Plugins that are disabled during runtime will not be able to be activated again 
   </action>
   <action name="actionNew">
    <property name="icon">
-    <iconset theme="document-new"/>
+    <iconset theme="document-new">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
     <string>&amp;New</string>

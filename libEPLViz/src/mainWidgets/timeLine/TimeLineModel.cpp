@@ -39,6 +39,8 @@ TimeLineModel::TimeLineModel(MainWindow *mw, QwtPlot *widget) : QwtBaseModel(mw,
   (void)widget;
   scrollbar = mw->findChild<QScrollBar *>("scrBarTimeline");
 
+  widget->enableAxis(QwtPlot::xBottom, false);
+
   widget->setAxisScale(QwtPlot::yLeft, 0, 10);
   widget->setAxisAutoScale(QwtPlot::yLeft, true);
 
@@ -123,6 +125,7 @@ void TimeLineModel::update(ProtectedCycle &cycle) {
     uint32_t x;
     ev->getCycleRange(&x);
     marker->setXValue(static_cast<double>(x));
+    marker->setXAxis(QwtPlot::xTop);
 
     marker->attach(plot);
     markers.append(marker);

@@ -62,6 +62,7 @@ void QwtBaseModel::createPlot(uint8_t nodeID, uint16_t mainIndex, uint16_t subIn
 
   initTS();
 
+  curve->setXAxis(QwtPlot::xTop);
   curve->attach(plot);
 }
 
@@ -107,6 +108,7 @@ void QwtBaseModel::update(ProtectedCycle &cycle) {
     initTS();
 
     curve = std::make_shared<QwtPlotCurve>();
+    curve->setXAxis(QwtPlot::xTop);
     curve->attach(plot);
 
     setupUsed = false;

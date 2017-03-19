@@ -30,7 +30,6 @@
 #include "PacketHistoryModel.hpp"
 #include "Cycle.hpp"
 #include "MainWindow.hpp"
-#include "PacketHistoryWidget.hpp"
 #include <QDebug>
 #include <string>
 #include <vector>
@@ -41,13 +40,13 @@ using namespace std;
 PacketHistoryModel::PacketHistoryModel(MainWindow *window, QPlainTextEdit *widget) : BaseModel(window, widget) {
   (void)window;
 
-  textWindow = widget;
+  textBox = widget;
 }
 
 void PacketHistoryModel::init() {
   selectedPacket = UINT64_MAX;
   currentCycle   = nullptr;
-  emit textUpdated("Please select a packet in the Cycle Commands widget.", textWindow);
+  textBox->setPlainText("No Packets available yet.");
 }
 
 void PacketHistoryModel::update(ProtectedCycle &cycle) {
@@ -80,5 +79,5 @@ void PacketHistoryModel::changePacket(uint64_t packet) {
   else
     text = "Packet out of bounds";
 
-  emit textUpdated(QString::fromStdString(text), textWindow);
+  textBox->setPlainText(QString::fromStdString(text));
 }

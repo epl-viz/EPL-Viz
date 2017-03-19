@@ -133,10 +133,6 @@ void MainWindow::createModels() {
           packetHistoryModel,
           SLOT(changePacket(uint64_t))); // Notify the packet viewer of changing packets
 
-  connect(packetHistoryModel,
-          SIGNAL(textUpdated(QString, QPlainTextEdit *)),
-          ui->dockPacketHistory,
-          SLOT(updatePacketHistoryLog(QString, QPlainTextEdit *)));
   connect(ui->scrBarTimeline, SIGNAL(valueChanged(int)), timeLineModel, SLOT(updateViewport(int)));
   connect(timeLineModel, SIGNAL(maxValueChanged(int, int)), ui->scrBarTimeline, SLOT(setRange(int, int)));
   connect(this, SIGNAL(cycleChanged()), timeLineModel, SLOT(replot()));

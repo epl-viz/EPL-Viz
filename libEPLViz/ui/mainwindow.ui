@@ -377,7 +377,7 @@ Plugins that are disabled during runtime will not be able to be activated again 
     </layout>
    </widget>
   </widget>
-  <widget class="PacketHistoryWidget" name="dockPacketHistory">
+  <widget class="QDockWidget" name="dockPacketHistory">
    <property name="windowTitle">
     <string>Packet &amp;Viewer</string>
    </property>
@@ -587,12 +587,6 @@ Plugins that are disabled during runtime will not be able to be activated again 
    <class>NetworkGraphWidget</class>
    <extends>QWidget</extends>
    <header>NetworkGraphWidget.hpp</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>PacketHistoryWidget</class>
-   <extends>QDockWidget</extends>
-   <header>PacketHistoryWidget.hpp</header>
    <container>1</container>
   </customwidget>
   <customwidget>

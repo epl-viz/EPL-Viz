@@ -41,7 +41,7 @@ class MainWindow;
 class PacketHistoryModel : public QObject, public BaseModel {
   Q_OBJECT
  private:
-  QPlainTextEdit *textWindow     = nullptr;
+  QPlainTextEdit *textBox        = nullptr;
   uint64_t        selectedPacket = UINT64_MAX;
 
   ProtectedCycle *currentCycle = nullptr;
@@ -57,8 +57,6 @@ class PacketHistoryModel : public QObject, public BaseModel {
  protected:
   void update(ProtectedCycle &cycle) override;
 
- signals:
-  void textUpdated(QString text, QPlainTextEdit *edit);
  public slots:
   void changePacket(uint64_t packet);
 };

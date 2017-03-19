@@ -43,6 +43,14 @@ class SettingsProfileItem final : public QListWidgetItem {
     int                       currentNode;
     bool                      pauseWhilePlayingFile = true;
     std::chrono::milliseconds guiThreadWaitTime     = std::chrono::milliseconds(100);
+
+    QColor odHighlight = QColor("#14aaff");
+    QColor pInvalid    = QColor("#b40000");
+    QColor pSoC        = QColor("#868482");
+    QColor pSoA        = QColor("#ae32a0");
+    QColor pPRes       = QColor("#80c342");
+    QColor pPReq       = QColor("#e0c31e");
+    QColor PASnd       = QColor("#14148c");
   };
 
  private:

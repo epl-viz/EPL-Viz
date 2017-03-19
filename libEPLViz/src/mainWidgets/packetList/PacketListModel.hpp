@@ -31,9 +31,11 @@
 #include "BaseModel.hpp"
 #include "CurODModelItem.hpp"
 #include "EPLVizDefines.hpp"
+#include "PacketListItem.hpp"
 #include "TreeModelBase.hpp"
 
 #include <QTreeWidget>
+#include <plf_colony.h>
 
 namespace EPL_Viz {
 
@@ -42,7 +44,8 @@ class MainWindow;
 class PacketListModel final : public TreeModelBase, public BaseModel {
   Q_OBJECT
  private:
-  MainWindow *mw;
+  MainWindow *                mw;
+  plf::colony<PacketListItem> itemList;
 
   size_t currentPacketListSize = 0;
 

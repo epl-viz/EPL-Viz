@@ -33,8 +33,9 @@ using namespace EPL_DataCollect;
 
 TreeModelItemBase::TreeModelItemBase(TreeModelItemBase *parent) : p(parent) {}
 TreeModelItemBase::~TreeModelItemBase() {
-  for (auto i : childItems)
-    delete i;
+  if (!noDelete)
+    for (auto i : childItems)
+      delete i;
 }
 
 TreeModelRoot::~TreeModelRoot() {}
@@ -57,8 +58,9 @@ void TreeModelItemBase::push_back(TreeModelItemBase *item) {
 TreeModelItemBase *TreeModelItemBase::back() { return childItems.back(); }
 
 void TreeModelItemBase::clear() {
-  for (auto i : childItems)
-    delete i;
+  if (!noDelete)
+    for (auto i : childItems)
+      delete i;
 
   childItems.clear();
   childIndexMap.clear();
@@ -90,6 +92,8 @@ int TreeModelItemBase::columnCount() const {
 
   return p->columnCount();
 }
+
+void TreeModelItemBase::setNoDelete(bool d) { noDelete = d; }
 
 
 QVariant TreeModelRoot::headerData(int section, Qt::Orientation orientation, int role) {

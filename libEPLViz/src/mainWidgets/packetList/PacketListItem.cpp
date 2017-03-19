@@ -26,22 +26,23 @@
 
 #include "PacketListItem.hpp"
 #include "EPLEnum2Str.hpp"
+#include "MainWindow.hpp"
 
 using namespace EPL_Viz;
 using namespace EPL_DataCollect;
 
-PacketListItem::PacketListItem(TreeModelItemBase *parent, EPL_DataCollect::InputHandler::PacketMetadata d, size_t ind)
-    : TreeModelItemBase(parent), metaData(d), index(ind) {}
+PacketListItem::PacketListItem(TreeModelItemBase *                           parent,
+                               MainWindow *                                  mainWin,
+                               EPL_DataCollect::InputHandler::PacketMetadata d,
+                               size_t                                        ind)
+    : TreeModelItemBase(parent), metaData(d), index(ind), mw(mainWin) {}
 
 PacketListItem::~PacketListItem() {}
 
 Qt::ItemFlags PacketListItem::flags() { return Qt::ItemIsEnabled; }
 bool          PacketListItem::hasChanged() { return false; }
 
-QVariant PacketListItem::data(int column, Qt::ItemDataRole role) {
-  if (role != Qt::DisplayRole)
-    return QVariant();
-
+QVariant PacketListItem::dataDisplay(int column) {
   uint8_t       tmp;
   PacketType    tp;
   ASndServiceID asndID;
@@ -96,6 +97,41 @@ QVariant PacketListItem::data(int column, Qt::ItemDataRole role) {
         default: return QVariant();
       }
 
+    default: return QVariant();
+  }
+}
+
+QColor PacketListItem::dataBackground() {
+  PacketType tp = static_cast<PacketType>(metaData.getFiled(InputHandler::PacketMetadata::PACKET_TYPE));
+  switch (tp) {
+    case PacketType::START_OF_CYCLE: return mw->getSettingsWin()->getConfig().pSoC;
+    case PacketType::START_OF_ASYNC: return mw->getSettingsWin()->getConfig().pSoA;
+    case PacketType::POLL_REQUEST: return mw->getSettingsWin()->getConfig().pPReq;
+    case PacketType::POLL_RESPONSE: return mw->getSettingsWin()->getConfig().pPRes;
+    case PacketType::ASYNC_SEND: return mw->getSettingsWin()->getConfig().PASnd;
+    case PacketType::UNDEF: return mw->getSettingsWin()->getConfig().pInvalid;
+    default: return QColor();
+  }
+}
+
+QColor PacketListItem::dataForground() {
+  QColor c = dataBackground();
+  if (!c.isValid())
+    return QColor();
+
+  if (c.lightness() >= 125) {
+    return QColor("#000000");
+  }
+
+  return QColor("#ffffff");
+}
+
+
+QVariant PacketListItem::data(int column, Qt::ItemDataRole role) {
+  switch (role) {
+    case Qt::DisplayRole: return dataDisplay(column);
+    case Qt::BackgroundRole: return QBrush(dataBackground());
+    case Qt::ForegroundRole: return QBrush(dataForground());
     default: return QVariant();
   }
 }

@@ -34,10 +34,11 @@ using namespace EPL_Viz;
 
 #include "qwt_plot.h"
 
-TimeLineMagnifier::TimeLineMagnifier(TimeLineModel *model, uint32_t *maxVal, QWidget *canvas)
+TimeLineMagnifier::TimeLineMagnifier(QScrollBar *bar, TimeLineModel *model, uint32_t *maxVal, QWidget *canvas)
     : QwtPlotMagnifier(canvas) {
   max      = maxVal;
   modelRef = model;
+  sBar     = bar;
 }
 
 /**
@@ -83,11 +84,18 @@ void TimeLineMagnifier::rescale(double factor) {
         v2 = scaleMap.invTransform(v2);
       }
 
+      if (std::abs(v1 - v2) < 1)
+        continue;
       if (v1 < 0)
         v1 = 0;
       if (v2 > *max)
         v2 = *max;
 
+      if (axisId == QwtPlot::xTop) {
+        sBar->setPageStep(static_cast<int>(v2 - v1));
+        sBar->setMaximum(static_cast<int>(modelRef->maxXValue - (v2 - v1)));
+        sBar->setValue(static_cast<int>(v1));
+      }
 
       plt->setAxisScale(axisId, v1, v2);
       doReplot = true;

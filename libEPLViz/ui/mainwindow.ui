@@ -35,7 +35,7 @@
     <item row="0" column="0">
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
-       <number>0</number>
+       <number>3</number>
       </property>
       <widget class="QWidget" name="tabNet">
        <attribute name="title">
@@ -106,7 +106,7 @@
        </attribute>
        <layout class="QGridLayout" name="gridLayout_3">
         <item row="0" column="0">
-         <widget class="EventViewerWidget" name="eventLog">
+         <widget class="EventViewerWidget" name="eventViewer">
           <column>
            <property name="text">
             <string>Event</string>

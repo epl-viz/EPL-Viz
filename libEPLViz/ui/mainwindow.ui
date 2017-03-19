@@ -35,7 +35,7 @@
     <item row="0" column="0">
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
-       <number>3</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="tabNet">
        <attribute name="title">
@@ -70,8 +70,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>1291</width>
-             <height>532</height>
+             <width>1322</width>
+             <height>413</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_15"/>
@@ -156,7 +156,7 @@
      <x>0</x>
      <y>0</y>
      <width>1920</width>
-     <height>26</height>
+     <height>30</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -275,7 +275,7 @@ Clicking inside the Timeline will jump back to the selected cycle.</string>
 Plugins that are disabled during runtime will not be able to be activated again for the duration of the playback/recording!</string>
    </property>
    <property name="windowTitle">
-    <string>&amp;Plugins</string>
+    <string>Pl&amp;ugins</string>
    </property>
    <attribute name="dockWidgetArea">
     <number>1</number>
@@ -328,7 +328,7 @@ Plugins that are disabled during runtime will not be able to be activated again 
     <string>Shows the Object Dictionary Descriptions that are currently provided by the loaded profiles.</string>
    </property>
    <property name="windowTitle">
-    <string>&amp;OD Descriptions</string>
+    <string>OD Desc&amp;riptions</string>
    </property>
    <attribute name="dockWidgetArea">
     <number>2</number>
@@ -364,7 +364,7 @@ Plugins that are disabled during runtime will not be able to be activated again 
     <string>Gives further detail to the events emitted by plugins.</string>
    </property>
    <property name="windowTitle">
-    <string>Event Log</string>
+    <string>Event Lo&amp;g</string>
    </property>
    <attribute name="dockWidgetArea">
     <number>8</number>

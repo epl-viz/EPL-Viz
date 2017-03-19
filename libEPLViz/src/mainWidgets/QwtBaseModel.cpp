@@ -38,11 +38,9 @@ using namespace EPL_DataCollect;
 using namespace EPL_DataCollect::constants;
 
 QwtBaseModel::QwtBaseModel(MainWindow *win, QwtPlot *widget) : BaseModel(win, widget) {
-  window    = win;
-  plot      = widget;
-  maxXValue = 50;
-  setupUsed = false;
-  odTS      = true;
+  window = win;
+  plot   = widget;
+  reset();
 }
 
 void QwtBaseModel::init() { connect(this, SIGNAL(requestRedraw()), plot, SLOT(repaint())); }
@@ -96,7 +94,6 @@ double QwtBaseModel::getViewportSize() {
 
 
 void QwtBaseModel::replot() {
-  postToThread([&] { plot->repaint(); }, plot);
   postToThread([&] { plot->replot(); }, plot);
   emit requestRedraw();
 }
@@ -148,4 +145,13 @@ void QwtBaseModel::setupPlotting() {
 
     setupUsed = true;
   }
+}
+
+void QwtBaseModel::reset() {
+  if (curve != nullptr)
+    curve->detach();
+  setupUsed = false;
+  odTS      = false;
+  maxXValue = 50;
+  replot();
 }

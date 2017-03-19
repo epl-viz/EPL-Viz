@@ -74,7 +74,6 @@ void TimeLineModel::init() {
   newestCycleMarker.attach(plot);
 
 
-
   log   = getMainWindow()->getCaptureInstance()->getEventLog();
   appid = log->getAppID();
 
@@ -145,4 +144,15 @@ void TimeLineModel::updateViewport(int value) {
 
   plot->setAxisScale(QwtPlot::xTop, min, max);
   replot();
+}
+
+void TimeLineModel::reset() {
+  for (std::shared_ptr<QwtPlotMarker> marker : markers) {
+    marker->detach();
+  }
+  markers.clear();
+  curCycleMarker.detach();
+  newestCycleMarker.detach();
+  magnifier = std::make_unique<TimeLineMagnifier>(scrollbar, this, &maxXValue, plot->canvas());
+  QwtBaseModel::reset();
 }

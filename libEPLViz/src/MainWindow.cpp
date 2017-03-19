@@ -140,8 +140,6 @@ void MainWindow::createModels() {
           SIGNAL(setNodes(uint8_t, uint16_t, uint16_t)),
           qwtPlot,
           SLOT(createPlot(uint8_t, uint16_t, uint16_t)));
-  // TODO update timeline value
-  // connect(this, SIGNAL(cycleChanged()), ui->scrBarTimeline, SLOT(setValue(int)))
 
   // Set timeline max value once, since we can't do this in the constructor of the model and want to do it before init
   emit timeLineModel->maxValueChanged(0, static_cast<int>(timeLineModel->maxXValue - timeLineModel->getViewportSize()));
@@ -192,6 +190,8 @@ void MainWindow::createModels() {
   connect(this, SIGNAL(resetGUI()), ui->networkGraphContents, SLOT(reset()));
   connect(this, SIGNAL(resetGUI()), ui->eventViewer, SLOT(reset()));
   connect(this, SIGNAL(resetGUI()), ui->pluginSelectorWidget, SLOT(reset()));
+  connect(this, SIGNAL(resetGUI()), timeLineModel, SLOT(reset()));
+  connect(this, SIGNAL(resetGUI()), qwtPlot, SLOT(reset()));
 
 
   modelThread->start();

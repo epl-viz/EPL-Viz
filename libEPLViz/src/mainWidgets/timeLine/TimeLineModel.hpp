@@ -69,5 +69,6 @@ class TimeLineModel : public QwtBaseModel {
 
  public slots:
   void updateViewport(int value);
+  void reset();
 };
 }

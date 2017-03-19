@@ -97,11 +97,8 @@ class QwtBaseModel : public QObject, public BaseModel {
 
  public slots:
   virtual void createPlot(uint8_t nodeID, uint16_t index, uint16_t subIndex);
-  /*
-  virtual void setXMin(uint32_t min);
-  virtual void setXMax(uint32_t max);
-  */
   void setupPlotting();
   void replot();
+  void reset();
 };
 }

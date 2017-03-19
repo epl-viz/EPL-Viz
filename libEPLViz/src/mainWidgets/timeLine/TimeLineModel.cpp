@@ -50,13 +50,6 @@ TimeLineModel::TimeLineModel(MainWindow *mw, QwtPlot *widget) : QwtBaseModel(mw,
   magnifier = std::make_unique<TimeLineMagnifier>(scrollbar, this, &maxXValue, widget->canvas());
   magnifier->setAxisEnabled(QwtPlot::xTop, true);
   magnifier->setAxisEnabled(QwtPlot::yLeft, false);
-  /*
-    panner = std::make_unique<QwtPlotPanner>(widget->canvas());
-    panner->setAxisEnabled(QwtPlot::yLeft, false);
-    panner->setAxisEnabled(QwtPlot::xTop, true);
-    oldPanValue = DEF_VIEWPORT_SIZE / 2;
-  */
-  // resetAxes();
 }
 
 TimeLineModel::~TimeLineModel() {}

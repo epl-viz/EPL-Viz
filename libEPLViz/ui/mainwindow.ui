@@ -70,8 +70,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>1322</width>
-             <height>413</height>
+             <width>1291</width>
+             <height>532</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_15"/>
@@ -100,6 +100,52 @@
         </item>
        </layout>
       </widget>
+      <widget class="QWidget" name="events">
+       <attribute name="title">
+        <string>Events</string>
+       </attribute>
+       <layout class="QGridLayout" name="gridLayout_3">
+        <item row="0" column="0">
+         <widget class="EventViewerWidget" name="eventLog">
+          <column>
+           <property name="text">
+            <string>Event</string>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>Description</string>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>Type</string>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>Flags</string>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>First</string>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>Last</string>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>Plugin</string>
+           </property>
+          </column>
+         </widget>
+        </item>
+       </layout>
+      </widget>
      </widget>
     </item>
    </layout>
@@ -110,7 +156,7 @@
      <x>0</x>
      <y>0</y>
      <width>1920</width>
-     <height>30</height>
+     <height>26</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -291,60 +337,6 @@ Plugins that are disabled during runtime will not be able to be activated again 
     <layout class="QGridLayout" name="gridLayout_4">
      <item row="0" column="0">
       <widget class="QTreeView" name="odDescriptionWidget"/>
-     </item>
-    </layout>
-   </widget>
-  </widget>
-  <widget class="QDockWidget" name="dockEvents">
-   <property name="toolTip">
-    <string>Shows an overview of all thrown events.</string>
-   </property>
-   <property name="windowTitle">
-    <string>Events</string>
-   </property>
-   <attribute name="dockWidgetArea">
-    <number>1</number>
-   </attribute>
-   <widget class="QWidget" name="dockEventsContents">
-    <layout class="QGridLayout" name="gridLayout_6">
-     <item row="0" column="0">
-      <widget class="EventViewerWidget" name="eventLog">
-       <column>
-        <property name="text">
-         <string>Event</string>
-        </property>
-       </column>
-       <column>
-        <property name="text">
-         <string>Description</string>
-        </property>
-       </column>
-       <column>
-        <property name="text">
-         <string>Type</string>
-        </property>
-       </column>
-       <column>
-        <property name="text">
-         <string>Flags</string>
-        </property>
-       </column>
-       <column>
-        <property name="text">
-         <string>First</string>
-        </property>
-       </column>
-       <column>
-        <property name="text">
-         <string>Last</string>
-        </property>
-       </column>
-       <column>
-        <property name="text">
-         <string>Plugin</string>
-        </property>
-       </column>
-      </widget>
      </item>
     </layout>
    </widget>

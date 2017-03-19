@@ -121,9 +121,13 @@ void MainWindow::createModels() {
   connect(this, SIGNAL(cycleChanged()), curODModel, SLOT(updateNext()));
 
   connect(ui->cycleCommandsView,
+          SIGNAL(activated(QModelIndex)),
+          cyCoModel,
+          SLOT(changeSelection(QModelIndex))); // Notify the cycle viewer model that an item was activated
+  connect(ui->cycleCommandsView,
           SIGNAL(clicked(QModelIndex)),
           cyCoModel,
-          SLOT(changeSelection(QModelIndex))); // Notify the cycle viewer model that the selection changed
+          SLOT(changeSelection(QModelIndex))); // Notify the cycle viewer model that an item was clicked
   connect(cyCoModel,
           SIGNAL(packetChanged(uint64_t)),
           packetHistoryModel,

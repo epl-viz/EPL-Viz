@@ -41,9 +41,10 @@ class MainWindow;
 class PacketHistoryModel : public QObject, public BaseModel {
   Q_OBJECT
  private:
-  QPlainTextEdit *textWindow;
-  uint64_t        selectedPacket;
-  bool            needUpdate;
+  QPlainTextEdit *textWindow     = nullptr;
+  uint64_t        selectedPacket = UINT64_MAX;
+
+  ProtectedCycle *currentCycle = nullptr;
 
  public:
   PacketHistoryModel(MainWindow *window, QPlainTextEdit *widget);

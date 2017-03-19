@@ -27,6 +27,7 @@
 #include "SettingsWindow.hpp"
 #include "SettingsProfileItem.hpp"
 #include "ui_settingswindow.h"
+#include <QColorDialog>
 #include <QFileDialog>
 #include <QInputDialog>
 
@@ -96,6 +97,22 @@ void SettingsWindow::updateView(bool updateNodes) {
   ui->IH_DeleteCyclesAfter->setValue(static_cast<int>(prof->cfg.backConf.ihConfig.deleteCyclesAfter.count()));
   ui->IH_LoopWait->setValue(static_cast<int>(prof->cfg.backConf.ihConfig.loopWaitTimeout.count()));
 
+  std::vector<std::pair<QPushButton *, QColor *>> colorSelctor = {{ui->COL_ODHighlight, &prof->cfg.odHighlight},
+                                                                  {ui->COL_P_ASnd, &prof->cfg.PASnd},
+                                                                  {ui->COL_P_Invalid, &prof->cfg.pInvalid},
+                                                                  {ui->COL_P_PREQ, &prof->cfg.pPReq},
+                                                                  {ui->COL_P_PResp, &prof->cfg.pPRes},
+                                                                  {ui->COL_P_SoA, &prof->cfg.pSoA},
+                                                                  {ui->COL_P_SoC, &prof->cfg.pSoC}};
+
+  for (auto i : colorSelctor) {
+    QPalette pal = i.first->palette();
+    pal.setColor(QPalette::Button, *i.second);
+    pal.setColor(QPalette::Highlight, *i.second);
+    i.first->setPalette(pal);
+    i.first->update();
+  }
+
   if (!updateNodes)
     return;
 
@@ -126,6 +143,19 @@ void SettingsWindow::saveIntoProfiles() {
   prof->cfg.backConf.ihConfig.checkPrefetch     = static_cast<uint8_t>(ui->IH_CheckPrefetch->value());
   prof->cfg.backConf.ihConfig.deleteCyclesAfter = std::chrono::milliseconds(ui->IH_DeleteCyclesAfter->value());
   prof->cfg.backConf.ihConfig.loopWaitTimeout   = std::chrono::milliseconds(ui->IH_LoopWait->value());
+
+  std::vector<std::pair<QPushButton *, QColor *>> colorSelctor = {{ui->COL_ODHighlight, &prof->cfg.odHighlight},
+                                                                  {ui->COL_P_ASnd, &prof->cfg.PASnd},
+                                                                  {ui->COL_P_Invalid, &prof->cfg.pInvalid},
+                                                                  {ui->COL_P_PREQ, &prof->cfg.pPReq},
+                                                                  {ui->COL_P_PResp, &prof->cfg.pPRes},
+                                                                  {ui->COL_P_SoA, &prof->cfg.pSoA},
+                                                                  {ui->COL_P_SoC, &prof->cfg.pSoC}};
+
+  for (auto i : colorSelctor) {
+    QPalette pal = i.first->palette();
+    *i.second    = pal.color(QPalette::Button);
+  }
 
   std::string      nID = prof->cfg.currentNode < 0 ? "Default" : std::to_string(prof->cfg.currentNode);
   QListWidgetItem *it  = ui->nodesList->currentItem();
@@ -173,6 +203,18 @@ void SettingsWindow::loadConfig() {
   prof->cfg.backConf.ihConfig.loopWaitTimeout =
         std::chrono::milliseconds(sp->readCustomValue("EPL_DC/IH/loopWaitTimeout").toInt());
 
+  std::vector<std::pair<QString, QColor *>> colorSelctor = {{"COL_odHighlight", &prof->cfg.odHighlight},
+                                                            {"COL_PASnd", &prof->cfg.PASnd},
+                                                            {"COL_pInvalid", &prof->cfg.pInvalid},
+                                                            {"COL_pPReq", &prof->cfg.pPReq},
+                                                            {"COL_pPRes", &prof->cfg.pPRes},
+                                                            {"COL_pSoA", &prof->cfg.pSoA},
+                                                            {"COL_pSoC", &prof->cfg.pSoC}};
+
+  for (auto i : colorSelctor) {
+    i.second->setNamedColor(sp->readCustomValue(i.first).toString());
+  }
+
   int size = sp->beginReadArray("nodes");
   for (int i = 0; i < size; ++i) {
     sp->setArrayIndex(i);
@@ -203,6 +245,18 @@ void SettingsWindow::saveConfig() {
                        static_cast<int>(prof->cfg.backConf.ihConfig.deleteCyclesAfter.count()));
   sp->writeCustomValue("EPL_DC/IH/loopWaitTimeout",
                        static_cast<int>(prof->cfg.backConf.ihConfig.deleteCyclesAfter.count()));
+
+  std::vector<std::pair<QString, QColor *>> colorSelctor = {{"COL_odHighlight", &prof->cfg.odHighlight},
+                                                            {"COL_PASnd", &prof->cfg.PASnd},
+                                                            {"COL_pInvalid", &prof->cfg.pInvalid},
+                                                            {"COL_pPReq", &prof->cfg.pPReq},
+                                                            {"COL_pPRes", &prof->cfg.pPRes},
+                                                            {"COL_pSoA", &prof->cfg.pSoA},
+                                                            {"COL_pSoC", &prof->cfg.pSoC}};
+
+  for (auto i : colorSelctor) {
+    sp->writeCustomValue(i.first, i.second->name());
+  }
 
   sp->beginWriteArray("nodes");
   int counter = 0;
@@ -275,10 +329,14 @@ void SettingsWindow::newProfile() {
   profiles[newProf]         = std::make_shared<SettingsProfileItem>(newProf.c_str(), ui->profList);
   SettingsProfileItem *prof = profiles[newProf].get();
   ui->profList->addItem(prof);
-  prof->cfg.backConf = mainWindow->getCaptureInstance()->getConfig();
-  prof->cfg.nodes.clear();
-  prof->cfg.nodes[-1]   = mainWindow->getCaptureInstance()->getDefaultNodeConfig();
-  prof->cfg.currentNode = -1;
+  if (profiles.find("Default") == profiles.end()) {
+    prof->cfg.backConf = mainWindow->getCaptureInstance()->getConfig();
+    prof->cfg.nodes.clear();
+    prof->cfg.nodes[-1]   = mainWindow->getCaptureInstance()->getDefaultNodeConfig();
+    prof->cfg.currentNode = -1;
+  } else {
+    prof->cfg = profiles["Default"].get()->cfg;
+  }
   saveConfig();
   updateView();
 }
@@ -397,6 +455,25 @@ void SettingsWindow::selectPythonDir() {
     qDebug() << files;
     ui->PY_pluginDIR->setText(files.front());
   }
+}
+
+void SettingsWindow::setColor() {
+  QPushButton *btn = dynamic_cast<QPushButton *>(sender());
+
+  if (!btn)
+    return;
+
+  QPalette pal = btn->palette();
+
+  QColor newColor = QColorDialog::getColor(pal.color(QPalette::Button), this, "Select color");
+  if (!newColor.isValid())
+    return;
+
+  pal.setColor(QPalette::Button, newColor);
+  pal.setColor(QPalette::Highlight, newColor);
+  btn->setPalette(pal);
+  btn->update();
+  btn->repaint();
 }
 
 SettingsProfileItem::Config SettingsWindow::getConfig() { return profiles[currentProfile].get()->cfg; }

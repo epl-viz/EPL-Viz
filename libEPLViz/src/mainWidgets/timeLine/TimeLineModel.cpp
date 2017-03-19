@@ -37,27 +37,30 @@ using namespace EPL_DataCollect;
 TimeLineModel::TimeLineModel(MainWindow *mw, QwtPlot *widget) : QwtBaseModel(mw, widget) {
   (void)mw;
   (void)widget;
-  viewportSize = DEF_VIEWPORT_SIZE;
-  widget->setAxisAutoScale(QwtPlot::xTop, false);
-
-  zoomer = std::make_unique<TimeLineMagnifier>(this, &maxXValue, widget->canvas());
-  zoomer->setAxisEnabled(QwtPlot::xTop, QwtPlot::yRight);
-
-  // connect(mw->findChild<TimelineWidget *>("dockTime"), SIGNAL(zoom(QPoint)), this, SLOT(zoom(QPoint)));
+  scrollbar = mw->findChild<QScrollBar *>("scrBarTimeline");
 
   widget->setAxisScale(QwtPlot::yLeft, 0, 10);
   widget->setAxisAutoScale(QwtPlot::yLeft, true);
 
-  widget->setAxisAutoScale(QwtPlot::xTop, false);
-  widget->setAxisScale(QwtPlot::xTop, 0, DEF_VIEWPORT_SIZE, 1);
-  resetAxes();
+  widget->setAxisScale(QwtPlot::xTop, 0, DEF_VIEWPORT_SIZE);
+  widget->setAxisAutoScale(QwtPlot::xTop, true);
+
+  magnifier = std::make_unique<TimeLineMagnifier>(scrollbar, this, &maxXValue, widget->canvas());
+  magnifier->setAxisEnabled(QwtPlot::xTop, true);
+  magnifier->setAxisEnabled(QwtPlot::yLeft, false);
+  /*
+    panner = std::make_unique<QwtPlotPanner>(widget->canvas());
+    panner->setAxisEnabled(QwtPlot::yLeft, false);
+    panner->setAxisEnabled(QwtPlot::xTop, true);
+    oldPanValue = DEF_VIEWPORT_SIZE / 2;
+  */
+  // resetAxes();
 }
 
 TimeLineModel::~TimeLineModel() {}
 
 void TimeLineModel::init() {
   markers.clear();
-  viewportSize = DEF_VIEWPORT_SIZE;
 
   curCycleMarker.setLineStyle(QwtPlotMarker::VLine);
   curCycleMarker.setLinePen(QColor(0, 0, 0), 2, Qt::PenStyle::DotLine);
@@ -73,9 +76,7 @@ void TimeLineModel::init() {
   newestCycleMarker.setLabel(QwtText("Backend"));
   newestCycleMarker.attach(plot);
 
-  zoomer = std::make_unique<TimeLineMagnifier>(this, &maxXValue, plot->canvas());
-  zoomer->setAxisEnabled(QwtPlot::xTop, true);
-  zoomer->setAxisEnabled(QwtPlot::yLeft, false);
+
 
   log   = getMainWindow()->getCaptureInstance()->getEventLog();
   appid = log->getAppID();
@@ -94,12 +95,15 @@ void TimeLineModel::update(ProtectedCycle &cycle) {
   uint32_t newest = window->getCaptureInstance()->getCycleContainer()->pollCycle().getCycleNum();
   newestCycleMarker.setXValue(static_cast<double>(newest));
   maxXValue = newest;
-  emit maxValueChanged(0, static_cast<int>(maxXValue));
+  emit maxValueChanged(0, static_cast<int>(maxXValue - getViewportSize()));
+  scrollbar->setMaximum(static_cast<int>(maxXValue));
 
   // Add new markers
   std::vector<EventBase *> nEvents = log->pollEvents(appid);
-  // qDebug() << "number of new Events adding to timeline: " + QString::number(nEvents.size());
+  if (nEvents.size() > 0)
+    qDebug() << "Number of new Events adding to timeline: " + QString::number(nEvents.size());
   for (EventBase *ev : nEvents) {
+
     std::shared_ptr<QwtPlotMarker> marker =
           std::make_shared<QwtPlotMarker>(QString::fromStdString(ev->getDescription()));
 
@@ -126,26 +130,27 @@ void TimeLineModel::update(ProtectedCycle &cycle) {
 }
 
 void TimeLineModel::updateViewport(int value) {
-  int64_t nmin = (static_cast<int64_t>(value) - viewportSize / 2);
-  int64_t nmax = (static_cast<int64_t>(value) + viewportSize / 2);
+  QwtScaleDiv scale = plot->axisScaleDiv(QwtPlot::xTop);
+  double      upper = scale.upperBound();
+  double      lower = scale.lowerBound();
 
-  if (nmin < 0) {
-    nmax += std::abs(nmin);
-    nmin = 0;
-  }
+  double viewportSize = upper - lower;
 
-  if (nmax > maxXValue) {
-    nmin -= (nmax - maxXValue);
-    nmax = maxXValue;
-  }
+  if (viewportSize < 1)
+    return;
 
-  // qDebug() << "Changing viewport to [" + QString::number(nmin) + "-" + QString::number(nmax) + "]";
+  double min = static_cast<double>(value);
+  double max = min + viewportSize;
 
-  postToThread([&] { plot->setAxisScale(plot->xTop, static_cast<double>(nmin), static_cast<double>(nmax), 1); }, plot);
+
+  qDebug() << "Changing viewport to [" + QString::number(min) + "-" + QString::number(max) + "]";
+
+  plot->setAxisScale(QwtPlot::xTop, min, max);
   replot();
 }
 
 void TimeLineModel::resetAxes() {
+  qDebug() << "============ reset Axis, do you really want to do? ==========";
   postToThread([&] { plot->setAxisMaxMinor(QwtPlot::xTop, 0); }, plot);
   postToThread([&] { plot->setAxisScale(QwtPlot::xTop, 0, maxXValue); }, plot);
 }

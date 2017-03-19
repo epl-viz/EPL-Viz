@@ -35,19 +35,27 @@
 #include "TimeLineMagnifier.hpp"
 
 #include <qwt_plot_marker.h>
+#include <qwt_plot_panner.h>
+
+#include <QScrollBar>
 
 namespace EPL_Viz {
 class TimeLineModel : public QwtBaseModel {
   Q_OBJECT
 
  private:
-  uint32_t                              appid;
-  uint32_t                              viewportSize;
-  EPL_DataCollect::EventLog *           log;
+  uint32_t                   appid;
+  EPL_DataCollect::EventLog *log;
+  QScrollBar *               scrollbar;
+
   QList<std::shared_ptr<QwtPlotMarker>> markers;
   QwtPlotMarker                         curCycleMarker;
   QwtPlotMarker                         newestCycleMarker;
-  std::unique_ptr<TimeLineMagnifier>    zoomer;
+
+  std::unique_ptr<TimeLineMagnifier> magnifier;
+
+  std::unique_ptr<QwtPlotPanner> panner;
+  int                            oldPanValue;
 
   void resetAxes();
 

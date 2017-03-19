@@ -41,14 +41,14 @@ QwtBaseModel::QwtBaseModel(MainWindow *win, QwtPlot *widget) : BaseModel(win, wi
   window    = win;
   plot      = widget;
   maxXValue = 50;
-  setup     = false;
+  setupUsed = false;
   odTS      = true;
 }
 
 void QwtBaseModel::init() { connect(this, SIGNAL(requestRedraw()), plot, SLOT(repaint())); }
 
 void QwtBaseModel::createPlot(uint8_t nodeID, uint16_t mainIndex, uint16_t subIndex) {
-  if (setup) {
+  if (setupUsed) {
     qDebug() << "Already created";
     return;
   }
@@ -88,8 +88,14 @@ void QwtBaseModel::initTS() {
   created = true;
 }
 
+double QwtBaseModel::getViewportSize() {
+  QwtScaleDiv div = plot->axisScaleDiv(QwtPlot::xTop);
+  return div.upperBound() - div.lowerBound();
+}
+
 
 void QwtBaseModel::replot() {
+  postToThread([&] { plot->repaint(); }, plot);
   postToThread([&] { plot->replot(); }, plot);
   emit requestRedraw();
 }
@@ -97,13 +103,13 @@ void QwtBaseModel::replot() {
 void QwtBaseModel::update(ProtectedCycle &cycle) {
   (void)cycle;
   // If setup widget has been used used, initialize timeseries now
-  if (setup) {
+  if (setupUsed) {
     initTS();
 
     curve = std::make_shared<QwtPlotCurve>();
     curve->attach(plot);
 
-    setup = false;
+    setupUsed = false;
   }
   // Abort when the QWTPlot has not been created
   if (!created) {
@@ -129,24 +135,6 @@ void QwtBaseModel::update(ProtectedCycle &cycle) {
   replot();
 }
 
-void QwtBaseModel::setXMin(uint32_t min) {
-  postToThread(
-        [&] {
-          plot->setAxisScale(
-                QwtPlot::xBottom, static_cast<double>(min), plot->axisScaleDiv(QwtPlot::xBottom).upperBound());
-        },
-        plot);
-}
-
-void QwtBaseModel::setXMax(uint32_t max) {
-  postToThread(
-        [&] {
-          plot->setAxisScale(
-                QwtPlot::xBottom, plot->axisScaleDiv(QwtPlot::xBottom).lowerBound(), static_cast<double>(max));
-        },
-        plot);
-}
-
 void QwtBaseModel::setupPlotting() {
   PlotCreator::PlotCreatorData data = PlotCreator::getNewPlot();
   if (data.isOK) {
@@ -156,6 +144,6 @@ void QwtBaseModel::setupPlotting() {
     odTS     = data.defaultODPlot;
     csName   = data.csName;
 
-    setup = true;
+    setupUsed = true;
   }
 }

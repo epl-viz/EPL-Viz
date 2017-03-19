@@ -78,7 +78,6 @@ void PacketListModel::update(ProtectedCycle &cycle) {
   size_t        s           = list.size();
 
   if (s > currentPacketListSize) {
-    qDebug() << "BBB";
     beginInsertRows(QModelIndex(), static_cast<int>(currentPacketListSize), static_cast<int>(s - 1));
     for (size_t i = currentPacketListSize; i < s; ++i) {
       root->push_back(new PacketListItem(root, list[i], i));
@@ -87,7 +86,6 @@ void PacketListModel::update(ProtectedCycle &cycle) {
     currentPacketListSize = s;
   } else if (s < currentPacketListSize) {
     // Clear the list
-    qDebug() << "CCC";
     currentPacketListSize = 0;
     beginResetModel();
     root->clear();

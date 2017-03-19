@@ -67,6 +67,7 @@ void TimeLineModel::init() {
   curCycleMarker.setXAxis(QwtPlot::xTop);
   curCycleMarker.setXValue(static_cast<double>(0));
   curCycleMarker.setLabel(QwtText("View"));
+  curCycleMarker.setLabelAlignment(Qt::AlignTop | Qt::AlignLeft);
   curCycleMarker.attach(plot);
 
   newestCycleMarker.setLineStyle(QwtPlotMarker::VLine);
@@ -74,6 +75,7 @@ void TimeLineModel::init() {
   newestCycleMarker.setXAxis(QwtPlot::xTop);
   newestCycleMarker.setXValue(static_cast<double>(0));
   newestCycleMarker.setLabel(QwtText("Backend"));
+  newestCycleMarker.setLabelAlignment(Qt::AlignLeft);
   newestCycleMarker.attach(plot);
 
 
@@ -147,10 +149,4 @@ void TimeLineModel::updateViewport(int value) {
 
   plot->setAxisScale(QwtPlot::xTop, min, max);
   replot();
-}
-
-void TimeLineModel::resetAxes() {
-  qDebug() << "============ reset Axis, do you really want to do? ==========";
-  postToThread([&] { plot->setAxisMaxMinor(QwtPlot::xTop, 0); }, plot);
-  postToThread([&] { plot->setAxisScale(QwtPlot::xTop, 0, maxXValue); }, plot);
 }

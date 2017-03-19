@@ -92,6 +92,7 @@ void QwtBaseModel::initTS() {
 
 
 void QwtBaseModel::replot() {
+  postToThread([&] { plot->repaint(); }, plot);
   postToThread([&] { plot->replot(); }, plot);
   emit requestRedraw();
 }

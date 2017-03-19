@@ -23,51 +23,28 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-/*!
- * \file PluginsWindow.hpp
- */
 
 #pragma once
 
-#include "PluginEditorWidget.hpp"
-#include <QFileDialog>
-#include <QMainWindow>
-
-namespace Ui {
-class PluginsWindow;
-}
+#include "BaseModel.hpp"
+#include "InputHandler.hpp"
+#include "TreeModelItemBase.hpp"
 
 namespace EPL_Viz {
 
-class MainWindow;
-class SettingsWindow;
-
-class PluginsWindow : public QMainWindow {
-  Q_OBJECT
-
+class PacketListItem final : public TreeModelItemBase {
  private:
-  Ui::PluginsWindow *   ui;
-  SettingsWindow *      settings;
-  static PluginsWindow *instance;
-
-  explicit PluginsWindow(MainWindow *mw);
+  EPL_DataCollect::InputHandler::PacketMetadata metaData;
+  size_t                                        index;
 
  public:
-  PluginsWindow() = delete;
-  ~PluginsWindow();
+  PacketListItem() = delete;
+  PacketListItem(TreeModelItemBase *parent, EPL_DataCollect::InputHandler::PacketMetadata d, size_t ind);
 
-  static PluginsWindow *create(MainWindow *mw);
-  PluginEditorWidget *getEditor();
+  virtual ~PacketListItem();
 
- private:
-  void closeEvent(QCloseEvent *event);
-
- signals:
-  void fileOpened(QUrl filename);
-  void cleanUp();
-
- public slots:
-  void open();
-  void closeFile();
+  QVariant data(int column, Qt::ItemDataRole role) override;
+  bool          hasChanged() override;
+  Qt::ItemFlags flags() override;
 };
 }

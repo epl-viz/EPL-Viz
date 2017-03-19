@@ -98,7 +98,7 @@ void TimeLineModel::update(ProtectedCycle &cycle) {
 
   // Add new markers
   std::vector<EventBase *> nEvents = log->pollEvents(appid);
-  //qDebug() << "number of new Events adding to timeline: " + QString::number(nEvents.size());
+  // qDebug() << "number of new Events adding to timeline: " + QString::number(nEvents.size());
   for (EventBase *ev : nEvents) {
     std::shared_ptr<QwtPlotMarker> marker =
           std::make_shared<QwtPlotMarker>(QString::fromStdString(ev->getDescription()));

@@ -24,50 +24,38 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 /*!
- * \file PluginsWindow.hpp
+ * \file ODDescriptionModel.hpp
  */
-
 #pragma once
 
-#include "PluginEditorWidget.hpp"
-#include <QFileDialog>
-#include <QMainWindow>
+#include "BaseModel.hpp"
+#include "CurODModelItem.hpp"
+#include "EPLVizDefines.hpp"
+#include "TreeModelBase.hpp"
 
-namespace Ui {
-class PluginsWindow;
-}
+#include <QTreeWidget>
 
 namespace EPL_Viz {
 
 class MainWindow;
-class SettingsWindow;
 
-class PluginsWindow : public QMainWindow {
+class PacketListModel final : public TreeModelBase, public BaseModel {
   Q_OBJECT
-
  private:
-  Ui::PluginsWindow *   ui;
-  SettingsWindow *      settings;
-  static PluginsWindow *instance;
+  MainWindow *mw;
 
-  explicit PluginsWindow(MainWindow *mw);
+  size_t currentPacketListSize = 0;
 
  public:
-  PluginsWindow() = delete;
-  ~PluginsWindow();
+  PacketListModel(MainWindow *window, QTreeView *treeWidget);
+  PacketListModel()  = delete;
+  ~PacketListModel() = default;
 
-  static PluginsWindow *create(MainWindow *mw);
-  PluginEditorWidget *getEditor();
+  QString getName() override { return "ODDescriptionModel"; }
 
- private:
-  void closeEvent(QCloseEvent *event);
+  void init() override;
 
- signals:
-  void fileOpened(QUrl filename);
-  void cleanUp();
-
- public slots:
-  void open();
-  void closeFile();
+ protected:
+  void update(ProtectedCycle &cycle) override;
 };
 }

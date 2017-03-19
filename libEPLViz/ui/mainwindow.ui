@@ -35,7 +35,7 @@
     <item row="0" column="0">
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
-       <number>1</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="tabNet">
        <attribute name="title">
@@ -70,8 +70,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>1291</width>
-             <height>532</height>
+             <width>1322</width>
+             <height>413</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_15"/>
@@ -90,6 +90,16 @@
         </item>
        </layout>
       </widget>
+      <widget class="QWidget" name="packets">
+       <attribute name="title">
+        <string>Packets</string>
+       </attribute>
+       <layout class="QVBoxLayout" name="verticalLayout_2">
+        <item>
+         <widget class="QTreeView" name="packetsView"/>
+        </item>
+       </layout>
+      </widget>
      </widget>
     </item>
    </layout>
@@ -100,7 +110,7 @@
      <x>0</x>
      <y>0</y>
      <width>1920</width>
-     <height>26</height>
+     <height>30</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -174,7 +184,7 @@ Clicking inside the Timeline will jump back to the selected cycle.</string>
     <set>Qt::AllDockWidgetAreas</set>
    </property>
    <property name="windowTitle">
-    <string>Timeline</string>
+    <string>Ti&amp;meline</string>
    </property>
    <attribute name="dockWidgetArea">
     <number>4</number>
@@ -219,7 +229,7 @@ Clicking inside the Timeline will jump back to the selected cycle.</string>
 Plugins that are disabled during runtime will not be able to be activated again for the duration of the playback/recording!</string>
    </property>
    <property name="windowTitle">
-    <string>Plugins</string>
+    <string>&amp;Plugins</string>
    </property>
    <attribute name="dockWidgetArea">
     <number>1</number>
@@ -254,7 +264,7 @@ Plugins that are disabled during runtime will not be able to be activated again 
     <string>Shows the Object Dictionary of the node currently selected via the Network Graph.</string>
    </property>
    <property name="windowTitle">
-    <string>Node OD</string>
+    <string>&amp;Node OD</string>
    </property>
    <attribute name="dockWidgetArea">
     <number>2</number>
@@ -272,7 +282,7 @@ Plugins that are disabled during runtime will not be able to be activated again 
     <string>Shows the Object Dictionary Descriptions that are currently provided by the loaded profiles.</string>
    </property>
    <property name="windowTitle">
-    <string>OD Descriptions</string>
+    <string>&amp;OD Descriptions</string>
    </property>
    <attribute name="dockWidgetArea">
     <number>2</number>
@@ -344,7 +354,7 @@ Plugins that are disabled during runtime will not be able to be activated again 
     <string>Shows the packets of the cycle selected via the Timeline.</string>
    </property>
    <property name="windowTitle">
-    <string>Cycle Viewer</string>
+    <string>&amp;Cycle Viewer</string>
    </property>
    <attribute name="dockWidgetArea">
     <number>2</number>
@@ -377,7 +387,7 @@ Plugins that are disabled during runtime will not be able to be activated again 
   </widget>
   <widget class="PacketHistoryWidget" name="dockPacketHistory">
    <property name="windowTitle">
-    <string>Packet Viewer</string>
+    <string>Packet &amp;Viewer</string>
    </property>
    <attribute name="dockWidgetArea">
     <number>8</number>
@@ -545,12 +555,16 @@ Plugins that are disabled during runtime will not be able to be activated again 
      <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
-    <string>Setup Plot</string>
+    <string>S&amp;etup Plot</string>
    </property>
   </action>
   <action name="actionNew">
+   <property name="icon">
+    <iconset theme="document-new">
+     <normaloff>.</normaloff>.</iconset>
+   </property>
    <property name="text">
-    <string>New</string>
+    <string>&amp;New</string>
    </property>
    <property name="toolTip">
     <string>Create a new session</string>

@@ -35,6 +35,7 @@
 #include "InterfacePicker.hpp"
 #include "NetworkGraphModel.hpp"
 #include "ODDescriptionModel.hpp"
+#include "PacketListModel.hpp"
 #include "PluginsWindow.hpp"
 #include "ProtocolValidator.hpp"
 #include "SettingsWindow.hpp"
@@ -102,6 +103,8 @@ MainWindow::~MainWindow() {
   delete settingsWin;
 }
 
+bool MainWindow::changeTime(double) { return true; }
+
 void MainWindow::createModels() {
   // Create and add Models here
   CycleCommandsModel *cyCoModel          = new CycleCommandsModel(this, ui->cycleCommandsView);
@@ -112,6 +115,7 @@ void MainWindow::createModels() {
   PythonLogModel *    pythonLogModel     = new PythonLogModel(this, ui->pythonLogView);
   PacketHistoryModel *packetHistoryModel = new PacketHistoryModel(this, ui->packetHistoryTextEdit);
   TimeLineModel *     timeLineModel      = new TimeLineModel(this, ui->qwtPlotTimeline);
+  PacketListModel *   packetListModel    = new PacketListModel(this, ui->packetsView);
 
   // Connect required signals
   connect(this, SIGNAL(cycleChanged()), cyCoModel, SLOT(updateNext()));
@@ -133,7 +137,10 @@ void MainWindow::createModels() {
   connect(ui->scrBarTimeline, SIGNAL(valueChanged(int)), timeLineModel, SLOT(updateViewport(int)));
   connect(timeLineModel, SIGNAL(maxValueChanged(int, int)), ui->scrBarTimeline, SLOT(setRange(int, int)));
   connect(this, SIGNAL(cycleChanged()), timeLineModel, SLOT(replot()));
-  connect(timeLineModel, SIGNAL(setNodes(uint8_t, uint16_t, uint16_t)), qwtPlot, SLOT(createPlot(uint8_t, uint16_t, uint16_t)));
+  connect(timeLineModel,
+          SIGNAL(setNodes(uint8_t, uint16_t, uint16_t)),
+          qwtPlot,
+          SLOT(createPlot(uint8_t, uint16_t, uint16_t)));
   // TODO update timeline value
   // connect(this, SIGNAL(cycleChanged()), ui->scrBarTimeline, SLOT(setValue(int)))
 
@@ -166,6 +173,7 @@ void MainWindow::createModels() {
   models.append(cyCoModel);
   models.append(oddescrModel);
   models.append(timeLineModel);
+  models.append(packetListModel);
 
   QWidget *network = ui->networkGraphContents;
   connect(network, SIGNAL(nodeSelected(uint8_t)), curODModel, SLOT(changeNode(uint8_t)));
@@ -184,6 +192,7 @@ void MainWindow::createModels() {
   // Connect reset signal to widgets requiring it
   connect(this, SIGNAL(resetGUI()), ui->networkGraphContents, SLOT(reset()));
   connect(this, SIGNAL(resetGUI()), ui->eventLog, SLOT(reset()));
+  connect(this, SIGNAL(resetGUI()), ui->pluginSelectorWidget, SLOT(reset()));
 
 
   modelThread->start();
@@ -243,13 +252,17 @@ void MainWindow::setFullscreen(bool makeFullscreen) {
 }
 
 void MainWindow::openPluginEditor() {
-  PluginsWindow *win = new PluginsWindow(this);
-  win->show();
+  PluginsWindow *win = PluginsWindow::create(this);
 
-  connect(win->getEditor(),
-          SIGNAL(pluginsSaved(QMap<QString, QString>)),
-          ui->pluginSelectorWidget,
-          SLOT(addPlugins(QMap<QString, QString>)));
+  // Check if the window was newly created
+  if (win) {
+    win->show();
+
+    connect(win->getEditor(),
+            SIGNAL(pluginsSaved(QMap<QString, QString>)),
+            ui->pluginSelectorWidget,
+            SLOT(addPlugins(QMap<QString, QString>)));
+  }
 }
 
 void MainWindow::openInterfacePicker() {
@@ -298,9 +311,7 @@ void MainWindow::save() {
 
   // The file could not be written
   if (!QFile::copy(QString::fromStdString(captureInstance->getCurrentFilePath()), saveFile)) {
-    QErrorMessage error(this);
-
-    error.showMessage("Could not save to file '" + saveFile + "'.");
+    QMessageBox::critical(0, "Error", tr("Could not save to file '%1'.").arg(saveFile));
   }
 }
 

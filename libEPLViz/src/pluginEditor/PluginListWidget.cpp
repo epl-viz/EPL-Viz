@@ -103,6 +103,7 @@ void PluginListWidget::fileAdded(QUrl file) {
   item->setToolTip(fileInfo.filePath());
   item->setStatusTip(fileInfo.filePath());
   this->addItem(item);
+  this->setCurrentItem(item);
 
   emit fileOpened(file);
 }

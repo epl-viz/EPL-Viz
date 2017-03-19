@@ -72,6 +72,9 @@ class SettingsWindow : public QDialog {
   void profChange(QListWidgetItem *curr, QListWidgetItem *pref);
   void nodeChange(QListWidgetItem *curr, QListWidgetItem *pref);
 
+  void selectXDDDir();
+  void selectPythonDir();
+
  public:
   explicit SettingsWindow(QWidget *parent, ProfileManager *settings);
   ~SettingsWindow();

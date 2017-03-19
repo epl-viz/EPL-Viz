@@ -65,5 +65,6 @@ class PluginSelectorWidget : public QListWidget {
  public slots:
   void loadPlugins(EPL_DataCollect::CaptureInstance *ci);
   void addPlugins(QMap<QString, QString> map);
+  void reset();
 };
 }

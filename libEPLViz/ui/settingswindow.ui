@@ -61,7 +61,7 @@
       <item>
        <widget class="QTabWidget" name="tabWidget">
         <property name="currentIndex">
-         <number>1</number>
+         <number>0</number>
         </property>
         <widget class="QWidget" name="backend">
          <attribute name="title">
@@ -682,6 +682,38 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>G_XDDDirSelct</sender>
+   <signal>clicked()</signal>
+   <receiver>SettingsWindow</receiver>
+   <slot>selectXDDDir()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1212</x>
+     <y>114</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>636</x>
+     <y>376</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>PY_plDirButton</sender>
+   <signal>clicked()</signal>
+   <receiver>SettingsWindow</receiver>
+   <slot>selectPythonDir()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1222</x>
+     <y>77</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>636</x>
+     <y>376</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>apply()</slot>
@@ -692,5 +724,7 @@
   <slot>deleteNode()</slot>
   <slot>profChange(QListWidgetItem*,QListWidgetItem*)</slot>
   <slot>nodeChange(QListWidgetItem*,QListWidgetItem*)</slot>
+  <slot>selectXDDDir()</slot>
+  <slot>selectPythonDir()</slot>
  </slots>
 </ui>

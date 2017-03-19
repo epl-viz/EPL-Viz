@@ -35,9 +35,10 @@ find_path(
     HINTS
       /usr/include/qwt
       /usr/local/include/qwt
+      ${QWT_ROOT}/include/qwt
 )
 
-find_library( QWT_LIBRARIES NAMES qwt qwt-qt5 )
+find_library( QWT_LIBRARIES NAMES qwt qwt-qt5 HINTS ${QWT_ROOT}/lib )
 
 find_package_handle_standard_args(QWT REQUIRED_VARS QWT_LIBRARIES QWT_INCLUDE_DIRS)
 

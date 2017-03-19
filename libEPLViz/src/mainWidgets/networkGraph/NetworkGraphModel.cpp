@@ -46,6 +46,9 @@ void NetworkGraphModel::update(ProtectedCycle &cycle) {
 
   QMap<uint8_t, NodeWidget *> *nodeMap = graph->getNodeWidgets();
 
+  // Keep track of nodes that are not visible in the current cycle
+  QList<uint8_t> untracked = nodeMap->keys();
+
   for (uint8_t id : list) {
     auto s = nodeMap->find(id);
 
@@ -54,9 +57,31 @@ void NetworkGraphModel::update(ProtectedCycle &cycle) {
       graph->queueNodeCreation(id);
     } else {
       // The node is added as widget and has to be updated
-      graph->queueNodeUpdate(id);
+      NodeWidget *nw = nodeMap->value(id);
+
+      nw->updateData(id, cycle);
+
+      if (nw->isHidden())
+        nw->show();
+
       // Reset highlighting
       s.value()->setHighlightingLevel(0);
+    }
+    untracked.removeOne(id);
+  }
+
+  // Hide unupdated nodes
+  for (uint8_t id : untracked) {
+    NodeWidget *nw = nodeMap->value(id);
+
+    // Check if node is not yet hidden
+    if (!nw->isHidden()) {
+      // Deselect the widget
+      if (nw->isSelected()) {
+        graph->selectNode(UINT8_MAX);
+      }
+
+      nw->hide();
     }
   }
 

@@ -75,6 +75,8 @@ class SettingsWindow : public QDialog {
   void selectXDDDir();
   void selectPythonDir();
 
+  void setColor();
+
  public:
   explicit SettingsWindow(QWidget *parent, ProfileManager *settings);
   ~SettingsWindow();

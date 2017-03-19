@@ -32,14 +32,24 @@
 
 namespace EPL_Viz {
 
+class MainWindow;
+
 class PacketListItem final : public TreeModelItemBase {
  private:
   EPL_DataCollect::InputHandler::PacketMetadata metaData;
   size_t                                        index;
+  MainWindow *                                  mw;
+
+  QVariant dataDisplay(int column);
+  QColor dataBackground();
+  QColor dataForground();
 
  public:
   PacketListItem() = delete;
-  PacketListItem(TreeModelItemBase *parent, EPL_DataCollect::InputHandler::PacketMetadata d, size_t ind);
+  PacketListItem(TreeModelItemBase *                           parent,
+                 MainWindow *                                  mainWin,
+                 EPL_DataCollect::InputHandler::PacketMetadata d,
+                 size_t                                        ind);
 
   virtual ~PacketListItem();
 

@@ -48,26 +48,11 @@ void NetworkGraphWidget::reset() {
   nodeMap.clear();
 
   createQueue.clear();
-  updateQueue.clear();
 }
 
 
 void NetworkGraphWidget::updateWidget(EPL_Viz::ProtectedCycle &c) {
   auto lock = c.getLock();
-
-  QMap<uint8_t, NodeWidget *> nodes(nodeMap); // Used to track untouched nodes
-
-  // Apply all queued updates
-  for (auto nID : updateQueue) {
-    NodeWidget *nw = nodeMap[nID];
-
-    nw->updateData(nID, c);
-    nw->show(); // Show the widget if it was hidden
-
-    nodes.remove(nID);
-  }
-
-  updateQueue.clear();
 
   // Ensure that a layout is present
   if (!grid) {
@@ -104,20 +89,7 @@ void NetworkGraphWidget::updateWidget(EPL_Viz::ProtectedCycle &c) {
   }
 
   createQueue.clear();
-
-  // Hide widgets that were not updated (Allows jumps back in time)
-  for (auto nw : nodes.values()) {
-    // Unselect the node if it is hidden and notify others
-    if (nw->isSelected()) {
-      nw->setSelected(false);
-      current = UINT8_MAX;
-      emit nodeSelected(current);
-    }
-    nw->hide();
-  }
 }
-
-void NetworkGraphWidget::queueNodeUpdate(uint8_t node) { updateQueue.append(node); }
 
 void NetworkGraphWidget::queueNodeCreation(uint8_t node) { createQueue.append(node); }
 
@@ -134,6 +106,9 @@ void NetworkGraphWidget::selectNode(uint8_t node) {
 
   // Update current node
   current = node;
-  nodeMap[current]->setSelected(true);
+
+  if (current != UINT8_MAX)
+    nodeMap[current]->setSelected(true);
+
   emit nodeSelected(current);
 }

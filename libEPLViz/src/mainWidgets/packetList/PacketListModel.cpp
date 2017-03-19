@@ -28,7 +28,6 @@
  */
 #include "PacketListModel.hpp"
 #include "MainWindow.hpp"
-#include "PacketListItem.hpp"
 #include <QString>
 
 using namespace EPL_Viz;
@@ -55,6 +54,8 @@ PacketListModel::PacketListModel(MainWindow *window, QTreeView *treeWidget)
                               QVariant("The send NMT Status (if the packet type supports it)"),
                               QVariant("The send Service ID (if the packet type supports it)"),
                               QVariant("The send Command (if the packet type supports it)")}}});
+
+  root->setNoDelete(true);
 }
 
 void PacketListModel::init() {
@@ -62,6 +63,7 @@ void PacketListModel::init() {
 
   beginResetModel();
   root->clear();
+  itemList.clear();
   endResetModel();
 }
 
@@ -80,7 +82,8 @@ void PacketListModel::update(ProtectedCycle &cycle) {
   if (s > currentPacketListSize) {
     beginInsertRows(QModelIndex(), static_cast<int>(currentPacketListSize), static_cast<int>(s - 1));
     for (size_t i = currentPacketListSize; i < s; ++i) {
-      root->push_back(new PacketListItem(root, list[i], i));
+      auto it = itemList.emplace(root, mw, list[i], i);
+      root->push_back(&(*it));
     }
     endInsertRows();
     currentPacketListSize = s;

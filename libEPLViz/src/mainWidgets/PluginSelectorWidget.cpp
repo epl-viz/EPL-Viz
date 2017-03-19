@@ -41,7 +41,7 @@ void PluginSelectorWidget::reset() {
   setEnabled(true);
 
   // Reenable all boxes
-  for (int i = 0; i < count(); i++) {
+  /*for (int i = 0; i < count(); i++) {
     QListWidgetItem *qwi = item(i);
 
     QCheckBox *box = qobject_cast<QCheckBox *>(itemWidget(qwi));
@@ -51,7 +51,7 @@ void PluginSelectorWidget::reset() {
       continue;
 
     box->setEnabled(true);
-  }
+  }*/
 }
 
 void PluginSelectorWidget::addItem(QString plugin) {
@@ -62,7 +62,7 @@ void PluginSelectorWidget::addItem(QString plugin) {
 
   plugins.append(plugin);
 
-  QObject::connect(box, SIGNAL(stateChanged(int)), this, SLOT(changeState(int)));
+  // QObject::connect(box, SIGNAL(stateChanged(int)), this, SLOT(changeState(int)));
 
   setItemWidget(it, box);
 }
@@ -177,8 +177,8 @@ void PluginSelectorWidget::addPlugins(QMap<QString, QString> map) {
   }
 }
 
-
-void PluginSelectorWidget::changeState(int state) {
+// TODO: Reimplement this once the backend has the capability to disable plugins
+/*void PluginSelectorWidget::changeState(int state) {
   if (recording) {
     QCheckBox *sender = qobject_cast<QCheckBox *>(QObject::sender());
 
@@ -195,10 +195,12 @@ void PluginSelectorWidget::changeState(int state) {
       QMessageBox::critical(0, "Error", tr("Could not disable the plugin '%1'!").arg(sender->toolTip()));
     }
   }
-}
+}*/
 
 void PluginSelectorWidget::loadPlugins(EPL_DataCollect::CaptureInstance *ci) {
-  qDebug() << "Received plugin load signal!";
+  if (recording)
+    return;
+
   pluginManager = ci->getPluginManager();
 
   for (int i = 0; i < count(); i++) {
@@ -213,11 +215,14 @@ void PluginSelectorWidget::loadPlugins(EPL_DataCollect::CaptureInstance *ci) {
     if (box->isChecked()) {
       // Plugin is enabled, load it in the backend
       pluginManager->addPlugin(std::make_shared<EPL_DataCollect::plugins::PythonPlugin>(plugins[i].toStdString()));
-    } else {
+    }
+    // TODO: Readd
+    /*else {
       // Plugin is not enabled, disable the checkbox to prevent activation during recording
       box->setEnabled(false);
-    }
+    }*/
   }
 
+  this->setEnabled(false);
   recording = true;
 }

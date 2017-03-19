@@ -30,7 +30,6 @@
 #include "PacketHistoryModel.hpp"
 #include "Cycle.hpp"
 #include "MainWindow.hpp"
-#include "PacketHistoryWidget.hpp"
 #include <QDebug>
 #include <string>
 #include <vector>
@@ -41,35 +40,44 @@ using namespace std;
 PacketHistoryModel::PacketHistoryModel(MainWindow *window, QPlainTextEdit *widget) : BaseModel(window, widget) {
   (void)window;
 
-  textWindow = widget;
+  textBox = widget;
 }
 
 void PacketHistoryModel::init() {
-  needUpdate     = true;
   selectedPacket = UINT64_MAX;
-  emit textUpdated("No packets available yet", textWindow);
+  currentCycle   = nullptr;
+  textBox->setPlainText("No Packets available yet.");
 }
 
 void PacketHistoryModel::update(ProtectedCycle &cycle) {
-  if (!needUpdate)
-    return;
+  currentCycle = &cycle;
+  changePacket(UINT64_MAX);
+}
 
-  auto lock = cycle.getLock();
+void PacketHistoryModel::changePacket(uint64_t packet) {
+  // Prevent wrong updates
+  if (selectedPacket == packet || !currentCycle) {
+    return;
+  }
+
+  selectedPacket = packet;
+
+  auto lock = currentCycle->getLock();
+
+  Cycle *cycle = currentCycle->getCycle();
+
+  if (!cycle)
+    return;
 
   vector<Packet> packets = cycle->getPackets();
   string         text;
+
   if (selectedPacket == UINT64_MAX)
     text = "Please select a packet in the Cycle Commands widget.";
   else if (selectedPacket < packets.size())
     text = packets[selectedPacket].getWiresharkString();
   else
     text = "Packet out of bounds";
-  emit textUpdated(QString::fromStdString(text), textWindow);
-  needUpdate = false;
-  qDebug() << "updating PacketHistoryModel";
-}
 
-void PacketHistoryModel::changePacket(uint64_t packet) {
-  needUpdate     = true;
-  selectedPacket = packet;
+  textBox->setPlainText(QString::fromStdString(text));
 }

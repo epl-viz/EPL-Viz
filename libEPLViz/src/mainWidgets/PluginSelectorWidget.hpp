@@ -59,8 +59,8 @@ class PluginSelectorWidget : public QListWidget {
  private:
   void addItem(QString plugin);
 
- private slots:
-  void changeState(int state);
+  /*private slots:
+   void changeState(int state);*/
 
  public slots:
   void loadPlugins(EPL_DataCollect::CaptureInstance *ci);

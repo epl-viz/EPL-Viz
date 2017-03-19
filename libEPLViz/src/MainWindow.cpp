@@ -121,18 +121,18 @@ void MainWindow::createModels() {
   connect(this, SIGNAL(cycleChanged()), curODModel, SLOT(updateNext()));
 
   connect(ui->cycleCommandsView,
+          SIGNAL(activated(QModelIndex)),
+          cyCoModel,
+          SLOT(changeSelection(QModelIndex))); // Notify the cycle viewer model that an item was activated
+  connect(ui->cycleCommandsView,
           SIGNAL(clicked(QModelIndex)),
           cyCoModel,
-          SLOT(changeSelection(QModelIndex))); // Notify the cycle viewer model that the selection changed
+          SLOT(changeSelection(QModelIndex))); // Notify the cycle viewer model that an item was clicked
   connect(cyCoModel,
           SIGNAL(packetChanged(uint64_t)),
           packetHistoryModel,
           SLOT(changePacket(uint64_t))); // Notify the packet viewer of changing packets
 
-  connect(packetHistoryModel,
-          SIGNAL(textUpdated(QString, QPlainTextEdit *)),
-          ui->dockPacketHistory,
-          SLOT(updatePacketHistoryLog(QString, QPlainTextEdit *)));
   connect(ui->scrBarTimeline, SIGNAL(valueChanged(int)), timeLineModel, SLOT(updateViewport(int)));
   connect(timeLineModel, SIGNAL(maxValueChanged(int, int)), ui->scrBarTimeline, SLOT(setRange(int, int)));
   connect(this, SIGNAL(cycleChanged()), timeLineModel, SLOT(replot()));

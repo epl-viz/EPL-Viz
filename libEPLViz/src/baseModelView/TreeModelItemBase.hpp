@@ -45,6 +45,7 @@ class TreeModelItemBase {
   TreeModelItemBase *p = nullptr;
   LIST               childItems;
   MAP                childIndexMap;
+  bool               noDelete = false;
 
  public:
   TreeModelItemBase() = delete;
@@ -67,6 +68,7 @@ class TreeModelItemBase {
   void push_back(TreeModelItemBase *item);
   TreeModelItemBase *back();
   void               clear();
+  void setNoDelete(bool d);
 };
 
 class TreeModelRoot : public TreeModelItemBase {

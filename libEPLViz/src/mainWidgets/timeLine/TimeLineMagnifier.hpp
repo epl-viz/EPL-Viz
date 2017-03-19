@@ -28,6 +28,7 @@
  */
 #pragma once
 
+#include <QScrollBar>
 #include <QWidget>
 #include <qwt_plot_magnifier.h>
 
@@ -38,12 +39,13 @@ class TimeLineMagnifier : public QwtPlotMagnifier {
   uint32_t *max;
 
  public:
-  TimeLineMagnifier(TimeLineModel *model, uint32_t *maxVal, QWidget *canvas);
+  TimeLineMagnifier(QScrollBar *bar, TimeLineModel *model, uint32_t *maxVal, QWidget *canvas);
 
   void rescale(double factor) override;
 
  private:
   TimeLineModel *modelRef;
+  QScrollBar *   sBar;
 
  signals:
   void requestReplot();

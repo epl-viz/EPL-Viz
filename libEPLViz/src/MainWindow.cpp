@@ -71,7 +71,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
   ui->setupUi(this);
   tabifyDockWidget(ui->dockCurrent, ui->dockOD);
-  tabifyDockWidget(ui->dockPlugins, ui->dockEvents);
 
   CS = new CycleSetterAction(ui->toolBar, this);
   ui->toolBar->addAction(CS);
@@ -83,7 +82,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
                 EPL_DataCollect::CaptureInstance *))); // Notify the PluginSelectorWidget of the start of recording
   connect(this,
           SIGNAL(recordingStarted(EPL_DataCollect::CaptureInstance *)),
-          ui->eventLog,
+          ui->eventViewer,
           SLOT(start(EPL_DataCollect::CaptureInstance *))); // Notify the eventLog of the start of recording
 
   profileManager->getDefaultProfile()->readWindowSettings(this);
@@ -122,9 +121,13 @@ void MainWindow::createModels() {
   connect(this, SIGNAL(cycleChanged()), curODModel, SLOT(updateNext()));
 
   connect(ui->cycleCommandsView,
+          SIGNAL(activated(QModelIndex)),
+          cyCoModel,
+          SLOT(changeSelection(QModelIndex))); // Notify the cycle viewer model that an item was activated
+  connect(ui->cycleCommandsView,
           SIGNAL(clicked(QModelIndex)),
           cyCoModel,
-          SLOT(changeSelection(QModelIndex))); // Notify the cycle viewer model that the selection changed
+          SLOT(changeSelection(QModelIndex))); // Notify the cycle viewer model that an item was clicked
   connect(cyCoModel,
           SIGNAL(packetChanged(uint64_t)),
           packetHistoryModel,
@@ -145,7 +148,7 @@ void MainWindow::createModels() {
   // connect(this, SIGNAL(cycleChanged()), ui->scrBarTimeline, SLOT(setValue(int)))
 
   // Set timeline max value once, since we can't do this in the constructor of the model and want to do it before init
-  emit timeLineModel->maxValueChanged(0, static_cast<int>(timeLineModel->maxXValue));
+  emit timeLineModel->maxValueChanged(0, static_cast<int>(timeLineModel->maxXValue - timeLineModel->getViewportSize()));
 
   // Activate and connect rightclick menu for Drawing Plots
   ui->curNodeODWidget->setContextMenuPolicy(Qt::CustomContextMenu);
@@ -191,7 +194,7 @@ void MainWindow::createModels() {
 
   // Connect reset signal to widgets requiring it
   connect(this, SIGNAL(resetGUI()), ui->networkGraphContents, SLOT(reset()));
-  connect(this, SIGNAL(resetGUI()), ui->eventLog, SLOT(reset()));
+  connect(this, SIGNAL(resetGUI()), ui->eventViewer, SLOT(reset()));
   connect(this, SIGNAL(resetGUI()), ui->pluginSelectorWidget, SLOT(reset()));
 
 
@@ -207,7 +210,7 @@ void MainWindow::destroyModels() {
 
 void MainWindow::updateWidgets(ProtectedCycle &cycle) {
   ui->networkGraphContents->updateWidget(cycle);
-  ui->eventLog->updateEvents();
+  ui->eventViewer->updateEvents();
 }
 
 void MainWindow::fixQToolButtons(std::vector<QToolButton *> &btns) {

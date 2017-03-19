@@ -57,6 +57,7 @@ class QwtBaseModel : public QObject, public BaseModel {
 
   void    init() override;
   QString getName() override { return "QwtBaseModel"; }
+  double  getViewportSize();
 
  protected:
   MainWindow *                                          window;
@@ -64,7 +65,7 @@ class QwtBaseModel : public QObject, public BaseModel {
   std::shared_ptr<QwtPlotCurve>                         curve;
   std::shared_ptr<EPL_DataCollect::plugins::TimeSeries> timeSeries;
 
-  bool setup;
+  bool setupUsed;
 
   uint8_t     node;
   uint16_t    index;
@@ -96,8 +97,10 @@ class QwtBaseModel : public QObject, public BaseModel {
 
  public slots:
   virtual void createPlot(uint8_t nodeID, uint16_t index, uint16_t subIndex);
+  /*
   virtual void setXMin(uint32_t min);
   virtual void setXMax(uint32_t max);
+  */
   void setupPlotting();
   void replot();
 };

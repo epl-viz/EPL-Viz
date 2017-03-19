@@ -27,6 +27,7 @@
 #include "SettingsWindow.hpp"
 #include "SettingsProfileItem.hpp"
 #include "ui_settingswindow.h"
+#include <QFileDialog>
 #include <QInputDialog>
 
 #include "MainWindow.hpp"
@@ -366,6 +367,36 @@ void SettingsWindow::nodeChange(QListWidgetItem *curr, QListWidgetItem *) {
   prof->cfg.currentNode = id;
   updateView(true);
   // saveConfig();
+}
+
+void SettingsWindow::selectXDDDir() {
+  QFileDialog dialog(this, "Select the XDD directory", ui->G_XDDDir->text());
+  dialog.setAcceptMode(QFileDialog::AcceptOpen);
+  dialog.setFileMode(QFileDialog::Directory);
+  dialog.setOption(QFileDialog::ReadOnly, true);
+  dialog.setViewMode(QFileDialog::Detail);
+
+  if (dialog.exec()) {
+    QStringList files;
+    files = dialog.selectedFiles();
+    qDebug() << files;
+    ui->G_XDDDir->setText(files.front());
+  }
+}
+
+void SettingsWindow::selectPythonDir() {
+  QFileDialog dialog(this, "Select the Python plugin directory", ui->PY_pluginDIR->text());
+  dialog.setAcceptMode(QFileDialog::AcceptOpen);
+  dialog.setFileMode(QFileDialog::Directory);
+  dialog.setOption(QFileDialog::ReadOnly, true);
+  dialog.setViewMode(QFileDialog::Detail);
+
+  if (dialog.exec()) {
+    QStringList files;
+    files = dialog.selectedFiles();
+    qDebug() << files;
+    ui->PY_pluginDIR->setText(files.front());
+  }
 }
 
 SettingsProfileItem::Config SettingsWindow::getConfig() { return profiles[currentProfile].get()->cfg; }

@@ -39,6 +39,8 @@ TimeLineModel::TimeLineModel(MainWindow *mw, QwtPlot *widget) : QwtBaseModel(mw,
   (void)widget;
   scrollbar = mw->findChild<QScrollBar *>("scrBarTimeline");
 
+  widget->enableAxis(QwtPlot::xBottom, false);
+
   widget->setAxisScale(QwtPlot::yLeft, 0, 10);
   widget->setAxisAutoScale(QwtPlot::yLeft, true);
 
@@ -48,13 +50,6 @@ TimeLineModel::TimeLineModel(MainWindow *mw, QwtPlot *widget) : QwtBaseModel(mw,
   magnifier = std::make_unique<TimeLineMagnifier>(scrollbar, this, &maxXValue, widget->canvas());
   magnifier->setAxisEnabled(QwtPlot::xTop, true);
   magnifier->setAxisEnabled(QwtPlot::yLeft, false);
-  /*
-    panner = std::make_unique<QwtPlotPanner>(widget->canvas());
-    panner->setAxisEnabled(QwtPlot::yLeft, false);
-    panner->setAxisEnabled(QwtPlot::xTop, true);
-    oldPanValue = DEF_VIEWPORT_SIZE / 2;
-  */
-  // resetAxes();
 }
 
 TimeLineModel::~TimeLineModel() {}
@@ -67,6 +62,7 @@ void TimeLineModel::init() {
   curCycleMarker.setXAxis(QwtPlot::xTop);
   curCycleMarker.setXValue(static_cast<double>(0));
   curCycleMarker.setLabel(QwtText("View"));
+  curCycleMarker.setLabelAlignment(Qt::AlignTop | Qt::AlignLeft);
   curCycleMarker.attach(plot);
 
   newestCycleMarker.setLineStyle(QwtPlotMarker::VLine);
@@ -74,6 +70,7 @@ void TimeLineModel::init() {
   newestCycleMarker.setXAxis(QwtPlot::xTop);
   newestCycleMarker.setXValue(static_cast<double>(0));
   newestCycleMarker.setLabel(QwtText("Backend"));
+  newestCycleMarker.setLabelAlignment(Qt::AlignLeft);
   newestCycleMarker.attach(plot);
 
 
@@ -121,6 +118,7 @@ void TimeLineModel::update(ProtectedCycle &cycle) {
     uint32_t x;
     ev->getCycleRange(&x);
     marker->setXValue(static_cast<double>(x));
+    marker->setXAxis(QwtPlot::xTop);
 
     marker->attach(plot);
     markers.append(marker);
@@ -147,10 +145,4 @@ void TimeLineModel::updateViewport(int value) {
 
   plot->setAxisScale(QwtPlot::xTop, min, max);
   replot();
-}
-
-void TimeLineModel::resetAxes() {
-  qDebug() << "============ reset Axis, do you really want to do? ==========";
-  postToThread([&] { plot->setAxisMaxMinor(QwtPlot::xTop, 0); }, plot);
-  postToThread([&] { plot->setAxisScale(QwtPlot::xTop, 0, maxXValue); }, plot);
 }

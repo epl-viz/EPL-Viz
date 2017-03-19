@@ -54,11 +54,6 @@ class TimeLineModel : public QwtBaseModel {
 
   std::unique_ptr<TimeLineMagnifier> magnifier;
 
-  std::unique_ptr<QwtPlotPanner> panner;
-  int                            oldPanValue;
-
-  void resetAxes();
-
  public:
   const static uint32_t DEF_VIEWPORT_SIZE = 10;
 

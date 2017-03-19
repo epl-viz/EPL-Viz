@@ -71,7 +71,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
   ui->setupUi(this);
   tabifyDockWidget(ui->dockCurrent, ui->dockOD);
-  tabifyDockWidget(ui->dockPlugins, ui->dockEvents);
 
   CS = new CycleSetterAction(ui->toolBar, this);
   ui->toolBar->addAction(CS);
@@ -83,7 +82,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
                 EPL_DataCollect::CaptureInstance *))); // Notify the PluginSelectorWidget of the start of recording
   connect(this,
           SIGNAL(recordingStarted(EPL_DataCollect::CaptureInstance *)),
-          ui->eventLog,
+          ui->eventViewer,
           SLOT(start(EPL_DataCollect::CaptureInstance *))); // Notify the eventLog of the start of recording
 
   profileManager->getDefaultProfile()->readWindowSettings(this);
@@ -191,7 +190,7 @@ void MainWindow::createModels() {
 
   // Connect reset signal to widgets requiring it
   connect(this, SIGNAL(resetGUI()), ui->networkGraphContents, SLOT(reset()));
-  connect(this, SIGNAL(resetGUI()), ui->eventLog, SLOT(reset()));
+  connect(this, SIGNAL(resetGUI()), ui->eventViewer, SLOT(reset()));
   connect(this, SIGNAL(resetGUI()), ui->pluginSelectorWidget, SLOT(reset()));
 
 
@@ -207,7 +206,7 @@ void MainWindow::destroyModels() {
 
 void MainWindow::updateWidgets(ProtectedCycle &cycle) {
   ui->networkGraphContents->updateWidget(cycle);
-  ui->eventLog->updateEvents();
+  ui->eventViewer->updateEvents();
 }
 
 void MainWindow::fixQToolButtons(std::vector<QToolButton *> &btns) {

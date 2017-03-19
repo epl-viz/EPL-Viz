@@ -35,6 +35,7 @@
 #include "InterfacePicker.hpp"
 #include "NetworkGraphModel.hpp"
 #include "ODDescriptionModel.hpp"
+#include "PacketListModel.hpp"
 #include "PluginsWindow.hpp"
 #include "ProtocolValidator.hpp"
 #include "SettingsWindow.hpp"
@@ -114,6 +115,7 @@ void MainWindow::createModels() {
   PythonLogModel *    pythonLogModel     = new PythonLogModel(this, ui->pythonLogView);
   PacketHistoryModel *packetHistoryModel = new PacketHistoryModel(this, ui->packetHistoryTextEdit);
   TimeLineModel *     timeLineModel      = new TimeLineModel(this, ui->qwtPlotTimeline);
+  PacketListModel *   packetListModel    = new PacketListModel(this, ui->packetsView);
 
   // Connect required signals
   connect(this, SIGNAL(cycleChanged()), cyCoModel, SLOT(updateNext()));
@@ -171,6 +173,7 @@ void MainWindow::createModels() {
   models.append(cyCoModel);
   models.append(oddescrModel);
   models.append(timeLineModel);
+  models.append(packetListModel);
 
   QWidget *network = ui->networkGraphContents;
   connect(network, SIGNAL(nodeSelected(uint8_t)), curODModel, SLOT(changeNode(uint8_t)));

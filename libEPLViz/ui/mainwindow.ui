@@ -370,12 +370,12 @@ Clicking inside the Timeline will jump back to the selected cycle.</string>
     </layout>
    </widget>
   </widget>
-  <widget class="PythonLogWidget" name="dockPythonLog">
+  <widget class="QDockWidget" name="dockPluginLog">
    <property name="toolTip">
-    <string>Gives further detail to the events emitted by plugins.</string>
+    <string>Shows the output of the plugins.</string>
    </property>
    <property name="windowTitle">
-    <string>Event Lo&amp;g</string>
+    <string>Plugin Log</string>
    </property>
    <attribute name="dockWidgetArea">
     <number>8</number>
@@ -383,10 +383,16 @@ Clicking inside the Timeline will jump back to the selected cycle.</string>
    <widget class="QWidget" name="dockWidgetContents_9">
     <layout class="QGridLayout" name="gridLayout_20">
      <item row="0" column="0">
-      <widget class="QTableView" name="pythonLogView">
-       <attribute name="horizontalHeaderStretchLastSection">
-        <bool>true</bool>
-       </attribute>
+      <widget class="QPlainTextEdit" name="pluginLogView">
+       <property name="undoRedoEnabled">
+        <bool>false</bool>
+       </property>
+       <property name="lineWrapMode">
+        <enum>QPlainTextEdit::NoWrap</enum>
+       </property>
+       <property name="textInteractionFlags">
+        <set>Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+       </property>
       </widget>
      </item>
     </layout>
@@ -568,12 +574,6 @@ Clicking inside the Timeline will jump back to the selected cycle.</string>
    <class>QwtPlot</class>
    <extends>QFrame</extends>
    <header>qwt_plot.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>PythonLogWidget</class>
-   <extends>QDockWidget</extends>
-   <header>PythonLogWidget.hpp</header>
    <container>1</container>
   </customwidget>
   <customwidget>

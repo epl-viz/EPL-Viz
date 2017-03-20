@@ -24,17 +24,42 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 /*!
- * \file PythonLogWidget.hpp
- * \todo Implement
+ * \file PluginLogModel.hpp
  */
+
 #pragma once
 
-#include <QDockWidget>
+#include "BaseModel.hpp"
+#include "Cycle.hpp"
+#include "EvPluginText.hpp"
+#include "EventBase.hpp"
+#include "EventLog.hpp"
+#include "vector"
+#include <QPlainTextEdit>
 
-class PythonLogWidget : public QDockWidget {
-  Q_OBJECT
+namespace EPL_Viz {
+
+class MainWindow;
+
+class PluginLogModel : public BaseModel {
+
+ private:
+  const QString eventFormat = QString("[Cycle %1] %2: %3"); // The format of a single event in the output
+
+  unsigned int               appid;
+  EPL_DataCollect::EventLog *log;
+
+  QPlainTextEdit *textBox = nullptr;
 
  public:
-  PythonLogWidget(QWidget *parent = nullptr);
-  ~PythonLogWidget()              = default;
+  PluginLogModel(MainWindow *window, QPlainTextEdit *widget);
+  PluginLogModel()  = delete;
+  ~PluginLogModel() = default;
+  QString getName() override { return "PluginLogModel"; }
+
+  void init() override;
+
+ protected:
+  void update(ProtectedCycle &cycle) override;
 };
+}

@@ -127,7 +127,7 @@ void MainWindow::createModels() {
   NetworkGraphModel * networkGraphModel  = new NetworkGraphModel(this, ui->networkGraphContents);
   ODDescriptionModel *oddescrModel       = new ODDescriptionModel(this, ui->odDescriptionWidget);
   CurrentODModel *    curODModel         = new CurrentODModel(this, ui->curNodeODWidget);
-  PythonLogModel *    pythonLogModel     = new PythonLogModel(this, ui->pythonLogView);
+  PluginLogModel *    pluginLogModel     = new PluginLogModel(this, ui->pluginLogView);
   PacketHistoryModel *packetHistoryModel = new PacketHistoryModel(this, ui->packetHistoryTextEdit);
   TimeLineModel *     timeLineModel      = new TimeLineModel(this, ui->qwtPlotTimeline);
   PacketListModel *   packetListModel    = new PacketListModel(this, ui->packetsView);
@@ -178,7 +178,7 @@ void MainWindow::createModels() {
 
   // Append the nodes to a list for cleanup
   models.append(packetHistoryModel);
-  models.append(pythonLogModel);
+  models.append(pluginLogModel);
   models.append(qwtPlot);
   models.append(curODModel);
   models.append(networkGraphModel);
@@ -472,7 +472,7 @@ void MainWindow::changeState(GUIState nState) {
       ui->qwtPlot->setEnabled(false);
       ui->packetsView->setEnabled(false);
       ui->eventViewer->setEnabled(false);
-      ui->pythonLogView->setEnabled(false);
+      ui->pluginLogView->setEnabled(false);
       ui->packetHistoryTextEdit->setEnabled(false);
       ui->cycleCommandsView->setEnabled(false);
       ui->pluginSelectorWidget->setEnabled(true);
@@ -507,7 +507,7 @@ void MainWindow::changeState(GUIState nState) {
       ui->qwtPlot->setEnabled(true);
       ui->packetsView->setEnabled(true);
       ui->eventViewer->setEnabled(true);
-      ui->pythonLogView->setEnabled(true);
+      ui->pluginLogView->setEnabled(true);
       ui->packetHistoryTextEdit->setEnabled(true);
       ui->cycleCommandsView->setEnabled(true);
       ui->pluginSelectorWidget->setEnabled(false);
@@ -545,7 +545,7 @@ void MainWindow::changeState(GUIState nState) {
       ui->qwtPlot->setEnabled(true);
       ui->packetsView->setEnabled(true);
       ui->eventViewer->setEnabled(true);
-      ui->pythonLogView->setEnabled(true);
+      ui->pluginLogView->setEnabled(true);
       ui->packetHistoryTextEdit->setEnabled(true);
       ui->cycleCommandsView->setEnabled(true);
       ui->pluginSelectorWidget->setEnabled(false);

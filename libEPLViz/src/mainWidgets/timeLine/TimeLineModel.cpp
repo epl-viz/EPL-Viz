@@ -52,14 +52,14 @@ TimeLineModel::TimeLineModel(MainWindow *mw, QwtPlot *widget) : QwtBaseModel(mw,
   magnifier->setAxisEnabled(QwtPlot::xTop, true);
   magnifier->setAxisEnabled(QwtPlot::yLeft, false);
 
-  // Configure PlotPicker
+  // Configure PlotPickers
   point = new QwtPlotPicker(plot->canvas());
   point->setAxis(QwtPlot::xTop, QwtPlot::yLeft);
   point->setStateMachine(new QwtPickerClickPointMachine());
   point->setMousePattern(QwtEventPattern::MousePatternCode::MouseSelect1, Qt::MouseButton::LeftButton);
 
   area = new QwtPlotPicker(plot->canvas());
-  point->setAxis(QwtPlot::xTop, QwtPlot::yLeft);
+  area->setAxis(QwtPlot::xTop, QwtPlot::yLeft);
   area->setStateMachine(new QwtPickerDragRectMachine());
   area->setMousePattern(QwtEventPattern::MousePatternCode::MouseSelect1, Qt::MouseButton::LeftButton);
 

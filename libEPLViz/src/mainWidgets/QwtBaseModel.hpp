@@ -37,7 +37,6 @@
 #include <qwt_plot.h>
 #include <qwt_plot_curve.h>
 
-
 #include "QCoreApplication"
 #include <QEvent>
 #include <QObject>
@@ -95,5 +94,6 @@ class QwtBaseModel : public QObject, public BaseModel {
   virtual void createPlot(uint8_t nodeID, uint16_t index, uint16_t subIndex, std::string cs);
   void replot();
   void reset();
+  void showContextMenu(const QPoint &point);
 };
 }

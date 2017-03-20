@@ -30,8 +30,11 @@
 #include "QwtBaseModel.hpp"
 #include "MainWindow.hpp"
 #include "PlotCreator.hpp"
-#include "QPointF"
-#include "QtDebug"
+
+#include <QPointF>
+#include <QtDebug>
+#include <QMenu>
+#include <QAction>
 
 using namespace EPL_Viz;
 using namespace EPL_DataCollect;
@@ -41,12 +44,14 @@ using namespace std;
 QwtBaseModel::QwtBaseModel(MainWindow *win, QwtPlot *widget) : BaseModel(win, widget) {
   window = win;
   plot   = widget;
+
+  widget->setContextMenuPolicy(Qt::CustomContextMenu);
+  connect(widget, SIGNAL(customContextMenuRequested(const QPoint &)), this, SLOT(showContextMenu(const QPoint &)));
+
   reset();
 }
 
 void QwtBaseModel::init() {
-  connect(this, SIGNAL(requestRedraw()), plot, SLOT(repaint()));
-
   for (PlotCreator::PlotCreatorData data : registeredCurves) {
     createPlot(data.node, data.index, data.subIndex, data.csName);
   }
@@ -63,7 +68,6 @@ double QwtBaseModel::getViewportSize() {
  */
 void QwtBaseModel::replot() {
   postToThread([&] { plot->replot(); }, plot);
-  emit requestRedraw();
 }
 
 void QwtBaseModel::update(ProtectedCycle &cycle) {
@@ -130,6 +134,13 @@ void QwtBaseModel::createPlot(uint8_t nodeID, uint16_t mainIndex, uint16_t subIn
   shared_ptr<QwtPlotCurve> curve = make_shared<QwtPlotCurve>();
   curve->setXAxis(QwtPlot::xTop);
   curve->attach(plot);
+  QString title;
+  if (csName.empty())
+    title = "Node: " + QString::number(nodeID) + " Index: 0x" + QString::number(mainIndex, 16) + " SubIndex: 0x" + QString::number(subIndex, 16);
+  else
+    title = QString::fromStdString(csName);
+
+  curve->setTitle(title);
 
   curves.append(QPair<shared_ptr<QwtPlotCurve>, shared_ptr<plugins::TimeSeries>>(curve, timeSeries));
 }
@@ -146,3 +157,39 @@ void QwtBaseModel::reset() {
   maxXValue = 50;
   replot();
 }
+
+void QwtBaseModel::showContextMenu(const QPoint &point) {
+  (void) point;
+  QMenu menu(plot);
+
+  QList<QAction *> actions;
+  for (QPair<shared_ptr<QwtPlotCurve>, shared_ptr<plugins::TimeSeries>> pair : curves) {
+    QAction *action = new QAction(this);
+
+    action->setText(pair.first->title().text());
+
+    actions.append(action);
+  }
+
+  for (PlotCreator::PlotCreatorData data : registeredCurves) {
+    QAction *action = new QAction();
+
+    QString title = QString::fromStdString(data.csName);
+    if (title.isEmpty())
+      title = "Node: " + QString::number(data.node) + " Index: 0x" + QString::number(data.index, 16) + " SubIndex: 0x" + QString::number(data.subIndex, 16);
+
+    action->setText(title);
+    action->setDisabled(true);
+
+    actions.append(action);
+  }
+
+  if (actions.isEmpty())
+    actions.append(new QAction("No Plot"));
+
+  menu.addActions(actions);
+  menu.exec();
+  actions.clear();
+}
+
+

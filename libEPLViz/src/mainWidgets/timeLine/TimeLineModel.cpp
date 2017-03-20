@@ -51,16 +51,16 @@ TimeLineModel::TimeLineModel(MainWindow *mw, QwtPlot *widget) : QwtBaseModel(mw,
   magnifier = std::make_unique<TimeLineMagnifier>(scrollbar, this, &maxXValue, widget->canvas());
   magnifier->setAxisEnabled(QwtPlot::xTop, true);
   magnifier->setAxisEnabled(QwtPlot::yLeft, false);
+  magnifier->setMouseButton(Qt::MouseButton::NoButton, Qt::KeyboardModifier::NoModifier);
 
   // Configure PlotPickers
   point = new QwtPlotPicker(plot->canvas());
   point->setAxis(QwtPlot::xTop, QwtPlot::yLeft);
   point->setStateMachine(new QwtPickerClickPointMachine());
   point->setMousePattern(QwtEventPattern::MousePatternCode::MouseSelect1, Qt::MouseButton::LeftButton);
-
   area = new QwtPlotPicker(plot->canvas());
   area->setAxis(QwtPlot::xTop, QwtPlot::yLeft);
-  area->setStateMachine(new QwtPickerDragRectMachine());
+  area->setStateMachine(new QwtPickerDragLineMachine());
   area->setMousePattern(QwtEventPattern::MousePatternCode::MouseSelect1, Qt::MouseButton::LeftButton);
 
   connect(point, SIGNAL(selected(QPointF)), this, SLOT(pointSelected(QPointF)));

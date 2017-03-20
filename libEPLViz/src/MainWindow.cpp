@@ -199,6 +199,7 @@ void MainWindow::createModels() {
   connect(this, SIGNAL(resetGUI()), timeLineModel, SLOT(reset()));
   connect(this, SIGNAL(resetGUI()), qwtPlot, SLOT(reset()));
 
+  getCycleSetter()->getWidget()->checkButtons();
 
   modelThread->start();
   connect(this, SIGNAL(close()), modelThread, SLOT(stop()));
@@ -213,6 +214,9 @@ void MainWindow::destroyModels() {
 void MainWindow::updateWidgets(ProtectedCycle &cycle) {
   ui->networkGraphContents->updateWidget(cycle);
   ui->eventViewer->updateEvents();
+
+  getCycleSetter()->getWidget()->setValue(BaseModel::getCurrentCycle()->getCycleNum());
+  getCycleSetter()->getWidget()->checkButtons();
 
   if (machineState == GUIState::RECORDING || machineState == GUIState::PLAYING || machineState == GUIState::PAUSED) {
     if (captureInstance->getState() == CaptureInstance::DONE) {
@@ -549,6 +553,9 @@ void MainWindow::config() {
   // Notify widgets that recording/playback has started
   emit recordingStarted(getCaptureInstance());
   CS->getWidget()->clearFilters();
+  maxCycle = 0;
+  getCycleSetter()->getWidget()->checkButtons();
+  getCycleSetter()->getWidget()->setValue(0);
 
   // Apply settings
   settingsWin->applyOn(captureInstance.get());

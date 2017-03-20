@@ -129,7 +129,7 @@ class MainWindow : public QMainWindow {
   EPL_DataCollect::CSViewFilters::Filter getFilter();
 
   uint32_t getMaxCycle() const noexcept { return maxCycle; }
-  void setMaxCycle(uint32_t c) noexcept { maxCycle = c; };
+  void setMaxCycle(uint32_t c) noexcept { maxCycle = c; }
 
  protected:
   void closeEvent(QCloseEvent *event) override;

@@ -42,6 +42,7 @@ class SettingsProfileItem final : public QListWidgetItem {
     std::string               pythonPluginsDir = "/opt";
     int                       currentNode;
     bool                      pauseWhilePlayingFile = true;
+    bool                      invertTimeLineZoom    = true;
     std::chrono::milliseconds guiThreadWaitTime     = std::chrono::milliseconds(100);
 
     QColor odHighlight = QColor("#14aaff");

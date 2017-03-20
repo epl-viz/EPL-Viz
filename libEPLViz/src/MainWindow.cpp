@@ -616,8 +616,8 @@ void MainWindow::setupPlot() {
     if (!showedPlotSetupMsg) {
       QMessageBox msg;
       msg.setText("A new Plot has been added.");
-      msg.setInformativeText("Rightclick on the Plot Widgets to see a list of all added plots");
-      msg.setDetailedText("This window won't be shown again");
+      msg.setInformativeText(
+            "Rightclick on the Plot Widgets to see a list of all added plots. This window won't be shown again.");
       msg.exec();
       showedPlotSetupMsg = true;
     }

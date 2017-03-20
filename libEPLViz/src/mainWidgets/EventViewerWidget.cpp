@@ -50,7 +50,7 @@ void EventViewerWidget::reset() {
 }
 
 void EventViewerWidget::jumpToEvent(QTreeWidgetItem *item) {
-  uint32_t cycle = std::atoi(item->text(4).toStdString().c_str());
+  uint32_t cycle = static_cast<uint32_t>(std::atoi(item->text(4).toStdString().c_str()));
 
   emit eventSelected(cycle);
 }

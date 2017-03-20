@@ -70,11 +70,11 @@ void PacketListModel::init() {
 }
 
 void PacketListModel::jumpToPacket(QModelIndex packet) {
-  uint32_t cycle = std::atoi(static_cast<PacketListItem *>(packet.internalPointer())
-                                   ->data(1, Qt::DisplayRole)
-                                   .toString()
-                                   .toStdString()
-                                   .c_str());
+  uint32_t cycle = static_cast<uint32_t>(std::atoi(static_cast<PacketListItem *>(packet.internalPointer())
+                                                         ->data(1, Qt::DisplayRole)
+                                                         .toString()
+                                                         .toStdString()
+                                                         .c_str()));
   emit packetSelected(cycle);
 }
 

@@ -37,8 +37,8 @@
 #include "ModelThread.hpp"
 #include "NodeWidget.hpp"
 #include "PacketHistoryModel.hpp"
+#include "PluginLogModel.hpp"
 #include "ProfileManager.hpp"
-#include "PythonLogModel.hpp"
 #include "QWTPlotModel.hpp"
 #include "SettingsWindow.hpp"
 #include "TimeLineModel.hpp"
@@ -129,7 +129,7 @@ class MainWindow : public QMainWindow {
   EPL_DataCollect::CSViewFilters::Filter getFilter();
 
   uint32_t getMaxCycle() const noexcept { return maxCycle; }
-  void setMaxCycle(uint32_t c) noexcept { maxCycle = c; };
+  void setMaxCycle(uint32_t c) noexcept { maxCycle = c; }
 
  protected:
   void closeEvent(QCloseEvent *event) override;

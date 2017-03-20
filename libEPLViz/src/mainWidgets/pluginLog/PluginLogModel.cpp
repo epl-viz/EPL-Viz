@@ -24,10 +24,37 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 /*!
- * \file PythonLogWidget.cpp
- * \todo Implement
+ * \file PluginLogModel.cpp
  */
+#include "PluginLogModel.hpp"
+#include "MainWindow.hpp"
+#include "EPLEnums.h"
 
-#include "PythonLogWidget.hpp"
+using namespace EPL_Viz;
+using namespace EPL_DataCollect;
 
-PythonLogWidget::PythonLogWidget(QWidget *parent) : QDockWidget(parent) {}
+PluginLogModel::PluginLogModel(MainWindow *window, QPlainTextEdit *widget) : BaseModel(window, widget) {
+  textBox = widget;
+}
+
+void PluginLogModel::init() {
+  log   = getMainWindow()->getCaptureInstance()->getEventLog();
+  appid = log->getAppID();
+  textBox->clear();
+}
+
+void PluginLogModel::update(ProtectedCycle &cycle) {
+  if (!log)
+    return;
+
+  std::vector<EventBase *> events = log->pollEvents(appid);
+
+  for (auto *event : events) {
+    // Only add text events
+    if (event->getType() == EvType::PLUGIN_EV_TEXT) {
+      textBox->appendPlainText(eventFormat.arg(QString::number(cycle->getCycleNum()),
+                                               QString::fromStdString(event->getPluginID()),
+                                               QString::fromStdString(event->getDescription())));
+    }
+  }
+}

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>413</width>
-    <height>44</height>
+    <width>616</width>
+    <height>38</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -16,13 +16,16 @@
     <verstretch>0</verstretch>
    </sizepolicy>
   </property>
-  <property name="mouseTracking">
-   <bool>true</bool>
-  </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
   <layout class="QHBoxLayout" name="horizontalLayout_2">
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
+    <number>0</number>
+   </property>
    <item>
     <spacer name="horizontalSpacer">
      <property name="orientation">
@@ -44,41 +47,162 @@
     </widget>
    </item>
    <item>
-    <widget class="QComboBox" name="filters"/>
-   </item>
-   <item>
-    <widget class="QLabel" name="label">
-     <property name="text">
-      <string>Cycle</string>
-     </property>
-    </widget>
-   </item>
-   <item>
-    <widget class="QSpinBox" name="counter">
+    <widget class="QComboBox" name="filters">
      <property name="sizePolicy">
-      <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+      <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
-     <property name="maximum">
-      <number>1000000</number>
+    </widget>
+   </item>
+   <item>
+    <widget class="Line" name="line">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
      </property>
     </widget>
    </item>
    <item>
-    <widget class="QToolButton" name="button">
+    <widget class="QToolButton" name="skipB">
+     <property name="toolTip">
+      <string>First Cycle</string>
+     </property>
      <property name="text">
       <string>...</string>
      </property>
      <property name="icon">
-      <iconset theme="dialog-ok">
-       <normaloff>.</normaloff>.</iconset>
+      <iconset theme="media-skip-backward"/>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>22</width>
+       <height>22</height>
+      </size>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QToolButton" name="seekB">
+     <property name="toolTip">
+      <string>Previous Cycle</string>
+     </property>
+     <property name="text">
+      <string>...</string>
+     </property>
+     <property name="icon">
+      <iconset theme="media-seek-backward"/>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>22</width>
+       <height>22</height>
+      </size>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="MouseTrackingWidget" name="widget" native="true">
+     <property name="mouseTracking">
+      <bool>true</bool>
+     </property>
+     <layout class="QHBoxLayout" name="horizontalLayout">
+      <property name="topMargin">
+       <number>0</number>
+      </property>
+      <property name="bottomMargin">
+       <number>0</number>
+      </property>
+      <item>
+       <widget class="QLabel" name="label">
+        <property name="text">
+         <string>Cycle</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QSpinBox" name="counter">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="maximum">
+         <number>1000000</number>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QToolButton" name="button">
+        <property name="toolTip">
+         <string>Change Cycle</string>
+        </property>
+        <property name="text">
+         <string>...</string>
+        </property>
+        <property name="icon">
+         <iconset theme="dialog-ok"/>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>22</width>
+          <height>22</height>
+         </size>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QToolButton" name="seekF">
+     <property name="toolTip">
+      <string>Next Cycle</string>
+     </property>
+     <property name="text">
+      <string>...</string>
+     </property>
+     <property name="icon">
+      <iconset theme="media-seek-forward"/>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>22</width>
+       <height>22</height>
+      </size>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QToolButton" name="skipF">
+     <property name="toolTip">
+      <string>Last Cycle</string>
+     </property>
+     <property name="text">
+      <string>...</string>
+     </property>
+     <property name="icon">
+      <iconset theme="media-skip-forward"/>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>22</width>
+       <height>22</height>
+      </size>
      </property>
     </widget>
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>MouseTrackingWidget</class>
+   <extends>QWidget</extends>
+   <header>CycleSetter.hpp</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections>
   <connection>
@@ -113,8 +237,76 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>seekB</sender>
+   <signal>clicked()</signal>
+   <receiver>CycleSetter</receiver>
+   <slot>seekB()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>304</x>
+     <y>21</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>292</x>
+     <y>21</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>seekF</sender>
+   <signal>clicked()</signal>
+   <receiver>CycleSetter</receiver>
+   <slot>seekF()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>525</x>
+     <y>21</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>292</x>
+     <y>21</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>skipB</sender>
+   <signal>clicked()</signal>
+   <receiver>CycleSetter</receiver>
+   <slot>skipB()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>266</x>
+     <y>21</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>292</x>
+     <y>21</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>skipF</sender>
+   <signal>clicked()</signal>
+   <receiver>CycleSetter</receiver>
+   <slot>skipF()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>563</x>
+     <y>21</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>292</x>
+     <y>21</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>changeCycle()</slot>
+  <slot>seekF()</slot>
+  <slot>seekB()</slot>
+  <slot>skipF()</slot>
+  <slot>skipB()</slot>
  </slots>
 </ui>

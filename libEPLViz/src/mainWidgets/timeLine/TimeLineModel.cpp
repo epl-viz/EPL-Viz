@@ -31,6 +31,7 @@
 #include "MainWindow.hpp"
 #include "PlotCreator.hpp"
 #include "QWTPlotWidget.hpp"
+#include "SettingsProfileItem.hpp"
 #include "TimeLineWidget.hpp"
 using namespace EPL_Viz;
 using namespace EPL_DataCollect;
@@ -52,6 +53,11 @@ TimeLineModel::TimeLineModel(MainWindow *mw, QwtPlot *widget) : QwtBaseModel(mw,
   magnifier->setAxisEnabled(QwtPlot::xTop, true);
   magnifier->setAxisEnabled(QwtPlot::yLeft, false);
   magnifier->setMouseButton(Qt::MouseButton::NoButton, Qt::KeyboardModifier::NoModifier);
+  defaultWheelFactor = magnifier->wheelFactor();
+  if (mw->getSettingsWin()->getConfig().invertTimeLineZoom)
+    magnifier->setWheelFactor(1 / defaultWheelFactor);
+  else
+    magnifier->setWheelFactor(defaultWheelFactor);
 
   // Configure PlotPickers
   point = new QwtPlotPicker(plot->canvas());
@@ -106,6 +112,11 @@ void TimeLineModel::init() {
 }
 
 void TimeLineModel::update(ProtectedCycle &cycle) {
+  if (window->getSettingsWin()->getConfig().invertTimeLineZoom)
+    magnifier->setWheelFactor(1 / defaultWheelFactor);
+  else
+    magnifier->setWheelFactor(defaultWheelFactor);
+
   // Change cyclemarker position
   uint32_t cycleNum = window->getCycleNum();
   if (cycleNum == UINT32_MAX)
@@ -176,4 +187,8 @@ void TimeLineModel::reset() {
   curCycleMarker.detach();
   newestCycleMarker.detach();
   QwtBaseModel::reset();
+  if (window->getSettingsWin()->getConfig().invertTimeLineZoom)
+    magnifier->setWheelFactor(1 / defaultWheelFactor);
+  else
+    magnifier->setWheelFactor(defaultWheelFactor);
 }

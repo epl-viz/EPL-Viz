@@ -46,6 +46,7 @@ class TimeLineModel : public QwtBaseModel {
 
  private:
   uint32_t                   appid;
+  double                     defaultWheelFactor;
   EPL_DataCollect::EventLog *log;
   QScrollBar *               scrollbar;
   QwtPlotPicker *            point;

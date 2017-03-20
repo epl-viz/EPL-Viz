@@ -60,5 +60,11 @@ class PacketListModel final : public TreeModelBase, public BaseModel {
 
  protected:
   void update(ProtectedCycle &cycle) override;
+
+ private slots:
+  void jumpToPacket(QModelIndex packet);
+
+ signals:
+  void packetSelected(uint32_t cycle);
 };
 }

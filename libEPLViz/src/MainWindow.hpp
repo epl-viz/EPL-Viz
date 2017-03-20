@@ -158,6 +158,7 @@ class MainWindow : public QMainWindow {
   void showAbout();
   void showLicense();
   void showStats();
+  void selectCycle(uint32_t cycle);
   void setupPlot();
 
 

@@ -48,8 +48,14 @@ class EventViewerWidget : public QTreeWidget {
 
   void updateEvents();
 
+ private slots:
+  void jumpToEvent(QTreeWidgetItem *item);
+
  public slots:
   void start(EPL_DataCollect::CaptureInstance *ci);
   void reset();
+
+ signals:
+  void eventSelected(uint32_t cycle);
 };
 }

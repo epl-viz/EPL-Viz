@@ -94,6 +94,11 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
   settingsWin = new SettingsWindow(this, profileManager);
   settingsWin->hide();
 
+  qRegisterMetaType<uint8_t>("uint8_t");
+  qRegisterMetaType<uint8_t>("uint16_t");
+  qRegisterMetaType<uint8_t>("uint32_t");
+  qRegisterMetaType<std::string>("std::string");
+
   ui->pluginSelectorWidget->setMainWindow(this);
 }
 
@@ -119,6 +124,10 @@ void MainWindow::createModels() {
   TimeLineModel *     timeLineModel      = new TimeLineModel(this, ui->qwtPlotTimeline);
   PacketListModel *   packetListModel    = new PacketListModel(this, ui->packetsView);
 
+  // save references to the timeline and plot model for the Plot setup Dialog
+  timeline = timeLineModel;
+  plot     = qwtPlot;
+
   // Connect required signals
   connect(this, SIGNAL(cycleChanged()), cyCoModel, SLOT(updateNext()));
   connect(this, SIGNAL(cycleChanged()), curODModel, SLOT(updateNext()));
@@ -139,11 +148,6 @@ void MainWindow::createModels() {
   connect(ui->scrBarTimeline, SIGNAL(valueChanged(int)), timeLineModel, SLOT(updateViewport(int)));
   connect(timeLineModel, SIGNAL(maxValueChanged(int, int)), ui->scrBarTimeline, SLOT(setRange(int, int)));
   connect(this, SIGNAL(cycleChanged()), timeLineModel, SLOT(replot()));
-  connect(timeLineModel,
-          SIGNAL(setNodes(uint8_t, uint16_t, uint16_t)),
-          qwtPlot,
-          SLOT(createPlot(uint8_t, uint16_t, uint16_t)));
-
   // Set timeline max value once, since we can't do this in the constructor of the model and want to do it before init
   emit timeLineModel->maxValueChanged(0, static_cast<int>(timeLineModel->maxXValue - timeLineModel->getViewportSize()));
 
@@ -154,14 +158,11 @@ void MainWindow::createModels() {
           curODModel,
           SLOT(showContextMenu(const QPoint &)));
   connect(curODModel,
-          SIGNAL(drawingPlot(uint8_t, uint16_t, uint16_t)),
-          timeLineModel,
-          SLOT(createPlot(uint8_t, uint16_t, uint16_t)));
-  connect(curODModel,
-          SIGNAL(drawingPlot(uint8_t, uint16_t, uint16_t)),
+          SIGNAL(drawingPlot(uint8_t, uint16_t, uint16_t, std::string)),
           qwtPlot,
-          SLOT(createPlot(uint8_t, uint16_t, uint16_t)));
-  connect(ui->actionSetup_Plot, SIGNAL(triggered()), timeLineModel, SLOT(setupPlotting()));
+          SLOT(createPlot(uint8_t, uint16_t, uint16_t, std::string)));
+  // Connect Setup Plot
+  connect(ui->actionSetup_Plot, SIGNAL(triggered()), this, SLOT(setupPlot()));
 
 
   // Append the nodes to a list for cleanup
@@ -599,6 +600,21 @@ bool MainWindow::curODWidgetUpdateData(QTreeWidgetItem *item, QString newData) {
   if (item->text(1).compare(newData))
     item->setText(1, newData);
   return true;
+}
+
+void MainWindow::setupPlot() {
+  PlotCreator::PlotCreatorData newPlot = PlotCreator::getNewPlot();
+  if (newPlot.isOK) {
+    if (newPlot.addToPlot && plot != nullptr)
+      plot->registerCurve(newPlot);
+    if (newPlot.addToTimeLine && timeline != nullptr)
+      timeline->registerCurve(newPlot);
+
+    QMessageBox msg;
+    msg.setText("A new Plot has been added.");
+    msg.setInformativeText("Rightclick on the Plot Widgets to see a list of all added plots");
+    msg.exec();
+  }
 }
 
 SettingsWindow *   MainWindow::getSettingsWin() { return settingsWin; }

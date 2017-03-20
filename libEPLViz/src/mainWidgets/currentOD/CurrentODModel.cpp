@@ -220,22 +220,8 @@ void CurrentODModel::showContextMenu(const QPoint &pos) {
   if (index.isValid()) {
     QAction *selectedAction = myMenu.exec(view->mapToGlobal(pos));
     if (selectedAction) {
-      // QModelIndex indexCol = createIndex(index.row(), 0, index.internalPointer());
-      // QVariant dataCol = data(indexCol, Qt::DisplayRole);
       CurODModelItem *item = static_cast<CurODModelItem *>(index.internalPointer());
-      emit            drawingPlot(node, item->getIndex(), item->getSubIndex());
-      // TODO get real data
-      /*
-      ->selectedItems();
-      bool     ok;
-      uint16_t i = static_cast<uint16_t>(tion.first()->text(0).remove(0, 2).toInt(&ok, 16));
-      if (!ok) {
-        qDebug() << "Could not get index from text in curodmodel";
-        return;
-      }
-
-      emit drawingPlot(node, index.data, 0);
-      */
+      emit            drawingPlot(node, item->getIndex(), item->getSubIndex(), "");
     }
   }
 }

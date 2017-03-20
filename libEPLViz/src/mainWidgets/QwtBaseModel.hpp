@@ -32,6 +32,7 @@
 #include "CSTimeSeriesPtr.hpp"
 #include "EPLVizDefines.hpp"
 #include "EventLog.hpp"
+#include "PlotCreator.hpp"
 #include "TimeSeries.hpp"
 #include <qwt_plot.h>
 #include <qwt_plot_curve.h>
@@ -58,25 +59,15 @@ class QwtBaseModel : public QObject, public BaseModel {
   void    init() override;
   QString getName() override { return "QwtBaseModel"; }
   double  getViewportSize();
+  void registerCurve(PlotCreator::PlotCreatorData data);
 
  protected:
-  MainWindow *                                          window;
-  QwtPlot *                                             plot;
-  std::shared_ptr<QwtPlotCurve>                         curve;
-  std::shared_ptr<EPL_DataCollect::plugins::TimeSeries> timeSeries;
-
-  bool setupUsed;
-
-  uint8_t     node;
-  uint16_t    index;
-  uint16_t    subindex;
-  bool        odTS;
-  std::string csName;
-
-  bool created = false;
+  MainWindow *window;
+  QwtPlot *   plot;
+  QList<QPair<std::shared_ptr<QwtPlotCurve>, std::shared_ptr<EPL_DataCollect::plugins::TimeSeries>>> curves;
+  QList<PlotCreator::PlotCreatorData> registeredCurves;
 
   virtual void update(ProtectedCycle &cycle) override;
-  void initTS();
 
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wunused-local-typedef"
@@ -98,11 +89,10 @@ class QwtBaseModel : public QObject, public BaseModel {
  signals:
   void requestRedraw();
   void maxValueChanged(int notUsed, int nMax);
-  void setNodes(uint8_t nodeID, uint16_t index, uint16_t subIndex);
+  void createPlotInConnected(uint8_t nodeID, uint16_t index, uint16_t subIndex, std::string cs);
 
  public slots:
-  virtual void createPlot(uint8_t nodeID, uint16_t index, uint16_t subIndex);
-  void setupPlotting();
+  virtual void createPlot(uint8_t nodeID, uint16_t index, uint16_t subIndex, std::string cs);
   void replot();
   void reset();
 };

@@ -46,6 +46,7 @@ QwtBaseModel::QwtBaseModel(MainWindow *win, QwtPlot *widget) : BaseModel(win, wi
   plot   = widget;
 
   widget->setContextMenuPolicy(Qt::CustomContextMenu);
+  widget->setAxisAutoScale(QwtPlot::yLeft, true);
   connect(widget, SIGNAL(customContextMenuRequested(const QPoint &)), this, SLOT(showContextMenu(const QPoint &)));
 
   reset();
@@ -133,14 +134,14 @@ void QwtBaseModel::createPlot(uint8_t nodeID, uint16_t mainIndex, uint16_t subIn
 
   shared_ptr<QwtPlotCurve> curve = make_shared<QwtPlotCurve>();
   curve->setXAxis(QwtPlot::xTop);
-  curve->attach(plot);
+  curve->setYAxis(QwtPlot::yLeft);
   QString title;
   if (csName.empty())
     title = "Node: " + QString::number(nodeID) + " Index: 0x" + QString::number(mainIndex, 16) + " SubIndex: 0x" + QString::number(subIndex, 16);
   else
     title = QString::fromStdString(csName);
-
   curve->setTitle(title);
+  curve->attach(plot);
 
   curves.append(QPair<shared_ptr<QwtPlotCurve>, shared_ptr<plugins::TimeSeries>>(curve, timeSeries));
 }

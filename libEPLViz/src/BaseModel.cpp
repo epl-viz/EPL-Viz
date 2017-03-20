@@ -58,7 +58,8 @@ void BaseModel::updateAll(MainWindow *mw, CaptureInstance *instance) {
   uint32_t oldCycleNum = cycle->getCycleNum();
 
   // Get Cycle
-  cycle.updateCycle(instance, mw->getCycleNum());
+  if (mw->getCycleNum() == UINT32_MAX || mw->getCycleNum() != oldCycleNum)
+    cycle.updateCycle(instance, mw->getCycleNum());
 
   uint32_t newCycleNum = cycle->getCycleNum();
 

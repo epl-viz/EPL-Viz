@@ -41,6 +41,12 @@ using namespace EPL_Viz;
 
 TimelineWidget::TimelineWidget(QWidget *parent) : QDockWidget(parent) { window = dynamic_cast<MainWindow *>(parent); }
 
+/**
+ * @brief TimelineWidget::event Overwriting event handling for type QEvent::Polish to connect cycle changing and plot
+ * area selection
+ * @param event The event
+ * @return see superclass
+ */
 bool TimelineWidget::event(QEvent *event) {
   // Only handling Polish events
   if (event->type() == QEvent::Polish) {

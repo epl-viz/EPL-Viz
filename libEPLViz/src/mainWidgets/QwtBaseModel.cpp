@@ -45,6 +45,13 @@ QwtBaseModel::QwtBaseModel(MainWindow *win, QwtPlot *widget) : BaseModel(win, wi
 
 void QwtBaseModel::init() { connect(this, SIGNAL(requestRedraw()), plot, SLOT(repaint())); }
 
+/**
+ * @brief QwtBaseModel::createPlot Slot for creating a plot with the given values
+ * Calls initTTS()
+ * @param nodeID ID of the node
+ * @param mainIndex Index of the OD Entry
+ * @param subIndex subindex to be plotted
+ */
 void QwtBaseModel::createPlot(uint8_t nodeID, uint16_t mainIndex, uint16_t subIndex) {
   if (setupUsed) {
     qDebug() << "Already created";
@@ -64,6 +71,11 @@ void QwtBaseModel::createPlot(uint8_t nodeID, uint16_t mainIndex, uint16_t subIn
   curve->attach(plot);
 }
 
+/**
+ * @brief QwtBaseModel::initTS Initializes the TimeSeries with the saved node, index and subindex or if odTS is set, a
+ * given CycleStorage
+ * Sets created to true.
+ */
 void QwtBaseModel::initTS() {
   qDebug() << "Initializing Timeseries with " + QString::number(node) + "/" + QString::number(index) + "/" +
                     QString::number(subindex);
@@ -92,7 +104,9 @@ double QwtBaseModel::getViewportSize() {
   return div.upperBound() - div.lowerBound();
 }
 
-
+/**
+ * @brief QwtBaseModel::replot Replots in the main Thread
+ */
 void QwtBaseModel::replot() {
   postToThread([&] { plot->replot(); }, plot);
   emit requestRedraw();
@@ -110,12 +124,13 @@ void QwtBaseModel::update(ProtectedCycle &cycle) {
 
     setupUsed = false;
   }
-  // Abort when the QWTPlot has not been created
+  // Abort when the QWTPlot has not been created. Still need to replot in case of Timeline
   if (!created) {
     replot();
     return;
   }
 
+  // Setting values in curve
   size_t oldDataCount = curve->dataSize();
   size_t newDataCount = timeSeries->tsData.size();
   qDebug() << "Updating BaseModel with timeseries data of the size " + QString::number(newDataCount) + "and " +
@@ -133,7 +148,11 @@ void QwtBaseModel::update(ProtectedCycle &cycle) {
 
   replot();
 }
-
+/**
+ * @brief QwtBaseModel::setupPlotting Slot for setting up a slot before the initializing stage
+ * Opens a Dialog and sets the values for later use. This should be used if the user wants to setup a plot before the
+ * backend has been started.
+ */
 void QwtBaseModel::setupPlotting() {
   PlotCreator::PlotCreatorData data = PlotCreator::getNewPlot();
   if (data.isOK) {

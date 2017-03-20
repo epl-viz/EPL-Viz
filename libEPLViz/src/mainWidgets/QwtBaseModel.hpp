@@ -81,8 +81,8 @@ class QwtBaseModel : public QObject, public BaseModel {
   template <typename F>
   static void postToThread(F &&fun, QObject *obj) {
     struct Event : public QEvent {
-      using Fun = typename std::decay<F>::type;
-      Fun funEl;
+      typedef typename std::decay<F>::type Fun;
+      Fun                                  funEl;
       Event(Fun &&funny) : QEvent(QEvent::None), funEl(std::move(funny)) {}
       Event(const Fun &funny) : QEvent(QEvent::None), funEl(funny) {}
       ~Event() { funEl(); }

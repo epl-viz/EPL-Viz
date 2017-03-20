@@ -31,6 +31,7 @@
 #include "CSViewFilters.hpp"
 #include "CycleCommandsModel.hpp"
 #include "DefaultFilter.hpp"
+#include "EPLVizDefines.hpp"
 #include "EPLVizEnum2Str.hpp"
 #include "InterfacePicker.hpp"
 #include "NetworkGraphModel.hpp"
@@ -55,6 +56,7 @@ void initResources() { Q_INIT_RESOURCE(resources); }
 void cleanupResources() { Q_CLEANUP_RESOURCE(resources); }
 
 using namespace EPL_Viz;
+using namespace EPL_Viz::constants;
 #include "ui_mainwindow.h"
 
 using namespace EPL_DataCollect;
@@ -358,13 +360,48 @@ void MainWindow::open() {
 
 void MainWindow::showAbout() {
   QMessageBox msgBox;
-  msgBox.setText("Created by EPL-Vizards. Copyright (c) 2017");
+
+  QString version = "Version ";
+  version += std::to_string(EPL_VIZ_VERSION_MAJOR).c_str();
+  version += ".";
+  version += std::to_string(EPL_VIZ_VERSION_MINOR).c_str();
+  version += ".";
+  version += std::to_string(EPL_VIZ_VERSION_SUBMINOR).c_str();
+  version += " +";
+  version += std::to_string(EPL_VIZ_GIT_LAST_TAG_DIFF).c_str();
+  version += " Commit ";
+  version += EPL_VIZ_VERSION_GIT;
+
+  msgBox.setText("Created by EPL-Vizards. Copyright (c) 2017\n\n" + version);
   msgBox.exec();
 }
 
 void MainWindow::showLicense() {
   QMessageBox msgBox;
-  msgBox.setText(""); // TODO: Add License
+  msgBox.setText("Copyright (c) 2017, EPL-Vizards\n"
+                 "All rights reserved.\n"
+                 "\n"
+                 "Redistribution and use in source and binary forms, with or without\n"
+                 "modification, are permitted provided that the following conditions are met:\n"
+                 "    * Redistributions of source code must retain the above copyright\n"
+                 "      notice, this list of conditions and the following disclaimer.\n"
+                 "    * Redistributions in binary form must reproduce the above copyright\n"
+                 "      notice, this list of conditions and the following disclaimer in the\n"
+                 "      documentation and/or other materials provided with the distribution.\n"
+                 "    * Neither the name of the EPL-Vizards nor the\n"
+                 "      names of its contributors may be used to endorse or promote products\n"
+                 "      derived from this software without specific prior written permission.\n"
+                 "\n"
+                 "THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS \"AS IS\" AND\n"
+                 "ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED\n"
+                 "WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE\n"
+                 "DISCLAIMED. IN NO EVENT SHALL EPL-Vizards BE LIABLE FOR ANY\n"
+                 "DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES\n"
+                 "(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;\n"
+                 "LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND\n"
+                 "ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT\n"
+                 "(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS\n"
+                 "SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.\n");
   msgBox.exec();
 }
 

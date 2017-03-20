@@ -34,12 +34,18 @@
            <property name="text">
             <string>New</string>
            </property>
+           <property name="icon">
+            <iconset theme="list-add"/>
+           </property>
           </widget>
          </item>
          <item>
           <widget class="QPushButton" name="profDelet">
            <property name="text">
             <string>Delete</string>
+           </property>
+           <property name="icon">
+            <iconset theme="list-remove"/>
            </property>
           </widget>
          </item>
@@ -587,12 +593,18 @@
                   <property name="text">
                    <string>Add</string>
                   </property>
+                  <property name="icon">
+                   <iconset theme="list-add"/>
+                  </property>
                  </widget>
                 </item>
                 <item>
                  <widget class="QPushButton" name="nodeRM">
                   <property name="text">
                    <string>Remove</string>
+                  </property>
+                  <property name="icon">
+                   <iconset theme="list-remove"/>
                   </property>
                  </widget>
                 </item>
@@ -740,12 +752,18 @@
            <property name="text">
             <string>Apply</string>
            </property>
+           <property name="icon">
+            <iconset theme="dialog-ok-apply"/>
+           </property>
           </widget>
          </item>
          <item>
           <widget class="QPushButton" name="reset">
            <property name="text">
             <string>Reset</string>
+           </property>
+           <property name="icon">
+            <iconset theme="dialog-cancel"/>
            </property>
           </widget>
          </item>

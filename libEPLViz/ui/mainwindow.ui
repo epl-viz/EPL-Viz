@@ -221,6 +221,8 @@
    <addaction name="separator"/>
    <addaction name="actionStatistics"/>
    <addaction name="actionFullscreen"/>
+   <addaction name="separator"/>
+   <addaction name="actionSetup_Plot"/>
   </widget>
   <widget class="TimelineWidget" name="dockTime">
    <property name="baseSize">
@@ -281,8 +283,7 @@ Clicking inside the Timeline will jump back to the selected cycle.</string>
   </widget>
   <widget class="TimelineWidget" name="dockPlugins">
    <property name="toolTip">
-    <string>Allows plugins to be enabled to run during a playback/recording.
-Plugins that are disabled during runtime will not be able to be activated again for the duration of the playback/recording!</string>
+    <string>Allows plugins to be enabled to run during a playback/recording.</string>
    </property>
    <property name="windowTitle">
     <string>Pl&amp;ugins</string>
@@ -535,7 +536,7 @@ Plugins that are disabled during runtime will not be able to be activated again 
   </action>
   <action name="actionSetup_Plot">
    <property name="icon">
-    <iconset theme="contact-new"/>
+    <iconset theme="list-add"/>
    </property>
    <property name="text">
     <string>S&amp;etup Plot</string>
@@ -735,22 +736,6 @@ Plugins that are disabled during runtime will not be able to be activated again 
     <hint type="destinationlabel">
      <x>767</x>
      <y>464</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>actionStop_Recording</sender>
-   <signal>triggered()</signal>
-   <receiver>pluginSelectorWidget</receiver>
-   <slot>disableWidget()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>-1</x>
-     <y>-1</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>138</x>
-     <y>268</y>
     </hint>
    </hints>
   </connection>

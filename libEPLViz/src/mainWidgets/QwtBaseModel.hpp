@@ -79,7 +79,7 @@ class QwtBaseModel : public QObject, public BaseModel {
   void initTS();
 
 #pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wcovered-switch-default"
+#pragma clang diagnostic ignored "-Wunused-local-typedef"
 
   template <typename F>
   static void postToThread(F &&fun, QObject *obj) {

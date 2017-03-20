@@ -46,13 +46,10 @@ PacketHistoryModel::PacketHistoryModel(MainWindow *window, QPlainTextEdit *widge
 void PacketHistoryModel::init() {
   selectedPacket = UINT64_MAX;
   currentCycle   = nullptr;
-  textBox->setPlainText("No Packets available yet.");
+  textBox->setPlainText("Please select a packet in the Cycle Commands widget.");
 }
 
-void PacketHistoryModel::update(ProtectedCycle &cycle) {
-  currentCycle = &cycle;
-  changePacket(UINT64_MAX);
-}
+void PacketHistoryModel::update(ProtectedCycle &cycle) { currentCycle = &cycle; }
 
 void PacketHistoryModel::changePacket(uint64_t packet) {
   // Prevent wrong updates

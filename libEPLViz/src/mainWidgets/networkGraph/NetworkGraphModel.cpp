@@ -57,12 +57,15 @@ void NetworkGraphModel::update(ProtectedCycle &cycle) {
       graph->queueNodeCreation(id);
     } else {
       // The node is added as widget and has to be updated
-      NodeWidget *nw = nodeMap->value(id);
-
+      NodeWidget *nw = s.value();
+      qDebug() << "Trying to update data of node " << QString::number(id);
       nw->updateData(id, cycle);
+      qDebug() << "Updated data of node " << QString::number(id);
 
       if (nw->isHidden())
-        nw->show();
+        graph->queueNodeReveal(id);
+
+      qDebug() << "Showed the node";
 
       // Reset highlighting
       s.value()->setHighlightingLevel(0);

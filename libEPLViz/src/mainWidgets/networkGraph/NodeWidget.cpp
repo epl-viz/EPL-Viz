@@ -187,7 +187,6 @@ void NodeWidget::updateData(uint8_t nID, ProtectedCycle &c) {
 
   updateIdentityInfo(node->getIdentity());
   updateStatus(node->getStatus());
-  updateStyleSheet();
 }
 
 void NodeWidget::setHighlightingLevel(int level) { highlightingLevel = level; }

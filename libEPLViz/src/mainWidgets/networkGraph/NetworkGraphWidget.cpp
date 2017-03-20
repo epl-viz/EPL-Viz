@@ -65,6 +65,13 @@ void NetworkGraphWidget::updateWidget(EPL_Viz::ProtectedCycle &c) {
     }
   }
 
+  // Show queued widgets
+  for (auto nID : showQueue) {
+    nodeMap[nID]->show();
+  }
+
+  showQueue.clear();
+
   // Create queued widgets
   for (auto nID : createQueue) {
     EPL_DataCollect::Node *n = c->getNode(nID);
@@ -89,9 +96,17 @@ void NetworkGraphWidget::updateWidget(EPL_Viz::ProtectedCycle &c) {
   }
 
   createQueue.clear();
+
+  // Update the stylesheet of all widgets
+  for (auto *nw : nodeMap.values()) {
+    if (!nw->isHidden())
+      nw->updateStyleSheet();
+  }
 }
 
 void NetworkGraphWidget::queueNodeCreation(uint8_t node) { createQueue.append(node); }
+void NetworkGraphWidget::queueNodeReveal(uint8_t node) { showQueue.append(node); }
+
 
 void NetworkGraphWidget::selectNode(uint8_t node) {
   // Check if there is currently a selected node

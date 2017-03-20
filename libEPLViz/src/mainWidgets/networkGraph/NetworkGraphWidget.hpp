@@ -50,6 +50,8 @@ class NetworkGraphWidget : public QWidget {
   QMap<uint8_t, NodeWidget *> nodeMap;
 
   QList<uint8_t> createQueue;
+  QList<uint8_t> showQueue;
+
 
  public:
   NetworkGraphWidget(QWidget *parent = nullptr);
@@ -61,6 +63,7 @@ class NetworkGraphWidget : public QWidget {
 
  private:
   void queueNodeCreation(uint8_t id);
+  void queueNodeReveal(uint8_t id);
 
   friend EPL_Viz::NetworkGraphModel;
 

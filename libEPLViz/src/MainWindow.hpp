@@ -150,6 +150,7 @@ class MainWindow : public QMainWindow {
   void showAbout();
   void showLicense();
   void showStats();
+  void setupPlot();
 
 
  signals:

@@ -36,6 +36,7 @@
 using namespace EPL_Viz;
 using namespace EPL_DataCollect;
 using namespace EPL_DataCollect::constants;
+using namespace std;
 
 QwtBaseModel::QwtBaseModel(MainWindow *win, QwtPlot *widget) : BaseModel(win, widget) {
   window = win;
@@ -43,60 +44,13 @@ QwtBaseModel::QwtBaseModel(MainWindow *win, QwtPlot *widget) : BaseModel(win, wi
   reset();
 }
 
-void QwtBaseModel::init() { connect(this, SIGNAL(requestRedraw()), plot, SLOT(repaint())); }
+void QwtBaseModel::init() {
+  connect(this, SIGNAL(requestRedraw()), plot, SLOT(repaint()));
 
-/**
- * @brief QwtBaseModel::createPlot Slot for creating a plot with the given values
- * Calls initTTS()
- * @param nodeID ID of the node
- * @param mainIndex Index of the OD Entry
- * @param subIndex subindex to be plotted
- */
-void QwtBaseModel::createPlot(uint8_t nodeID, uint16_t mainIndex, uint16_t subIndex) {
-  if (setupUsed) {
-    qDebug() << "Already created";
-    return;
+  for (PlotCreator::PlotCreatorData data : registeredCurves) {
+    createPlot(data.node, data.index, data.subIndex, data.csName);
   }
-  curve = std::make_shared<QwtPlotCurve>();
-  if (subIndex > UINT8_MAX)
-    subIndex = 0;
-
-  node     = nodeID;
-  index    = mainIndex;
-  subindex = subIndex;
-
-  initTS();
-
-  curve->setXAxis(QwtPlot::xTop);
-  curve->attach(plot);
-}
-
-/**
- * @brief QwtBaseModel::initTS Initializes the TimeSeries with the saved node, index and subindex or if odTS is set, a
- * given CycleStorage
- * Sets created to true.
- */
-void QwtBaseModel::initTS() {
-  qDebug() << "Initializing Timeseries with " + QString::number(node) + "/" + QString::number(index) + "/" +
-                    QString::number(subindex);
-  auto              ptr = window->getCaptureInstance()->getCycleContainer()->pollCyclePTR();
-  CycleStorageBase *cs;
-
-  if (window->getCaptureInstance()->getState() != CaptureInstance::CIstate::RUNNING) {
-    cs = window->getCaptureInstance()->getStartCycle()->getCycleStorage(EPL_DC_PLUGIN_TIME_SERIES_CSID);
-  } else {
-    cs = ptr->getCycleStorage(EPL_DC_PLUGIN_TIME_SERIES_CSID);
-  }
-
-  auto *tsp = dynamic_cast<plugins::CSTimeSeriesPtr *>(cs);
-  if (odTS) {
-    qDebug() << "Setting timeseries hardcoded";
-    timeSeries = std::make_shared<plugins::TimeSeries>(node, index, subindex);
-  } else
-    timeSeries = std::make_shared<plugins::TimeSeries>(node, csName);
-  tsp->addTS(timeSeries);
-
-  created = true;
+  registeredCurves.clear();
 }
 
 double QwtBaseModel::getViewportSize() {
@@ -114,63 +68,85 @@ void QwtBaseModel::replot() {
 
 void QwtBaseModel::update(ProtectedCycle &cycle) {
   (void)cycle;
-  // If setup widget has been used used, initialize timeseries now
-  if (setupUsed) {
-    initTS();
 
-    curve = std::make_shared<QwtPlotCurve>();
-    curve->setXAxis(QwtPlot::xTop);
+  // Setting values in curves
+  for (QPair<shared_ptr<QwtPlotCurve>, shared_ptr<plugins::TimeSeries>> pair : curves) {
+    shared_ptr<QwtPlotCurve> curve = pair.first;
+    shared_ptr<plugins::TimeSeries> timeSeries = pair.second;
+
+    size_t oldDataCount = curve->dataSize();
+    size_t newDataCount = timeSeries->tsData.size();
+    qDebug() << "Updating BaseModel with timeseries data of the size " + QString::number(newDataCount) + "and " +
+                      QString::number(oldDataCount) + " old values";
+    if (oldDataCount == newDataCount)
+      return;
+
+    std::vector<double> xValues(newDataCount);
+    for (size_t i = 0; i < newDataCount; ++i) {
+      xValues[i] = static_cast<double>(i);
+    }
+
+    curve->setSamples(xValues.data(), timeSeries->tsData.data(), static_cast<int>(newDataCount));
     curve->attach(plot);
-
-    setupUsed = false;
   }
-  // Abort when the QWTPlot has not been created. Still need to replot in case of Timeline
-  if (!created) {
-    replot();
-    return;
-  }
-
-  // Setting values in curve
-  size_t oldDataCount = curve->dataSize();
-  size_t newDataCount = timeSeries->tsData.size();
-  qDebug() << "Updating BaseModel with timeseries data of the size " + QString::number(newDataCount) + "and " +
-                    QString::number(oldDataCount) + " old values";
-  if (oldDataCount == newDataCount)
-    return;
-
-  std::vector<double> xValues(newDataCount);
-  for (size_t i = 0; i < newDataCount; ++i) {
-    xValues[i] = static_cast<double>(i);
-  }
-
-  curve->setSamples(xValues.data(), timeSeries->tsData.data(), static_cast<int>(newDataCount));
-  curve->attach(plot);
 
   replot();
 }
-/**
- * @brief QwtBaseModel::setupPlotting Slot for setting up a slot before the initializing stage
- * Opens a Dialog and sets the values for later use. This should be used if the user wants to setup a plot before the
- * backend has been started.
- */
-void QwtBaseModel::setupPlotting() {
-  PlotCreator::PlotCreatorData data = PlotCreator::getNewPlot();
-  if (data.isOK) {
-    node     = data.node;
-    index    = data.index;
-    subindex = data.subIndex;
-    odTS     = data.defaultODPlot;
-    csName   = data.csName;
 
-    setupUsed = true;
-  }
+void QwtBaseModel::registerCurve(PlotCreator::PlotCreatorData data) {
+  registeredCurves.append(data);
 }
 
+
+/**
+ * @brief QwtBaseModel::createPlot Slot for creating a plot with the given values
+ * Wether the CycleStorage name is empty or not, decides if the indices or the string should be used.
+ * Calls initTTS()
+ * @param nodeID ID of the node
+ * @param mainIndex Index of the OD Entry
+ * @param subIndex subindex to be plotted
+ * @param csName CycleStorage name, ignored if empty
+ */
+void QwtBaseModel::createPlot(uint8_t nodeID, uint16_t mainIndex, uint16_t subIndex, std::string csName) {
+  if (subIndex > UINT8_MAX)
+    subIndex = 0;
+
+  auto              ptr = window->getCaptureInstance()->getCycleContainer()->pollCyclePTR();
+  CycleStorageBase *cs;
+
+  if (window->getCaptureInstance()->getState() != CaptureInstance::CIstate::RUNNING) {
+    cs = window->getCaptureInstance()->getStartCycle()->getCycleStorage(EPL_DC_PLUGIN_TIME_SERIES_CSID);
+  } else {
+    cs = ptr->getCycleStorage(EPL_DC_PLUGIN_TIME_SERIES_CSID);
+  }
+
+  auto *tsp = dynamic_cast<plugins::CSTimeSeriesPtr *>(cs);
+
+  shared_ptr<plugins::TimeSeries> timeSeries;
+  if (csName.empty())
+    timeSeries = make_shared<plugins::TimeSeries>(nodeID, mainIndex, subIndex);
+  else
+    timeSeries = make_shared<plugins::TimeSeries>(nodeID, csName);
+  tsp->addTS(timeSeries);
+
+  shared_ptr<QwtPlotCurve> curve = make_shared<QwtPlotCurve>();
+  curve->setXAxis(QwtPlot::xTop);
+  curve->attach(plot);
+
+  curves.append(QPair<shared_ptr<QwtPlotCurve>, shared_ptr<plugins::TimeSeries>>(curve, timeSeries));
+}
+
+
 void QwtBaseModel::reset() {
-  if (curve != nullptr)
-    curve->detach();
-  setupUsed = false;
-  odTS      = false;
+  for (QPair<shared_ptr<QwtPlotCurve>, shared_ptr<plugins::TimeSeries>> pair : curves) {
+    pair.first->detach();
+  }
+
+  curves.clear();
+  registeredCurves.clear();
+
   maxXValue = 50;
   replot();
 }
+
+

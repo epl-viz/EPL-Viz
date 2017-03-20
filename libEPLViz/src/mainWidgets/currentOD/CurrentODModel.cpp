@@ -221,7 +221,7 @@ void CurrentODModel::showContextMenu(const QPoint &pos) {
     QAction *selectedAction = myMenu.exec(view->mapToGlobal(pos));
     if (selectedAction) {
       CurODModelItem *item = static_cast<CurODModelItem *>(index.internalPointer());
-      emit            drawingPlot(node, item->getIndex(), item->getSubIndex());
+      emit            drawingPlot(node, item->getIndex(), item->getSubIndex(), "");
     }
   }
 }

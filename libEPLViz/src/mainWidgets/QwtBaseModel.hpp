@@ -32,8 +32,8 @@
 #include "CSTimeSeriesPtr.hpp"
 #include "EPLVizDefines.hpp"
 #include "EventLog.hpp"
-#include "TimeSeries.hpp"
 #include "PlotCreator.hpp"
+#include "TimeSeries.hpp"
 #include <qwt_plot.h>
 #include <qwt_plot_curve.h>
 
@@ -62,10 +62,10 @@ class QwtBaseModel : public QObject, public BaseModel {
   void registerCurve(PlotCreator::PlotCreatorData data);
 
  protected:
-  MainWindow *                                          window;
-  QwtPlot *                                             plot;
-  QList<QPair<std::shared_ptr<QwtPlotCurve>, std::shared_ptr<EPL_DataCollect::plugins::TimeSeries>>>  curves;
-  QList<PlotCreator::PlotCreatorData>                   registeredCurves;
+  MainWindow *window;
+  QwtPlot *   plot;
+  QList<QPair<std::shared_ptr<QwtPlotCurve>, std::shared_ptr<EPL_DataCollect::plugins::TimeSeries>>> curves;
+  QList<PlotCreator::PlotCreatorData> registeredCurves;
 
   virtual void update(ProtectedCycle &cycle) override;
 

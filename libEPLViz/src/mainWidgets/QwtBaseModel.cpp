@@ -71,7 +71,7 @@ void QwtBaseModel::update(ProtectedCycle &cycle) {
 
   // Setting values in curves
   for (QPair<shared_ptr<QwtPlotCurve>, shared_ptr<plugins::TimeSeries>> pair : curves) {
-    shared_ptr<QwtPlotCurve> curve = pair.first;
+    shared_ptr<QwtPlotCurve>        curve      = pair.first;
     shared_ptr<plugins::TimeSeries> timeSeries = pair.second;
 
     size_t oldDataCount = curve->dataSize();
@@ -93,9 +93,7 @@ void QwtBaseModel::update(ProtectedCycle &cycle) {
   replot();
 }
 
-void QwtBaseModel::registerCurve(PlotCreator::PlotCreatorData data) {
-  registeredCurves.append(data);
-}
+void QwtBaseModel::registerCurve(PlotCreator::PlotCreatorData data) { registeredCurves.append(data); }
 
 
 /**
@@ -148,5 +146,3 @@ void QwtBaseModel::reset() {
   maxXValue = 50;
   replot();
 }
-
-

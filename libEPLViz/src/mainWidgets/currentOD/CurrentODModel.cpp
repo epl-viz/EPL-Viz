@@ -40,7 +40,7 @@ using namespace std;
 
 CurrentODModel::CurrentODModel(MainWindow *window, QTreeView *widget)
     : TreeModelBase(widget), BaseModel(window, widget) {
-  root   = new TreeModelRoot({{Qt::DisplayRole, {QVariant("Index"), QVariant("Value")}}});
+  root   = new TreeModelRoot({{Qt::DisplayRole, {QVariant("Index"), QVariant("Value"), QVariant("Name")}}});
   filter = new ODFilter(this, window);
   filter->setSourceModel(this);
   widget->setModel(filter);

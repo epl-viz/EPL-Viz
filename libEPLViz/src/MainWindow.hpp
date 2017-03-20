@@ -149,6 +149,7 @@ class MainWindow : public QMainWindow {
   void updateWidgets(ProtectedCycle &cycle);
   void showAbout();
   void showLicense();
+  void showStats();
 
 
  signals:

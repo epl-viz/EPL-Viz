@@ -63,7 +63,8 @@ QVariant CurODModelItem::dataDisplay(int column) {
   if (!n)
     return QVariant("[INVALID NODE]");
 
-  ODEntry *entry = n->getOD()->getEntry(index);
+  ODEntry *           entry = n->getOD()->getEntry(index);
+  ODEntryDescription *desc  = n->getOD()->getODDesc()->getEntry(index);
 
   if (!entry) {
     QString error = "[INVALID OD INDEX ";
@@ -95,6 +96,19 @@ QVariant CurODModelItem::dataDisplay(int column) {
         return QVariant(entry->toString(static_cast<uint8_t>(subIndex)).c_str());
       }
 
+    case 2: // NAME
+      if (!desc)
+        return QVariant("<No Data>");
+
+      if (subIndex == UINT16_MAX) { // This is a root OD item
+        return QVariant(desc->name.c_str());
+      } else { // This is a subIndex item
+        if (subIndex >= desc->subEntries.size())
+          return QVariant("<No Data>");
+
+        return QVariant(desc->subEntries[subIndex].name.c_str());
+      }
+
     default: return QVariant("[INVALID COLUMN]");
   }
 }
@@ -103,6 +117,7 @@ QVariant CurODModelItem::dataTooltip(int column) {
   switch (column) {
     case 0: return QVariant("The OD index");
     case 1: return QVariant("The Value");
+    case 2: return QVariant("The Name of the OD index from the XDD");
     default: return QVariant();
   }
 }

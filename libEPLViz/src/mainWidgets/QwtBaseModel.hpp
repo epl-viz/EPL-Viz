@@ -78,6 +78,9 @@ class QwtBaseModel : public QObject, public BaseModel {
   virtual void update(ProtectedCycle &cycle) override;
   void initTS();
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wcovered-switch-default"
+
   template <typename F>
   static void postToThread(F &&fun, QObject *obj) {
     struct Event : public QEvent {
@@ -89,6 +92,8 @@ class QwtBaseModel : public QObject, public BaseModel {
     };
     QCoreApplication::postEvent(obj, new Event(std::forward<F>(fun)));
   }
+
+#pragma clang diagnostic push
 
  signals:
   void requestRedraw();

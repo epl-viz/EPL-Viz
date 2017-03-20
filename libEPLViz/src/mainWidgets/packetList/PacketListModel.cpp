@@ -34,7 +34,7 @@ using namespace EPL_Viz;
 using namespace EPL_DataCollect;
 using namespace std;
 
-PacketListModel::PacketListModel(MainWindow *window, QTreeView *treeWidget)
+PacketListModel::PacketListModel(MainWindow *window, QAbstractItemView *treeWidget)
     : TreeModelBase(treeWidget), BaseModel(window, treeWidget), mw(window) {
   root = new TreeModelRoot({{Qt::DisplayRole,
                              {QVariant("Number"),

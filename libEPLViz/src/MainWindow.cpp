@@ -405,6 +405,8 @@ void MainWindow::showLicense() {
   msgBox.exec();
 }
 
+void MainWindow::showStats() {}
+
 void MainWindow::startRecording() {
   qDebug() << "start Recording";
   changeState(GUIState::RECORDING);

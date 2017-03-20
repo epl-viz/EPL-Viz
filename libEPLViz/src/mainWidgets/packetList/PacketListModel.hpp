@@ -50,7 +50,7 @@ class PacketListModel final : public TreeModelBase, public BaseModel {
   size_t currentPacketListSize = 0;
 
  public:
-  PacketListModel(MainWindow *window, QTreeView *treeWidget);
+  PacketListModel(MainWindow *window, QAbstractItemView *treeWidget);
   PacketListModel()  = delete;
   ~PacketListModel() = default;
 

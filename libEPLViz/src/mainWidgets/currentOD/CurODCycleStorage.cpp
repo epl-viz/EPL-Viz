@@ -63,6 +63,9 @@ QVariant CurODCycleStorage::dataDisplay(int column) {
 
       return QVariant(str.empty() ? "<NO VALUE>" : str.c_str());
 
+    case 2: // NAME
+      return QVariant();
+
     default: return QVariant("[INVALID COLUMN]");
   }
 }

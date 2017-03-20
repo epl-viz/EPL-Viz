@@ -118,9 +118,6 @@ void MainWindow::createModels() {
   TimeLineModel *     timeLineModel      = new TimeLineModel(this, ui->qwtPlotTimeline);
   PacketListModel *   packetListModel    = new PacketListModel(this, ui->packetsView);
 
-  // Connect required signals
-  connect(this, SIGNAL(cycleChanged()), cyCoModel, SLOT(updateNext()));
-  connect(this, SIGNAL(cycleChanged()), curODModel, SLOT(updateNext()));
 
   connect(ui->cycleCommandsView,
           SIGNAL(activated(QModelIndex)),

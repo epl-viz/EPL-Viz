@@ -64,7 +64,6 @@ class CurrentODModel final : public TreeModelBase, public BaseModel {
   void update(ProtectedCycle &cycle) override;
 
  public slots:
-  void updateNext();
   void changeNode(uint8_t);
   void showContextMenu(const QPoint &);
  signals:

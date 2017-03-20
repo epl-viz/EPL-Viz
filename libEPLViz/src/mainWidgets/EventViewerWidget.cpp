@@ -32,11 +32,9 @@
 using namespace EPL_Viz;
 using namespace EPL_DataCollect;
 
-EventViewerWidget::EventViewerWidget(QWidget *parent) : QTreeWidget(parent) { setEnabled(false); }
+EventViewerWidget::EventViewerWidget(QWidget *parent) : QTreeWidget(parent) {}
 
 void EventViewerWidget::reset() {
-  setEnabled(false);
-
   // Delete all entries
   while (topLevelItemCount() > 0) {
     delete takeTopLevelItem(0);
@@ -49,7 +47,6 @@ void EventViewerWidget::reset() {
 void EventViewerWidget::start(CaptureInstance *ci) {
   log   = ci->getEventLog();
   appID = log->getAppID();
-  setEnabled(true); // Turn on the widgets
 }
 
 void EventViewerWidget::updateEvents() {

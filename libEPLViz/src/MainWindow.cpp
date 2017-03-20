@@ -408,8 +408,12 @@ void MainWindow::showLicense() {
 void MainWindow::showStats() {}
 
 void MainWindow::startRecording() {
-  qDebug() << "start Recording";
-  changeState(GUIState::RECORDING);
+  openInterfacePicker();
+
+  if (!interface.isEmpty()) {
+    qDebug() << "start Recording";
+    changeState(GUIState::RECORDING);
+  }
 }
 
 void MainWindow::stopRecording() {
@@ -422,7 +426,6 @@ void MainWindow::changeState(GUIState nState) {
         "Change state from " + EPLVizEnum2Str::toStr(machineState) + " to " + EPLVizEnum2Str::toStr(nState);
   qDebug() << QString::fromStdString(test);
 
-  std::string interfaceName;
   // switch with new state
   int backendState;
   switch (nState) {
@@ -481,12 +484,7 @@ void MainWindow::changeState(GUIState nState) {
 
       config();
 
-      if (interface.isEmpty())
-        interfaceName = nullptr;
-      else
-        interfaceName = interface.toStdString();
-
-      backendState = captureInstance->startRecording(interfaceName);
+      backendState = captureInstance->startRecording(interface.toStdString());
 
       // Handle Backend errors
       if (backendState != 0) {

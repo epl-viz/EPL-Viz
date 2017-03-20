@@ -221,6 +221,8 @@
    <addaction name="separator"/>
    <addaction name="actionStatistics"/>
    <addaction name="actionFullscreen"/>
+   <addaction name="separator"/>
+   <addaction name="actionSetup_Plot"/>
   </widget>
   <widget class="TimelineWidget" name="dockTime">
    <property name="baseSize">
@@ -534,7 +536,7 @@ Clicking inside the Timeline will jump back to the selected cycle.</string>
   </action>
   <action name="actionSetup_Plot">
    <property name="icon">
-    <iconset theme="contact-new"/>
+    <iconset theme="list-add"/>
    </property>
    <property name="text">
     <string>S&amp;etup Plot</string>

@@ -32,15 +32,18 @@
 #include <QDebug>
 #include <QEvent>
 #include <QLineEdit>
-#include <qwt_event_pattern.h>
-#include <qwt_picker_machine.h>
-#include <qwt_plot.h>
 #include <stdio.h>
 
 using namespace EPL_Viz;
 
 TimelineWidget::TimelineWidget(QWidget *parent) : QDockWidget(parent) { window = dynamic_cast<MainWindow *>(parent); }
 
+/**
+ * @brief TimelineWidget::event Overwriting event handling for type QEvent::Polish to connect cycle changing and plot
+ * area selection
+ * @param event The event
+ * @return see superclass
+ */
 bool TimelineWidget::event(QEvent *event) {
   // Only handling Polish events
   if (event->type() == QEvent::Polish) {
@@ -52,40 +55,9 @@ bool TimelineWidget::event(QEvent *event) {
       plot->enableAxis(QwtPlot::yLeft, true);
       plot->enableAxis(QwtPlot::xBottom, false);
       plot->enableAxis(QwtPlot::xTop, true);
-
-      // Configure PlotPicker
-      point = new QwtPlotPicker(plot->canvas());
-      point->setStateMachine(new QwtPickerClickPointMachine());
-      point->setMousePattern(QwtEventPattern::MousePatternCode::MouseSelect1, Qt::MouseButton::LeftButton);
-
-      area = new QwtPlotPicker(plot->canvas());
-      area->setStateMachine(new QwtPickerDragRectMachine());
-      area->setMousePattern(QwtEventPattern::MousePatternCode::MouseSelect1, Qt::MouseButton::LeftButton);
-
-      connect(point, SIGNAL(selected(QPointF)), this, SLOT(pointSelected(QPointF)));
-      connect(area, SIGNAL(selected(QRectF)), window->findChild<QWTPlotWidget *>("tabGraph"), SLOT(changeArea(QRectF)));
-
     } else {
       qDebug() << "PlotTimeline not found, this is ok";
     }
   }
   return QWidget::event(event);
-}
-
-void TimelineWidget::wheelEvent(QWheelEvent *event) {
-  /*
-  QPoint numDegrees = event->angleDelta() / 8;
-
-  if (!numDegrees.isNull()) {
-    emit zoom(numDegrees);
-  }
-
-  event->accept();
-  */
-  event->ignore();
-}
-
-void TimelineWidget::pointSelected(const QPointF &pa) {
-  qDebug() << "Clicked on Timeline at point " << pa.x();
-  window->changeCycle(static_cast<uint32_t>(pa.x()));
 }

@@ -20,6 +20,9 @@ class PlotCreator : public QDialog {
     uint16_t index    = UINT16_MAX;
     uint8_t  subIndex = UINT8_MAX;
 
+    bool addToTimeLine = true;
+    bool addToPlot     = true;
+
     std::string csName = "";
   };
 

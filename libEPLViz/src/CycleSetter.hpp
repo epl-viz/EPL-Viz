@@ -19,8 +19,7 @@ class CycleSetter : public QWidget {
  private:
   Ui::CycleSetter *                     ui;
   MainWindow *                          mw;
-  bool                                  pointerInWindow = false;
-  std::chrono::system_clock::time_point leaveTP         = std::chrono::system_clock::now();
+  std::chrono::system_clock::time_point leaveTP = std::chrono::system_clock::now();
 
  public:
   explicit CycleSetter(QWidget *parent, MainWindow *main);
@@ -33,12 +32,32 @@ class CycleSetter : public QWidget {
   void setFilters(std::vector<EPL_DataCollect::CSViewFilters::Filter> &f);
   std::string getCurrentFilter();
 
+  void resetTimer() { leaveTP = std::chrono::system_clock::now(); }
+  void checkButtons();
+
+ public slots:
+  void changeCycle();
+  void seekF();
+  void seekB();
+  void skipF();
+  void skipB();
+};
+
+class MouseTrackingWidget : public QWidget {
+  Q_OBJECT
+ private:
+  bool         pointerInWindow = false;
+  CycleSetter *parent          = nullptr;
+
  protected:
   void enterEvent(QEvent *) override;
   void leaveEvent(QEvent *) override;
 
- public slots:
-  void changeCycle();
+ public:
+  explicit MouseTrackingWidget(QWidget *p) : QWidget(p), parent(dynamic_cast<CycleSetter *>(p)) {}
+  ~MouseTrackingWidget() = default;
+
+  bool isMouseInWidget() const noexcept { return pointerInWindow; }
 };
 
 

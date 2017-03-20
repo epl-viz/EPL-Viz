@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>417</width>
-    <height>347</height>
+    <height>367</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -16,6 +16,12 @@
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
     <widget class="QToolBox" name="toolBox">
+     <property name="frameShape">
+      <enum>QFrame::NoFrame</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Raised</enum>
+     </property>
      <property name="currentIndex">
       <number>0</number>
      </property>
@@ -25,7 +31,7 @@
         <x>0</x>
         <y>0</y>
         <width>405</width>
-        <height>219</height>
+        <height>162</height>
        </rect>
       </property>
       <attribute name="label">
@@ -100,7 +106,7 @@
         <x>0</x>
         <y>0</y>
         <width>405</width>
-        <height>219</height>
+        <height>153</height>
        </rect>
       </property>
       <attribute name="label">
@@ -141,6 +147,39 @@
     </widget>
    </item>
    <item>
+    <widget class="Line" name="line">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QWidget" name="widget" native="true">
+     <layout class="QVBoxLayout" name="verticalLayout_4">
+      <item>
+       <widget class="QCheckBox" name="AddToTimeLine">
+        <property name="text">
+         <string>Add Plot to Timeline</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QCheckBox" name="AddToPlot">
+        <property name="text">
+         <string>Add Plot to central plot widget</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
     <widget class="QWidget" name="widget_2" native="true">
      <layout class="QHBoxLayout" name="horizontalLayout_2">
       <item>
@@ -148,12 +187,18 @@
         <property name="text">
          <string>OK</string>
         </property>
+        <property name="icon">
+         <iconset theme="dialog-ok-apply"/>
+        </property>
        </widget>
       </item>
       <item>
        <widget class="QPushButton" name="cancelBTN">
         <property name="text">
          <string>Cancel</string>
+        </property>
+        <property name="icon">
+         <iconset theme="dialog-cancel"/>
         </property>
        </widget>
       </item>

@@ -15,6 +15,8 @@ PlotCreator::PlotCreatorData PlotCreator::getData() {
   d.node          = static_cast<uint8_t>(ui->node->value());
   d.index         = static_cast<uint16_t>(ui->index->value());
   d.subIndex      = static_cast<uint8_t>(ui->subIndex->value());
+  d.addToTimeLine = ui->AddToTimeLine->checkState() == Qt::Checked;
+  d.addToPlot     = ui->AddToPlot->checkState() == Qt::Checked;
 
   return d;
 }

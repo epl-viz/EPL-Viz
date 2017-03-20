@@ -41,6 +41,7 @@
 #include "PythonLogModel.hpp"
 #include "QWTPlotModel.hpp"
 #include "SettingsWindow.hpp"
+#include "TimeLineModel.hpp"
 #include <QAction>
 #include <QDebug>
 #include <QErrorMessage>
@@ -65,19 +66,24 @@ class MainWindow : public QMainWindow {
   typedef std::unique_ptr<EPL_DataCollect::CaptureInstance> CI_PTR;
 
  private:
+  uint32_t                          maxCycle = 0;
+  uint32_t                          curCycle = UINT32_MAX;
   Ui::MainWindow *                  ui;
   CycleSetterAction *               CS;
   ProfileManager *                  profileManager;
   GUIState                          machineState;
-  uint32_t                          curCycle = UINT32_MAX;
   ModelThread *                     modelThread;
   QLinkedList<EPL_Viz::BaseModel *> models;
   CI_PTR                            captureInstance;
   QString                           interface;
   std::string                       file;
   SettingsWindow *                  settingsWin;
+  bool                              showedPlotSetupMsg;
 
   QString saveFile;
+
+  TimeLineModel *timeline;
+  QWTPlotModel * plot;
 
   std::vector<EPL_DataCollect::CSViewFilters::Filter> filters;
 
@@ -122,6 +128,9 @@ class MainWindow : public QMainWindow {
   void setFilters(std::vector<EPL_DataCollect::CSViewFilters::Filter> f);
   EPL_DataCollect::CSViewFilters::Filter getFilter();
 
+  uint32_t getMaxCycle() const noexcept { return maxCycle; }
+  void setMaxCycle(uint32_t c) noexcept { maxCycle = c; };
+
  protected:
   void closeEvent(QCloseEvent *event) override;
 
@@ -132,7 +141,6 @@ class MainWindow : public QMainWindow {
   void config();
   bool curODWidgetUpdateData(QTreeWidgetItem *item, QString newData);
   void odDescrWidgetUpdateData(QTreeWidgetItem *item, QVector<QString> newData);
-
 
  public slots:
   void setFullscreen(bool makeFullscreen);
@@ -150,6 +158,7 @@ class MainWindow : public QMainWindow {
   void showAbout();
   void showLicense();
   void showStats();
+  void setupPlot();
 
 
  signals:

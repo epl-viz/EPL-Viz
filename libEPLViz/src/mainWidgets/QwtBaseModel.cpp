@@ -30,43 +30,90 @@
 #include "QwtBaseModel.hpp"
 #include "MainWindow.hpp"
 #include "PlotCreator.hpp"
-#include "QPointF"
-#include "QtDebug"
+
+#include <QAction>
+#include <QMenu>
+#include <QPointF>
+#include <QtDebug>
 
 using namespace EPL_Viz;
 using namespace EPL_DataCollect;
 using namespace EPL_DataCollect::constants;
+using namespace std;
 
 QwtBaseModel::QwtBaseModel(MainWindow *win, QwtPlot *widget) : BaseModel(win, widget) {
   window = win;
   plot   = widget;
+
+  widget->setContextMenuPolicy(Qt::CustomContextMenu);
+  widget->setAxisAutoScale(QwtPlot::yLeft, true);
+  connect(widget, SIGNAL(customContextMenuRequested(const QPoint &)), this, SLOT(showContextMenu(const QPoint &)));
+
   reset();
 }
 
-void QwtBaseModel::init() { connect(this, SIGNAL(requestRedraw()), plot, SLOT(repaint())); }
-
-void QwtBaseModel::createPlot(uint8_t nodeID, uint16_t mainIndex, uint16_t subIndex) {
-  if (setupUsed) {
-    qDebug() << "Already created";
-    return;
+void QwtBaseModel::init() {
+  for (PlotCreator::PlotCreatorData data : registeredCurves) {
+    createPlot(data.node, data.index, data.subIndex, data.csName);
   }
-  curve = std::make_shared<QwtPlotCurve>();
+  registeredCurves.clear();
+}
+
+double QwtBaseModel::getViewportSize() {
+  QwtScaleDiv div = plot->axisScaleDiv(QwtPlot::xTop);
+  return div.upperBound() - div.lowerBound();
+}
+
+/**
+ * @brief QwtBaseModel::replot Replots in the main Thread
+ */
+void QwtBaseModel::replot() {
+  postToThread([&] { plot->replot(); }, plot);
+}
+
+void QwtBaseModel::update(ProtectedCycle &cycle) {
+  (void)cycle;
+
+  // Setting values in curves
+  for (QPair<shared_ptr<QwtPlotCurve>, shared_ptr<plugins::TimeSeries>> pair : curves) {
+    shared_ptr<QwtPlotCurve>        curve      = pair.first;
+    shared_ptr<plugins::TimeSeries> timeSeries = pair.second;
+
+    size_t oldDataCount = curve->dataSize();
+    size_t newDataCount = timeSeries->tsData.size();
+    qDebug() << "Updating BaseModel with timeseries data of the size " + QString::number(newDataCount) + "and " +
+                      QString::number(oldDataCount) + " old values";
+    if (oldDataCount == newDataCount)
+      return;
+
+    std::vector<double> xValues(newDataCount);
+    for (size_t i = 0; i < newDataCount; ++i) {
+      xValues[i] = static_cast<double>(i);
+    }
+
+    curve->setSamples(xValues.data(), timeSeries->tsData.data(), static_cast<int>(newDataCount));
+    curve->attach(plot);
+  }
+
+  replot();
+}
+
+void QwtBaseModel::registerCurve(PlotCreator::PlotCreatorData data) { registeredCurves.append(data); }
+
+
+/**
+ * @brief QwtBaseModel::createPlot Slot for creating a plot with the given values
+ * Wether the CycleStorage name is empty or not, decides if the indices or the string should be used.
+ * Calls initTTS()
+ * @param nodeID ID of the node
+ * @param mainIndex Index of the OD Entry
+ * @param subIndex subindex to be plotted
+ * @param csName CycleStorage name, ignored if empty
+ */
+void QwtBaseModel::createPlot(uint8_t nodeID, uint16_t mainIndex, uint16_t subIndex, std::string csName) {
   if (subIndex > UINT8_MAX)
     subIndex = 0;
 
-  node     = nodeID;
-  index    = mainIndex;
-  subindex = subIndex;
-
-  initTS();
-
-  curve->setXAxis(QwtPlot::xTop);
-  curve->attach(plot);
-}
-
-void QwtBaseModel::initTS() {
-  qDebug() << "Initializing Timeseries with " + QString::number(node) + "/" + QString::number(index) + "/" +
-                    QString::number(subindex);
   auto              ptr = window->getCaptureInstance()->getCycleContainer()->pollCyclePTR();
   CycleStorageBase *cs;
 
@@ -77,81 +124,73 @@ void QwtBaseModel::initTS() {
   }
 
   auto *tsp = dynamic_cast<plugins::CSTimeSeriesPtr *>(cs);
-  if (odTS) {
-    qDebug() << "Setting timeseries hardcoded";
-    timeSeries = std::make_shared<plugins::TimeSeries>(node, index, subindex);
-  } else
-    timeSeries = std::make_shared<plugins::TimeSeries>(node, csName);
+
+  shared_ptr<plugins::TimeSeries> timeSeries;
+  if (csName.empty())
+    timeSeries = make_shared<plugins::TimeSeries>(nodeID, mainIndex, subIndex);
+  else
+    timeSeries = make_shared<plugins::TimeSeries>(nodeID, csName);
   tsp->addTS(timeSeries);
 
-  created = true;
-}
-
-double QwtBaseModel::getViewportSize() {
-  QwtScaleDiv div = plot->axisScaleDiv(QwtPlot::xTop);
-  return div.upperBound() - div.lowerBound();
-}
-
-
-void QwtBaseModel::replot() {
-  postToThread([&] { plot->replot(); }, plot);
-  emit requestRedraw();
-}
-
-void QwtBaseModel::update(ProtectedCycle &cycle) {
-  (void)cycle;
-  // If setup widget has been used used, initialize timeseries now
-  if (setupUsed) {
-    initTS();
-
-    curve = std::make_shared<QwtPlotCurve>();
-    curve->setXAxis(QwtPlot::xTop);
-    curve->attach(plot);
-
-    setupUsed = false;
-  }
-  // Abort when the QWTPlot has not been created
-  if (!created) {
-    replot();
-    return;
-  }
-
-  size_t oldDataCount = curve->dataSize();
-  size_t newDataCount = timeSeries->tsData.size();
-  qDebug() << "Updating BaseModel with timeseries data of the size " + QString::number(newDataCount) + "and " +
-                    QString::number(oldDataCount) + " old values";
-  if (oldDataCount == newDataCount)
-    return;
-
-  std::vector<double> xValues(newDataCount);
-  for (size_t i = 0; i < newDataCount; ++i) {
-    xValues[i] = static_cast<double>(i);
-  }
-
-  curve->setSamples(xValues.data(), timeSeries->tsData.data(), static_cast<int>(newDataCount));
+  shared_ptr<QwtPlotCurve> curve = make_shared<QwtPlotCurve>();
+  curve->setXAxis(QwtPlot::xTop);
+  curve->setYAxis(QwtPlot::yLeft);
+  QString title;
+  if (csName.empty())
+    title = "Node: " + QString::number(nodeID) + " Index: 0x" + QString::number(mainIndex, 16) + " SubIndex: 0x" +
+            QString::number(subIndex, 16);
+  else
+    title = QString::fromStdString(csName);
+  curve->setTitle(title);
   curve->attach(plot);
 
-  replot();
+  curves.append(QPair<shared_ptr<QwtPlotCurve>, shared_ptr<plugins::TimeSeries>>(curve, timeSeries));
 }
 
-void QwtBaseModel::setupPlotting() {
-  PlotCreator::PlotCreatorData data = PlotCreator::getNewPlot();
-  if (data.isOK) {
-    node     = data.node;
-    index    = data.index;
-    subindex = data.subIndex;
-    odTS     = data.defaultODPlot;
-    csName   = data.csName;
-
-    setupUsed = true;
-  }
-}
 
 void QwtBaseModel::reset() {
-  if (curve != nullptr)
-    curve->detach();
-  setupUsed = false;
-  odTS      = false;
+  for (QPair<shared_ptr<QwtPlotCurve>, shared_ptr<plugins::TimeSeries>> pair : curves) {
+    pair.first->detach();
+  }
+
+  curves.clear();
+  registeredCurves.clear();
+
   maxXValue = 50;
   replot();
+}
+
+void QwtBaseModel::showContextMenu(const QPoint &point) {
+  (void)point;
+  QMenu menu(plot);
+
+  QList<QAction *> actions;
+  for (QPair<shared_ptr<QwtPlotCurve>, shared_ptr<plugins::TimeSeries>> pair : curves) {
+    QAction *action = new QAction(this);
+
+    action->setText(pair.first->title().text());
+
+    actions.append(action);
+  }
+
+  for (PlotCreator::PlotCreatorData data : registeredCurves) {
+    QAction *action = new QAction();
+
+    QString title = QString::fromStdString(data.csName);
+    if (title.isEmpty())
+      title = "Node: " + QString::number(data.node) + " Index: 0x" + QString::number(data.index, 16) + " SubIndex: 0x" +
+              QString::number(data.subIndex, 16);
+
+    action->setText(title);
+    action->setDisabled(true);
+
+    actions.append(action);
+  }
+
+  if (actions.isEmpty())
+    actions.append(new QAction("No Plot"));
+
+  menu.addActions(actions);
+  menu.exec();
+  actions.clear();
 }

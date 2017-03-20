@@ -41,6 +41,7 @@
 #include "PythonLogModel.hpp"
 #include "QWTPlotModel.hpp"
 #include "SettingsWindow.hpp"
+#include "TimeLineModel.hpp"
 #include <QAction>
 #include <QDebug>
 #include <QErrorMessage>
@@ -78,6 +79,9 @@ class MainWindow : public QMainWindow {
   SettingsWindow *                  settingsWin;
 
   QString saveFile;
+
+  TimeLineModel *timeline;
+  QWTPlotModel * plot;
 
   std::vector<EPL_DataCollect::CSViewFilters::Filter> filters;
 
@@ -132,7 +136,6 @@ class MainWindow : public QMainWindow {
   void config();
   bool curODWidgetUpdateData(QTreeWidgetItem *item, QString newData);
   void odDescrWidgetUpdateData(QTreeWidgetItem *item, QVector<QString> newData);
-
 
  public slots:
   void setFullscreen(bool makeFullscreen);

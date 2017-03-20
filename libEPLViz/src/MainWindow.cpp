@@ -124,6 +124,10 @@ void MainWindow::createModels() {
   TimeLineModel *     timeLineModel      = new TimeLineModel(this, ui->qwtPlotTimeline);
   PacketListModel *   packetListModel    = new PacketListModel(this, ui->packetsView);
 
+  // save references to the timeline and plot model for the Plot setup Dialog
+  timeline = timeLineModel;
+  plot     = qwtPlot;
+
   // Connect required signals
   connect(this, SIGNAL(cycleChanged()), cyCoModel, SLOT(updateNext()));
   connect(this, SIGNAL(cycleChanged()), curODModel, SLOT(updateNext()));
@@ -592,8 +596,18 @@ bool MainWindow::curODWidgetUpdateData(QTreeWidgetItem *item, QString newData) {
 }
 
 void MainWindow::setupPlot() {
-  // TODO
-  return;
+  PlotCreator::PlotCreatorData newPlot = PlotCreator::getNewPlot();
+  if (newPlot.isOK) {
+    if (newPlot.addToPlot && plot != nullptr)
+      plot->registerCurve(newPlot);
+    if (newPlot.addToTimeLine && timeline != nullptr)
+      timeline->registerCurve(newPlot);
+
+    QMessageBox msg;
+    msg.setText("A new Plot has been added.");
+    msg.setInformativeText("Rightclick on the Plot Widgets to see a list of all added plots");
+    msg.exec();
+  }
 }
 
 SettingsWindow *   MainWindow::getSettingsWin() { return settingsWin; }

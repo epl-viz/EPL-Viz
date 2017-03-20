@@ -22,7 +22,7 @@ void Statistics::refresh() {
   ui->List->addTopLevelItem(new QTreeWidgetItem({"Packet count", std::to_string(stats.packetCount).c_str()}));
   ui->List->addTopLevelItem(new QTreeWidgetItem({"Events count", std::to_string(stats.eventsCount).c_str()}));
   ui->List->addTopLevelItem(
-        new QTreeWidgetItem({"Total time", (std::to_string(stats.totalTime.count()) + "ns").c_str()}));
+        new QTreeWidgetItem({"Total time", (std::to_string(stats.totalTime.count()) + " ns").c_str()}));
   ui->List->addTopLevelItem(new QTreeWidgetItem(
-        {"Average Cycle time", (std::to_string(stats.totalTime.count() / stats.cycleCount) + "ns").c_str()}));
+        {"Average Cycle time", (std::to_string(stats.totalTime.count() / stats.cycleCount) + " ns").c_str()}));
 }

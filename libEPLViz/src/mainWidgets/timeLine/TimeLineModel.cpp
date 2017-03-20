@@ -175,6 +175,5 @@ void TimeLineModel::reset() {
   markers.clear();
   curCycleMarker.detach();
   newestCycleMarker.detach();
-  magnifier = std::make_unique<TimeLineMagnifier>(scrollbar, this, &maxXValue, plot->canvas());
   QwtBaseModel::reset();
 }

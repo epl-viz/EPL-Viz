@@ -75,7 +75,7 @@ void QwtBaseModel::update(ProtectedCycle &cycle) {
   (void)cycle;
 
   // Setting values in curves
-  for (QPair<shared_ptr<QwtPlotCurve>, shared_ptr<plugins::TimeSeries>> pair : curves) {
+  for (QPair<shared_ptr<QwtPlotCurve>, shared_ptr<plugins::TimeSeries>> pair : curves.values()) {
     shared_ptr<QwtPlotCurve>        curve      = pair.first;
     shared_ptr<plugins::TimeSeries> timeSeries = pair.second;
 
@@ -92,10 +92,31 @@ void QwtBaseModel::update(ProtectedCycle &cycle) {
     }
 
     curve->setSamples(xValues.data(), timeSeries->tsData.data(), static_cast<int>(newDataCount));
-    curve->attach(plot);
   }
 
   replot();
+}
+
+/**
+ * @brief createStringIdentifier Returns an identifier for the index;
+ * @param node node
+ * @param index index
+ * @param subIndex subindex
+ * @param cs cycle storage name if needed.
+ * @return Identifier
+ */
+QString QwtBaseModel::createStringIdentifier(uint8_t node, uint16_t index, uint16_t subIndex, std::string cs) {
+  QString title;
+  if (cs.empty())
+    title = "Node: " + QString::number(node) + " Index: 0x" + QString::number(index, 16) + " SubIndex: 0x" +
+            QString::number(subIndex, 16);
+  else
+    title = QString::fromStdString(cs);
+  return title;
+}
+
+QString QwtBaseModel::createStringIdentifier(const PlotCreator::PlotCreatorData &data) {
+  return createStringIdentifier(data.node, data.index, data.subIndex, data.csName);
 }
 
 void QwtBaseModel::registerCurve(PlotCreator::PlotCreatorData data) { registeredCurves.append(data); }
@@ -135,21 +156,18 @@ void QwtBaseModel::createPlot(uint8_t nodeID, uint16_t mainIndex, uint16_t subIn
   shared_ptr<QwtPlotCurve> curve = make_shared<QwtPlotCurve>();
   curve->setXAxis(QwtPlot::xTop);
   curve->setYAxis(QwtPlot::yLeft);
-  QString title;
-  if (csName.empty())
-    title = "Node: " + QString::number(nodeID) + " Index: 0x" + QString::number(mainIndex, 16) + " SubIndex: 0x" +
-            QString::number(subIndex, 16);
-  else
-    title = QString::fromStdString(csName);
+
+  QString title = createStringIdentifier(nodeID, mainIndex, subIndex, csName);
+
   curve->setTitle(title);
   curve->attach(plot);
 
-  curves.append(QPair<shared_ptr<QwtPlotCurve>, shared_ptr<plugins::TimeSeries>>(curve, timeSeries));
+  curves.insert(title, QPair<shared_ptr<QwtPlotCurve>, shared_ptr<plugins::TimeSeries>>(curve, timeSeries));
 }
 
 
 void QwtBaseModel::reset() {
-  for (QPair<shared_ptr<QwtPlotCurve>, shared_ptr<plugins::TimeSeries>> pair : curves) {
+  for (QPair<shared_ptr<QwtPlotCurve>, shared_ptr<plugins::TimeSeries>> pair : curves.values()) {
     pair.first->detach();
   }
 
@@ -165,10 +183,15 @@ void QwtBaseModel::showContextMenu(const QPoint &point) {
   QMenu menu(plot);
 
   QList<QAction *> actions;
-  for (QPair<shared_ptr<QwtPlotCurve>, shared_ptr<plugins::TimeSeries>> pair : curves) {
+  for (QPair<shared_ptr<QwtPlotCurve>, shared_ptr<plugins::TimeSeries>> pair : curves.values()) {
     QAction *action = new QAction(this);
 
     action->setText(pair.first->title().text());
+    action->setData(pair.first->title().text());
+    action->setCheckable(true);
+
+    action->setChecked(plot->itemList(QwtPlotItem::Rtti_PlotCurve).contains(pair.first.get()));
+    connect(action, SIGNAL(changed()), this, SLOT(enablePlot()));
 
     actions.append(action);
   }
@@ -176,21 +199,39 @@ void QwtBaseModel::showContextMenu(const QPoint &point) {
   for (PlotCreator::PlotCreatorData data : registeredCurves) {
     QAction *action = new QAction();
 
-    QString title = QString::fromStdString(data.csName);
-    if (title.isEmpty())
-      title = "Node: " + QString::number(data.node) + " Index: 0x" + QString::number(data.index, 16) + " SubIndex: 0x" +
-              QString::number(data.subIndex, 16);
-
-    action->setText(title);
+    action->setText(createStringIdentifier(data));
+    action->setData(createStringIdentifier(data));
     action->setDisabled(true);
+    action->setCheckable(true);
+    action->setChecked(true);
+    connect(action, SIGNAL(changed()), this, SLOT(enablePlot()));
 
     actions.append(action);
   }
 
-  if (actions.isEmpty())
-    actions.append(new QAction("No Plot"));
+  if (actions.isEmpty()) {
+    QAction *action = new QAction("No Plot");
+    action->setEnabled(false);
+    actions.append(action);
+  }
 
   menu.addActions(actions);
   menu.exec();
   actions.clear();
+}
+
+void QwtBaseModel::enablePlot() {
+  QAction *act = dynamic_cast<QAction *>(sender());
+
+  shared_ptr<QwtPlotCurve> curve = curves.value(act->data().toString()).first;
+  if (curve == nullptr) {
+    return;
+  }
+
+  bool checked = act->isChecked();
+  if (checked)
+    curve->attach(plot);
+  else
+    curve->detach();
+  replot();
 }

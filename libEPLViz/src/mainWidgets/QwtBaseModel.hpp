@@ -63,10 +63,13 @@ class QwtBaseModel : public QObject, public BaseModel {
  protected:
   MainWindow *window;
   QwtPlot *   plot;
-  QList<QPair<std::shared_ptr<QwtPlotCurve>, std::shared_ptr<EPL_DataCollect::plugins::TimeSeries>>> curves;
+  QMap<QString, QPair<std::shared_ptr<QwtPlotCurve>, std::shared_ptr<EPL_DataCollect::plugins::TimeSeries>>> curves;
   QList<PlotCreator::PlotCreatorData> registeredCurves;
 
   virtual void update(ProtectedCycle &cycle) override;
+  QString createStringIdentifier(uint8_t node, uint16_t index, uint16_t subIndex, std::string cs);
+  QString createStringIdentifier(const PlotCreator::PlotCreatorData &data);
+
 
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wunused-local-typedef"
@@ -95,5 +98,6 @@ class QwtBaseModel : public QObject, public BaseModel {
   void replot();
   void reset();
   void showContextMenu(const QPoint &point);
+  void enablePlot();
 };
 }

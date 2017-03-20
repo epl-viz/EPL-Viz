@@ -99,6 +99,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
   qRegisterMetaType<uint8_t>("uint32_t");
   qRegisterMetaType<std::string>("std::string");
 
+  showedPlotSetupMsg = false;
+
   ui->pluginSelectorWidget->setMainWindow(this);
 }
 
@@ -597,16 +599,21 @@ bool MainWindow::curODWidgetUpdateData(QTreeWidgetItem *item, QString newData) {
 
 void MainWindow::setupPlot() {
   PlotCreator::PlotCreatorData newPlot = PlotCreator::getNewPlot();
+
   if (newPlot.isOK) {
     if (newPlot.addToPlot && plot != nullptr)
       plot->registerCurve(newPlot);
     if (newPlot.addToTimeLine && timeline != nullptr)
       timeline->registerCurve(newPlot);
 
-    QMessageBox msg;
-    msg.setText("A new Plot has been added.");
-    msg.setInformativeText("Rightclick on the Plot Widgets to see a list of all added plots");
-    msg.exec();
+    if (!showedPlotSetupMsg) {
+      QMessageBox msg;
+      msg.setText("A new Plot has been added.");
+      msg.setInformativeText("Rightclick on the Plot Widgets to see a list of all added plots");
+      msg.setDetailedText("This window won't be shown again");
+      msg.exec();
+      showedPlotSetupMsg = true;
+    }
   }
 }
 

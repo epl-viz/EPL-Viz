@@ -77,6 +77,7 @@ class MainWindow : public QMainWindow {
   QString                           interface;
   std::string                       file;
   SettingsWindow *                  settingsWin;
+  bool                              showedPlotSetupMsg;
 
   QString saveFile;
 

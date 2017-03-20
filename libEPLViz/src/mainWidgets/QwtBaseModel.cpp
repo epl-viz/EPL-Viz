@@ -31,10 +31,10 @@
 #include "MainWindow.hpp"
 #include "PlotCreator.hpp"
 
+#include <QAction>
+#include <QMenu>
 #include <QPointF>
 #include <QtDebug>
-#include <QMenu>
-#include <QAction>
 
 using namespace EPL_Viz;
 using namespace EPL_DataCollect;
@@ -137,7 +137,8 @@ void QwtBaseModel::createPlot(uint8_t nodeID, uint16_t mainIndex, uint16_t subIn
   curve->setYAxis(QwtPlot::yLeft);
   QString title;
   if (csName.empty())
-    title = "Node: " + QString::number(nodeID) + " Index: 0x" + QString::number(mainIndex, 16) + " SubIndex: 0x" + QString::number(subIndex, 16);
+    title = "Node: " + QString::number(nodeID) + " Index: 0x" + QString::number(mainIndex, 16) + " SubIndex: 0x" +
+            QString::number(subIndex, 16);
   else
     title = QString::fromStdString(csName);
   curve->setTitle(title);
@@ -160,7 +161,7 @@ void QwtBaseModel::reset() {
 }
 
 void QwtBaseModel::showContextMenu(const QPoint &point) {
-  (void) point;
+  (void)point;
   QMenu menu(plot);
 
   QList<QAction *> actions;
@@ -177,7 +178,8 @@ void QwtBaseModel::showContextMenu(const QPoint &point) {
 
     QString title = QString::fromStdString(data.csName);
     if (title.isEmpty())
-      title = "Node: " + QString::number(data.node) + " Index: 0x" + QString::number(data.index, 16) + " SubIndex: 0x" + QString::number(data.subIndex, 16);
+      title = "Node: " + QString::number(data.node) + " Index: 0x" + QString::number(data.index, 16) + " SubIndex: 0x" +
+              QString::number(data.subIndex, 16);
 
     action->setText(title);
     action->setDisabled(true);
@@ -192,5 +194,3 @@ void QwtBaseModel::showContextMenu(const QPoint &point) {
   menu.exec();
   actions.clear();
 }
-
-

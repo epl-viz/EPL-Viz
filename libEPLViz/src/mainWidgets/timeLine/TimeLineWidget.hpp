@@ -30,7 +30,6 @@
 #pragma once
 
 #include <QDockWidget>
-#include <qwt_plot_picker.h>
 
 namespace EPL_Viz {
 
@@ -40,18 +39,10 @@ class TimelineWidget : public QDockWidget {
   Q_OBJECT
 
  private:
-  QwtPlotPicker *point;
-  QwtPlotPicker *area;
-  MainWindow *   window;
-
- protected:
-  void wheelEvent(QWheelEvent *event) override;
+  MainWindow *window;
 
  public:
   TimelineWidget(QWidget *parent = nullptr);
   bool event(QEvent *event) override;
-
- public slots:
-  void pointSelected(const QPointF &pa);
 };
 }

@@ -30,6 +30,7 @@
 #include "TimeLineModel.hpp"
 #include "MainWindow.hpp"
 #include "PlotCreator.hpp"
+#include "QWTPlotWidget.hpp"
 #include "TimeLineWidget.hpp"
 using namespace EPL_Viz;
 using namespace EPL_DataCollect;
@@ -50,9 +51,33 @@ TimeLineModel::TimeLineModel(MainWindow *mw, QwtPlot *widget) : QwtBaseModel(mw,
   magnifier = std::make_unique<TimeLineMagnifier>(scrollbar, this, &maxXValue, widget->canvas());
   magnifier->setAxisEnabled(QwtPlot::xTop, true);
   magnifier->setAxisEnabled(QwtPlot::yLeft, false);
+
+  // Configure PlotPicker
+  point = new QwtPlotPicker(plot->canvas());
+  point->setAxis(QwtPlot::xTop, QwtPlot::yLeft);
+  point->setStateMachine(new QwtPickerClickPointMachine());
+  point->setMousePattern(QwtEventPattern::MousePatternCode::MouseSelect1, Qt::MouseButton::LeftButton);
+
+  area = new QwtPlotPicker(plot->canvas());
+  point->setAxis(QwtPlot::xTop, QwtPlot::yLeft);
+  area->setStateMachine(new QwtPickerDragRectMachine());
+  area->setMousePattern(QwtEventPattern::MousePatternCode::MouseSelect1, Qt::MouseButton::LeftButton);
+
+  connect(point, SIGNAL(selected(QPointF)), this, SLOT(pointSelected(QPointF)));
+  connect(area, SIGNAL(selected(QRectF)), window->findChild<QWTPlotWidget *>("tabGraph"), SLOT(changeArea(QRectF)));
 }
 
-TimeLineModel::~TimeLineModel() {}
+TimeLineModel::~TimeLineModel() {
+  delete point;
+  delete area;
+}
+
+void TimeLineModel::pointSelected(const QPointF &pa) {
+  uint32_t x = static_cast<uint32_t>(std::round(pa.x()));
+  window->changeCycle(x);
+  curCycleMarker.setXValue(x);
+  replot();
+}
 
 void TimeLineModel::init() {
   markers.clear();

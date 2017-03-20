@@ -34,8 +34,9 @@
 #include "QwtBaseModel.hpp"
 #include "TimeLineMagnifier.hpp"
 
+#include <qwt_picker_machine.h>
 #include <qwt_plot_marker.h>
-#include <qwt_plot_panner.h>
+#include <qwt_plot_picker.h>
 
 #include <QScrollBar>
 
@@ -47,6 +48,9 @@ class TimeLineModel : public QwtBaseModel {
   uint32_t                   appid;
   EPL_DataCollect::EventLog *log;
   QScrollBar *               scrollbar;
+  QwtPlotPicker *            point;
+  QwtPlotPicker *            area;
+
 
   QList<std::shared_ptr<QwtPlotMarker>> markers;
   QwtPlotMarker                         curCycleMarker;
@@ -66,9 +70,9 @@ class TimeLineModel : public QwtBaseModel {
  protected:
   void update(ProtectedCycle &cycle) override;
 
-
  public slots:
   void updateViewport(int value);
   void reset();
+  void pointSelected(const QPointF &pa);
 };
 }

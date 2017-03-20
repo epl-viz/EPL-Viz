@@ -164,9 +164,6 @@ void TimeLineModel::updateViewport(int value) {
   double min = static_cast<double>(value);
   double max = min + viewportSize;
 
-
-  qDebug() << "Changing viewport to [" + QString::number(min) + "-" + QString::number(max) + "]";
-
   plot->setAxisScale(QwtPlot::xTop, min, max);
   replot();
 }

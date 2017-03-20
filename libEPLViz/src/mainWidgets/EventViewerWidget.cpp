@@ -28,15 +28,18 @@
  */
 
 #include "EventViewerWidget.hpp"
+#include <QHeaderView>
 
 using namespace EPL_Viz;
 using namespace EPL_DataCollect;
 
-EventViewerWidget::EventViewerWidget(QWidget *parent) : QTreeWidget(parent) { setEnabled(false); }
+EventViewerWidget::EventViewerWidget(QWidget *parent) : QTreeWidget(parent) {
+  connect(this, SIGNAL(itemActivated(QTreeWidgetItem *, int)), this, SLOT(jumpToEvent(QTreeWidgetItem *)));
+  connect(this, SIGNAL(itemClicked(QTreeWidgetItem *, int)), this, SLOT(jumpToEvent(QTreeWidgetItem *)));
+  header()->setSectionsMovable(false);
+}
 
 void EventViewerWidget::reset() {
-  setEnabled(false);
-
   // Delete all entries
   while (topLevelItemCount() > 0) {
     delete takeTopLevelItem(0);
@@ -46,10 +49,15 @@ void EventViewerWidget::reset() {
   appID = UINT32_MAX;
 }
 
+void EventViewerWidget::jumpToEvent(QTreeWidgetItem *item) {
+  uint32_t cycle = std::atoi(item->text(4).toStdString().c_str());
+
+  emit eventSelected(cycle);
+}
+
 void EventViewerWidget::start(CaptureInstance *ci) {
   log   = ci->getEventLog();
   appID = log->getAppID();
-  setEnabled(true); // Turn on the widgets
 }
 
 void EventViewerWidget::updateEvents() {

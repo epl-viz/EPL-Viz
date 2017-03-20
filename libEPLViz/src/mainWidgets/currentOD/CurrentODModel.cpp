@@ -208,8 +208,6 @@ void CurrentODModel::update(ProtectedCycle &cycle) {
   lastUpdatedNode = node;
 }
 
-void CurrentODModel::updateNext() {}
-
 void CurrentODModel::changeNode(uint8_t n) { node = n; }
 
 void CurrentODModel::showContextMenu(const QPoint &pos) {

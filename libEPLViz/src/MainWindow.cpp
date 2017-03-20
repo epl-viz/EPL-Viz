@@ -87,6 +87,10 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
           SIGNAL(recordingStarted(EPL_DataCollect::CaptureInstance *)),
           ui->eventViewer,
           SLOT(start(EPL_DataCollect::CaptureInstance *))); // Notify the eventLog of the start of recording
+  connect(ui->eventViewer,
+          SIGNAL(eventSelected(uint32_t)),
+          this,
+          SLOT(selectCycle(uint32_t))); // Allow the event viewer widget to change cycle as well
 
   profileManager->getDefaultProfile()->readWindowSettings(this);
   captureInstance = std::make_unique<CaptureInstance>();
@@ -114,6 +118,8 @@ MainWindow::~MainWindow() {
 
 bool MainWindow::changeTime(double) { return true; }
 
+void MainWindow::selectCycle(uint32_t cycle) { changeCycle(cycle); }
+
 void MainWindow::createModels() {
   // Create and add Models here
   CycleCommandsModel *cyCoModel          = new CycleCommandsModel(this, ui->cycleCommandsView);
@@ -127,12 +133,8 @@ void MainWindow::createModels() {
   PacketListModel *   packetListModel    = new PacketListModel(this, ui->packetsView);
 
   // save references to the timeline and plot model for the Plot setup Dialog
-  timeline = timeLineModel;
   plot     = qwtPlot;
-
-  // Connect required signals
-  connect(this, SIGNAL(cycleChanged()), cyCoModel, SLOT(updateNext()));
-  connect(this, SIGNAL(cycleChanged()), curODModel, SLOT(updateNext()));
+  timeline = timeLineModel;
 
   connect(ui->cycleCommandsView,
           SIGNAL(activated(QModelIndex)),
@@ -150,6 +152,13 @@ void MainWindow::createModels() {
   connect(ui->scrBarTimeline, SIGNAL(valueChanged(int)), timeLineModel, SLOT(updateViewport(int)));
   connect(timeLineModel, SIGNAL(maxValueChanged(int, int)), ui->scrBarTimeline, SLOT(setRange(int, int)));
   connect(this, SIGNAL(cycleChanged()), timeLineModel, SLOT(replot()));
+  connect(this, SIGNAL(cycleChanged()), packetHistoryModel, SLOT(changePacket()));
+
+  connect(packetListModel,
+          SIGNAL(packetSelected(uint32_t)),
+          this,
+          SLOT(selectCycle(uint32_t))); // Allow the event viewer widget to change cycle as well
+
   // Set timeline max value once, since we can't do this in the constructor of the model and want to do it before init
   emit timeLineModel->maxValueChanged(0, static_cast<int>(timeLineModel->maxXValue - timeLineModel->getViewportSize()));
 
@@ -447,13 +456,27 @@ void MainWindow::changeState(GUIState nState) {
       // Update GUI button states
       ui->actionStart_Recording->setEnabled(true);
       ui->actionStop_Recording->setEnabled(false);
-      ui->pluginEditorButton->setEnabled(true);
       ui->actionPlugins->setEnabled(true);
       ui->actionNew->setEnabled(true);
       ui->actionLoad->setEnabled(true);
       ui->actionSave->setEnabled(false);
       ui->actionSave_As->setEnabled(false);
       ui->actionStatistics->setEnabled(false);
+
+      // Set all widgets to their correct state
+      ui->dockTime->setEnabled(false);
+      CS->getWidget()->setEnabled(false);
+      ui->curNodeODWidget->setEnabled(false);
+      ui->odDescriptionWidget->setEnabled(false);
+      ui->networkGraph->setEnabled(false);
+      ui->qwtPlot->setEnabled(false);
+      ui->packetsView->setEnabled(false);
+      ui->eventViewer->setEnabled(false);
+      ui->pythonLogView->setEnabled(false);
+      ui->packetHistoryTextEdit->setEnabled(false);
+      ui->cycleCommandsView->setEnabled(false);
+      ui->pluginSelectorWidget->setEnabled(true);
+      ui->pluginEditorButton->setEnabled(true);
 
       if (machineState == GUIState::STOPPED) {
         // Reset all models back to their initial state
@@ -468,13 +491,27 @@ void MainWindow::changeState(GUIState nState) {
       // Update GUI button states
       ui->actionStart_Recording->setEnabled(false);
       ui->actionStop_Recording->setEnabled(true);
-      ui->pluginEditorButton->setEnabled(false);
       ui->actionPlugins->setEnabled(false);
       ui->actionNew->setEnabled(false);
       ui->actionLoad->setEnabled(false);
       ui->actionSave->setEnabled(false); // Saving is not available during playback
       ui->actionSave_As->setEnabled(false);
       ui->actionStatistics->setEnabled(false);
+
+      // Set all widgets to their correct state
+      ui->dockTime->setEnabled(true);
+      CS->getWidget()->setEnabled(true);
+      ui->curNodeODWidget->setEnabled(true);
+      ui->odDescriptionWidget->setEnabled(true);
+      ui->networkGraph->setEnabled(true);
+      ui->qwtPlot->setEnabled(true);
+      ui->packetsView->setEnabled(true);
+      ui->eventViewer->setEnabled(true);
+      ui->pythonLogView->setEnabled(true);
+      ui->packetHistoryTextEdit->setEnabled(true);
+      ui->cycleCommandsView->setEnabled(true);
+      ui->pluginSelectorWidget->setEnabled(false);
+      ui->pluginEditorButton->setEnabled(false);
 
       config();
 
@@ -498,6 +535,21 @@ void MainWindow::changeState(GUIState nState) {
       ui->actionSave->setEnabled(true);
       ui->actionSave_As->setEnabled(true);
       ui->actionStatistics->setEnabled(false);
+
+      // Set all widgets to their correct state
+      ui->dockTime->setEnabled(true);
+      CS->getWidget()->setEnabled(true);
+      ui->curNodeODWidget->setEnabled(true);
+      ui->odDescriptionWidget->setEnabled(true);
+      ui->networkGraph->setEnabled(true);
+      ui->qwtPlot->setEnabled(true);
+      ui->packetsView->setEnabled(true);
+      ui->eventViewer->setEnabled(true);
+      ui->pythonLogView->setEnabled(true);
+      ui->packetHistoryTextEdit->setEnabled(true);
+      ui->cycleCommandsView->setEnabled(true);
+      ui->pluginSelectorWidget->setEnabled(false);
+      ui->pluginEditorButton->setEnabled(false);
 
       config();
 
@@ -534,7 +586,6 @@ void MainWindow::changeState(GUIState nState) {
       // Update GUI button states
       ui->actionStart_Recording->setEnabled(false);
       ui->actionStop_Recording->setEnabled(false);
-      ui->pluginEditorButton->setEnabled(false);
       ui->actionPlugins->setEnabled(false);
       ui->actionNew->setEnabled(true);
       ui->actionLoad->setEnabled(false);

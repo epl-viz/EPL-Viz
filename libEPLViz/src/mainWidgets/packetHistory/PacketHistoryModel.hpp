@@ -58,6 +58,6 @@ class PacketHistoryModel : public QObject, public BaseModel {
   void update(ProtectedCycle &cycle) override;
 
  public slots:
-  void changePacket(uint64_t packet);
+  void changePacket(uint64_t packet = UINT64_MAX);
 };
 }

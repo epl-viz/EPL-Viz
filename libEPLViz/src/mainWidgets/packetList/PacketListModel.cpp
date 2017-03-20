@@ -56,6 +56,8 @@ PacketListModel::PacketListModel(MainWindow *window, QAbstractItemView *treeWidg
                               QVariant("The send Command (if the packet type supports it)")}}});
 
   root->setNoDelete(true);
+  connect(treeWidget, SIGNAL(activated(QModelIndex)), this, SLOT(jumpToPacket(QModelIndex)));
+  connect(treeWidget, SIGNAL(clicked(QModelIndex)), this, SLOT(jumpToPacket(QModelIndex)));
 }
 
 void PacketListModel::init() {
@@ -65,6 +67,15 @@ void PacketListModel::init() {
   root->clear();
   itemList.clear();
   endResetModel();
+}
+
+void PacketListModel::jumpToPacket(QModelIndex packet) {
+  uint32_t cycle = std::atoi(static_cast<PacketListItem *>(packet.internalPointer())
+                                   ->data(1, Qt::DisplayRole)
+                                   .toString()
+                                   .toStdString()
+                                   .c_str());
+  emit packetSelected(cycle);
 }
 
 void PacketListModel::update(ProtectedCycle &cycle) {

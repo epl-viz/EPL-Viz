@@ -54,6 +54,8 @@ void ModelThread::loop() {
     switch (*state) {
       case GUIState::UNINIT: yieldCurrentThread(); break;
       case GUIState::PLAYING:
+      case GUIState::PAUSED:
+      case GUIState::STOPPED:
       case GUIState::RECORDING: {
         auto *                   ci      = window->getCaptureInstance();
         CaptureInstance::CIstate cistate = ci->getState();
@@ -75,8 +77,6 @@ void ModelThread::loop() {
 
         break;
       }
-      case GUIState::PAUSED: break;
-      case GUIState::STOPPED: yieldCurrentThread(); break;
     }
     // TODO Constant update time or something else?
     SLEEP(milliseconds, window->getSettingsWin()->getConfig().guiThreadWaitTime);

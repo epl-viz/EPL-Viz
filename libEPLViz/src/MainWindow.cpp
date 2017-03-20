@@ -41,6 +41,7 @@
 #include "ProtocolValidator.hpp"
 #include "SettingsWindow.hpp"
 #include "SettingsWindow.hpp"
+#include "Statistics.hpp"
 #include "TimeLineModel.hpp"
 #include "TimeSeriesBuilder.hpp"
 #include <QWidgetAction>
@@ -206,6 +207,12 @@ void MainWindow::destroyModels() {
 void MainWindow::updateWidgets(ProtectedCycle &cycle) {
   ui->networkGraphContents->updateWidget(cycle);
   ui->eventViewer->updateEvents();
+
+  if (machineState == GUIState::RECORDING || machineState == GUIState::PLAYING || machineState == GUIState::PAUSED) {
+    if (captureInstance->getState() == CaptureInstance::DONE) {
+      changeState(GUIState::STOPPED);
+    }
+  }
 }
 
 void MainWindow::fixQToolButtons(std::vector<QToolButton *> &btns) {
@@ -228,7 +235,7 @@ void MainWindow::fixQToolButtons(std::vector<QAction *> &actions, QToolBar *bar)
 }
 
 bool MainWindow::changeCycle(uint32_t cycle) {
-  if (machineState != GUIState::STOPPED) {
+  if (machineState != GUIState::UNINIT) {
     if (curCycle != cycle) {
       curCycle = cycle;
       emit cycleChanged();
@@ -402,7 +409,7 @@ void MainWindow::showLicense() {
   msgBox.exec();
 }
 
-void MainWindow::showStats() {}
+void MainWindow::showStats() { Statistics(this).exec(); }
 
 void MainWindow::startRecording() {
   openInterfacePicker();
@@ -436,6 +443,7 @@ void MainWindow::changeState(GUIState nState) {
       ui->actionLoad->setEnabled(true);
       ui->actionSave->setEnabled(false);
       ui->actionSave_As->setEnabled(false);
+      ui->actionStatistics->setEnabled(false);
 
       if (machineState == GUIState::STOPPED) {
         // Reset all models back to their initial state
@@ -456,6 +464,7 @@ void MainWindow::changeState(GUIState nState) {
       ui->actionLoad->setEnabled(false);
       ui->actionSave->setEnabled(false); // Saving is not available during playback
       ui->actionSave_As->setEnabled(false);
+      ui->actionStatistics->setEnabled(false);
 
       config();
 
@@ -478,6 +487,7 @@ void MainWindow::changeState(GUIState nState) {
       ui->actionLoad->setEnabled(false);
       ui->actionSave->setEnabled(true);
       ui->actionSave_As->setEnabled(true);
+      ui->actionStatistics->setEnabled(false);
 
       config();
 
@@ -498,6 +508,17 @@ void MainWindow::changeState(GUIState nState) {
       ui->actionPlugins->setEnabled(false);
       ui->actionNew->setEnabled(false);
       ui->actionLoad->setEnabled(false);
+
+      if (captureInstance->getState() == CaptureInstance::DONE) {
+        ui->actionStatistics->setEnabled(true);
+        ui->actionSave->setEnabled(true);
+        ui->actionSave_As->setEnabled(true);
+      } else {
+        ui->actionStatistics->setEnabled(false);
+        ui->actionSave->setEnabled(false);
+        ui->actionSave_As->setEnabled(false);
+      }
+
       break;
     case GUIState::STOPPED:
       // Update GUI button states
@@ -507,6 +528,9 @@ void MainWindow::changeState(GUIState nState) {
       ui->actionPlugins->setEnabled(false);
       ui->actionNew->setEnabled(true);
       ui->actionLoad->setEnabled(false);
+      ui->actionSave->setEnabled(true);
+      ui->actionSave_As->setEnabled(true);
+      ui->actionStatistics->setEnabled(true);
 
       ui->pluginSelectorWidget->setEnabled(false);
       break;

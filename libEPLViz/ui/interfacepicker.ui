@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Dialog</string>
+   <string>Select an interface for capturing</string>
   </property>
   <widget class="QDialogButtonBox" name="buttonBox">
    <property name="geometry">
@@ -126,22 +126,6 @@
     <hint type="sourcelabel">
      <x>311</x>
      <y>341</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>179</x>
-     <y>179</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>buttonBox</sender>
-   <signal>accepted()</signal>
-   <receiver>InterfacePicker</receiver>
-   <slot>saveInterface()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>309</x>
-     <y>179</y>
     </hint>
     <hint type="destinationlabel">
      <x>179</x>

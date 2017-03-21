@@ -27,7 +27,7 @@
   </property>
   <property name="windowIcon">
    <iconset>
-    <normalon>../resources/logo3.svg</normalon>
+    <normalon>:/icons/resources/logo3.svg</normalon>
    </iconset>
   </property>
   <widget class="QWidget" name="centralWidget">
@@ -375,7 +375,7 @@ Clicking inside the Timeline will jump back to the selected cycle.</string>
     <string>Shows the output of the plugins.</string>
    </property>
    <property name="windowTitle">
-    <string>Plugin Log</string>
+    <string>Plu&amp;gin Log</string>
    </property>
    <attribute name="dockWidgetArea">
     <number>8</number>

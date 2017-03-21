@@ -482,12 +482,14 @@ void MainWindow::changeState(GUIState nState) {
         // Reset all models back to their initial state
         BaseModel::initAll();
         CS->getWidget()->setValue(0);
+        setWindowTitle(tr("EPL-Viz"));
         emit resetGUI();
       }
 
       captureInstance = std::make_unique<CaptureInstance>();
       break;
     case GUIState::PLAYING:
+
       // Update GUI button states
       ui->actionStart_Recording->setEnabled(false);
       ui->actionStop_Recording->setEnabled(true);
@@ -513,6 +515,11 @@ void MainWindow::changeState(GUIState nState) {
       ui->pluginSelectorWidget->setEnabled(false);
       ui->pluginEditorButton->setEnabled(false);
 
+      // GUI state is updated, don't restart the recording
+      if (machineState == GUIState::PAUSED) {
+        break;
+      }
+
       config();
 
       backendState = captureInstance->loadPCAP(file);
@@ -523,6 +530,9 @@ void MainWindow::changeState(GUIState nState) {
         changeState(GUIState::UNINIT);
         return;
       }
+
+      setWindowTitle(tr("EPL-Viz - [%1]").arg(QString::fromStdString(file)));
+
       break;
     case GUIState::RECORDING:
       // Update GUI button states
@@ -551,6 +561,11 @@ void MainWindow::changeState(GUIState nState) {
       ui->pluginSelectorWidget->setEnabled(false);
       ui->pluginEditorButton->setEnabled(false);
 
+      // GUI state is updated, don't restart the recording
+      if (machineState == GUIState::PAUSED) {
+        break;
+      }
+
       config();
 
       backendState = captureInstance->startRecording(interface.toStdString());
@@ -561,6 +576,9 @@ void MainWindow::changeState(GUIState nState) {
         changeState(GUIState::UNINIT);
         return;
       }
+
+      setWindowTitle(tr("EPL-Viz - Recording on '%1'").arg(interface));
+
       break;
     case GUIState::PAUSED:
       // Update GUI button states

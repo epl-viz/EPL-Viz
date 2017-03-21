@@ -48,7 +48,7 @@ QVariant PacketListItem::dataDisplay(int column) {
   ASndServiceID asndID;
   switch (column) {
     case 0: // Number
-      return QVariant(static_cast<uint32_t>(index));
+      return QVariant(static_cast<uint32_t>(index + 1));
     case 1: // Cycle
       return QVariant(metaData.cycleNum);
     case 2: // TYPE

@@ -61,12 +61,6 @@ void BaseModel::updateAll(MainWindow *mw, CaptureInstance *instance) {
   if (mw->getCycleNum() == UINT32_MAX || mw->getCycleNum() != oldCycleNum)
     cycle.updateCycle(instance, mw->getCycleNum());
 
-  uint32_t newCycleNum = cycle->getCycleNum();
-
-  // Prevent unnecessary updates TODO move into models
-  if (newCycleNum == UINT32_MAX)
-    return;
-
   // Filter
   CycleStorageBase *b   = cycle->getCycleStorage(EPL_DC_PLUGIN_VIEW_FILTERS_CSID);
   CSViewFilters *   csF = dynamic_cast<CSViewFilters *>(b);

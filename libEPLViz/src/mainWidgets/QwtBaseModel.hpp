@@ -69,6 +69,7 @@ class QwtBaseModel : public QObject, public BaseModel {
   virtual void update(ProtectedCycle &cycle) override;
   QString createStringIdentifier(uint8_t node, uint16_t index, uint16_t subIndex, std::string cs);
   QString createStringIdentifier(const PlotCreator::PlotCreatorData &data);
+  void createPlot(uint8_t nodeID, uint16_t index, uint16_t subIndex, std::string cs, QwtPlot::Axis);
 
 
 #pragma clang diagnostic push
@@ -94,7 +95,7 @@ class QwtBaseModel : public QObject, public BaseModel {
   void createPlotInConnected(uint8_t nodeID, uint16_t index, uint16_t subIndex, std::string cs);
 
  public slots:
-  virtual void createPlot(uint8_t nodeID, uint16_t index, uint16_t subIndex, std::string cs);
+  virtual void createPlot(uint8_t nodeID, uint16_t index, uint16_t subIndex, std::string cs) = 0;
   void replot();
   void reset();
   void showContextMenu(const QPoint &point);

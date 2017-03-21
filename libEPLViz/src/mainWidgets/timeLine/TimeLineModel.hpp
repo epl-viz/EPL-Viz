@@ -75,5 +75,6 @@ class TimeLineModel : public QwtBaseModel {
   void updateViewport(int value);
   void reset();
   void pointSelected(const QPointF &pa);
+  void createPlot(uint8_t nodeID, uint16_t index, uint16_t subIndex, std::string cs);
 };
 }

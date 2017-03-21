@@ -184,12 +184,11 @@ void QwtBaseModel::showContextMenu(const QPoint &point) {
 
   QList<QAction *> actions;
   for (QPair<shared_ptr<QwtPlotCurve>, shared_ptr<plugins::TimeSeries>> pair : curves.values()) {
-    QAction *action = new QAction(this);
+    QAction *action = new QAction(plot);
 
     action->setText(pair.first->title().text());
     action->setData(pair.first->title().text());
     action->setCheckable(true);
-
     action->setChecked(plot->itemList(QwtPlotItem::Rtti_PlotCurve).contains(pair.first.get()));
     connect(action, SIGNAL(changed()), this, SLOT(enablePlot()));
 
@@ -197,7 +196,7 @@ void QwtBaseModel::showContextMenu(const QPoint &point) {
   }
 
   for (PlotCreator::PlotCreatorData data : registeredCurves) {
-    QAction *action = new QAction();
+    QAction *action = new QAction(plot);
 
     action->setText(createStringIdentifier(data));
     action->setData(createStringIdentifier(data));
@@ -210,7 +209,7 @@ void QwtBaseModel::showContextMenu(const QPoint &point) {
   }
 
   if (actions.isEmpty()) {
-    QAction *action = new QAction("No Plot");
+    QAction *action = new QAction("No Plot", plot);
     action->setEnabled(false);
     actions.append(action);
   }

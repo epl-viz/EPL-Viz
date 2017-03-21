@@ -68,7 +68,7 @@ void NetworkGraphModel::update(ProtectedCycle &cycle) {
       // qDebug() << "Showed the node";
 
       // Reset highlighting
-      s.value()->setHighlightingLevel(0);
+      s.value()->setHighlighted(false);
     }
     untracked.removeOne(id);
   }
@@ -95,8 +95,7 @@ void NetworkGraphModel::update(ProtectedCycle &cycle) {
     switch (event->getType()) {
       case EvType::VIEW_EV_HIGHLIGHT_MN:
       case EvType::VIEW_EV_HIGHLIGHT_CN: {
-        uint8_t node  = static_cast<uint8_t>(event->getEventFlags()); // EventFlags is the NodeID for these events
-        int     level = std::stoi(event->getDescription()); // Description is the highlighting level for these events
+        uint8_t node = static_cast<uint8_t>(event->getEventFlags()); // EventFlags is the NodeID for these events
 
         // Invalid node
         if (cycle->getNode(node) == nullptr)
@@ -113,7 +112,7 @@ void NetworkGraphModel::update(ProtectedCycle &cycle) {
             break;
 
           // Set highlighting
-          n.value()->setHighlightingLevel(level);
+          n.value()->setHighlighted(true);
         }
         break;
       }

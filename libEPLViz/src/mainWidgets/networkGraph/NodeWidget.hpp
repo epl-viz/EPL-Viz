@@ -67,8 +67,8 @@ class NodeWidget : public QFrame {
   QString                   idString;
   EPL_DataCollect::NMTState status;
 
-  int  highlightingLevel = 0;
-  bool selected          = false;
+  bool highlighted = false;
+  bool selected    = false;
 
   QFrame *      line;
   QLabel *      nameLabel;
@@ -102,7 +102,7 @@ class NodeWidget : public QFrame {
   void nodeClicked(uint8_t node);
 
  public slots:
-  void setHighlightingLevel(int level);
+  void setHighlighted(bool highlight);
   void updateData(uint8_t nID, EPL_Viz::ProtectedCycle &c);
   void updateStyleSheet();
 };

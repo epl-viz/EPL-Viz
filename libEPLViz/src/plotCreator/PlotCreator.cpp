@@ -1,8 +1,9 @@
 #include "PlotCreator.hpp"
 #include "MainWindow.hpp"
-#include "ui_PlotCreator.h"
 
 using namespace EPL_Viz;
+
+#include "ui_PlotCreator.h"
 
 PlotCreator::PlotCreator(QWidget *parent) : QDialog(parent), ui(new Ui::PlotCreator) { ui->setupUi(this); }
 PlotCreator::~PlotCreator() { delete ui; }

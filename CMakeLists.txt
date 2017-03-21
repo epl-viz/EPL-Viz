@@ -244,8 +244,8 @@ endif( USE_SYSTEM_PACKETS )
 ####################
 
 # Write dummy files, so that they can be detected
-file( WRITE "${PROJECT_SOURCE_DIR}/libEPLViz/src/EPLVizEnum2Str.hpp" "" )
-file( WRITE "${PROJECT_SOURCE_DIR}/libEPLViz/src/EPLVizEnum2Str.cpp" "" )
+file( WRITE "${PROJECT_SOURCE_DIR}/libEPLViz/src/utils/EPLVizEnum2Str.hpp" "" )
+file( WRITE "${PROJECT_SOURCE_DIR}/libEPLViz/src/utils/EPLVizEnum2Str.cpp" "" )
 
 new_project_library(
   PATH         "${PROJECT_SOURCE_DIR}/libEPLViz"
@@ -332,7 +332,7 @@ endif( NOT USE_SYSTEM_PACKETS )
 ##################
 
 enum2str_generate(
-  PATH       "${PROJECT_SOURCE_DIR}/libEPLViz/src"
+  PATH       "${PROJECT_SOURCE_DIR}/libEPLViz/src/utils"
   CLASS_NAME "EPLVizEnum2Str"
   FUNC_NAME  "toStr"
   INCLUDES   "GUIState.hpp"

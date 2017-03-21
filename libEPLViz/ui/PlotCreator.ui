@@ -42,7 +42,7 @@
         <widget class="QWidget" name="widget_3" native="true">
          <layout class="QGridLayout" name="gridLayout">
           <item row="1" column="1">
-           <widget class="QSpinBox" name="index">
+           <widget class="HexSpinBox" name="index">
             <property name="maximum">
              <number>65535</number>
             </property>
@@ -54,17 +54,21 @@
           <item row="2" column="0">
            <widget class="QLabel" name="label_4">
             <property name="text">
-             <string>OD Sub Index (dec)</string>
+             <string>OD Sub Index</string>
             </property>
            </widget>
           </item>
           <item row="2" column="1">
-           <widget class="QSpinBox" name="subIndex"/>
+           <widget class="HexSpinBox" name="subIndex">
+            <property name="maximum">
+             <number>255</number>
+            </property>
+           </widget>
           </item>
           <item row="1" column="0">
            <widget class="QLabel" name="label_2">
             <property name="text">
-             <string>OD Index (dec)</string>
+             <string>OD Index</string>
             </property>
            </widget>
           </item>
@@ -106,7 +110,7 @@
         <x>0</x>
         <y>0</y>
         <width>405</width>
-        <height>153</height>
+        <height>162</height>
        </rect>
       </property>
       <attribute name="label">
@@ -207,6 +211,13 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>HexSpinBox</class>
+   <extends>QSpinBox</extends>
+   <header>HexSpinBox.hpp</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections>
   <connection>

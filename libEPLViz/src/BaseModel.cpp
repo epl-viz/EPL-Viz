@@ -63,11 +63,9 @@ void BaseModel::updateAll(MainWindow *mw, CaptureInstance *instance) {
 
   uint32_t newCycleNum = cycle->getCycleNum();
 
-// Prevent unnecessary updates TODO move into models
-#if 0
-  if (newCycleNum == UINT32_MAX || newCycleNum == oldCycleNum)
+  // Prevent unnecessary updates TODO move into models
+  if (newCycleNum == UINT32_MAX)
     return;
-#endif
 
   // Filter
   CycleStorageBase *b   = cycle->getCycleStorage(EPL_DC_PLUGIN_VIEW_FILTERS_CSID);

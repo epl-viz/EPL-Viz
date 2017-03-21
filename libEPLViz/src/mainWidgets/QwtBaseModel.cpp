@@ -189,7 +189,6 @@ void QwtBaseModel::showContextMenu(const QPoint &point) {
     action->setText(pair.first->title().text());
     action->setData(pair.first->title().text());
     action->setCheckable(true);
-
     action->setChecked(plot->itemList(QwtPlotItem::Rtti_PlotCurve).contains(pair.first.get()));
     connect(action, SIGNAL(changed()), this, SLOT(enablePlot()));
 
@@ -197,7 +196,7 @@ void QwtBaseModel::showContextMenu(const QPoint &point) {
   }
 
   for (PlotCreator::PlotCreatorData data : registeredCurves) {
-    QAction *action = new QAction();
+    QAction *action = new QAction(this);
 
     action->setText(createStringIdentifier(data));
     action->setData(createStringIdentifier(data));
@@ -210,7 +209,7 @@ void QwtBaseModel::showContextMenu(const QPoint &point) {
   }
 
   if (actions.isEmpty()) {
-    QAction *action = new QAction("No Plot");
+    QAction *action = new QAction("No Plot", this);
     action->setEnabled(false);
     actions.append(action);
   }

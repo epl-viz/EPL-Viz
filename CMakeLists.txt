@@ -185,9 +185,7 @@ endif( NOT DISABLE_TESTS )
 if( USE_SYSTEM_PACKETS )
 
   # Use the EPL_DataCollect version installed on the system
-  set( CMAKE_BUILD_TYPE Debug )
   find_package( EPL_DataCollect REQUIRED )
-  set( CMAKE_BUILD_TYPE Release )
 
 else( USE_SYSTEM_PACKETS )
   set( EPL_DC_PREFIX         "${PROJECT_BINARY_DIR}/EPL_DataCollect" )

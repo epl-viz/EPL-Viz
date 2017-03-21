@@ -465,22 +465,6 @@
    </hints>
   </connection>
   <connection>
-   <sender>PluginsWindow</sender>
-   <signal>cleanUp()</signal>
-   <receiver>editor</receiver>
-   <slot>cleanUp()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>555</x>
-     <y>330</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>694</x>
-     <y>344</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
    <sender>actionClose</sender>
    <signal>triggered()</signal>
    <receiver>PluginsWindow</receiver>

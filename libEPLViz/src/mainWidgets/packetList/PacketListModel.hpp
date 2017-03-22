@@ -44,7 +44,6 @@ class MainWindow;
 class PacketListModel final : public TreeModelBase, public BaseModel {
   Q_OBJECT
  private:
-  MainWindow *                mw;
   plf::colony<PacketListItem> itemList;
 
   size_t currentPacketListSize = 0;

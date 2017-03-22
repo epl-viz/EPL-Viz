@@ -46,12 +46,14 @@ class SettingsProfileItem final : public QListWidgetItem {
     std::chrono::milliseconds guiThreadWaitTime     = std::chrono::milliseconds(100);
 
     QColor odHighlight = QColor("#14aaff");
-    QColor pInvalid    = QColor("#b40000");
-    QColor pSoC        = QColor("#868482");
-    QColor pSoA        = QColor("#ae32a0");
-    QColor pPRes       = QColor("#80c342");
-    QColor pPReq       = QColor("#e0c31e");
-    QColor PASnd       = QColor("#14148c");
+    QColor pInvalid    = QColor("#801515");
+    QColor pSoC        = QColor("#116611");
+    QColor pSoA        = QColor("#55AA55");
+    QColor pPRes       = QColor("#804515");
+    QColor pPReq       = QColor("#D49A6A");
+    QColor pASnd       = QColor("#D46A6A");
+    QColor pAINV       = QColor("#0D4D4D");
+    QColor pANMI       = QColor("#407F7F");
   };
 
  private:

@@ -108,10 +108,13 @@ QColor PacketListItem::dataBackground() {
     case PacketType::START_OF_ASYNC: return mw->getSettingsWin()->getConfig().pSoA;
     case PacketType::POLL_REQUEST: return mw->getSettingsWin()->getConfig().pPReq;
     case PacketType::POLL_RESPONSE: return mw->getSettingsWin()->getConfig().pPRes;
-    case PacketType::ASYNC_SEND: return mw->getSettingsWin()->getConfig().PASnd;
+    case PacketType::ASYNC_SEND: return mw->getSettingsWin()->getConfig().pASnd;
+    case PacketType::AINV: return mw->getSettingsWin()->getConfig().pAINV;
+    case PacketType::AMNI: return mw->getSettingsWin()->getConfig().pANMI;
     case PacketType::UNDEF: return mw->getSettingsWin()->getConfig().pInvalid;
-    default: return QColor();
   }
+
+  return QColor();
 }
 
 QColor PacketListItem::dataForground() {
@@ -128,10 +131,16 @@ QColor PacketListItem::dataForground() {
 
 
 QVariant PacketListItem::data(int column, Qt::ItemDataRole role) {
+  QColor col;
   switch (role) {
     case Qt::DisplayRole: return dataDisplay(column);
-    case Qt::BackgroundRole: return QBrush(dataBackground());
-    case Qt::ForegroundRole: return QBrush(dataForground());
+    case Qt::BackgroundRole: col = dataBackground(); break;
+    case Qt::ForegroundRole: col = dataForground(); break;
     default: return QVariant();
   }
+
+  if (!col.isValid())
+    return QVariant();
+
+  return QBrush(col);
 }

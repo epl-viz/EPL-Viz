@@ -35,7 +35,7 @@ using namespace EPL_DataCollect;
 using namespace std;
 
 PacketListModel::PacketListModel(MainWindow *window, QAbstractItemView *treeWidget)
-    : TreeModelBase(treeWidget), BaseModel(window, treeWidget), mw(window) {
+    : TreeModelBase(treeWidget), BaseModel(window, treeWidget) {
   root = new TreeModelRoot({{Qt::DisplayRole,
                              {QVariant("Number"),
                               QVariant("Cycle"),
@@ -80,7 +80,7 @@ void PacketListModel::jumpToPacket(QModelIndex packet) {
 
 void PacketListModel::update(ProtectedCycle &cycle) {
   auto             l  = getLock();
-  CaptureInstance *ci = mw->getCaptureInstance();
+  CaptureInstance *ci = getMainWindow()->getCaptureInstance();
 
   if (!ci)
     return;
@@ -93,7 +93,7 @@ void PacketListModel::update(ProtectedCycle &cycle) {
   if (s > currentPacketListSize) {
     beginInsertRows(QModelIndex(), static_cast<int>(currentPacketListSize), static_cast<int>(s - 1));
     for (size_t i = currentPacketListSize; i < s; ++i) {
-      auto it = itemList.emplace(root, mw, list[i], i);
+      auto it = itemList.emplace(root, getMainWindow(), list[i], i);
       root->push_back(&(*it));
     }
     endInsertRows();

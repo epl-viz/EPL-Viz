@@ -58,19 +58,19 @@ QVariant SettingsPlotItem::dataDisplay(int column) {
 
     case 2: // Index
       if (pltData.defaultODPlot)
-        return static_cast<int>(pltData.index);
+        return QString().number(static_cast<int>(pltData.index), 16).prepend("0x");
 
       return pltData.csName.c_str();
 
     case 3: // Subindex
       if (pltData.defaultODPlot)
-        return static_cast<int>(pltData.subIndex);
+        return QString().number(static_cast<int>(pltData.subIndex), 16).prepend("0x");
 
       return QVariant();
 
     case 4: // Node
       if (pltData.defaultODPlot)
-        return static_cast<int>(pltData.node);
+        return QString().number(static_cast<int>(pltData.node), 16).prepend("0x");
 
       return QVariant();
 

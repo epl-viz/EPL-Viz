@@ -29,6 +29,12 @@
       <item>
        <widget class="QWidget" name="c1_Buttons" native="true">
         <layout class="QHBoxLayout" name="horizontalLayout_2">
+         <property name="leftMargin">
+          <number>0</number>
+         </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
          <item>
           <widget class="QPushButton" name="profNew">
            <property name="text">
@@ -45,7 +51,7 @@
             <string>Delete</string>
            </property>
            <property name="icon">
-            <iconset theme="list-remove"/>
+            <iconset theme="edit-delete"/>
            </property>
           </widget>
          </item>
@@ -85,7 +91,7 @@
              </attribute>
              <layout class="QVBoxLayout" name="verticalLayout_10">
               <item>
-               <widget class="QWidget" name="widget_15" native="true">
+               <widget class="QWidget" name="widgetGUI_General" native="true">
                 <layout class="QGridLayout" name="gridLayout_6">
                  <item row="1" column="0">
                   <widget class="QLabel" name="label_22">
@@ -965,7 +971,7 @@
          </attribute>
          <layout class="QHBoxLayout" name="horizontalLayout_6">
           <item>
-           <widget class="QWidget" name="widget_6" native="true">
+           <widget class="QWidget" name="widgetNode1" native="true">
             <layout class="QVBoxLayout" name="verticalLayout_6">
              <item>
               <widget class="QListWidget" name="nodesList">
@@ -980,6 +986,12 @@
              <item>
               <widget class="QWidget" name="widget_8" native="true">
                <layout class="QHBoxLayout" name="horizontalLayout_7">
+                <property name="leftMargin">
+                 <number>0</number>
+                </property>
+                <property name="rightMargin">
+                 <number>0</number>
+                </property>
                 <item>
                  <widget class="QPushButton" name="nodeAdd">
                   <property name="text">
@@ -996,7 +1008,7 @@
                    <string>Remove</string>
                   </property>
                   <property name="icon">
-                   <iconset theme="list-remove"/>
+                   <iconset theme="edit-delete"/>
                   </property>
                  </widget>
                 </item>
@@ -1007,7 +1019,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QWidget" name="widget_7" native="true">
+           <widget class="QWidget" name="widgetNode2" native="true">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
               <horstretch>3</horstretch>
@@ -1081,6 +1093,77 @@
           </item>
          </layout>
         </widget>
+        <widget class="QWidget" name="plots">
+         <attribute name="title">
+          <string>Plots</string>
+         </attribute>
+         <layout class="QVBoxLayout" name="verticalLayout_12">
+          <item>
+           <widget class="QTreeView" name="plotsView"/>
+          </item>
+          <item>
+           <widget class="QWidget" name="widget_24" native="true">
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>0</height>
+             </size>
+            </property>
+            <layout class="QHBoxLayout" name="horizontalLayout_15">
+             <property name="leftMargin">
+              <number>0</number>
+             </property>
+             <property name="rightMargin">
+              <number>0</number>
+             </property>
+             <item>
+              <widget class="QPushButton" name="plotNew">
+               <property name="text">
+                <string>New</string>
+               </property>
+               <property name="icon">
+                <iconset theme="list-add"/>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="plotDelete">
+               <property name="text">
+                <string>Delete</string>
+               </property>
+               <property name="icon">
+                <iconset theme="edit-delete"/>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="plotEdit">
+               <property name="text">
+                <string>Edit</string>
+               </property>
+               <property name="icon">
+                <iconset theme="document-edit"/>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QWidget" name="widget_25" native="true"/>
+             </item>
+             <item>
+              <widget class="QPushButton" name="plotClear">
+               <property name="text">
+                <string>Clear</string>
+               </property>
+               <property name="icon">
+                <iconset theme="list-remove"/>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+          </item>
+         </layout>
+        </widget>
         <widget class="QWidget" name="backend">
          <attribute name="title">
           <string>Backend</string>
@@ -1097,7 +1180,7 @@
              </attribute>
              <layout class="QVBoxLayout" name="verticalLayout_3">
               <item>
-               <widget class="QWidget" name="widget_2" native="true">
+               <widget class="QWidget" name="widgetBackend_General" native="true">
                 <layout class="QGridLayout" name="gridLayout">
                  <item row="1" column="2">
                   <widget class="QWidget" name="widget_13" native="true">
@@ -1142,8 +1225,7 @@
                        <string>...</string>
                       </property>
                       <property name="icon">
-                       <iconset theme="folder">
-                        <normaloff>.</normaloff>.</iconset>
+                       <iconset theme="folder"/>
                       </property>
                      </widget>
                     </item>
@@ -1174,7 +1256,7 @@
              </attribute>
              <layout class="QVBoxLayout" name="verticalLayout_4">
               <item>
-               <widget class="QWidget" name="widget_4" native="true">
+               <widget class="QWidget" name="widgetBackend_SM" native="true">
                 <layout class="QGridLayout" name="gridLayout_2">
                  <item row="0" column="0">
                   <widget class="QLabel" name="label_2">
@@ -1220,7 +1302,7 @@
              </attribute>
              <layout class="QVBoxLayout" name="verticalLayout_5">
               <item>
-               <widget class="QWidget" name="widget_5" native="true">
+               <widget class="QWidget" name="widgetBackend_IH" native="true">
                 <layout class="QGridLayout" name="gridLayout_3">
                  <item row="0" column="0">
                   <widget class="QLabel" name="label_3">
@@ -1361,7 +1443,7 @@
          </attribute>
          <layout class="QVBoxLayout" name="verticalLayout_8">
           <item>
-           <widget class="QWidget" name="widget_10" native="true">
+           <widget class="QWidget" name="widgetPython" native="true">
             <layout class="QHBoxLayout" name="horizontalLayout_8">
              <item>
               <widget class="QLabel" name="label_9">
@@ -1386,8 +1468,7 @@
                    <string>...</string>
                   </property>
                   <property name="icon">
-                   <iconset theme="folder">
-                    <normaloff>.</normaloff>.</iconset>
+                   <iconset theme="folder"/>
                   </property>
                   <property name="iconSize">
                    <size>
@@ -1423,6 +1504,12 @@
       <item>
        <widget class="QWidget" name="widget" native="true">
         <layout class="QHBoxLayout" name="horizontalLayout_3">
+         <property name="leftMargin">
+          <number>0</number>
+         </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
          <item>
           <widget class="QPushButton" name="apply">
            <property name="sizePolicy">
@@ -1955,6 +2042,86 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>plotNew</sender>
+   <signal>clicked()</signal>
+   <receiver>SettingsWindow</receiver>
+   <slot>plotNew()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>384</x>
+     <y>553</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>566</x>
+     <y>325</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>plotDelete</sender>
+   <signal>clicked()</signal>
+   <receiver>SettingsWindow</receiver>
+   <slot>plotDelete()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>546</x>
+     <y>553</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>566</x>
+     <y>325</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>plotClear</sender>
+   <signal>clicked()</signal>
+   <receiver>SettingsWindow</receiver>
+   <slot>plotClear()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1033</x>
+     <y>553</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>566</x>
+     <y>325</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>plotEdit</sender>
+   <signal>clicked()</signal>
+   <receiver>SettingsWindow</receiver>
+   <slot>plotEdit()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>709</x>
+     <y>553</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>566</x>
+     <y>325</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>plotsView</sender>
+   <signal>doubleClicked(QModelIndex)</signal>
+   <receiver>SettingsWindow</receiver>
+   <slot>plotEdit()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>709</x>
+     <y>286</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>566</x>
+     <y>325</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>apply()</slot>
@@ -1969,5 +2136,9 @@
   <slot>selectPythonDir()</slot>
   <slot>setColor()</slot>
   <slot>clearColor()</slot>
+  <slot>plotNew()</slot>
+  <slot>plotDelete()</slot>
+  <slot>plotEdit()</slot>
+  <slot>plotClear()</slot>
  </slots>
 </ui>

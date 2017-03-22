@@ -39,7 +39,7 @@ PacketListItem::PacketListItem(TreeModelItemBase *                           par
 
 PacketListItem::~PacketListItem() {}
 
-Qt::ItemFlags PacketListItem::flags() { return Qt::ItemIsEnabled; }
+Qt::ItemFlags PacketListItem::flags() { return Qt::ItemIsEnabled | Qt::ItemNeverHasChildren; }
 bool          PacketListItem::hasChanged() { return false; }
 
 QVariant PacketListItem::dataDisplay(int column) {

@@ -295,7 +295,7 @@ void MainWindow::openInterfacePicker() {
     interface = name;
 }
 
-void MainWindow::openSettings() { settingsWin->show(); }
+void MainWindow::openSettings() { settingsWin->exec(); }
 
 bool MainWindow::event(QEvent *event) {
   // configure stuff
@@ -478,6 +478,8 @@ void MainWindow::changeState(GUIState nState) {
       ui->pluginSelectorWidget->setEnabled(true);
       ui->pluginEditorButton->setEnabled(true);
 
+      settingsWin->leaveRecordingState();
+
       if (machineState == GUIState::STOPPED) {
         // Reset all models back to their initial state
         BaseModel::initAll();
@@ -514,6 +516,8 @@ void MainWindow::changeState(GUIState nState) {
       ui->cycleCommandsView->setEnabled(true);
       ui->pluginSelectorWidget->setEnabled(false);
       ui->pluginEditorButton->setEnabled(false);
+
+      settingsWin->enterRecordingState();
 
       // GUI state is updated, don't restart the recording
       if (machineState == GUIState::PAUSED) {
@@ -561,6 +565,8 @@ void MainWindow::changeState(GUIState nState) {
       ui->pluginSelectorWidget->setEnabled(false);
       ui->pluginEditorButton->setEnabled(false);
 
+      settingsWin->enterRecordingState();
+
       // GUI state is updated, don't restart the recording
       if (machineState == GUIState::PAUSED) {
         break;
@@ -593,10 +599,12 @@ void MainWindow::changeState(GUIState nState) {
         ui->actionStatistics->setEnabled(true);
         ui->actionSave->setEnabled(true);
         ui->actionSave_As->setEnabled(true);
+        settingsWin->leaveRecordingState();
       } else {
         ui->actionStatistics->setEnabled(false);
         ui->actionSave->setEnabled(false);
         ui->actionSave_As->setEnabled(false);
+        settingsWin->enterRecordingState();
       }
 
       break;
@@ -612,6 +620,7 @@ void MainWindow::changeState(GUIState nState) {
       ui->actionStatistics->setEnabled(true);
 
       ui->pluginSelectorWidget->setEnabled(false);
+      settingsWin->leaveRecordingState();
       break;
   }
   machineState = nState;
@@ -673,25 +682,7 @@ bool MainWindow::curODWidgetUpdateData(QTreeWidgetItem *item, QString newData) {
   return true;
 }
 
-void MainWindow::setupPlot() {
-  PlotCreator::PlotCreatorData newPlot = PlotCreator::getNewPlot();
-
-  if (newPlot.isOK) {
-    if (newPlot.addToPlot && plot != nullptr)
-      plot->registerCurve(newPlot);
-    if (newPlot.addToTimeLine && timeline != nullptr)
-      timeline->registerCurve(newPlot);
-
-    if (!showedPlotSetupMsg) {
-      QMessageBox msg;
-      msg.setText("A new Plot has been added.");
-      msg.setInformativeText(
-            "Rightclick on the Plot Widgets to see a list of all added plots. This window won't be shown again.");
-      msg.exec();
-      showedPlotSetupMsg = true;
-    }
-  }
-}
+void MainWindow::setupPlot() { settingsWin->execPlotsTab(); }
 
 SettingsWindow *   MainWindow::getSettingsWin() { return settingsWin; }
 CycleSetterAction *MainWindow::getCycleSetter() { return CS; }

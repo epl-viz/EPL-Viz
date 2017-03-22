@@ -61,10 +61,21 @@ void Profile::writeCustomValue(QString custom, QVariant val) { settings->setValu
 
 QVariant Profile::readCustomValue(QString custom) { return settings->value(name + custom, QVariant()); }
 
-void Profile::beginWriteArray(QString custom) { settings->beginWriteArray(name + custom); }
+void Profile::beginWriteArray(QString custom) {
+  nameSaved = name;
+  name      = "";
+  settings->beginWriteArray(nameSaved + custom);
+}
 
-int Profile::beginReadArray(QString custom) { return settings->beginReadArray(name + custom); }
+int Profile::beginReadArray(QString custom) {
+  nameSaved = name;
+  name      = "";
+  return settings->beginReadArray(nameSaved + custom);
+}
 
 void Profile::setArrayIndex(int i) { settings->setArrayIndex(i); }
 
-void Profile::endArray() { settings->endArray(); }
+void Profile::endArray() {
+  settings->endArray();
+  name = nameSaved;
+}

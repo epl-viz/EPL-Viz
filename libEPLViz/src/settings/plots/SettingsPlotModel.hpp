@@ -24,9 +24,30 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 /*!
- * \file InterfaceListWidget.cpp
+ * \file ODDescriptionModel.hpp
  */
+#pragma once
 
-#include "InterfaceListWidget.hpp"
+#include "SettingsPlotItem.hpp"
+#include "TreeModelBase.hpp"
 
-InterfaceListWidget::InterfaceListWidget(QWidget *parent) : QListWidget(parent) {}
+#include <QTreeWidget>
+#include <plf_colony.h>
+
+namespace EPL_Viz {
+
+class SettingsWindow;
+
+class SettingsPlotModel final : public TreeModelBase {
+  Q_OBJECT
+ private:
+  SettingsWindow *sw;
+
+ public:
+  SettingsPlotModel(SettingsWindow *window, QAbstractItemView *treeWidget);
+  SettingsPlotModel()  = delete;
+  ~SettingsPlotModel() = default;
+
+  void update();
+};
+}

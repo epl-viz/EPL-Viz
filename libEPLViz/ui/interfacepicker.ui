@@ -15,7 +15,7 @@
   </property>
   <layout class="QHBoxLayout" name="horizontalLayout">
    <item>
-    <widget class="InterfaceListWidget" name="interfaceList"/>
+    <widget class="QListWidget" name="interfaceList"/>
    </item>
    <item>
     <widget class="QWidget" name="widget" native="true">
@@ -68,13 +68,6 @@
    </item>
   </layout>
  </widget>
- <customwidgets>
-  <customwidget>
-   <class>InterfaceListWidget</class>
-   <extends>QListWidget</extends>
-   <header>InterfaceListWidget.hpp</header>
-  </customwidget>
- </customwidgets>
  <resources/>
  <connections>
   <connection>

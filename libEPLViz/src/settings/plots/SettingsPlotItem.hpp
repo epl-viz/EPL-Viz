@@ -26,79 +26,30 @@
 
 #pragma once
 
-#include "ProfileManager.hpp"
-#include "SettingsPlotModel.hpp"
-#include "SettingsProfileItem.hpp"
-#include <QDialog>
-#include <QListWidget>
-#include <memory>
-#include <unordered_map>
-
-namespace Ui {
-class SettingsWindow;
-}
+#include "PlotCreator.hpp"
+#include "TreeModelItemBase.hpp"
 
 namespace EPL_Viz {
 
 class MainWindow;
 
-class SettingsWindow : public QDialog {
-  Q_OBJECT
+class SettingsPlotItem final : public TreeModelItemBase {
  private:
-  Ui::SettingsWindow *ui;
-  MainWindow *        mainWindow;
-  ProfileManager *    conf;
-  SettingsPlotModel * plotModel;
+  PlotCreator::PlotCreatorData pltData;
 
-  std::unordered_map<std::string, std::shared_ptr<SettingsProfileItem>> profiles;
-
-  std::string currentProfile = "Default";
-
-  std::vector<QWidget *> disableList;
-
-  void loadConfig();
-  void saveConfig();
-  void saveIntoProfiles();
-  void updateView(bool updateNodes = true);
-
-  SettingsProfileItem::Config startCFG;
-
- public slots:
-  void applyOn(EPL_DataCollect::CaptureInstance *ci);
-  void apply();
-  void reset();
-
-  void newProfile();
-  void deleteProfile();
-  void newNode();
-  void deleteNode();
-
-  void profChange(QListWidgetItem *curr, QListWidgetItem *pref);
-  void nodeChange(QListWidgetItem *curr, QListWidgetItem *pref);
-
-  void selectXDDDir();
-  void selectPythonDir();
-
-  void setColor();
-  void clearColor();
-
-  void plotNew();
-  void plotEdit();
-  void plotDelete();
-  void plotClear();
-
- signals:
-  void settingsUpdated();
+  QVariant dataDisplay(int column);
+  QVariant dataTooltip(int column);
+  QColor dataBackground();
+  QColor dataForground();
 
  public:
-  explicit SettingsWindow(QWidget *parent, ProfileManager *settings);
-  ~SettingsWindow();
+  SettingsPlotItem() = delete;
+  SettingsPlotItem(TreeModelItemBase *parent, PlotCreator::PlotCreatorData d);
 
-  int execPlotsTab();
+  virtual ~SettingsPlotItem();
 
-  void enterRecordingState();
-  void leaveRecordingState();
-
-  SettingsProfileItem::Config getConfig();
+  QVariant data(int column, Qt::ItemDataRole role) override;
+  Qt::ItemFlags flags() override;
+  bool          hasChanged() override;
 };
 }

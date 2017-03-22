@@ -24,18 +24,39 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 /*!
- * \file InterfaceListWidget.hpp
+ * \file ODDescriptionModel.cpp
  */
+#include "SettingsPlotModel.hpp"
+#include "SettingsWindow.hpp"
+#include <QString>
 
-#pragma once
+using namespace EPL_Viz;
+using namespace EPL_DataCollect;
+using namespace std;
 
-#include <QDialog>
-#include <QListWidget>
+SettingsPlotModel::SettingsPlotModel(SettingsWindow *window, QAbstractItemView *treeWidget)
+    : TreeModelBase(treeWidget), sw(window) {
+  root = new TreeModelRoot(
+        {{Qt::DisplayRole,
+          {QVariant("Plot Type"), QVariant("Add to"), QVariant("Index"), QVariant("Subindex"), QVariant("Node")}},
+         {Qt::ToolTipRole,
+          {QVariant("The type of the plot (Normal OD or Cycle storage plot)"),
+           QVariant("To which widget to add the plot"),
+           QVariant("The index to plot"),
+           QVariant("The subindex of the OD Index"),
+           QVariant("The on which node to plot")}}});
 
-class InterfaceListWidget : public QListWidget {
-  Q_OBJECT
+  root->clear();
+}
 
- public:
-  InterfaceListWidget(QWidget *parent);
-  ~InterfaceListWidget() = default;
-};
+void SettingsPlotModel::update() {
+  beginResetModel();
+  root->clear();
+
+  auto cfg = sw->getConfig();
+  for (auto &i : cfg.plots) {
+    root->push_back(new SettingsPlotItem(root, i));
+  }
+
+  endResetModel();
+}

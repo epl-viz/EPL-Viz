@@ -138,7 +138,7 @@ void BaseModel::initAll() {
 
 void BaseModel::reg(BaseModel *model) {
   if (!registeredModels.contains(model)) {
-    qDebug() << "Registered a model";
+    // qDebug() << "Registered a model";
     registeredModels.append(model);
   } else
     throw std::runtime_error("Cannot add a model twice!");
@@ -146,7 +146,7 @@ void BaseModel::reg(BaseModel *model) {
 
 void BaseModel::dereg(BaseModel *model) {
   registeredModels.removeOne(model);
-  qDebug() << "Deregistered a model";
+  // qDebug() << "Deregistered a model";
 }
 
 bool BaseModel::operator==(const BaseModel &other) { return this == &other; }

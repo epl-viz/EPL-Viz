@@ -26,7 +26,6 @@
 /*!
  * \file TimeLineMagnifier.cpp
  */
-#pragma GCC diagnostic warning "-Wfloat-equal"
 
 #include "TimeLineMagnifier.hpp"
 #include "TimeLineModel.hpp"
@@ -51,7 +50,7 @@ void TimeLineMagnifier::rescale(double factor) {
     return;
 
   factor = qAbs(factor);
-  if (factor == 1.0 || factor == 0.0)
+  if (static_cast<int>(factor) == 1 || static_cast<int>(factor) == 0)
     return;
 
   bool doReplot = false;

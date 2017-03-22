@@ -39,7 +39,7 @@ CyCoTreeItem::CyCoTreeItem(TreeModelItemBase *parent, ProtectedCycle &cycle, siz
 
 CyCoTreeItem::~CyCoTreeItem() {}
 
-Qt::ItemFlags CyCoTreeItem::flags() { return Qt::ItemIsEnabled; }
+Qt::ItemFlags CyCoTreeItem::flags() { return Qt::ItemIsEnabled | Qt::ItemNeverHasChildren; }
 bool          CyCoTreeItem::hasChanged() { return false; }
 
 QVariant CyCoTreeItem::dataDisplay(int column) {

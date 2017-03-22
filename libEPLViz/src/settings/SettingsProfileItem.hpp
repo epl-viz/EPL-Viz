@@ -27,6 +27,7 @@
 #pragma once
 
 #include "CaptureInstance.hpp"
+#include "PlotCreator.hpp"
 #include <QListWidget>
 #include <unordered_map>
 
@@ -44,6 +45,8 @@ class SettingsProfileItem final : public QListWidgetItem {
     bool                      pauseWhilePlayingFile = true;
     bool                      invertTimeLineZoom    = true;
     std::chrono::milliseconds guiThreadWaitTime     = std::chrono::milliseconds(100);
+
+    std::vector<PlotCreator::PlotCreatorData> plots;
 
     QColor odHighlight = QColor("#14aaff");
     QColor pInvalid    = QColor("#801515");

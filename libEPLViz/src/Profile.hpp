@@ -36,6 +36,11 @@ namespace EPL_Viz {
 class MainWindow;
 
 class Profile {
+ private:
+  QSettings *settings;
+  QString    name;
+  QString    nameSaved;
+
  public:
   Profile(QSettings *settings, QString name);
   ~Profile() = default;
@@ -64,9 +69,5 @@ class Profile {
   int beginReadArray(QString custom);
   void setArrayIndex(int i);
   void endArray();
-
- private:
-  QSettings *settings;
-  QString    name;
 };
 }

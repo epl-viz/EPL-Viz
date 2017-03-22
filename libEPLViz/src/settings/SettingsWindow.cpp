@@ -548,7 +548,7 @@ void SettingsWindow::setColor() {
 
   QPalette pal = palette();
 
-  QColor newColor = QColorDialog::getColor(pal.color(QPalette::Button), this, "Select color");
+  QColor newColor = QColorDialog::getColor(pal.color(QPalette::Window), this, "Select color");
   if (!newColor.isValid())
     return;
 

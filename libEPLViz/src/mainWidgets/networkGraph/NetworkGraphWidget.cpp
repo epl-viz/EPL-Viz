@@ -46,67 +46,41 @@ void NetworkGraphWidget::reset() {
   }
 
   nodeMap.clear();
-
-  createQueue.clear();
 }
 
-
-void NetworkGraphWidget::updateWidget(EPL_Viz::ProtectedCycle &c) {
-  auto lock = c.getLock();
-
+void NetworkGraphWidget::createWidget(uint8_t nID, EPL_Viz::ProtectedCycle &c) {
   // Ensure that a layout is present
   if (!grid) {
     grid = qobject_cast<QGridLayout *>(layout());
 
-    // Create a new one if it is still missing
+    // Create a new one if it is missing
     if (!grid) {
       grid = new QGridLayout();
       this->setLayout(grid);
     }
   }
 
-  // Show queued widgets
-  for (auto nID : showQueue) {
-    nodeMap[nID]->show();
+  auto                   lock = c.getLock();
+  EPL_DataCollect::Node *n    = c->getNode(nID);
+
+  qDebug() << "Creating new node " << QString::number(nID);
+
+  if (!n) {
+    qDebug() << "Invalid node " << QString::number(nID);
+    return;
   }
 
-  showQueue.clear();
+  NodeWidget *nw = new NodeWidget(n, this);
 
-  // Create queued widgets
-  for (auto nID : createQueue) {
-    EPL_DataCollect::Node *n = c->getNode(nID);
+  connect(nw, SIGNAL(nodeClicked(uint8_t)), this, SLOT(selectNode(uint8_t)));
+  nodeMap.insert(nID, nw);
 
-    qDebug() << "Creating new node " << QString::number(nID);
+  qDebug() << "Placing new node widget at row " << QString::number(count / 4) << " and column "
+           << QString::number(count % 4);
 
-    if (!n) {
-      qDebug() << "Invalid node " << QString::number(nID);
-      return;
-    }
-
-    NodeWidget *nw = new NodeWidget(n, this);
-
-    connect(nw, SIGNAL(nodeClicked(uint8_t)), this, SLOT(selectNode(uint8_t)));
-    nodeMap.insert(nID, nw);
-
-    qDebug() << "Placing new node widget at row " << QString::number(count / 4) << " and column "
-             << QString::number(count % 4);
-
-    grid->addWidget(nw, count / 4, count % 4);
-    count++;
-  }
-
-  createQueue.clear();
-
-  // Update the stylesheet of all widgets
-  for (auto *nw : nodeMap.values()) {
-    if (!nw->isHidden())
-      nw->updateStyleSheet();
-  }
+  grid->addWidget(nw, count / 4, count % 4);
+  count++;
 }
-
-void NetworkGraphWidget::queueNodeCreation(uint8_t node) { createQueue.append(node); }
-void NetworkGraphWidget::queueNodeReveal(uint8_t node) { showQueue.append(node); }
-
 
 void NetworkGraphWidget::selectNode(uint8_t node) {
   // Check if there is currently a selected node

@@ -70,10 +70,10 @@ void ModelThread::loop() {
           window->changeState(GUIState::UNINIT);
           return;
         }
-        BaseModel::updateAll(window, ci);
 
-        // Wait until the widgets are updated in the other thread
-        emit updateCompleted(BaseModel::getCurrentCycle());
+        // Update models and if it was completed, the widgets
+        if (BaseModel::updateAll(window, ci))
+          emit updateCompleted(); // Wait until the widgets are updated in the GUI thread
 
         break;
       }

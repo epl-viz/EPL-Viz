@@ -44,20 +44,18 @@ class PacketHistoryModel : public QObject, public BaseModel {
   QPlainTextEdit *textBox        = nullptr;
   uint64_t        selectedPacket = UINT64_MAX;
 
-  ProtectedCycle *currentCycle = nullptr;
-
  public:
   PacketHistoryModel(MainWindow *window, QPlainTextEdit *widget);
   PacketHistoryModel()  = delete;
   ~PacketHistoryModel() = default;
   QString getName() override { return "PacketHistoryModel"; }
 
-  void init() override;
-
  protected:
-  void update(ProtectedCycle &cycle) override;
+  void init() override;
+  void update() override;
+  void updateWidget() override;
 
  public slots:
-  void changePacket(uint64_t packet = UINT64_MAX);
+  void changePacket(uint64_t packet);
 };
 }

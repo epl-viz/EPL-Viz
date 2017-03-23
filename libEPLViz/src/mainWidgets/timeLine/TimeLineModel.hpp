@@ -69,7 +69,8 @@ class TimeLineModel : public QwtBaseModel {
   void init() override;
 
  protected:
-  void update(ProtectedCycle &cycle) override;
+  void update() override;
+  void updateWidget() override;
 
  public slots:
   void updateViewport(int value);

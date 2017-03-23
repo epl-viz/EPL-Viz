@@ -49,30 +49,10 @@ BaseModel::~BaseModel() { dereg(this); }
 
 MainWindow *BaseModel::getMainWindow() { return mainWindow; }
 
-void BaseModel::updateAll(MainWindow *mw, CaptureInstance *instance) {
+bool BaseModel::updateAll(MainWindow *mw, CaptureInstance *instance) {
   if (instance == nullptr) {
     qDebug() << "CaptureInstance is a nullptr";
-    return;
-  }
-
-  uint32_t oldCycleNum = cycle->getCycleNum();
-
-  // Get Cycle
-  if (mw->getCycleNum() == UINT32_MAX || mw->getCycleNum() != oldCycleNum)
-    cycle.updateCycle(instance, mw->getCycleNum());
-
-  // Filter
-  CycleStorageBase *b   = cycle->getCycleStorage(EPL_DC_PLUGIN_VIEW_FILTERS_CSID);
-  CSViewFilters *   csF = dynamic_cast<CSViewFilters *>(b);
-
-  if (!b)
-    qDebug() << "Not registered " << EPL_DC_PLUGIN_VIEW_FILTERS_CSID.c_str();
-
-  if (csF == nullptr) {
-    qDebug() << "No filters set";
-  } else {
-    auto filters = csF->getFilters();
-    mw->setFilters(filters);
+    return false;
   }
 
   GUIState state = mw->getState();
@@ -108,20 +88,55 @@ void BaseModel::updateAll(MainWindow *mw, CaptureInstance *instance) {
     }
   }
 
-  // If the recording is paused, do not update models
+  // If the recording is paused, do not continue updating
   if (state == GUIState::PAUSED)
-    return;
+    return false;
+
+  uint32_t oldCycleNum = cycle->getCycleNum();
+
+  // Get Cycle
+  if (mw->getCycleNum() == UINT32_MAX || mw->getCycleNum() != oldCycleNum)
+    cycle.updateCycle(instance, mw->getCycleNum());
+
+  // Don't send the same cycle again
+  if (cycle->getCycleNum() == UINT32_MAX || cycle->getCycleNum() == oldCycleNum) {
+    return false;
+  }
+
+  // Filter
+  CycleStorageBase *b   = cycle->getCycleStorage(EPL_DC_PLUGIN_VIEW_FILTERS_CSID);
+  CSViewFilters *   csF = dynamic_cast<CSViewFilters *>(b);
+
+  if (!b)
+    qDebug() << "Not registered " << EPL_DC_PLUGIN_VIEW_FILTERS_CSID.c_str();
+
+  if (csF == nullptr) {
+    qDebug() << "No filters set";
+  } else {
+    auto filters = csF->getFilters();
+    mw->setFilters(filters);
+  }
 
   // Update models
   for (auto &i : registeredModels) {
-    //    qDebug() << "[" << cycle->getCycleNum() << "] Updating " << i->getName();
-    i->update(cycle);
-    //    qDebug() << "[" << cycle->getCycleNum() << "] DONE     " << i->getName();
+    qDebug() << "[" << cycle->getCycleNum() << "] Updating " << i->getName();
+    i->update();
+    qDebug() << "[" << cycle->getCycleNum() << "] DONE     " << i->getName();
   }
 
   uint32_t cycleNum = cycle->getCycleNum();
   if (cycleNum > mw->getMaxCycle())
     mw->setMaxCycle(cycleNum);
+
+  return true;
+}
+
+void BaseModel::updateAllWidgets() {
+  for (auto &i : registeredModels) {
+    qDebug() << "[" << cycle->getCycleNum() << "] Updating widget of " << i->getName();
+    i->updateWidget();
+    qDebug() << "[" << cycle->getCycleNum() << "] DONE     " << i->getName();
+  }
 }
 
 ProtectedCycle &BaseModel::getCurrentCycle() { return cycle; }
@@ -130,9 +145,9 @@ void BaseModel::initAll() {
   appID = UINT32_MAX; // Initialize appID with a dummy value
 
   for (auto &i : registeredModels) {
-    //    qDebug() << "[INIT] Updating " << i->getName();
+    qDebug() << "[INIT] Updating " << i->getName();
     i->init();
-    //    qDebug() << "[INIT] DONE     " << i->getName();
+    qDebug() << "[INIT] DONE     " << i->getName();
   }
 }
 

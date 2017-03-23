@@ -55,15 +55,15 @@ class PacketListModel final : public TreeModelBase, public BaseModel {
 
   QString getName() override { return "ODDescriptionModel"; }
 
-  void init() override;
-
  protected:
-  void update(ProtectedCycle &cycle) override;
+  void update() override;
+  void init() override;
+  void updateWidget() override;
 
  private slots:
   void jumpToPacket(QModelIndex packet);
 
  signals:
-  void packetSelected(uint32_t cycle);
+  void cycleSelected(uint32_t cycleNum);
 };
 }

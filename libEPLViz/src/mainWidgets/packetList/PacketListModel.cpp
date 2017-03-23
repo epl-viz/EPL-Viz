@@ -70,15 +70,29 @@ void PacketListModel::init() {
 }
 
 void PacketListModel::jumpToPacket(QModelIndex packet) {
-  uint32_t cycle = static_cast<uint32_t>(std::atoi(static_cast<PacketListItem *>(packet.internalPointer())
-                                                         ->data(1, Qt::DisplayRole)
-                                                         .toString()
-                                                         .toStdString()
-                                                         .c_str()));
-  emit packetSelected(cycle);
+  uint64_t packetIndex = 0;
+  int      row         = packet.row() - 1;
+
+  QVariant    cycle = static_cast<PacketListItem *>(packet.internalPointer())->data(1, Qt::DisplayRole);
+  QModelIndex prev  = packet.sibling(row, 1);
+
+  // Determine the packet index in the current cycle
+  while (prev.isValid() && row >= 0) {
+    if (prev.data(Qt::DisplayRole) != cycle) {
+      packetIndex++; // FIXME: The start of cycle shows as belonging to the old cycle in the table
+      break;
+    }
+
+    packetIndex++;
+    row--;
+    prev = packet.sibling(row, 1);
+  }
+
+  uint32_t cycleNum = static_cast<uint32_t>(std::atoi(cycle.toString().toStdString().c_str()));
+  emit     cycleSelected(cycleNum);
 }
 
-void PacketListModel::update(ProtectedCycle &cycle) {
+void PacketListModel::update() {
   auto             l  = getLock();
   CaptureInstance *ci = getMainWindow()->getCaptureInstance();
 
@@ -104,7 +118,9 @@ void PacketListModel::update(ProtectedCycle &cycle) {
     beginResetModel();
     root->clear();
     endResetModel();
-    update(cycle);
+    update();
     return;
   }
 }
+
+void PacketListModel::updateWidget() {}

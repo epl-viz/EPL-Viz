@@ -45,26 +45,24 @@ PacketHistoryModel::PacketHistoryModel(MainWindow *window, QPlainTextEdit *widge
 
 void PacketHistoryModel::init() {
   selectedPacket = UINT64_MAX;
-  currentCycle   = nullptr;
+
   textBox->setPlainText("Please select a packet in the Cycle Commands widget.");
 }
 
-void PacketHistoryModel::update(ProtectedCycle &cycle) { currentCycle = &cycle; }
+void PacketHistoryModel::update() {}
+
+void PacketHistoryModel::updateWidget() { changePacket(UINT64_MAX); }
 
 void PacketHistoryModel::changePacket(uint64_t packet) {
+  ProtectedCycle &cycle = BaseModel::getCurrentCycle();
+  auto            lock  = cycle.getLock();
+
   // Prevent wrong updates
-  if (selectedPacket == packet || !currentCycle) {
+  if (selectedPacket == packet) {
     return;
   }
 
   selectedPacket = packet;
-
-  auto lock = currentCycle->getLock();
-
-  Cycle *cycle = currentCycle->getCycle();
-
-  if (!cycle)
-    return;
 
   vector<Packet> packets = cycle->getPackets();
   string         text;

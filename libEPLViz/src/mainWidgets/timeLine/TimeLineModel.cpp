@@ -111,7 +111,9 @@ void TimeLineModel::init() {
   QwtBaseModel::init();
 }
 
-void TimeLineModel::update(ProtectedCycle &cycle) {
+void TimeLineModel::update() {
+  ProtectedCycle &cycle = BaseModel::getCurrentCycle();
+
   if (window->getSettingsWin()->getConfig().invertTimeLineZoom)
     magnifier->setWheelFactor(1 / defaultWheelFactor);
   else
@@ -159,8 +161,10 @@ void TimeLineModel::update(ProtectedCycle &cycle) {
     markers.append(marker);
   }
 
-  QwtBaseModel::update(cycle);
+  QwtBaseModel::update();
 }
+
+void TimeLineModel::updateWidget() {}
 
 void TimeLineModel::updateViewport(int value) {
   QwtScaleDiv scale = plot->axisScaleDiv(QwtPlot::xTop);

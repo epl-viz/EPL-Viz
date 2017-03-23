@@ -44,10 +44,13 @@ class MainWindow;
 class PluginLogModel : public BaseModel {
 
  private:
-  const QString eventFormat = QString("[Cycle %1] %2: %3"); // The format of a single event in the output
+  const QString eventFormat =
+        QString("<html><b>[Cycle %1] %2:</b> %3</html>"); // The format of a single event in the output
 
-  unsigned int               appid;
-  EPL_DataCollect::EventLog *log;
+  QList<QString> eventQueue;
+
+  uint32_t                   appid = UINT32_MAX;
+  EPL_DataCollect::EventLog *log   = nullptr;
 
   QPlainTextEdit *textBox = nullptr;
 
@@ -57,9 +60,10 @@ class PluginLogModel : public BaseModel {
   ~PluginLogModel() = default;
   QString getName() override { return "PluginLogModel"; }
 
-  void init() override;
 
  protected:
-  void update(ProtectedCycle &cycle) override;
+  void init() override;
+  void update() override;
+  void updateWidget() override;
 };
 }

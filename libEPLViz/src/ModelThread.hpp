@@ -59,7 +59,7 @@ class ModelThread : public QThread {
 
  signals:
   void resultReady(const QString &result);
-  void updateCompleted(ProtectedCycle &cycle);
+  void updateCompleted();
  public slots:
   void stop();
 };

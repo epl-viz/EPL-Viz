@@ -43,7 +43,9 @@ void PluginLogModel::init() {
   textBox->clear();
 }
 
-void PluginLogModel::update(ProtectedCycle &cycle) {
+void PluginLogModel::update() {
+  ProtectedCycle &cycle = BaseModel::getCurrentCycle();
+
   if (!log)
     return;
 
@@ -52,9 +54,16 @@ void PluginLogModel::update(ProtectedCycle &cycle) {
   for (auto *event : events) {
     // Only add text events
     if (event->getType() == EvType::PLUGIN_EV_TEXT) {
-      textBox->appendPlainText(eventFormat.arg(QString::number(cycle->getCycleNum()),
-                                               QString::fromStdString(event->getPluginID()),
-                                               QString::fromStdString(event->getDescription())));
+      eventQueue.append(eventFormat.arg(QString::number(cycle->getCycleNum()),
+                                        QString::fromStdString(event->getPluginID()),
+                                        QString::fromStdString(event->getDescription())));
     }
   }
+}
+
+void PluginLogModel::updateWidget() {
+  for (QString event : eventQueue) {
+    textBox->appendHtml(event);
+  }
+  eventQueue.clear();
 }

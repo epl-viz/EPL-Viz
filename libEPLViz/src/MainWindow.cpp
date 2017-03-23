@@ -152,12 +152,11 @@ void MainWindow::createModels() {
   connect(ui->scrBarTimeline, SIGNAL(valueChanged(int)), timeLineModel, SLOT(updateViewport(int)));
   connect(timeLineModel, SIGNAL(maxValueChanged(int, int)), ui->scrBarTimeline, SLOT(setRange(int, int)));
   connect(this, SIGNAL(cycleChanged()), timeLineModel, SLOT(replot()));
-  connect(this, SIGNAL(cycleChanged()), packetHistoryModel, SLOT(changePacket()));
 
   connect(packetListModel,
-          SIGNAL(packetSelected(uint32_t)),
+          SIGNAL(cycleSelected(uint32_t)),
           this,
-          SLOT(selectCycle(uint32_t))); // Allow the event viewer widget to change cycle as well
+          SLOT(selectCycle(uint32_t))); // Allow the packet viewer widget to change cycle
 
   // Set timeline max value once, since we can't do this in the constructor of the model and want to do it before init
   emit timeLineModel->maxValueChanged(0, static_cast<int>(timeLineModel->maxXValue - timeLineModel->getViewportSize()));
@@ -188,18 +187,14 @@ void MainWindow::createModels() {
   models.append(packetListModel);
 
   QWidget *network = ui->networkGraphContents;
-  connect(network, SIGNAL(nodeSelected(uint8_t)), curODModel, SLOT(changeNode(uint8_t)));
-  connect(network, SIGNAL(nodeSelected(uint8_t)), oddescrModel, SLOT(changeNode(uint8_t)));
+  connect(network, SIGNAL(nodeSelected(uint8_t)), curODModel, SLOT(selectNode(uint8_t)));
+  connect(network, SIGNAL(nodeSelected(uint8_t)), oddescrModel, SLOT(selectNode(uint8_t)));
 
 
   modelThread = new ModelThread(this, &machineState, this);
   connect(modelThread, &ModelThread::resultReady, this, &MainWindow::handleResults);
   connect(modelThread, &ModelThread::finished, modelThread, &QObject::deleteLater);
-  connect(modelThread,
-          SIGNAL(updateCompleted(ProtectedCycle &)),
-          this,
-          SLOT(updateWidgets(ProtectedCycle &)),
-          Qt::BlockingQueuedConnection);
+  connect(modelThread, SIGNAL(updateCompleted()), this, SLOT(updateWidgets()), Qt::BlockingQueuedConnection);
 
   // Connect reset signal to widgets requiring it
   connect(this, SIGNAL(resetGUI()), ui->networkGraphContents, SLOT(reset()));
@@ -219,8 +214,8 @@ void MainWindow::destroyModels() {
   }
 }
 
-void MainWindow::updateWidgets(ProtectedCycle &cycle) {
-  ui->networkGraphContents->updateWidget(cycle);
+void MainWindow::updateWidgets() {
+  BaseModel::updateAllWidgets();
   ui->eventViewer->updateEvents();
 
   getCycleSetter()->getWidget()->setValue(BaseModel::getCurrentCycle()->getCycleNum());

@@ -210,7 +210,6 @@ void MainWindow::createModels() {
 
   getCycleSetter()->getWidget()->checkButtons();
 
-  modelThread->start();
   connect(this, SIGNAL(close()), modelThread, SLOT(stop()));
 }
 
@@ -648,6 +647,8 @@ void MainWindow::config() {
   // Register timeseries cycle storage
   captureInstance->registerCycleStorage<plugins::CSTimeSeriesPtr>(
         EPL_DataCollect::constants::EPL_DC_PLUGIN_TIME_SERIES_CSID);
+
+  modelThread->start();
 
   // Initialize all Models
   BaseModel::initAll(); // TODO do we need to do this here

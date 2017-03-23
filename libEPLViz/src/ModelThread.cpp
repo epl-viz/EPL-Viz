@@ -53,9 +53,9 @@ void ModelThread::loop() {
   while (running) {
     switch (*state) {
       case GUIState::UNINIT: yieldCurrentThread(); break;
+      case GUIState::STOPPED: stop(); break;
       case GUIState::PLAYING:
       case GUIState::PAUSED:
-      case GUIState::STOPPED:
       case GUIState::RECORDING: {
         auto *                   ci      = window->getCaptureInstance();
         CaptureInstance::CIstate cistate = ci->getState();

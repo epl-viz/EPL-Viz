@@ -57,6 +57,27 @@ class SettingsProfileItem final : public QListWidgetItem {
     QColor pASnd       = QColor("#D46A6A");
     QColor pAINV       = QColor("#0D4D4D");
     QColor pANMI       = QColor("#407F7F");
+
+    QColor evProtoError = QColor("#550000");
+    QColor evError      = QColor("#801515");
+    QColor evWarning    = QColor("#806415");
+    QColor evInfo       = QColor("#116611");
+    QColor evDebug      = QColor("#55AA55");
+    QColor evPText      = QColor("#0D4D4D");
+
+    QColor NMT_Highligthed         = QColor("#ff9f00");
+    QColor NMT_OFF                 = QColor("#656565");
+    QColor NMT_INITIALISING        = QColor("#0D4D4D");
+    QColor NMT_RESET_APPLICATION   = QColor("#801515");
+    QColor NMT_RESET_COMMUNICATION = QColor("#801515");
+    QColor NMT_RESET_CONFIGURATION = QColor("#801515");
+    QColor NMT_NOT_ACTIVE          = QColor("#003333");
+    QColor NMT_PRE_OPERATIONAL_1   = QColor("#804515");
+    QColor NMT_PRE_OPERATIONAL_2   = QColor("#D49A6A");
+    QColor NMT_READY_TO_OPERATE    = QColor("#004400");
+    QColor NMT_OPERATIONAL         = QColor("#116611");
+    QColor NMT_STOPPED             = QColor("#550000");
+    QColor NMT_BASIC_ETHERNET      = QColor("#930093");
   };
 
  private:

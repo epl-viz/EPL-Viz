@@ -36,6 +36,9 @@
 
 using namespace EPL_Viz;
 
+const QRegExp colSetReg("^COL_S_\\w+$");
+const QRegExp colClearReg("^COL_C_\\w+$");
+
 SettingsWindow::SettingsWindow(QWidget *parent, ProfileManager *settings)
     : QDialog(parent), ui(new Ui::SettingsWindow) {
   ui->setupUi(this);
@@ -44,6 +47,17 @@ SettingsWindow::SettingsWindow(QWidget *parent, ProfileManager *settings)
   conf       = settings;
 
   auto profs = conf->getProfiles();
+
+  QList<QToolButton *> cSet   = ui->colors_tabs->findChildren<QToolButton *>(colSetReg);
+  QList<QToolButton *> cClear = ui->colors_tabs->findChildren<QToolButton *>(colClearReg);
+
+  for (auto *i : cSet) {
+    connect(i, SIGNAL(clicked()), this, SLOT(setColor()));
+  }
+
+  for (auto *i : cClear) {
+    connect(i, SIGNAL(clicked()), this, SLOT(clearColor()));
+  }
 
   disableList = {ui->c1,
                  ui->widgetBackend_General,
@@ -113,15 +127,38 @@ void SettingsWindow::updateView(bool updateNodes) {
   ui->IH_DeleteCyclesAfter->setValue(static_cast<int>(prof->cfg.backConf.ihConfig.deleteCyclesAfter.count()));
   ui->IH_LoopWait->setValue(static_cast<int>(prof->cfg.backConf.ihConfig.loopWaitTimeout.count()));
 
-  std::vector<std::pair<QFrame *, QColor *>> colorSelctor = {{ui->COL_ODHighlight, &prof->cfg.odHighlight},
-                                                             {ui->COL_P_ASnd, &prof->cfg.pASnd},
-                                                             {ui->COL_P_Invalid, &prof->cfg.pInvalid},
-                                                             {ui->COL_P_PReq, &prof->cfg.pPReq},
-                                                             {ui->COL_P_PResp, &prof->cfg.pPRes},
-                                                             {ui->COL_P_SoA, &prof->cfg.pSoA},
-                                                             {ui->COL_P_SoC, &prof->cfg.pSoC},
-                                                             {ui->COL_P_ANMI, &prof->cfg.pANMI},
-                                                             {ui->COL_P_AINV, &prof->cfg.pAINV}};
+  std::vector<std::pair<QFrame *, QColor *>> colorSelctor = {
+        {ui->COL_ODHighlight, &prof->cfg.odHighlight},
+        {ui->COL_P_ASnd, &prof->cfg.pASnd},
+        {ui->COL_P_Invalid, &prof->cfg.pInvalid},
+        {ui->COL_P_PReq, &prof->cfg.pPReq},
+        {ui->COL_P_PResp, &prof->cfg.pPRes},
+        {ui->COL_P_SoA, &prof->cfg.pSoA},
+        {ui->COL_P_SoC, &prof->cfg.pSoC},
+        {ui->COL_P_ANMI, &prof->cfg.pANMI},
+        {ui->COL_P_AINV, &prof->cfg.pAINV},
+
+        {ui->COL_ProtoError, &prof->cfg.evProtoError},
+        {ui->COL_Error, &prof->cfg.evError},
+        {ui->COL_Warning, &prof->cfg.evWarning},
+        {ui->COL_Info, &prof->cfg.evInfo},
+        {ui->COL_Debug, &prof->cfg.evDebug},
+        {ui->COL_PText, &prof->cfg.evPText},
+
+        {ui->COL_nHighlighted, &prof->cfg.NMT_Highligthed},
+        {ui->COL_NMTOFF, &prof->cfg.NMT_OFF},
+        {ui->COL_INITIALISING, &prof->cfg.NMT_INITIALISING},
+        {ui->COL_RESET_APPLICATION, &prof->cfg.NMT_RESET_APPLICATION},
+        {ui->COL_RESET_COMMUNICATION, &prof->cfg.NMT_RESET_COMMUNICATION},
+        {ui->COL_RESET_CONFIGURATION, &prof->cfg.NMT_RESET_CONFIGURATION},
+        {ui->COL_NOT_ACTIVE, &prof->cfg.NMT_NOT_ACTIVE},
+        {ui->COL_PRE_OPERATIONAL_1, &prof->cfg.NMT_PRE_OPERATIONAL_1},
+        {ui->COL_PRE_OPERATIONAL_2, &prof->cfg.NMT_PRE_OPERATIONAL_2},
+        {ui->COL_READY_TO_OPERATE, &prof->cfg.NMT_READY_TO_OPERATE},
+        {ui->COL_OPERATIONAL, &prof->cfg.NMT_OPERATIONAL},
+        {ui->COL_STOPPED, &prof->cfg.NMT_STOPPED},
+        {ui->COL_BASIC_ETHERNET, &prof->cfg.NMT_BASIC_ETHERNET},
+  };
 
   for (auto i : colorSelctor) {
     QPalette pal = palette();
@@ -169,15 +206,38 @@ void SettingsWindow::saveIntoProfiles() {
   prof->cfg.backConf.ihConfig.deleteCyclesAfter = std::chrono::milliseconds(ui->IH_DeleteCyclesAfter->value());
   prof->cfg.backConf.ihConfig.loopWaitTimeout   = std::chrono::milliseconds(ui->IH_LoopWait->value());
 
-  std::vector<std::pair<QFrame *, QColor *>> colorSelctor = {{ui->COL_ODHighlight, &prof->cfg.odHighlight},
-                                                             {ui->COL_P_ASnd, &prof->cfg.pASnd},
-                                                             {ui->COL_P_Invalid, &prof->cfg.pInvalid},
-                                                             {ui->COL_P_PReq, &prof->cfg.pPReq},
-                                                             {ui->COL_P_PResp, &prof->cfg.pPRes},
-                                                             {ui->COL_P_SoA, &prof->cfg.pSoA},
-                                                             {ui->COL_P_SoC, &prof->cfg.pSoC},
-                                                             {ui->COL_P_ANMI, &prof->cfg.pANMI},
-                                                             {ui->COL_P_AINV, &prof->cfg.pAINV}};
+  std::vector<std::pair<QFrame *, QColor *>> colorSelctor = {
+        {ui->COL_ODHighlight, &prof->cfg.odHighlight},
+        {ui->COL_P_ASnd, &prof->cfg.pASnd},
+        {ui->COL_P_Invalid, &prof->cfg.pInvalid},
+        {ui->COL_P_PReq, &prof->cfg.pPReq},
+        {ui->COL_P_PResp, &prof->cfg.pPRes},
+        {ui->COL_P_SoA, &prof->cfg.pSoA},
+        {ui->COL_P_SoC, &prof->cfg.pSoC},
+        {ui->COL_P_ANMI, &prof->cfg.pANMI},
+        {ui->COL_P_AINV, &prof->cfg.pAINV},
+
+        {ui->COL_ProtoError, &prof->cfg.evProtoError},
+        {ui->COL_Error, &prof->cfg.evError},
+        {ui->COL_Warning, &prof->cfg.evWarning},
+        {ui->COL_Info, &prof->cfg.evInfo},
+        {ui->COL_Debug, &prof->cfg.evDebug},
+        {ui->COL_PText, &prof->cfg.evPText},
+
+        {ui->COL_nHighlighted, &prof->cfg.NMT_Highligthed},
+        {ui->COL_NMTOFF, &prof->cfg.NMT_OFF},
+        {ui->COL_INITIALISING, &prof->cfg.NMT_INITIALISING},
+        {ui->COL_RESET_APPLICATION, &prof->cfg.NMT_RESET_APPLICATION},
+        {ui->COL_RESET_COMMUNICATION, &prof->cfg.NMT_RESET_COMMUNICATION},
+        {ui->COL_RESET_CONFIGURATION, &prof->cfg.NMT_RESET_CONFIGURATION},
+        {ui->COL_NOT_ACTIVE, &prof->cfg.NMT_NOT_ACTIVE},
+        {ui->COL_PRE_OPERATIONAL_1, &prof->cfg.NMT_PRE_OPERATIONAL_1},
+        {ui->COL_PRE_OPERATIONAL_2, &prof->cfg.NMT_PRE_OPERATIONAL_2},
+        {ui->COL_READY_TO_OPERATE, &prof->cfg.NMT_READY_TO_OPERATE},
+        {ui->COL_OPERATIONAL, &prof->cfg.NMT_OPERATIONAL},
+        {ui->COL_STOPPED, &prof->cfg.NMT_STOPPED},
+        {ui->COL_BASIC_ETHERNET, &prof->cfg.NMT_BASIC_ETHERNET},
+  };
 
   for (auto i : colorSelctor) {
     if (i.first->isEnabled()) {
@@ -237,15 +297,38 @@ void SettingsWindow::loadConfig() {
   prof->cfg.backConf.ihConfig.loopWaitTimeout =
         std::chrono::milliseconds(sp->readCustomValue("EPL_DC/IH/loopWaitTimeout").toInt());
 
-  std::vector<std::pair<QString, QColor *>> colorSelctor = {{"COL_odHighlight", &prof->cfg.odHighlight},
-                                                            {"COL_PASnd", &prof->cfg.pASnd},
-                                                            {"COL_pInvalid", &prof->cfg.pInvalid},
-                                                            {"COL_pPReq", &prof->cfg.pPReq},
-                                                            {"COL_pPRes", &prof->cfg.pPRes},
-                                                            {"COL_pSoA", &prof->cfg.pSoA},
-                                                            {"COL_pSoC", &prof->cfg.pSoC},
-                                                            {"COL_ANMI", &prof->cfg.pANMI},
-                                                            {"COL_AINV", &prof->cfg.pAINV}};
+  std::vector<std::pair<QString, QColor *>> colorSelctor = {
+        {"COL_odHighlight", &prof->cfg.odHighlight},
+        {"COL_PASnd", &prof->cfg.pASnd},
+        {"COL_pInvalid", &prof->cfg.pInvalid},
+        {"COL_pPReq", &prof->cfg.pPReq},
+        {"COL_pPRes", &prof->cfg.pPRes},
+        {"COL_pSoA", &prof->cfg.pSoA},
+        {"COL_pSoC", &prof->cfg.pSoC},
+        {"COL_ANMI", &prof->cfg.pANMI},
+        {"COL_AINV", &prof->cfg.pAINV},
+
+        {"COL_ProtoError", &prof->cfg.evProtoError},
+        {"COL_Error", &prof->cfg.evError},
+        {"COL_Warning", &prof->cfg.evWarning},
+        {"COL_Info", &prof->cfg.evInfo},
+        {"COL_Debug", &prof->cfg.evDebug},
+        {"COL_PText", &prof->cfg.evPText},
+
+        {"COL_nHighlighted", &prof->cfg.NMT_Highligthed},
+        {"COL_NMTOFF", &prof->cfg.NMT_OFF},
+        {"COL_INITIALISING", &prof->cfg.NMT_INITIALISING},
+        {"COL_RESET_APPLICATION", &prof->cfg.NMT_RESET_APPLICATION},
+        {"COL_RESET_COMMUNICATION", &prof->cfg.NMT_RESET_COMMUNICATION},
+        {"COL_RESET_CONFIGURATION", &prof->cfg.NMT_RESET_CONFIGURATION},
+        {"COL_NOT_ACTIVE", &prof->cfg.NMT_NOT_ACTIVE},
+        {"COL_PRE_OPERATIONAL_1", &prof->cfg.NMT_PRE_OPERATIONAL_1},
+        {"COL_PRE_OPERATIONAL_2", &prof->cfg.NMT_PRE_OPERATIONAL_2},
+        {"COL_READY_TO_OPERATE", &prof->cfg.NMT_READY_TO_OPERATE},
+        {"COL_OPERATIONAL", &prof->cfg.NMT_OPERATIONAL},
+        {"COL_STOPPED", &prof->cfg.NMT_STOPPED},
+        {"COL_BASIC_ETHERNET", &prof->cfg.NMT_BASIC_ETHERNET},
+  };
 
   for (auto i : colorSelctor) {
     i.second->setNamedColor(sp->readCustomValue(i.first).toString());
@@ -304,15 +387,38 @@ void SettingsWindow::saveConfig() {
   sp->writeCustomValue("EPL_DC/IH/loopWaitTimeout",
                        static_cast<int>(prof->cfg.backConf.ihConfig.loopWaitTimeout.count()));
 
-  std::vector<std::pair<QString, QColor *>> colorSelctor = {{"COL_odHighlight", &prof->cfg.odHighlight},
-                                                            {"COL_PASnd", &prof->cfg.pASnd},
-                                                            {"COL_pInvalid", &prof->cfg.pInvalid},
-                                                            {"COL_pPReq", &prof->cfg.pPReq},
-                                                            {"COL_pPRes", &prof->cfg.pPRes},
-                                                            {"COL_pSoA", &prof->cfg.pSoA},
-                                                            {"COL_pSoC", &prof->cfg.pSoC},
-                                                            {"COL_ANMI", &prof->cfg.pANMI},
-                                                            {"COL_AINV", &prof->cfg.pAINV}};
+  std::vector<std::pair<QString, QColor *>> colorSelctor = {
+        {"COL_odHighlight", &prof->cfg.odHighlight},
+        {"COL_PASnd", &prof->cfg.pASnd},
+        {"COL_pInvalid", &prof->cfg.pInvalid},
+        {"COL_pPReq", &prof->cfg.pPReq},
+        {"COL_pPRes", &prof->cfg.pPRes},
+        {"COL_pSoA", &prof->cfg.pSoA},
+        {"COL_pSoC", &prof->cfg.pSoC},
+        {"COL_ANMI", &prof->cfg.pANMI},
+        {"COL_AINV", &prof->cfg.pAINV},
+
+        {"COL_ProtoError", &prof->cfg.evProtoError},
+        {"COL_Error", &prof->cfg.evError},
+        {"COL_Warning", &prof->cfg.evWarning},
+        {"COL_Info", &prof->cfg.evInfo},
+        {"COL_Debug", &prof->cfg.evDebug},
+        {"COL_PText", &prof->cfg.evPText},
+
+        {"COL_nHighlighted", &prof->cfg.NMT_Highligthed},
+        {"COL_NMTOFF", &prof->cfg.NMT_OFF},
+        {"COL_INITIALISING", &prof->cfg.NMT_INITIALISING},
+        {"COL_RESET_APPLICATION", &prof->cfg.NMT_RESET_APPLICATION},
+        {"COL_RESET_COMMUNICATION", &prof->cfg.NMT_RESET_COMMUNICATION},
+        {"COL_RESET_CONFIGURATION", &prof->cfg.NMT_RESET_CONFIGURATION},
+        {"COL_NOT_ACTIVE", &prof->cfg.NMT_NOT_ACTIVE},
+        {"COL_PRE_OPERATIONAL_1", &prof->cfg.NMT_PRE_OPERATIONAL_1},
+        {"COL_PRE_OPERATIONAL_2", &prof->cfg.NMT_PRE_OPERATIONAL_2},
+        {"COL_READY_TO_OPERATE", &prof->cfg.NMT_READY_TO_OPERATE},
+        {"COL_OPERATIONAL", &prof->cfg.NMT_OPERATIONAL},
+        {"COL_STOPPED", &prof->cfg.NMT_STOPPED},
+        {"COL_BASIC_ETHERNET", &prof->cfg.NMT_BASIC_ETHERNET},
+  };
 
   for (auto i : colorSelctor) {
     if (i.second->isValid()) {

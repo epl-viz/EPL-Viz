@@ -45,8 +45,12 @@ class CurrentODModel final : public TreeModelBase, public BaseModel {
   Q_OBJECT
 
  private:
-  uint8_t node            = 1;
-  uint8_t lastUpdatedNode = node;
+  uint8_t  node             = 1;
+  uint8_t  lastUpdatedNode  = node;
+  uint32_t lastUpdatedCycle = UINT32_MAX;
+
+  bool hasChanged    = false;
+  bool completeReset = false;
 
   ODFilter *filter;
 

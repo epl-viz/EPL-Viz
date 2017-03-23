@@ -58,27 +58,30 @@ void CycleCommandsModel::init() {
 }
 
 
-void CycleCommandsModel::update() {
+void CycleCommandsModel::update() {}
+
+void CycleCommandsModel::updateWidget() {
   ProtectedCycle &cycle = BaseModel::getCurrentCycle();
   auto            l     = getLock();
   auto            lock  = cycle.getLock();
 
-  size_t numPackets = cycle->getPackets().size();
+  if (lastCycle == cycle->getCycleNum())
+    return;
+
+  currentPackets = cycle->getPackets();
+
+  size_t numPackets = currentPackets.size();
 
   // Delete old tree and add new
   beginResetModel();
   root->clear();
-  endResetModel();
-
-  beginInsertRows(QModelIndex(), 0, static_cast<int>(numPackets - 1));
 
   for (size_t i = 0; i < numPackets; ++i) {
-    root->push_back(new CyCoTreeItem(root, cycle, i, getMainWindow()));
+    root->push_back(new CyCoTreeItem(root, currentPackets, i, getMainWindow()));
   }
 
-  endInsertRows();
+  endResetModel();
+  lastCycle = cycle->getCycleNum();
 }
-
-void CycleCommandsModel::updateWidget() {}
 
 void CycleCommandsModel::changeSelection(QModelIndex index) { emit packetChanged(static_cast<uint64_t>(index.row())); }

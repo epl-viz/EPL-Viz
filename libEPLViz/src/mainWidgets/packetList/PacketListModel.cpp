@@ -92,7 +92,9 @@ void PacketListModel::jumpToPacket(QModelIndex packet) {
   emit     cycleSelected(cycleNum);
 }
 
-void PacketListModel::update() {
+void PacketListModel::update() {}
+
+void PacketListModel::updateWidget() {
   auto             l  = getLock();
   CaptureInstance *ci = getMainWindow()->getCaptureInstance();
 
@@ -118,9 +120,7 @@ void PacketListModel::update() {
     beginResetModel();
     root->clear();
     endResetModel();
-    update();
+    updateWidget();
     return;
   }
 }
-
-void PacketListModel::updateWidget() {}

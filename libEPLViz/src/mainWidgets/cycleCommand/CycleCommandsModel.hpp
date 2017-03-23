@@ -38,6 +38,9 @@
 namespace EPL_Viz {
 class CycleCommandsModel : public TreeModelBase, public BaseModel {
   Q_OBJECT
+ private:
+  uint32_t                             lastCycle = UINT32_MAX;
+  std::vector<EPL_DataCollect::Packet> currentPackets;
 
  protected:
   void init() override;

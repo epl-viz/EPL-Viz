@@ -45,7 +45,8 @@ namespace EPL_Viz {
 class ODDescriptionModel final : public TreeModelBase, public BaseModel {
   Q_OBJECT
  private:
-  uint8_t node = UINT8_MAX;
+  uint8_t node       = UINT8_MAX;
+  bool    hasChanged = false;
 
   ODFilterDesc *filter = nullptr;
 

@@ -34,7 +34,7 @@
 #include "TreeModelItemBase.hpp"
 #include <QList>
 #include <QVariant>
-#include <QVector>
+#include <vector>
 
 namespace EPL_Viz {
 
@@ -42,9 +42,9 @@ class MainWindow;
 
 class CyCoTreeItem final : public TreeModelItemBase {
  private:
-  ProtectedCycle &c;
-  size_t          pIndex;
-  MainWindow *    mw;
+  std::vector<EPL_DataCollect::Packet> &packets;
+  size_t                                pIndex;
+  MainWindow *                          mw;
 
 
   QVariant dataDisplay(int column);
@@ -54,7 +54,10 @@ class CyCoTreeItem final : public TreeModelItemBase {
 
  public:
   CyCoTreeItem() = delete;
-  CyCoTreeItem(TreeModelItemBase *parent, ProtectedCycle &cycle, size_t packetIndexs, MainWindow *mainWin);
+  CyCoTreeItem(TreeModelItemBase *                   parent,
+               std::vector<EPL_DataCollect::Packet> &pacs,
+               size_t                                packetIndexs,
+               MainWindow *                          mainWin);
   virtual ~CyCoTreeItem();
 
   QVariant data(int column, Qt::ItemDataRole role) override;

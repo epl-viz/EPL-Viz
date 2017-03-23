@@ -63,32 +63,24 @@ void CurrentODModel::update() {
   auto            l        = getLock();
   int             children = root->childCount();
 
-  // Check if no node is selected
-  if (node == UINT8_MAX) {
-    // Clear the widget if necessary
-    if (children > 0) {
-      beginResetModel();
-      root->clear();
-      endResetModel();
-    }
-    return;
-  }
-
   auto lock = cycle.getLock();
 
   Node *n = cycle->getNode(node);
 
-  if (!n) {
+  if (!n || node == UINT8_MAX) {
     // Clear the widget if necessary
     if (children > 0) {
-      beginResetModel();
-      root->clear();
-      endResetModel();
+      hasChanged    = true;
+      completeReset = true;
     }
     return;
   }
 
   bool hasFilterChanged = filter->updateFilter();
+  if (hasFilterChanged) {
+    hasChanged    = true;
+    completeReset = true;
+  }
 
   static std::vector<uint16_t>    oldVec;
   static std::vector<std::string> oldVecCS;
@@ -126,6 +118,49 @@ void CurrentODModel::update() {
   set_symmetric_difference(chVec.begin(), chVec.end(), oldVec.begin(), oldVec.end(), back_inserter(diff));
   set_symmetric_difference(chVecCS.begin(), chVecCS.end(), oldVecCS.begin(), oldVecCS.end(), back_inserter(diffCS));
 
+  if (diff.empty() && diffCS.empty() && node == lastUpdatedNode && !hasFilterChanged) {
+    if (lastUpdatedCycle == cycle->getCycleNum())
+      return;
+
+    hasChanged = true;
+  } else {
+    hasChanged    = true;
+    completeReset = true;
+  }
+
+  lastUpdatedCycle = cycle->getCycleNum();
+}
+
+void CurrentODModel::updateWidget() {
+  if (!hasChanged)
+    return;
+
+  ProtectedCycle &cycle    = BaseModel::getCurrentCycle();
+  auto            l        = getLock();
+  int             children = root->childCount();
+
+  // Check if no node is selected
+  if (node == UINT8_MAX) {
+    // Clear the widget if necessary
+    if (children > 0) {
+      beginResetModel();
+      root->clear();
+      endResetModel();
+    }
+    return;
+  }
+
+  auto  lock = cycle.getLock();
+  Node *n    = cycle->getNode(node);
+
+  if (!n) {
+    // Clear the widget if necessary
+    if (children > 0) {
+      hasChanged    = true;
+      completeReset = true;
+    }
+    return;
+  }
 
   std::vector<uint32_t> toHighLight;
 
@@ -138,57 +173,26 @@ void CurrentODModel::update() {
     }
   }
 
-  if (diff.empty() && diffCS.empty() && node == lastUpdatedNode && !hasFilterChanged) {
-    // No entry changes
-    for (auto &i : *root->getChildren()) {
-      CurODModelItem *od = dynamic_cast<CurODModelItem *>(i);
-      if (!od) {
-        CurODCycleStorage *cs = dynamic_cast<CurODCycleStorage *>(i);
-
-        if (!cs)
-          continue;
-
-        if (cs->hasChanged())
-          emitRowChaned(i);
-
-        continue;
-      }
-
-      ODEntry *entry = n->getOD()->getEntry(od->getIndex());
-      if (entry->getArraySize() >= 0 && i->childCount() != entry->getArraySize()) {
-        QModelIndex index = indexOf(i);
-        beginRemoveRows(index, 0, i->childCount() - 1);
-        i->clear();
-        endRemoveRows();
-
-        beginInsertRows(index, 0, entry->getArraySize() - 1);
-        for (uint16_t j = 0; j < entry->getArraySize(); ++j) {
-          i->push_back(new CurODModelItem(i, cycle, node, od->getIndex(), j));
-        }
-        endInsertRows();
-        continue;
-      }
-
-      for (auto &j : *i->getChildren()) {
-        dynamic_cast<CurODModelItem *>(j)->resetColor();
-        if (j->hasChanged()) {
-          emitRowChaned(j);
-        }
-      }
-
-      od->resetColor();
-      if (i->hasChanged()) {
-        emitRowChaned(i);
-      }
-
-      if (std::find(toHighLight.begin(), toHighLight.end(), od->getIndex()) != toHighLight.end()) {
-        od->setColor(QColor(0x7c, 0xd1, 0xd9));
-      }
-    }
-  } else {
-    // Rebuild entire model (new / deleted entries are rare)
+  if (completeReset) {
     beginResetModel();
     root->clear();
+
+    static std::vector<uint16_t>    chVec; // static: recycle heap memory
+    static std::vector<std::string> chVecCS;
+    chVec.clear();
+    chVecCS.clear();
+
+    for (auto &i : *cycle->getAllCycleStorage()) {
+      chVecCS.emplace_back(i.first);
+    }
+
+    plf::colony<uint16_t> changedList = n->getOD()->getWrittenValues();
+
+    chVec.assign(changedList.begin(), changedList.end());
+    std::sort(chVec.begin(), chVec.end());
+
+    if (!n || node == UINT8_MAX)
+      return;
 
     for (auto i : chVec) {
       ODEntry *entry = n->getOD()->getEntry(i);
@@ -222,12 +226,29 @@ void CurrentODModel::update() {
       root->push_back(new CurODCycleStorage(root, cycle, i));
     }
 
+    endResetModel();
+  } else {
+    beginResetModel();
+
+    // No entry changes
+    for (auto &i : *root->getChildren()) {
+      CurODModelItem *od = dynamic_cast<CurODModelItem *>(i);
+      if (!od)
+        continue;
+
+
+      od->resetColor();
+      if (std::find(toHighLight.begin(), toHighLight.end(), od->getIndex()) != toHighLight.end()) {
+        od->setColor(QColor(0x7c, 0xd1, 0xd9));
+      }
+    }
 
     endResetModel();
   }
-}
 
-void CurrentODModel::updateWidget() {}
+  completeReset = false;
+  hasChanged    = false;
+}
 
 void CurrentODModel::selectNode(uint8_t n) {
   if (node != n) {

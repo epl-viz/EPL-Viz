@@ -65,30 +65,15 @@ void ODDescriptionModel::update() {
   ProtectedCycle &cycle    = BaseModel::getCurrentCycle();
   auto            l        = getLock();
   int             children = root->childCount();
+  auto            lock     = cycle.getLock();
+  Node *          n        = cycle->getNode(node);
 
   // Check if no node is selected
-  if (node == UINT8_MAX) {
+  if (node == UINT8_MAX || !n) {
     // Clear the widget if necessary
-    if (children > 0) {
-      beginResetModel();
-      root->clear();
-      endResetModel();
-    }
-    return;
-  }
+    if (children > 0)
+      hasChanged = true;
 
-  auto lock = cycle.getLock();
-
-  Node *n = cycle->getNode(node);
-
-  // Check if node exists
-  if (!n) {
-    // Clear the widget if necessary
-    if (children > 0) {
-      beginResetModel();
-      root->clear();
-      endResetModel();
-    }
     return;
   }
 
@@ -112,37 +97,52 @@ void ODDescriptionModel::update() {
   std::sort(oldVec.begin(), oldVec.end());
   std::set_symmetric_difference(chVec.begin(), chVec.end(), oldVec.begin(), oldVec.end(), std::back_inserter(diff));
 
-  if (diff.empty() && !hasFilterChanged) {
-    // No entry changes
-
-    // Do nothing because the OD Description is static
-  } else {
-    // Rebuild entire model (new / deleted entries are rare)
-    beginResetModel();
-    root->clear();
-
-    for (auto i : chVec) {
-      ODEntryDescription *entry = n->getOD()->getODDesc()->getEntry(i);
-
-      if (!entry) {
-        qDebug() << "ERROR entry does not exist! " << i;
-        continue;
-      }
-
-      root->push_back(new ODDescriptionItem(root, cycle, node, i));
-      auto *item = root->back();
-
-      for (uint16_t j = 0; j < entry->subEntries.size(); ++j) {
-        item->push_back(new ODDescriptionItem(item, cycle, node, i, j));
-      }
-    }
-
-
-    endResetModel();
-  }
+  if (!diff.empty() || hasFilterChanged)
+    hasChanged = true;
 }
 
-void ODDescriptionModel::updateWidget() {}
+void ODDescriptionModel::updateWidget() {
+  if (!hasChanged)
+    return;
+
+  ProtectedCycle &cycle = BaseModel::getCurrentCycle();
+  auto            l     = getLock();
+  auto            lock  = cycle.getLock();
+  Node *          n     = cycle->getNode(node);
+
+  beginResetModel();
+  root->clear();
+
+  if (node == UINT8_MAX || !n)
+    return;
+
+  static std::vector<uint16_t> chVec; // static: recycle heap memory
+  chVec.clear();
+
+  plf::colony<uint16_t> changedList = n->getOD()->getODDesc()->getEntriesList();
+
+  chVec.assign(changedList.begin(), changedList.end());
+  std::sort(chVec.begin(), chVec.end());
+
+  for (auto i : chVec) {
+    ODEntryDescription *entry = n->getOD()->getODDesc()->getEntry(i);
+
+    if (!entry) {
+      qDebug() << "ERROR entry does not exist! " << i;
+      continue;
+    }
+
+    root->push_back(new ODDescriptionItem(root, cycle, node, i));
+    auto *item = root->back();
+
+    for (uint16_t j = 0; j < entry->subEntries.size(); ++j) {
+      item->push_back(new ODDescriptionItem(item, cycle, node, i, j));
+    }
+  }
+
+  endResetModel();
+  hasChanged = false;
+}
 
 
 void ODDescriptionModel::selectNode(uint8_t n) {

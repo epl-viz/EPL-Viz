@@ -34,8 +34,11 @@ using namespace EPL_DataCollect;
 using namespace EPL_Viz;
 using namespace std::chrono;
 
-CyCoTreeItem::CyCoTreeItem(TreeModelItemBase *parent, ProtectedCycle &cycle, size_t packetIndexs, MainWindow *mainWin)
-    : TreeModelItemBase(parent), c(cycle), pIndex(packetIndexs), mw(mainWin) {}
+CyCoTreeItem::CyCoTreeItem(TreeModelItemBase *                   parent,
+                           std::vector<EPL_DataCollect::Packet> &pacs,
+                           size_t                                packetIndexs,
+                           MainWindow *                          mainWin)
+    : TreeModelItemBase(parent), packets(pacs), pIndex(packetIndexs), mw(mainWin) {}
 
 CyCoTreeItem::~CyCoTreeItem() {}
 
@@ -43,18 +46,13 @@ Qt::ItemFlags CyCoTreeItem::flags() { return Qt::ItemIsEnabled | Qt::ItemNeverHa
 bool          CyCoTreeItem::hasChanged() { return false; }
 
 QVariant CyCoTreeItem::dataDisplay(int column) {
-  auto lock = c.getLock();
-
-  if (pIndex >= c->getPackets().size())
-    return QVariant();
-
-  Packet                   packet = c->getPackets().at(pIndex);
-  system_clock::time_point SoC    = c->getPackets().at(0).getTimeStamp();
+  Packet &                 packet = packets.at(pIndex);
+  system_clock::time_point SoC    = packets.at(0).getTimeStamp();
   system_clock::time_point last;
   if (pIndex == 0) {
     last = SoC;
   } else {
-    last = c->getPackets().at(pIndex - 1).getTimeStamp();
+    last = packets.at(pIndex - 1).getTimeStamp();
   }
 
   switch (column) {
@@ -89,7 +87,7 @@ QVariant CyCoTreeItem::dataTooltip(int column) {
 }
 
 QColor CyCoTreeItem::dataBackground() {
-  Packet     packet = c->getPackets().at(pIndex);
+  Packet &   packet = packets.at(pIndex);
   PacketType tp     = static_cast<PacketType>(packet.getType());
   switch (tp) {
     case PacketType::START_OF_CYCLE: return mw->getSettingsWin()->getConfig().pSoC;

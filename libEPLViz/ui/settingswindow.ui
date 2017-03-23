@@ -41,8 +41,7 @@
             <string>New</string>
            </property>
            <property name="icon">
-            <iconset theme="list-add">
-             <normaloff>.</normaloff>.</iconset>
+            <iconset theme="list-add"/>
            </property>
           </widget>
          </item>
@@ -52,8 +51,7 @@
             <string>Delete</string>
            </property>
            <property name="icon">
-            <iconset theme="edit-delete">
-             <normaloff>.</normaloff>.</iconset>
+            <iconset theme="edit-delete"/>
            </property>
           </widget>
          </item>
@@ -173,8 +171,7 @@
                    <string>Add</string>
                   </property>
                   <property name="icon">
-                   <iconset theme="list-add">
-                    <normaloff>.</normaloff>.</iconset>
+                   <iconset theme="list-add"/>
                   </property>
                  </widget>
                 </item>
@@ -184,8 +181,7 @@
                    <string>Remove</string>
                   </property>
                   <property name="icon">
-                   <iconset theme="edit-delete">
-                    <normaloff>.</normaloff>.</iconset>
+                   <iconset theme="edit-delete"/>
                   </property>
                  </widget>
                 </item>
@@ -299,8 +295,7 @@
                 <string>New</string>
                </property>
                <property name="icon">
-                <iconset theme="list-add">
-                 <normaloff>.</normaloff>.</iconset>
+                <iconset theme="list-add"/>
                </property>
               </widget>
              </item>
@@ -310,8 +305,7 @@
                 <string>Delete</string>
                </property>
                <property name="icon">
-                <iconset theme="edit-delete">
-                 <normaloff>.</normaloff>.</iconset>
+                <iconset theme="edit-delete"/>
                </property>
               </widget>
              </item>
@@ -321,8 +315,7 @@
                 <string>Edit</string>
                </property>
                <property name="icon">
-                <iconset theme="document-edit">
-                 <normaloff>.</normaloff>.</iconset>
+                <iconset theme="document-edit"/>
                </property>
               </widget>
              </item>
@@ -335,8 +328,7 @@
                 <string>Clear</string>
                </property>
                <property name="icon">
-                <iconset theme="list-remove">
-                 <normaloff>.</normaloff>.</iconset>
+                <iconset theme="list-remove"/>
                </property>
               </widget>
              </item>
@@ -432,8 +424,7 @@
                        <string>Set</string>
                       </property>
                       <property name="icon">
-                       <iconset theme="color-picker">
-                        <normaloff>.</normaloff>.</iconset>
+                       <iconset theme="color-picker"/>
                       </property>
                      </widget>
                     </item>
@@ -443,8 +434,7 @@
                        <string>Clear</string>
                       </property>
                       <property name="icon">
-                       <iconset theme="edit-clear">
-                        <normaloff>.</normaloff>.</iconset>
+                       <iconset theme="edit-clear"/>
                       </property>
                      </widget>
                     </item>
@@ -533,8 +523,7 @@
                        <string>Set</string>
                       </property>
                       <property name="icon">
-                       <iconset theme="color-picker">
-                        <normaloff>.</normaloff>.</iconset>
+                       <iconset theme="color-picker"/>
                       </property>
                      </widget>
                     </item>
@@ -544,8 +533,7 @@
                        <string>Clear</string>
                       </property>
                       <property name="icon">
-                       <iconset theme="edit-clear">
-                        <normaloff>.</normaloff>.</iconset>
+                       <iconset theme="edit-clear"/>
                       </property>
                      </widget>
                     </item>
@@ -621,8 +609,7 @@
                        <string>Set</string>
                       </property>
                       <property name="icon">
-                       <iconset theme="color-picker">
-                        <normaloff>.</normaloff>.</iconset>
+                       <iconset theme="color-picker"/>
                       </property>
                      </widget>
                     </item>
@@ -632,8 +619,7 @@
                        <string>Clear</string>
                       </property>
                       <property name="icon">
-                       <iconset theme="edit-clear">
-                        <normaloff>.</normaloff>.</iconset>
+                       <iconset theme="edit-clear"/>
                       </property>
                      </widget>
                     </item>
@@ -709,8 +695,7 @@
                        <string>Set</string>
                       </property>
                       <property name="icon">
-                       <iconset theme="color-picker">
-                        <normaloff>.</normaloff>.</iconset>
+                       <iconset theme="color-picker"/>
                       </property>
                      </widget>
                     </item>
@@ -720,8 +705,7 @@
                        <string>Clear</string>
                       </property>
                       <property name="icon">
-                       <iconset theme="edit-clear">
-                        <normaloff>.</normaloff>.</iconset>
+                       <iconset theme="edit-clear"/>
                       </property>
                      </widget>
                     </item>
@@ -797,8 +781,7 @@
                        <string>Set</string>
                       </property>
                       <property name="icon">
-                       <iconset theme="color-picker">
-                        <normaloff>.</normaloff>.</iconset>
+                       <iconset theme="color-picker"/>
                       </property>
                      </widget>
                     </item>
@@ -808,8 +791,7 @@
                        <string>Clear</string>
                       </property>
                       <property name="icon">
-                       <iconset theme="edit-clear">
-                        <normaloff>.</normaloff>.</iconset>
+                       <iconset theme="edit-clear"/>
                       </property>
                      </widget>
                     </item>
@@ -885,8 +867,7 @@
                        <string>Set</string>
                       </property>
                       <property name="icon">
-                       <iconset theme="color-picker">
-                        <normaloff>.</normaloff>.</iconset>
+                       <iconset theme="color-picker"/>
                       </property>
                      </widget>
                     </item>
@@ -896,8 +877,7 @@
                        <string>Clear</string>
                       </property>
                       <property name="icon">
-                       <iconset theme="edit-clear">
-                        <normaloff>.</normaloff>.</iconset>
+                       <iconset theme="edit-clear"/>
                       </property>
                      </widget>
                     </item>
@@ -973,8 +953,7 @@
                        <string>Set</string>
                       </property>
                       <property name="icon">
-                       <iconset theme="color-picker">
-                        <normaloff>.</normaloff>.</iconset>
+                       <iconset theme="color-picker"/>
                       </property>
                      </widget>
                     </item>
@@ -984,8 +963,7 @@
                        <string>Clear</string>
                       </property>
                       <property name="icon">
-                       <iconset theme="edit-clear">
-                        <normaloff>.</normaloff>.</iconset>
+                       <iconset theme="edit-clear"/>
                       </property>
                      </widget>
                     </item>
@@ -1061,8 +1039,7 @@
                        <string>Set</string>
                       </property>
                       <property name="icon">
-                       <iconset theme="color-picker">
-                        <normaloff>.</normaloff>.</iconset>
+                       <iconset theme="color-picker"/>
                       </property>
                      </widget>
                     </item>
@@ -1072,8 +1049,7 @@
                        <string>Clear</string>
                       </property>
                       <property name="icon">
-                       <iconset theme="edit-clear">
-                        <normaloff>.</normaloff>.</iconset>
+                       <iconset theme="edit-clear"/>
                       </property>
                      </widget>
                     </item>
@@ -1149,8 +1125,7 @@
                        <string>Set</string>
                       </property>
                       <property name="icon">
-                       <iconset theme="color-picker">
-                        <normaloff>.</normaloff>.</iconset>
+                       <iconset theme="color-picker"/>
                       </property>
                      </widget>
                     </item>
@@ -1160,8 +1135,7 @@
                        <string>Clear</string>
                       </property>
                       <property name="icon">
-                       <iconset theme="edit-clear">
-                        <normaloff>.</normaloff>.</iconset>
+                       <iconset theme="edit-clear"/>
                       </property>
                      </widget>
                     </item>
@@ -1263,8 +1237,7 @@
                        <string>Set</string>
                       </property>
                       <property name="icon">
-                       <iconset theme="color-picker">
-                        <normaloff>.</normaloff>.</iconset>
+                       <iconset theme="color-picker"/>
                       </property>
                      </widget>
                     </item>
@@ -1274,8 +1247,7 @@
                        <string>Clear</string>
                       </property>
                       <property name="icon">
-                       <iconset theme="edit-clear">
-                        <normaloff>.</normaloff>.</iconset>
+                       <iconset theme="edit-clear"/>
                       </property>
                      </widget>
                     </item>
@@ -1351,8 +1323,7 @@
                        <string>Set</string>
                       </property>
                       <property name="icon">
-                       <iconset theme="color-picker">
-                        <normaloff>.</normaloff>.</iconset>
+                       <iconset theme="color-picker"/>
                       </property>
                      </widget>
                     </item>
@@ -1362,8 +1333,7 @@
                        <string>Clear</string>
                       </property>
                       <property name="icon">
-                       <iconset theme="edit-clear">
-                        <normaloff>.</normaloff>.</iconset>
+                       <iconset theme="edit-clear"/>
                       </property>
                      </widget>
                     </item>
@@ -1439,8 +1409,7 @@
                        <string>Set</string>
                       </property>
                       <property name="icon">
-                       <iconset theme="color-picker">
-                        <normaloff>.</normaloff>.</iconset>
+                       <iconset theme="color-picker"/>
                       </property>
                      </widget>
                     </item>
@@ -1450,8 +1419,7 @@
                        <string>Clear</string>
                       </property>
                       <property name="icon">
-                       <iconset theme="edit-clear">
-                        <normaloff>.</normaloff>.</iconset>
+                       <iconset theme="edit-clear"/>
                       </property>
                      </widget>
                     </item>
@@ -1527,8 +1495,7 @@
                        <string>Set</string>
                       </property>
                       <property name="icon">
-                       <iconset theme="color-picker">
-                        <normaloff>.</normaloff>.</iconset>
+                       <iconset theme="color-picker"/>
                       </property>
                      </widget>
                     </item>
@@ -1538,8 +1505,7 @@
                        <string>Clear</string>
                       </property>
                       <property name="icon">
-                       <iconset theme="edit-clear">
-                        <normaloff>.</normaloff>.</iconset>
+                       <iconset theme="edit-clear"/>
                       </property>
                      </widget>
                     </item>
@@ -1615,8 +1581,7 @@
                        <string>Set</string>
                       </property>
                       <property name="icon">
-                       <iconset theme="color-picker">
-                        <normaloff>.</normaloff>.</iconset>
+                       <iconset theme="color-picker"/>
                       </property>
                      </widget>
                     </item>
@@ -1626,8 +1591,7 @@
                        <string>Clear</string>
                       </property>
                       <property name="icon">
-                       <iconset theme="edit-clear">
-                        <normaloff>.</normaloff>.</iconset>
+                       <iconset theme="edit-clear"/>
                       </property>
                      </widget>
                     </item>
@@ -1703,8 +1667,7 @@
                        <string>Set</string>
                       </property>
                       <property name="icon">
-                       <iconset theme="color-picker">
-                        <normaloff>.</normaloff>.</iconset>
+                       <iconset theme="color-picker"/>
                       </property>
                      </widget>
                     </item>
@@ -1714,8 +1677,7 @@
                        <string>Clear</string>
                       </property>
                       <property name="icon">
-                       <iconset theme="edit-clear">
-                        <normaloff>.</normaloff>.</iconset>
+                       <iconset theme="edit-clear"/>
                       </property>
                      </widget>
                     </item>
@@ -1820,8 +1782,7 @@
                        <string>Set</string>
                       </property>
                       <property name="icon">
-                       <iconset theme="color-picker">
-                        <normaloff>.</normaloff>.</iconset>
+                       <iconset theme="color-picker"/>
                       </property>
                      </widget>
                     </item>
@@ -1831,8 +1792,7 @@
                        <string>Clear</string>
                       </property>
                       <property name="icon">
-                       <iconset theme="edit-clear">
-                        <normaloff>.</normaloff>.</iconset>
+                       <iconset theme="edit-clear"/>
                       </property>
                      </widget>
                     </item>
@@ -1921,8 +1881,7 @@
                        <string>Set</string>
                       </property>
                       <property name="icon">
-                       <iconset theme="color-picker">
-                        <normaloff>.</normaloff>.</iconset>
+                       <iconset theme="color-picker"/>
                       </property>
                      </widget>
                     </item>
@@ -1932,8 +1891,7 @@
                        <string>Clear</string>
                       </property>
                       <property name="icon">
-                       <iconset theme="edit-clear">
-                        <normaloff>.</normaloff>.</iconset>
+                       <iconset theme="edit-clear"/>
                       </property>
                      </widget>
                     </item>
@@ -2009,8 +1967,7 @@
                        <string>Set</string>
                       </property>
                       <property name="icon">
-                       <iconset theme="color-picker">
-                        <normaloff>.</normaloff>.</iconset>
+                       <iconset theme="color-picker"/>
                       </property>
                      </widget>
                     </item>
@@ -2020,8 +1977,7 @@
                        <string>Clear</string>
                       </property>
                       <property name="icon">
-                       <iconset theme="edit-clear">
-                        <normaloff>.</normaloff>.</iconset>
+                       <iconset theme="edit-clear"/>
                       </property>
                      </widget>
                     </item>
@@ -2097,8 +2053,7 @@
                        <string>Set</string>
                       </property>
                       <property name="icon">
-                       <iconset theme="color-picker">
-                        <normaloff>.</normaloff>.</iconset>
+                       <iconset theme="color-picker"/>
                       </property>
                      </widget>
                     </item>
@@ -2108,8 +2063,7 @@
                        <string>Clear</string>
                       </property>
                       <property name="icon">
-                       <iconset theme="edit-clear">
-                        <normaloff>.</normaloff>.</iconset>
+                       <iconset theme="edit-clear"/>
                       </property>
                      </widget>
                     </item>
@@ -2185,8 +2139,7 @@
                        <string>Set</string>
                       </property>
                       <property name="icon">
-                       <iconset theme="color-picker">
-                        <normaloff>.</normaloff>.</iconset>
+                       <iconset theme="color-picker"/>
                       </property>
                      </widget>
                     </item>
@@ -2196,8 +2149,7 @@
                        <string>Clear</string>
                       </property>
                       <property name="icon">
-                       <iconset theme="edit-clear">
-                        <normaloff>.</normaloff>.</iconset>
+                       <iconset theme="edit-clear"/>
                       </property>
                      </widget>
                     </item>
@@ -2273,8 +2225,7 @@
                        <string>Set</string>
                       </property>
                       <property name="icon">
-                       <iconset theme="color-picker">
-                        <normaloff>.</normaloff>.</iconset>
+                       <iconset theme="color-picker"/>
                       </property>
                      </widget>
                     </item>
@@ -2284,8 +2235,7 @@
                        <string>Clear</string>
                       </property>
                       <property name="icon">
-                       <iconset theme="edit-clear">
-                        <normaloff>.</normaloff>.</iconset>
+                       <iconset theme="edit-clear"/>
                       </property>
                      </widget>
                     </item>
@@ -2361,8 +2311,7 @@
                        <string>Set</string>
                       </property>
                       <property name="icon">
-                       <iconset theme="color-picker">
-                        <normaloff>.</normaloff>.</iconset>
+                       <iconset theme="color-picker"/>
                       </property>
                      </widget>
                     </item>
@@ -2372,8 +2321,7 @@
                        <string>Clear</string>
                       </property>
                       <property name="icon">
-                       <iconset theme="edit-clear">
-                        <normaloff>.</normaloff>.</iconset>
+                       <iconset theme="edit-clear"/>
                       </property>
                      </widget>
                     </item>
@@ -2449,8 +2397,7 @@
                        <string>Set</string>
                       </property>
                       <property name="icon">
-                       <iconset theme="color-picker">
-                        <normaloff>.</normaloff>.</iconset>
+                       <iconset theme="color-picker"/>
                       </property>
                      </widget>
                     </item>
@@ -2460,8 +2407,7 @@
                        <string>Clear</string>
                       </property>
                       <property name="icon">
-                       <iconset theme="edit-clear">
-                        <normaloff>.</normaloff>.</iconset>
+                       <iconset theme="edit-clear"/>
                       </property>
                      </widget>
                     </item>
@@ -2537,8 +2483,7 @@
                        <string>Set</string>
                       </property>
                       <property name="icon">
-                       <iconset theme="color-picker">
-                        <normaloff>.</normaloff>.</iconset>
+                       <iconset theme="color-picker"/>
                       </property>
                      </widget>
                     </item>
@@ -2548,8 +2493,7 @@
                        <string>Clear</string>
                       </property>
                       <property name="icon">
-                       <iconset theme="edit-clear">
-                        <normaloff>.</normaloff>.</iconset>
+                       <iconset theme="edit-clear"/>
                       </property>
                      </widget>
                     </item>
@@ -2625,8 +2569,7 @@
                        <string>Set</string>
                       </property>
                       <property name="icon">
-                       <iconset theme="color-picker">
-                        <normaloff>.</normaloff>.</iconset>
+                       <iconset theme="color-picker"/>
                       </property>
                      </widget>
                     </item>
@@ -2636,8 +2579,7 @@
                        <string>Clear</string>
                       </property>
                       <property name="icon">
-                       <iconset theme="edit-clear">
-                        <normaloff>.</normaloff>.</iconset>
+                       <iconset theme="edit-clear"/>
                       </property>
                      </widget>
                     </item>
@@ -2713,8 +2655,7 @@
                        <string>Set</string>
                       </property>
                       <property name="icon">
-                       <iconset theme="color-picker">
-                        <normaloff>.</normaloff>.</iconset>
+                       <iconset theme="color-picker"/>
                       </property>
                      </widget>
                     </item>
@@ -2724,8 +2665,7 @@
                        <string>Clear</string>
                       </property>
                       <property name="icon">
-                       <iconset theme="edit-clear">
-                        <normaloff>.</normaloff>.</iconset>
+                       <iconset theme="edit-clear"/>
                       </property>
                      </widget>
                     </item>
@@ -2801,8 +2741,7 @@
                        <string>Set</string>
                       </property>
                       <property name="icon">
-                       <iconset theme="color-picker">
-                        <normaloff>.</normaloff>.</iconset>
+                       <iconset theme="color-picker"/>
                       </property>
                      </widget>
                     </item>
@@ -2812,8 +2751,7 @@
                        <string>Clear</string>
                       </property>
                       <property name="icon">
-                       <iconset theme="edit-clear">
-                        <normaloff>.</normaloff>.</iconset>
+                       <iconset theme="edit-clear"/>
                       </property>
                      </widget>
                     </item>
@@ -2889,8 +2827,7 @@
                        <string>Set</string>
                       </property>
                       <property name="icon">
-                       <iconset theme="color-picker">
-                        <normaloff>.</normaloff>.</iconset>
+                       <iconset theme="color-picker"/>
                       </property>
                      </widget>
                     </item>
@@ -2900,8 +2837,7 @@
                        <string>Clear</string>
                       </property>
                       <property name="icon">
-                       <iconset theme="edit-clear">
-                        <normaloff>.</normaloff>.</iconset>
+                       <iconset theme="edit-clear"/>
                       </property>
                      </widget>
                     </item>
@@ -2978,8 +2914,7 @@
                        <string>...</string>
                       </property>
                       <property name="icon">
-                       <iconset theme="folder">
-                        <normaloff>.</normaloff>.</iconset>
+                       <iconset theme="folder"/>
                       </property>
                      </widget>
                     </item>
@@ -3222,8 +3157,7 @@
                    <string>...</string>
                   </property>
                   <property name="icon">
-                   <iconset theme="folder">
-                    <normaloff>.</normaloff>.</iconset>
+                   <iconset theme="folder"/>
                   </property>
                   <property name="iconSize">
                    <size>
@@ -3277,8 +3211,7 @@
             <string>Apply</string>
            </property>
            <property name="icon">
-            <iconset theme="dialog-ok-apply">
-             <normaloff>.</normaloff>.</iconset>
+            <iconset theme="dialog-ok-apply"/>
            </property>
           </widget>
          </item>
@@ -3294,8 +3227,7 @@
             <string>Reset</string>
            </property>
            <property name="icon">
-            <iconset theme="dialog-cancel">
-             <normaloff>.</normaloff>.</iconset>
+            <iconset theme="dialog-cancel"/>
            </property>
           </widget>
          </item>
@@ -3321,8 +3253,7 @@
             <string>Close</string>
            </property>
            <property name="icon">
-            <iconset theme="dialog-close">
-             <normaloff>.</normaloff>.</iconset>
+            <iconset theme="dialog-close"/>
            </property>
           </widget>
          </item>

@@ -36,7 +36,11 @@ using namespace EPL_DataCollect;
 
 QWTPlotModel::QWTPlotModel(MainWindow *win, QwtPlot *widget) : QwtBaseModel(win, widget) {
   (void)win;
-  (void)widget;
+  widget->setAxisAutoScale(QwtPlot::xBottom, true);
 }
 
 QWTPlotModel::~QWTPlotModel() {}
+
+void QWTPlotModel::createPlot(uint8_t nodeID, uint16_t index, uint16_t subIndex, std::string cs, QColor color) {
+  QwtBaseModel::createPlot(nodeID, index, subIndex, cs, QwtPlot::xBottom, color);
+}

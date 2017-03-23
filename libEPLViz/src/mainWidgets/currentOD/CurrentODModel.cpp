@@ -28,6 +28,7 @@
  */
 #include "CurrentODModel.hpp"
 #include "CurODCycleStorage.hpp"
+#include "MainWindow.hpp"
 #include "OD.hpp"
 #include <QMenu>
 #include <QString>
@@ -50,7 +51,6 @@ CurrentODModel::CurrentODModel(MainWindow *window, QTreeView *widget)
 CurrentODModel::~CurrentODModel() {}
 
 void CurrentODModel::init() {
-  node            = 1;
   lastUpdatedNode = node;
 
   beginResetModel();
@@ -62,10 +62,8 @@ void CurrentODModel::update() {
   ProtectedCycle &cycle    = BaseModel::getCurrentCycle();
   auto            l        = getLock();
   int             children = root->childCount();
-
-  auto lock = cycle.getLock();
-
-  Node *n = cycle->getNode(node);
+  auto            lock     = cycle.getLock();
+  Node *          n        = cycle->getNode(node);
 
   if (!n || node == UINT8_MAX) {
     // Clear the widget if necessary
@@ -119,16 +117,11 @@ void CurrentODModel::update() {
   set_symmetric_difference(chVecCS.begin(), chVecCS.end(), oldVecCS.begin(), oldVecCS.end(), back_inserter(diffCS));
 
   if (diff.empty() && diffCS.empty() && node == lastUpdatedNode && !hasFilterChanged) {
-    if (lastUpdatedCycle == cycle->getCycleNum())
-      return;
-
     hasChanged = true;
   } else {
     hasChanged    = true;
     completeReset = true;
   }
-
-  lastUpdatedCycle = cycle->getCycleNum();
 }
 
 void CurrentODModel::updateWidget() {
@@ -139,25 +132,16 @@ void CurrentODModel::updateWidget() {
   auto            l        = getLock();
   int             children = root->childCount();
 
+  auto  lock = cycle.getLock();
+  Node *n    = cycle->getNode(node);
+
   // Check if no node is selected
-  if (node == UINT8_MAX) {
+  if (node == UINT8_MAX || !n) {
     // Clear the widget if necessary
     if (children > 0) {
       beginResetModel();
       root->clear();
       endResetModel();
-    }
-    return;
-  }
-
-  auto  lock = cycle.getLock();
-  Node *n    = cycle->getNode(node);
-
-  if (!n) {
-    // Clear the widget if necessary
-    if (children > 0) {
-      hasChanged    = true;
-      completeReset = true;
     }
     return;
   }
@@ -211,7 +195,7 @@ void CurrentODModel::updateWidget() {
 
       if (std::find(toHighLight.begin(), toHighLight.end(), dynamic_cast<CurODModelItem *>(item)->getIndex()) !=
           toHighLight.end()) {
-        dynamic_cast<CurODModelItem *>(item)->setColor(QColor(0x7c, 0xd1, 0xd9));
+        dynamic_cast<CurODModelItem *>(item)->setColor(getMainWindow()->getSettingsWin()->getConfig().odHighlight);
       }
     }
 
@@ -239,7 +223,7 @@ void CurrentODModel::updateWidget() {
 
       od->resetColor();
       if (std::find(toHighLight.begin(), toHighLight.end(), od->getIndex()) != toHighLight.end()) {
-        od->setColor(QColor(0x7c, 0xd1, 0xd9));
+        od->setColor(getMainWindow()->getSettingsWin()->getConfig().odHighlight);
       }
     }
 
@@ -253,7 +237,7 @@ void CurrentODModel::updateWidget() {
 void CurrentODModel::selectNode(uint8_t n) {
   if (node != n) {
     node = n;
-    update();
+    forceNextUpdate();
   }
 }
 

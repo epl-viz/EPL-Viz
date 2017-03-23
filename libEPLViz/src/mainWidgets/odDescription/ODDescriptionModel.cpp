@@ -148,6 +148,6 @@ void ODDescriptionModel::updateWidget() {
 void ODDescriptionModel::selectNode(uint8_t n) {
   if (node != n) {
     node = n;
-    update();
+    forceNextUpdate();
   }
 }

@@ -87,6 +87,7 @@ class BaseModel {
   static QLinkedList<BaseModel *> registeredModels;
   static uint32_t                 appID;
   static ProtectedCycle           cycle;
+  static bool                     forceUpdate;
   MainWindow *                    mainWindow;
 
  public:
@@ -104,13 +105,15 @@ class BaseModel {
   static void reg(BaseModel *model);
   static void dereg(BaseModel *model);
 
+  static void forceNextUpdate() { forceUpdate = true; }
+
   static ProtectedCycle &getCurrentCycle();
 
   MainWindow *getMainWindow();
 
  private:
   static bool updateAll(MainWindow *mw, EPL_DataCollect::CaptureInstance *instance);
-  static void updateAllWidgets();
+  static void updateAllWidgets(MainWindow *mw);
 
   static void initAll();
 

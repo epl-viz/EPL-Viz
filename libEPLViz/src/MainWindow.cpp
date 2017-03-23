@@ -219,8 +219,8 @@ void MainWindow::destroyModels() {
 }
 
 void MainWindow::updateWidgets() {
-  qDebug() << "==> Widget Update thread";
-  BaseModel::updateAllWidgets();
+  // qDebug() << "==> Widget Update thread";
+  BaseModel::updateAllWidgets(this);
   ui->eventViewer->updateEvents();
 
   getCycleSetter()->getWidget()->setValue(BaseModel::getCurrentCycle()->getCycleNum());

@@ -59,10 +59,9 @@ void ModelThread::loop() {
       case GUIState::RECORDING: {
         auto *                   ci      = window->getCaptureInstance();
         CaptureInstance::CIstate cistate = ci->getState();
-        if (cistate == CaptureInstance::CIstate::SETUP) {
-          qDebug() << "Still in Setup phase";
+        if (cistate == CaptureInstance::CIstate::SETUP)
           continue;
-        }
+
         if (cistate != CaptureInstance::CIstate::RUNNING && cistate != CaptureInstance::CIstate::DONE) {
           qDebug() << QString::fromStdString("Stopped because ci changed state to state " +
                                              EPLEnum2Str::toStr(cistate));
@@ -73,9 +72,9 @@ void ModelThread::loop() {
 
         // Update models and if it was completed, the widgets
         if (BaseModel::updateAll(window, ci)) {
-          qDebug() << "BEGIN UPDATING WIDGETS";
+          // qDebug() << "BEGIN UPDATING WIDGETS";
           emit updateCompleted(); // Wait until the widgets are updated in the GUI thread
-          qDebug() << "END UPDATING WIDGETS";
+          // qDebug() << "END UPDATING WIDGETS";
         }
 
         break;

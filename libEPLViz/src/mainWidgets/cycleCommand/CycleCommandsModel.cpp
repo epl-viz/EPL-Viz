@@ -65,9 +65,6 @@ void CycleCommandsModel::updateWidget() {
   auto            l     = getLock();
   auto            lock  = cycle.getLock();
 
-  if (lastCycle == cycle->getCycleNum())
-    return;
-
   currentPackets = cycle->getPackets();
 
   size_t numPackets = currentPackets.size();
@@ -81,7 +78,6 @@ void CycleCommandsModel::updateWidget() {
   }
 
   endResetModel();
-  lastCycle = cycle->getCycleNum();
 }
 
 void CycleCommandsModel::changeSelection(QModelIndex index) { emit packetChanged(static_cast<uint64_t>(index.row())); }

@@ -28,17 +28,18 @@
  */
 #include "CyCoTreeItem.hpp"
 #include "EPLEnum2Str.hpp"
+#include "MainWindow.hpp"
 
 using namespace EPL_DataCollect;
 using namespace EPL_Viz;
 using namespace std::chrono;
 
-CyCoTreeItem::CyCoTreeItem(TreeModelItemBase *parent, ProtectedCycle &cycle, size_t packetIndexs)
-    : TreeModelItemBase(parent), c(cycle), pIndex(packetIndexs) {}
+CyCoTreeItem::CyCoTreeItem(TreeModelItemBase *parent, ProtectedCycle &cycle, size_t packetIndexs, MainWindow *mainWin)
+    : TreeModelItemBase(parent), c(cycle), pIndex(packetIndexs), mw(mainWin) {}
 
 CyCoTreeItem::~CyCoTreeItem() {}
 
-Qt::ItemFlags CyCoTreeItem::flags() { return Qt::ItemIsEnabled; }
+Qt::ItemFlags CyCoTreeItem::flags() { return Qt::ItemIsEnabled | Qt::ItemNeverHasChildren; }
 bool          CyCoTreeItem::hasChanged() { return false; }
 
 QVariant CyCoTreeItem::dataDisplay(int column) {
@@ -87,13 +88,48 @@ QVariant CyCoTreeItem::dataTooltip(int column) {
   }
 }
 
+QColor CyCoTreeItem::dataBackground() {
+  Packet     packet = c->getPackets().at(pIndex);
+  PacketType tp     = static_cast<PacketType>(packet.getType());
+  switch (tp) {
+    case PacketType::START_OF_CYCLE: return mw->getSettingsWin()->getConfig().pSoC;
+    case PacketType::START_OF_ASYNC: return mw->getSettingsWin()->getConfig().pSoA;
+    case PacketType::POLL_REQUEST: return mw->getSettingsWin()->getConfig().pPReq;
+    case PacketType::POLL_RESPONSE: return mw->getSettingsWin()->getConfig().pPRes;
+    case PacketType::ASYNC_SEND: return mw->getSettingsWin()->getConfig().pASnd;
+    case PacketType::AINV: return mw->getSettingsWin()->getConfig().pAINV;
+    case PacketType::AMNI: return mw->getSettingsWin()->getConfig().pANMI;
+    case PacketType::UNDEF: return mw->getSettingsWin()->getConfig().pInvalid;
+  }
+
+  return QColor();
+}
+
+QColor CyCoTreeItem::dataForground() {
+  QColor bgCol = dataBackground();
+  if (!bgCol.isValid())
+    return QColor();
+
+  if (bgCol.lightness() >= 125) {
+    return QColor("#000000");
+  }
+
+  return QColor("#ffffff");
+}
+
 QVariant CyCoTreeItem::data(int column, Qt::ItemDataRole role) {
-  if (role != Qt::DisplayRole)
-    return QVariant();
+  QColor col;
 
   switch (role) {
     case Qt::DisplayRole: return dataDisplay(column);
     case Qt::ToolTipRole: return dataTooltip(column);
+    case Qt::BackgroundRole: col = dataBackground(); break;
+    case Qt::ForegroundRole: col = dataForground(); break;
     default: return QVariant();
   }
+
+  if (!col.isValid())
+    return QVariant();
+
+  return QBrush(col);
 }

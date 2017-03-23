@@ -189,7 +189,7 @@ void NodeWidget::updateData(uint8_t nID, ProtectedCycle &c) {
   updateStatus(node->getStatus());
 }
 
-void NodeWidget::setHighlightingLevel(int level) { highlightingLevel = level; }
+void NodeWidget::setHighlighted(bool highlight) { highlighted = highlight; }
 
 void NodeWidget::setSelected(bool sel) {
   if (sel != selected) {
@@ -204,7 +204,7 @@ bool NodeWidget::isSelected() { return selected; }
 
 void NodeWidget::updateStyleSheet() {
   QString statusColor = statusToBackground(status);
-  QString highlight   = QString::number(static_cast<int>(255 * (static_cast<double>(highlightingLevel) / 100)));
+  QString highlight   = (highlighted ? "255" : "0");
 
   setStyleSheet(styleFormat.arg(idString, statusColor, highlight, borderStyle()));
 }

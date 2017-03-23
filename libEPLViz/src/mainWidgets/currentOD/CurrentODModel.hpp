@@ -55,16 +55,17 @@ class CurrentODModel final : public TreeModelBase, public BaseModel {
   CurrentODModel() = delete;
   ~CurrentODModel();
 
-  void    init() override;
   QString getName() override { return "CurrentODModel"; }
 
  protected:
-  QTreeView *view;
+  QTreeView *view = nullptr;
 
-  void update(ProtectedCycle &cycle) override;
+  void init() override;
+  void update() override;
+  void updateWidget() override;
 
  public slots:
-  void changeNode(uint8_t);
+  void selectNode(uint8_t);
   void showContextMenu(const QPoint &);
  signals:
   void drawingPlot(uint8_t nodeID, uint16_t index, uint16_t subIndex, std::string cs);

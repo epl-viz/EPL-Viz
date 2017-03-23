@@ -23,44 +23,24 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-/*!
- * \file ModelThread.hpp
- */
 
 #pragma once
 
-#include "EPLVizDefines.hpp"
-#include "GUIState.hpp"
-#include <QThread>
+#include <QSpinBox>
 
 namespace EPL_Viz {
 
-class MainWindow;
-class ProtectedCycle;
-
-class ModelThread : public QThread {
-  Q_OBJECT
-
- private:
-  EPL_Viz::GUIState *state;
-  MainWindow *       window;
-  bool               running;
-
+// Source: http://stackoverflow.com/questions/26581444/qspinbox-with-unsigned-int-for-hex-input
+class HexSpinBox : public QSpinBox {
  public:
-  ModelThread(QObject *parent, GUIState *machineState, MainWindow *win);
-  ModelThread() = delete;
-  ~ModelThread();
+  HexSpinBox(QWidget *parent);
+
+  uint32_t hexValue() const { return static_cast<uint32_t>(value()); }
+  void setHexValue(uint32_t value) { setValue(static_cast<int>(value)); }
 
  protected:
-  void run() Q_DECL_OVERRIDE;
-
- private:
-  void loop();
-
- signals:
-  void resultReady(const QString &result);
-  void updateCompleted();
- public slots:
-  void stop();
+  QString textFromValue(int value) const;
+  int valueFromText(const QString &text) const;
+  QValidator::State validate(QString &input, int &pos) const;
 };
 }

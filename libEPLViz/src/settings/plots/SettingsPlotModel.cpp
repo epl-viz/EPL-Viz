@@ -24,43 +24,39 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 /*!
- * \file ModelThread.hpp
+ * \file ODDescriptionModel.cpp
  */
+#include "SettingsPlotModel.hpp"
+#include "SettingsWindow.hpp"
+#include <QString>
 
-#pragma once
+using namespace EPL_Viz;
+using namespace EPL_DataCollect;
+using namespace std;
 
-#include "EPLVizDefines.hpp"
-#include "GUIState.hpp"
-#include <QThread>
+SettingsPlotModel::SettingsPlotModel(SettingsWindow *window, QAbstractItemView *treeWidget)
+    : TreeModelBase(treeWidget), sw(window) {
+  root = new TreeModelRoot(
+        {{Qt::DisplayRole,
+          {QVariant("Plot Type"), QVariant("Add to"), QVariant("Index"), QVariant("Subindex"), QVariant("Node")}},
+         {Qt::ToolTipRole,
+          {QVariant("The type of the plot (Normal OD or Cycle storage plot)"),
+           QVariant("To which widget to add the plot"),
+           QVariant("The index to plot"),
+           QVariant("The subindex of the OD Index"),
+           QVariant("The on which node to plot")}}});
 
-namespace EPL_Viz {
+  root->clear();
+}
 
-class MainWindow;
-class ProtectedCycle;
+void SettingsPlotModel::update() {
+  beginResetModel();
+  root->clear();
 
-class ModelThread : public QThread {
-  Q_OBJECT
+  auto cfg = sw->getConfig();
+  for (auto &i : cfg.plots) {
+    root->push_back(new SettingsPlotItem(root, i));
+  }
 
- private:
-  EPL_Viz::GUIState *state;
-  MainWindow *       window;
-  bool               running;
-
- public:
-  ModelThread(QObject *parent, GUIState *machineState, MainWindow *win);
-  ModelThread() = delete;
-  ~ModelThread();
-
- protected:
-  void run() Q_DECL_OVERRIDE;
-
- private:
-  void loop();
-
- signals:
-  void resultReady(const QString &result);
-  void updateCompleted();
- public slots:
-  void stop();
-};
+  endResetModel();
 }

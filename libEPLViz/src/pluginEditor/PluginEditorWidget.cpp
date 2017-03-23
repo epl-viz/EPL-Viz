@@ -34,7 +34,7 @@
 
 PluginEditorWidget::PluginEditorWidget(QWidget *parent) : QWidget(parent) { layout = new QGridLayout(this); }
 
-PluginEditorWidget::~PluginEditorWidget() { cleanUp(); }
+PluginEditorWidget::~PluginEditorWidget() {}
 
 void PluginEditorWidget::selectPlugin(QString plugin) {
   // Find the specified document for the given plugin

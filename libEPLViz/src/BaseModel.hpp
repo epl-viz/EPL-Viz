@@ -97,8 +97,9 @@ class BaseModel {
   virtual QString getName() = 0;
 
  protected:
-  virtual void update(ProtectedCycle &cycle) = 0;
-  virtual void init()                        = 0;
+  virtual void update()       = 0;
+  virtual void updateWidget() = 0;
+  virtual void init()         = 0;
 
   static void reg(BaseModel *model);
   static void dereg(BaseModel *model);
@@ -108,13 +109,15 @@ class BaseModel {
   MainWindow *getMainWindow();
 
  private:
-  static void updateAll(MainWindow *mw, EPL_DataCollect::CaptureInstance *instance);
+  static bool updateAll(MainWindow *mw, EPL_DataCollect::CaptureInstance *instance);
+  static void updateAllWidgets();
+
   static void initAll();
 
   friend MainWindow;  // Allow MainWindow to init
   friend ModelThread; // Allow ModelThread to update
 
  signals:
-  void updateCompleted(ProtectedCycle &);
+  void updateCompleted();
 };
 }

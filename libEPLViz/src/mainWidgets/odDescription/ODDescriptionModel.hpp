@@ -45,10 +45,9 @@ namespace EPL_Viz {
 class ODDescriptionModel final : public TreeModelBase, public BaseModel {
   Q_OBJECT
  private:
-  uint8_t node            = 1;
-  uint8_t lastUpdatedNode = node;
+  uint8_t node = UINT8_MAX;
 
-  ODFilterDesc *filter;
+  ODFilterDesc *filter = nullptr;
 
  public:
   ODDescriptionModel(MainWindow *window, QTreeView *treeWidget);
@@ -57,12 +56,13 @@ class ODDescriptionModel final : public TreeModelBase, public BaseModel {
 
   QString getName() override { return "ODDescriptionModel"; }
 
-  void init() override;
 
  protected:
-  void update(ProtectedCycle &cycle) override;
+  void init() override;
+  void update() override;
+  void updateWidget() override;
 
  public slots:
-  void changeNode(uint8_t);
+  void selectNode(uint8_t);
 };
 }

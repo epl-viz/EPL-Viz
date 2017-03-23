@@ -27,7 +27,7 @@
   </property>
   <property name="windowIcon">
    <iconset>
-    <normalon>../resources/logo3.svg</normalon>
+    <normalon>:/icons/resources/logo3.svg</normalon>
    </iconset>
   </property>
   <widget class="QWidget" name="centralWidget">
@@ -96,7 +96,11 @@
        </attribute>
        <layout class="QVBoxLayout" name="verticalLayout_2">
         <item>
-         <widget class="QTreeView" name="packetsView"/>
+         <widget class="QTreeView" name="packetsView">
+          <attribute name="headerDefaultSectionSize">
+           <number>135</number>
+          </attribute>
+         </widget>
         </item>
        </layout>
       </widget>
@@ -107,6 +111,9 @@
        <layout class="QGridLayout" name="gridLayout_3">
         <item row="0" column="0">
          <widget class="EventViewerWidget" name="eventViewer">
+          <attribute name="headerDefaultSectionSize">
+           <number>135</number>
+          </attribute>
           <column>
            <property name="text">
             <string>Event</string>
@@ -223,6 +230,7 @@
    <addaction name="actionFullscreen"/>
    <addaction name="separator"/>
    <addaction name="actionSetup_Plot"/>
+   <addaction name="actionSettings"/>
   </widget>
   <widget class="TimelineWidget" name="dockTime">
    <property name="baseSize">
@@ -329,7 +337,11 @@ Clicking inside the Timeline will jump back to the selected cycle.</string>
    <widget class="QWidget" name="dockWidgetContents_4">
     <layout class="QGridLayout" name="gridLayout">
      <item row="0" column="0">
-      <widget class="QTreeView" name="curNodeODWidget"/>
+      <widget class="QTreeView" name="curNodeODWidget">
+       <attribute name="headerDefaultSectionSize">
+        <number>85</number>
+       </attribute>
+      </widget>
      </item>
     </layout>
    </widget>
@@ -347,7 +359,11 @@ Clicking inside the Timeline will jump back to the selected cycle.</string>
    <widget class="QWidget" name="dockWidgetContents_3">
     <layout class="QGridLayout" name="gridLayout_4">
      <item row="0" column="0">
-      <widget class="QTreeView" name="odDescriptionWidget"/>
+      <widget class="QTreeView" name="odDescriptionWidget">
+       <attribute name="headerDefaultSectionSize">
+        <number>100</number>
+       </attribute>
+      </widget>
      </item>
     </layout>
    </widget>
@@ -365,7 +381,11 @@ Clicking inside the Timeline will jump back to the selected cycle.</string>
    <widget class="QWidget" name="dockWidgetContents_7">
     <layout class="QGridLayout" name="gridLayout_18">
      <item row="0" column="0">
-      <widget class="QTreeView" name="cycleCommandsView"/>
+      <widget class="QTreeView" name="cycleCommandsView">
+       <attribute name="headerDefaultSectionSize">
+        <number>90</number>
+       </attribute>
+      </widget>
      </item>
     </layout>
    </widget>
@@ -375,7 +395,7 @@ Clicking inside the Timeline will jump back to the selected cycle.</string>
     <string>Shows the output of the plugins.</string>
    </property>
    <property name="windowTitle">
-    <string>Plugin Log</string>
+    <string>Plu&amp;gin Log</string>
    </property>
    <attribute name="dockWidgetArea">
     <number>8</number>

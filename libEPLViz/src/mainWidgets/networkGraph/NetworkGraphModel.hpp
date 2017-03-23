@@ -41,7 +41,10 @@ class NetworkGraphModel : public QObject, public BaseModel {
   Q_OBJECT
 
  private:
-  NetworkGraphWidget *graph;
+  NetworkGraphWidget *graph = nullptr;
+  QList<uint8_t>      createQueue;
+  QList<NodeWidget *> revealQueue;
+
 
  public:
   NetworkGraphModel(MainWindow *mw, NetworkGraphWidget *widget);
@@ -51,6 +54,7 @@ class NetworkGraphModel : public QObject, public BaseModel {
 
  protected:
   void init() override;
-  void update(ProtectedCycle &cycle) override;
+  void update() override;
+  void updateWidget() override;
 };
 }

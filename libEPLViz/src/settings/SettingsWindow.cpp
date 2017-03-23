@@ -30,6 +30,7 @@
 #include <QColorDialog>
 #include <QFileDialog>
 #include <QInputDialog>
+#include <QMessageBox>
 
 #include "MainWindow.hpp"
 
@@ -39,9 +40,23 @@ SettingsWindow::SettingsWindow(QWidget *parent, ProfileManager *settings)
     : QDialog(parent), ui(new Ui::SettingsWindow) {
   ui->setupUi(this);
   mainWindow = dynamic_cast<MainWindow *>(parent);
+  plotModel  = new SettingsPlotModel(this, ui->plotsView);
   conf       = settings;
 
   auto profs = conf->getProfiles();
+
+  disableList = {ui->c1,
+                 ui->widgetBackend_General,
+                 ui->widgetBackend_IH,
+                 ui->widgetBackend_SM,
+                 ui->widgetGUI_General,
+                 ui->widgetNode1,
+                 ui->widgetNode2,
+                 ui->widgetPython,
+                 ui->plotClear,
+                 ui->plotDelete,
+                 ui->plotEdit,
+                 ui->plotsView};
 
   for (auto i : profs) {
     currentProfile            = i.toStdString();
@@ -98,18 +113,25 @@ void SettingsWindow::updateView(bool updateNodes) {
   ui->IH_DeleteCyclesAfter->setValue(static_cast<int>(prof->cfg.backConf.ihConfig.deleteCyclesAfter.count()));
   ui->IH_LoopWait->setValue(static_cast<int>(prof->cfg.backConf.ihConfig.loopWaitTimeout.count()));
 
-  std::vector<std::pair<QPushButton *, QColor *>> colorSelctor = {{ui->COL_ODHighlight, &prof->cfg.odHighlight},
-                                                                  {ui->COL_P_ASnd, &prof->cfg.PASnd},
-                                                                  {ui->COL_P_Invalid, &prof->cfg.pInvalid},
-                                                                  {ui->COL_P_PREQ, &prof->cfg.pPReq},
-                                                                  {ui->COL_P_PResp, &prof->cfg.pPRes},
-                                                                  {ui->COL_P_SoA, &prof->cfg.pSoA},
-                                                                  {ui->COL_P_SoC, &prof->cfg.pSoC}};
+  std::vector<std::pair<QFrame *, QColor *>> colorSelctor = {{ui->COL_ODHighlight, &prof->cfg.odHighlight},
+                                                             {ui->COL_P_ASnd, &prof->cfg.pASnd},
+                                                             {ui->COL_P_Invalid, &prof->cfg.pInvalid},
+                                                             {ui->COL_P_PReq, &prof->cfg.pPReq},
+                                                             {ui->COL_P_PResp, &prof->cfg.pPRes},
+                                                             {ui->COL_P_SoA, &prof->cfg.pSoA},
+                                                             {ui->COL_P_SoC, &prof->cfg.pSoC},
+                                                             {ui->COL_P_ANMI, &prof->cfg.pANMI},
+                                                             {ui->COL_P_AINV, &prof->cfg.pAINV}};
 
   for (auto i : colorSelctor) {
-    QPalette pal = i.first->palette();
-    pal.setColor(QPalette::Button, *i.second);
-    pal.setColor(QPalette::Highlight, *i.second);
+    QPalette pal = palette();
+
+    if (i.second->isValid()) {
+      pal.setColor(QPalette::Window, *i.second);
+      i.first->setEnabled(true);
+    } else {
+      i.first->setEnabled(false);
+    }
     i.first->setPalette(pal);
     i.first->update();
   }
@@ -117,8 +139,7 @@ void SettingsWindow::updateView(bool updateNodes) {
   if (!updateNodes)
     return;
 
-  std::string name = prof->cfg.currentNode < 0 ? "Default" : std::to_string(prof->cfg.currentNode);
-  qDebug() << name.c_str() << " " << prof->cfg.currentNode;
+  std::string              name = prof->cfg.currentNode < 0 ? "Default" : std::to_string(prof->cfg.currentNode);
   QList<QListWidgetItem *> list = ui->nodesList->findItems(name.c_str(), Qt::MatchExactly);
   if (list.empty()) {
     qDebug() << "ERROR: No nodes saved";
@@ -129,6 +150,8 @@ void SettingsWindow::updateView(bool updateNodes) {
     ui->N_Special->setText(prof->cfg.nodes[prof->cfg.currentNode].specificProfile.c_str());
     ui->nodesList->setCurrentItem(*list.begin());
   }
+
+  plotModel->update();
 }
 
 void SettingsWindow::saveIntoProfiles() {
@@ -146,17 +169,23 @@ void SettingsWindow::saveIntoProfiles() {
   prof->cfg.backConf.ihConfig.deleteCyclesAfter = std::chrono::milliseconds(ui->IH_DeleteCyclesAfter->value());
   prof->cfg.backConf.ihConfig.loopWaitTimeout   = std::chrono::milliseconds(ui->IH_LoopWait->value());
 
-  std::vector<std::pair<QPushButton *, QColor *>> colorSelctor = {{ui->COL_ODHighlight, &prof->cfg.odHighlight},
-                                                                  {ui->COL_P_ASnd, &prof->cfg.PASnd},
-                                                                  {ui->COL_P_Invalid, &prof->cfg.pInvalid},
-                                                                  {ui->COL_P_PREQ, &prof->cfg.pPReq},
-                                                                  {ui->COL_P_PResp, &prof->cfg.pPRes},
-                                                                  {ui->COL_P_SoA, &prof->cfg.pSoA},
-                                                                  {ui->COL_P_SoC, &prof->cfg.pSoC}};
+  std::vector<std::pair<QFrame *, QColor *>> colorSelctor = {{ui->COL_ODHighlight, &prof->cfg.odHighlight},
+                                                             {ui->COL_P_ASnd, &prof->cfg.pASnd},
+                                                             {ui->COL_P_Invalid, &prof->cfg.pInvalid},
+                                                             {ui->COL_P_PReq, &prof->cfg.pPReq},
+                                                             {ui->COL_P_PResp, &prof->cfg.pPRes},
+                                                             {ui->COL_P_SoA, &prof->cfg.pSoA},
+                                                             {ui->COL_P_SoC, &prof->cfg.pSoC},
+                                                             {ui->COL_P_ANMI, &prof->cfg.pANMI},
+                                                             {ui->COL_P_AINV, &prof->cfg.pAINV}};
 
   for (auto i : colorSelctor) {
-    QPalette pal = i.first->palette();
-    *i.second    = pal.color(QPalette::Button);
+    if (i.first->isEnabled()) {
+      QPalette pal = i.first->palette();
+      *i.second    = pal.color(QPalette::Window);
+    } else {
+      *i.second = QColor();
+    }
   }
 
   std::string      nID = prof->cfg.currentNode < 0 ? "Default" : std::to_string(prof->cfg.currentNode);
@@ -182,6 +211,8 @@ void SettingsWindow::saveIntoProfiles() {
   prof->cfg.nodes[nodeID].autoDeduceSpecificProfile = ui->N_autoDetect->checkState() == Qt::Checked;
   prof->cfg.nodes[nodeID].baseProfile               = ui->N_Base->text().toStdString();
   prof->cfg.nodes[nodeID].specificProfile           = ui->N_Special->text().toStdString();
+
+  emit settingsUpdated();
 }
 
 void SettingsWindow::loadConfig() {
@@ -207,16 +238,21 @@ void SettingsWindow::loadConfig() {
         std::chrono::milliseconds(sp->readCustomValue("EPL_DC/IH/loopWaitTimeout").toInt());
 
   std::vector<std::pair<QString, QColor *>> colorSelctor = {{"COL_odHighlight", &prof->cfg.odHighlight},
-                                                            {"COL_PASnd", &prof->cfg.PASnd},
+                                                            {"COL_PASnd", &prof->cfg.pASnd},
                                                             {"COL_pInvalid", &prof->cfg.pInvalid},
                                                             {"COL_pPReq", &prof->cfg.pPReq},
                                                             {"COL_pPRes", &prof->cfg.pPRes},
                                                             {"COL_pSoA", &prof->cfg.pSoA},
-                                                            {"COL_pSoC", &prof->cfg.pSoC}};
+                                                            {"COL_pSoC", &prof->cfg.pSoC},
+                                                            {"COL_ANMI", &prof->cfg.pANMI},
+                                                            {"COL_AINV", &prof->cfg.pAINV}};
 
   for (auto i : colorSelctor) {
     i.second->setNamedColor(sp->readCustomValue(i.first).toString());
   }
+
+  prof->cfg.nodes.clear();
+  prof->cfg.plots.clear();
 
   int size = sp->beginReadArray("nodes");
   for (int i = 0; i < size; ++i) {
@@ -228,6 +264,24 @@ void SettingsWindow::loadConfig() {
     prof->cfg.nodes[index].autoDeduceSpecificProfile = autoDed;
     prof->cfg.nodes[index].baseProfile               = base;
     prof->cfg.nodes[index].specificProfile           = specificProfile;
+  }
+  sp->endArray();
+
+  size = sp->beginReadArray("plots");
+  for (int i = 0; i < size; ++i) {
+    sp->setArrayIndex(i);
+    prof->cfg.plots.emplace_back();
+    auto &plt = prof->cfg.plots.back();
+
+    plt.isOK          = true;
+    plt.defaultODPlot = sp->readCustomValue("defaultODPlot").toBool();
+    plt.node          = static_cast<uint8_t>(sp->readCustomValue("node").toInt());
+    plt.index         = static_cast<uint16_t>(sp->readCustomValue("index").toInt());
+    plt.subIndex      = static_cast<uint8_t>(sp->readCustomValue("subIndex").toInt());
+    plt.addToTimeLine = sp->readCustomValue("addToTimeLine").toBool();
+    plt.addToPlot     = sp->readCustomValue("addToPlot").toBool();
+    plt.csName        = sp->readCustomValue("csName").toString().toStdString();
+    plt.color.setNamedColor(sp->readCustomValue("color").toString());
   }
   sp->endArray();
 }
@@ -251,15 +305,21 @@ void SettingsWindow::saveConfig() {
                        static_cast<int>(prof->cfg.backConf.ihConfig.loopWaitTimeout.count()));
 
   std::vector<std::pair<QString, QColor *>> colorSelctor = {{"COL_odHighlight", &prof->cfg.odHighlight},
-                                                            {"COL_PASnd", &prof->cfg.PASnd},
+                                                            {"COL_PASnd", &prof->cfg.pASnd},
                                                             {"COL_pInvalid", &prof->cfg.pInvalid},
                                                             {"COL_pPReq", &prof->cfg.pPReq},
                                                             {"COL_pPRes", &prof->cfg.pPRes},
                                                             {"COL_pSoA", &prof->cfg.pSoA},
-                                                            {"COL_pSoC", &prof->cfg.pSoC}};
+                                                            {"COL_pSoC", &prof->cfg.pSoC},
+                                                            {"COL_ANMI", &prof->cfg.pANMI},
+                                                            {"COL_AINV", &prof->cfg.pAINV}};
 
   for (auto i : colorSelctor) {
-    sp->writeCustomValue(i.first, i.second->name());
+    if (i.second->isValid()) {
+      sp->writeCustomValue(i.first, i.second->name());
+    } else {
+      sp->writeCustomValue(i.first, "<NOT SET>");
+    }
   }
 
   sp->beginWriteArray("nodes");
@@ -270,6 +330,22 @@ void SettingsWindow::saveConfig() {
     sp->writeCustomValue("autoDeduceSpecificProfile", i.second.autoDeduceSpecificProfile);
     sp->writeCustomValue("baseProfile", i.second.baseProfile.c_str());
     sp->writeCustomValue("specificProfile", i.second.specificProfile.c_str());
+    ++counter;
+  }
+  sp->endArray();
+
+  sp->beginWriteArray("plots");
+  counter = 0;
+  for (auto i : prof->cfg.plots) {
+    sp->setArrayIndex(counter);
+    sp->writeCustomValue("defaultODPlot", i.defaultODPlot);
+    sp->writeCustomValue("node", static_cast<int>(i.node));
+    sp->writeCustomValue("index", static_cast<int>(i.index));
+    sp->writeCustomValue("subIndex", static_cast<int>(i.subIndex));
+    sp->writeCustomValue("addToTimeLine", i.addToTimeLine);
+    sp->writeCustomValue("addToPlot", i.addToPlot);
+    sp->writeCustomValue("csName", i.csName.c_str());
+    sp->writeCustomValue("color", i.color.name());
     ++counter;
   }
   sp->endArray();
@@ -388,14 +464,15 @@ void SettingsWindow::deleteNode() {
   ui->nodesList->takeItem(ui->nodesList->row(nd));
   prof->cfg.currentNode = -1;
   updateView();
-  saveConfig();
 }
 
 void SettingsWindow::profChange(QListWidgetItem *curr, QListWidgetItem *) {
   if (!curr) {
-    qDebug() << "Current profile undefined";
+    ui->profDelet->setEnabled(false);
     return;
   }
+
+  ui->profDelet->setEnabled(true);
 
   SettingsProfileItem *it = dynamic_cast<SettingsProfileItem *>(curr);
   currentProfile          = it->name.toStdString();
@@ -417,9 +494,11 @@ void SettingsWindow::profChange(QListWidgetItem *curr, QListWidgetItem *) {
 
 void SettingsWindow::nodeChange(QListWidgetItem *curr, QListWidgetItem *) {
   if (!curr) {
-    qDebug() << "Current node undefined";
+    ui->nodeRM->setEnabled(false);
     return;
   }
+
+  ui->nodeRM->setEnabled(true);
 
   SettingsProfileItem *prof = profiles[currentProfile].get();
   int                  id   = -1;
@@ -441,7 +520,6 @@ void SettingsWindow::selectXDDDir() {
   if (dialog.exec()) {
     QStringList files;
     files = dialog.selectedFiles();
-    qDebug() << files;
     ui->G_XDDDir->setText(files.front());
   }
 }
@@ -456,28 +534,134 @@ void SettingsWindow::selectPythonDir() {
   if (dialog.exec()) {
     QStringList files;
     files = dialog.selectedFiles();
-    qDebug() << files;
     ui->PY_pluginDIR->setText(files.front());
   }
 }
 
+const QRegExp colorRegex("^COL_\\w+$");
+
 void SettingsWindow::setColor() {
-  QPushButton *btn = dynamic_cast<QPushButton *>(sender());
+  QToolButton *btn = dynamic_cast<QToolButton *>(sender());
 
   if (!btn)
     return;
 
-  QPalette pal = btn->palette();
+  QPalette pal = palette();
 
-  QColor newColor = QColorDialog::getColor(pal.color(QPalette::Button), this, "Select color");
+  QColor newColor = QColorDialog::getColor(pal.color(QPalette::Window), this, "Select color");
   if (!newColor.isValid())
     return;
 
-  pal.setColor(QPalette::Button, newColor);
-  pal.setColor(QPalette::Highlight, newColor);
-  btn->setPalette(pal);
-  btn->update();
-  btn->repaint();
+  pal.setColor(QPalette::Window, newColor);
+
+  QList<QFrame *> foundChildren = btn->parent()->findChildren<QFrame *>(colorRegex, Qt::FindDirectChildrenOnly);
+  if (foundChildren.empty()) {
+    qDebug() << "Internal widget structure error";
+    return;
+  }
+
+  QFrame *frame = foundChildren.first();
+  frame->setPalette(pal);
+  frame->setEnabled(true);
+  frame->update();
+  frame->repaint();
+}
+
+void SettingsWindow::clearColor() {
+  QToolButton *btn = dynamic_cast<QToolButton *>(sender());
+
+  if (!btn)
+    return;
+
+  QPalette pal = palette();
+
+  QList<QFrame *> foundChildren = btn->parent()->findChildren<QFrame *>(colorRegex, Qt::FindDirectChildrenOnly);
+  if (foundChildren.empty()) {
+    qDebug() << "Internal widget structure error";
+    return;
+  }
+
+  QFrame *frame = foundChildren.first();
+
+  frame->setPalette(pal);
+  frame->setEnabled(false);
+  frame->update();
+  frame->repaint();
+}
+
+void SettingsWindow::plotNew() {
+  SettingsProfileItem *prof   = profiles[currentProfile].get();
+  auto                 newPlt = PlotCreator::getNewPlot();
+
+  if (!newPlt.isOK)
+    return;
+
+  prof->cfg.plots.emplace_back(newPlt);
+  updateView();
+}
+
+void SettingsWindow::plotEdit() {
+  SettingsProfileItem *prof     = profiles[currentProfile].get();
+  QModelIndex          currItem = ui->plotsView->currentIndex();
+
+  if (!currItem.isValid())
+    return;
+
+  size_t row = plotModel->getItem(currItem)->row();
+  if (row >= prof->cfg.plots.size()) {
+    qDebug() << "ERROR: Invalid Size";
+    return;
+  }
+
+  auto newPlt = PlotCreator::getNewPlot(&prof->cfg.plots[row]);
+  if (!newPlt.isOK)
+    return;
+
+  prof->cfg.plots[row] = newPlt;
+  updateView();
+}
+
+void SettingsWindow::plotDelete() {
+  SettingsProfileItem *prof     = profiles[currentProfile].get();
+  QModelIndex          currItem = ui->plotsView->currentIndex();
+
+  if (!currItem.isValid())
+    return;
+
+  size_t row = plotModel->getItem(currItem)->row();
+  if (row >= prof->cfg.plots.size()) {
+    qDebug() << "ERROR: Invalid Size";
+    return;
+  }
+
+  prof->cfg.plots.erase(prof->cfg.plots.begin() + static_cast<long>(row));
+  updateView();
+}
+
+void SettingsWindow::plotClear() {
+  auto btn = QMessageBox::question(this, "About to delete ALL plots", "Are you sure you want to delete ALL plots?");
+  if (btn != QMessageBox::Yes)
+    return;
+
+  SettingsProfileItem *prof = profiles[currentProfile].get();
+  prof->cfg.plots.clear();
+  updateView();
+}
+
+
+int SettingsWindow::execPlotsTab() {
+  ui->tabWidget->setCurrentIndex(2);
+  return exec();
+}
+
+void SettingsWindow::enterRecordingState() {
+  for (auto *i : disableList)
+    i->setEnabled(false);
+}
+
+void SettingsWindow::leaveRecordingState() {
+  for (auto *i : disableList)
+    i->setEnabled(true);
 }
 
 SettingsProfileItem::Config SettingsWindow::getConfig() { return profiles[currentProfile].get()->cfg; }

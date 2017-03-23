@@ -185,9 +185,7 @@ endif( NOT DISABLE_TESTS )
 if( USE_SYSTEM_PACKETS )
 
   # Use the EPL_DataCollect version installed on the system
-  set( CMAKE_BUILD_TYPE Debug )
   find_package( EPL_DataCollect REQUIRED )
-  set( CMAKE_BUILD_TYPE Release )
 
 else( USE_SYSTEM_PACKETS )
   set( EPL_DC_PREFIX         "${PROJECT_BINARY_DIR}/EPL_DataCollect" )
@@ -244,8 +242,8 @@ endif( USE_SYSTEM_PACKETS )
 ####################
 
 # Write dummy files, so that they can be detected
-file( WRITE "${PROJECT_SOURCE_DIR}/libEPLViz/src/EPLVizEnum2Str.hpp" "" )
-file( WRITE "${PROJECT_SOURCE_DIR}/libEPLViz/src/EPLVizEnum2Str.cpp" "" )
+file( WRITE "${PROJECT_SOURCE_DIR}/libEPLViz/src/utils/EPLVizEnum2Str.hpp" "" )
+file( WRITE "${PROJECT_SOURCE_DIR}/libEPLViz/src/utils/EPLVizEnum2Str.cpp" "" )
 
 new_project_library(
   PATH         "${PROJECT_SOURCE_DIR}/libEPLViz"
@@ -332,7 +330,7 @@ endif( NOT USE_SYSTEM_PACKETS )
 ##################
 
 enum2str_generate(
-  PATH       "${PROJECT_SOURCE_DIR}/libEPLViz/src"
+  PATH       "${PROJECT_SOURCE_DIR}/libEPLViz/src/utils"
   CLASS_NAME "EPLVizEnum2Str"
   FUNC_NAME  "toStr"
   INCLUDES   "GUIState.hpp"

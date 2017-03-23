@@ -55,7 +55,6 @@ void InterfacePicker::updateList() {
   std::vector<std::string> interfaces = captureInstance->getDevices();
   for (std::string s : interfaces) {
     list->addItem(QString::fromStdString(s));
-    qDebug() << "Added" + QString::fromStdString(s);
   }
 }
 

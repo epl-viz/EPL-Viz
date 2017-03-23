@@ -152,12 +152,11 @@ void MainWindow::createModels() {
   connect(ui->scrBarTimeline, SIGNAL(valueChanged(int)), timeLineModel, SLOT(updateViewport(int)));
   connect(timeLineModel, SIGNAL(maxValueChanged(int, int)), ui->scrBarTimeline, SLOT(setRange(int, int)));
   connect(this, SIGNAL(cycleChanged()), timeLineModel, SLOT(replot()));
-  connect(this, SIGNAL(cycleChanged()), packetHistoryModel, SLOT(changePacket()));
 
   connect(packetListModel,
-          SIGNAL(packetSelected(uint32_t)),
+          SIGNAL(cycleSelected(uint32_t)),
           this,
-          SLOT(selectCycle(uint32_t))); // Allow the event viewer widget to change cycle as well
+          SLOT(selectCycle(uint32_t))); // Allow the packet viewer widget to change cycle
 
   // Set timeline max value once, since we can't do this in the constructor of the model and want to do it before init
   emit timeLineModel->maxValueChanged(0, static_cast<int>(timeLineModel->maxXValue - timeLineModel->getViewportSize()));
@@ -188,18 +187,14 @@ void MainWindow::createModels() {
   models.append(packetListModel);
 
   QWidget *network = ui->networkGraphContents;
-  connect(network, SIGNAL(nodeSelected(uint8_t)), curODModel, SLOT(changeNode(uint8_t)));
-  connect(network, SIGNAL(nodeSelected(uint8_t)), oddescrModel, SLOT(changeNode(uint8_t)));
+  connect(network, SIGNAL(nodeSelected(uint8_t)), curODModel, SLOT(selectNode(uint8_t)));
+  connect(network, SIGNAL(nodeSelected(uint8_t)), oddescrModel, SLOT(selectNode(uint8_t)));
 
 
   modelThread = new ModelThread(this, &machineState, this);
   connect(modelThread, &ModelThread::resultReady, this, &MainWindow::handleResults);
   connect(modelThread, &ModelThread::finished, modelThread, &QObject::deleteLater);
-  connect(modelThread,
-          SIGNAL(updateCompleted(ProtectedCycle &)),
-          this,
-          SLOT(updateWidgets(ProtectedCycle &)),
-          Qt::BlockingQueuedConnection);
+  connect(modelThread, SIGNAL(updateCompleted()), this, SLOT(updateWidgets()), Qt::BlockingQueuedConnection);
 
   // Connect reset signal to widgets requiring it
   connect(this, SIGNAL(resetGUI()), ui->networkGraphContents, SLOT(reset()));
@@ -210,7 +205,6 @@ void MainWindow::createModels() {
 
   getCycleSetter()->getWidget()->checkButtons();
 
-  modelThread->start();
   connect(this, SIGNAL(close()), modelThread, SLOT(stop()));
 }
 
@@ -220,8 +214,8 @@ void MainWindow::destroyModels() {
   }
 }
 
-void MainWindow::updateWidgets(ProtectedCycle &cycle) {
-  ui->networkGraphContents->updateWidget(cycle);
+void MainWindow::updateWidgets() {
+  BaseModel::updateAllWidgets();
   ui->eventViewer->updateEvents();
 
   getCycleSetter()->getWidget()->setValue(BaseModel::getCurrentCycle()->getCycleNum());
@@ -295,7 +289,7 @@ void MainWindow::openInterfacePicker() {
     interface = name;
 }
 
-void MainWindow::openSettings() { settingsWin->show(); }
+void MainWindow::openSettings() { settingsWin->exec(); }
 
 bool MainWindow::event(QEvent *event) {
   // configure stuff
@@ -478,16 +472,20 @@ void MainWindow::changeState(GUIState nState) {
       ui->pluginSelectorWidget->setEnabled(true);
       ui->pluginEditorButton->setEnabled(true);
 
+      settingsWin->leaveRecordingState();
+
       if (machineState == GUIState::STOPPED) {
         // Reset all models back to their initial state
         BaseModel::initAll();
         CS->getWidget()->setValue(0);
+        setWindowTitle(tr("EPL-Viz"));
         emit resetGUI();
       }
 
       captureInstance = std::make_unique<CaptureInstance>();
       break;
     case GUIState::PLAYING:
+
       // Update GUI button states
       ui->actionStart_Recording->setEnabled(false);
       ui->actionStop_Recording->setEnabled(true);
@@ -513,16 +511,28 @@ void MainWindow::changeState(GUIState nState) {
       ui->pluginSelectorWidget->setEnabled(false);
       ui->pluginEditorButton->setEnabled(false);
 
+      settingsWin->enterRecordingState();
+
+      // GUI state is updated, don't restart the recording
+      if (machineState == GUIState::PAUSED) {
+        break;
+      }
+
       config();
 
       backendState = captureInstance->loadPCAP(file);
+      qDebug() << "Opened PCAP " << QString::fromStdString(file);
 
       // Handle Backend errors
       if (backendState != 0) {
         qDebug() << QString("Backend error Code ") + QString::number(backendState);
+        QMessageBox::critical(0, "Error", tr("Received backend error code %1.").arg(backendState));
         changeState(GUIState::UNINIT);
         return;
       }
+
+      setWindowTitle(tr("EPL-Viz - [%1]").arg(QString::fromStdString(file)));
+
       break;
     case GUIState::RECORDING:
       // Update GUI button states
@@ -551,16 +561,29 @@ void MainWindow::changeState(GUIState nState) {
       ui->pluginSelectorWidget->setEnabled(false);
       ui->pluginEditorButton->setEnabled(false);
 
+      settingsWin->enterRecordingState();
+
+      // GUI state is updated, don't restart the recording
+      if (machineState == GUIState::PAUSED) {
+        break;
+      }
+
       config();
 
       backendState = captureInstance->startRecording(interface.toStdString());
+      qDebug() << "Started recording on " << interface;
 
       // Handle Backend errors
       if (backendState != 0) {
         qDebug() << QString("Backend error Code ") + QString::number(backendState);
+        QMessageBox::critical(0, "Error", tr("Received backend error code %1.").arg(backendState));
+
         changeState(GUIState::UNINIT);
         return;
       }
+
+      setWindowTitle(tr("EPL-Viz - Recording on '%1'").arg(interface));
+
       break;
     case GUIState::PAUSED:
       // Update GUI button states
@@ -575,10 +598,12 @@ void MainWindow::changeState(GUIState nState) {
         ui->actionStatistics->setEnabled(true);
         ui->actionSave->setEnabled(true);
         ui->actionSave_As->setEnabled(true);
+        settingsWin->leaveRecordingState();
       } else {
         ui->actionStatistics->setEnabled(false);
         ui->actionSave->setEnabled(false);
         ui->actionSave_As->setEnabled(false);
+        settingsWin->enterRecordingState();
       }
 
       break;
@@ -594,6 +619,7 @@ void MainWindow::changeState(GUIState nState) {
       ui->actionStatistics->setEnabled(true);
 
       ui->pluginSelectorWidget->setEnabled(false);
+      settingsWin->leaveRecordingState();
       break;
   }
   machineState = nState;
@@ -621,6 +647,8 @@ void MainWindow::config() {
   // Register timeseries cycle storage
   captureInstance->registerCycleStorage<plugins::CSTimeSeriesPtr>(
         EPL_DataCollect::constants::EPL_DC_PLUGIN_TIME_SERIES_CSID);
+
+  modelThread->start();
 
   // Initialize all Models
   BaseModel::initAll(); // TODO do we need to do this here
@@ -655,25 +683,7 @@ bool MainWindow::curODWidgetUpdateData(QTreeWidgetItem *item, QString newData) {
   return true;
 }
 
-void MainWindow::setupPlot() {
-  PlotCreator::PlotCreatorData newPlot = PlotCreator::getNewPlot();
-
-  if (newPlot.isOK) {
-    if (newPlot.addToPlot && plot != nullptr)
-      plot->registerCurve(newPlot);
-    if (newPlot.addToTimeLine && timeline != nullptr)
-      timeline->registerCurve(newPlot);
-
-    if (!showedPlotSetupMsg) {
-      QMessageBox msg;
-      msg.setText("A new Plot has been added.");
-      msg.setInformativeText(
-            "Rightclick on the Plot Widgets to see a list of all added plots. This window won't be shown again.");
-      msg.exec();
-      showedPlotSetupMsg = true;
-    }
-  }
-}
+void MainWindow::setupPlot() { settingsWin->execPlotsTab(); }
 
 SettingsWindow *   MainWindow::getSettingsWin() { return settingsWin; }
 CycleSetterAction *MainWindow::getCycleSetter() { return CS; }

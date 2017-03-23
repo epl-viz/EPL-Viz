@@ -58,12 +58,33 @@ void CurrentODModel::init() {
   endResetModel();
 }
 
-void CurrentODModel::update(ProtectedCycle &cycle) {
-  auto l    = getLock();
+void CurrentODModel::update() {
+  ProtectedCycle &cycle    = BaseModel::getCurrentCycle();
+  auto            l        = getLock();
+  int             children = root->childCount();
+
+  // Check if no node is selected
+  if (node == UINT8_MAX) {
+    // Clear the widget if necessary
+    if (children > 0) {
+      beginResetModel();
+      root->clear();
+      endResetModel();
+    }
+    return;
+  }
+
   auto lock = cycle.getLock();
 
   Node *n = cycle->getNode(node);
+
   if (!n) {
+    // Clear the widget if necessary
+    if (children > 0) {
+      beginResetModel();
+      root->clear();
+      endResetModel();
+    }
     return;
   }
 
@@ -167,7 +188,6 @@ void CurrentODModel::update(ProtectedCycle &cycle) {
   } else {
     // Rebuild entire model (new / deleted entries are rare)
     beginResetModel();
-
     root->clear();
 
     for (auto i : chVec) {
@@ -202,13 +222,19 @@ void CurrentODModel::update(ProtectedCycle &cycle) {
       root->push_back(new CurODCycleStorage(root, cycle, i));
     }
 
+
     endResetModel();
   }
-
-  lastUpdatedNode = node;
 }
 
-void CurrentODModel::changeNode(uint8_t n) { node = n; }
+void CurrentODModel::updateWidget() {}
+
+void CurrentODModel::selectNode(uint8_t n) {
+  if (node != n) {
+    node = n;
+    update();
+  }
+}
 
 void CurrentODModel::showContextMenu(const QPoint &pos) {
   QMenu myMenu;

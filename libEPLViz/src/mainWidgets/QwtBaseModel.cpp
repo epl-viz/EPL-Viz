@@ -71,9 +71,7 @@ void QwtBaseModel::replot() {
   postToThread([&] { plot->replot(); }, plot);
 }
 
-void QwtBaseModel::update(ProtectedCycle &cycle) {
-  (void)cycle;
-
+void QwtBaseModel::update() {
   // Setting values in curves
   for (QPair<shared_ptr<QwtPlotCurve>, shared_ptr<plugins::TimeSeries>> pair : curves.values()) {
     shared_ptr<QwtPlotCurve>        curve      = pair.first;
@@ -91,9 +89,10 @@ void QwtBaseModel::update(ProtectedCycle &cycle) {
 
     curve->setSamples(xValues.data(), timeSeries->tsData.data(), static_cast<int>(newDataCount));
   }
-
   replot();
 }
+
+void QwtBaseModel::updateWidget() {}
 
 /**
  * @brief createStringIdentifier Returns an identifier for the index;

@@ -154,7 +154,7 @@ class MainWindow : public QMainWindow {
   void handleResults(const QString &);
   void startRecording();
   void stopRecording();
-  void updateWidgets(ProtectedCycle &cycle);
+  void updateWidgets();
   void showAbout();
   void showLicense();
   void showStats();

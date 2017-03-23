@@ -23,10 +23,32 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-/*!
- * \file InterfaceListWidget.cpp
- */
 
-#include "InterfaceListWidget.hpp"
+#include "HexSpinBox.hpp"
 
-InterfaceListWidget::InterfaceListWidget(QWidget *parent) : QListWidget(parent) {}
+using namespace EPL_Viz;
+
+HexSpinBox::HexSpinBox(QWidget *parent) : QSpinBox(parent) { setDisplayIntegerBase(16); }
+
+QString HexSpinBox::textFromValue(int value) const { return QString::number(value, 16).toUpper(); }
+
+int HexSpinBox::valueFromText(const QString &text) const { return static_cast<int>(text.toUInt(0, 16)); }
+
+QValidator::State HexSpinBox::validate(QString &input, int &pos) const {
+  QString copy(input);
+
+  pos -= copy.size() - copy.trimmed().size();
+  copy = copy.trimmed();
+  if (copy.isEmpty())
+    return QValidator::Intermediate;
+
+  input = copy.toUpper();
+
+  bool okay;
+  int  val = static_cast<int>(copy.toUInt(&okay, 16));
+  if (!okay || val < minimum() || val > maximum()) {
+    return QValidator::Invalid;
+  }
+
+  return QValidator::Acceptable;
+}

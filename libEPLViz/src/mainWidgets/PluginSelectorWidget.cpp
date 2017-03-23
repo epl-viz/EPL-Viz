@@ -118,7 +118,13 @@ void PluginSelectorWidget::addPlugins(QMap<QString, QString> map) {
     if (plugins.contains(plugin))
       continue;
 
-    QString newPath = pluginPath + "/" + plugin;
+    QString newPath = pluginPath;
+
+    if (!newPath.endsWith('/')) {
+      newPath += "/";
+    }
+
+    newPath += plugin;
 
     if (newPath != path) {
       if (QFile::exists(newPath)) {
@@ -166,8 +172,8 @@ void PluginSelectorWidget::addPlugins(QMap<QString, QString> map) {
                               "Error",
                               tr("Unable to create file '%1'. "
                                  "Please ensure that you have the required permissions to access the plugin folder.")
-                                    .arg(path));
-        continue;
+                                    .arg(newPath));
+        return;
       }
 
       qDebug() << "Moved file to " << newPath;

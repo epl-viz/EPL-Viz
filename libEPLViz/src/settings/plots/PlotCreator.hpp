@@ -24,6 +24,7 @@ class PlotCreator : public QDialog {
     bool addToPlot     = true;
 
     std::string csName = "";
+    QColor      color  = QColor("#000000");
   };
 
  private:
@@ -34,10 +35,13 @@ class PlotCreator : public QDialog {
   PlotCreatorData getData();
   void            wait();
 
+ public slots:
+  void changeColor();
+
  public:
   explicit PlotCreator(QWidget *parent = 0);
   ~PlotCreator();
 
-  static PlotCreatorData getNewPlot();
+  static PlotCreatorData getNewPlot(PlotCreatorData *oldData = nullptr);
 };
 }

@@ -40,9 +40,10 @@ NetworkGraphModel::NetworkGraphModel(MainWindow *mw, NetworkGraphWidget *widget)
 
 void NetworkGraphModel::init() {}
 
-void NetworkGraphModel::update(ProtectedCycle &cycle) {
-  auto lock = cycle.getLock();
-  auto list = cycle->getNodeList();
+void NetworkGraphModel::update() {
+  ProtectedCycle &cycle = BaseModel::getCurrentCycle();
+  auto            lock  = cycle.getLock();
+  auto            list  = cycle->getNodeList();
 
   QMap<uint8_t, NodeWidget *> *nodeMap = graph->getNodeWidgets();
 
@@ -54,21 +55,18 @@ void NetworkGraphModel::update(ProtectedCycle &cycle) {
 
     if (s == nodeMap->end() || s.key() != id) {
       // The node is not yet added as a widget and has to be created
-      graph->queueNodeCreation(id);
+      createQueue.append(id);
     } else {
       // The node is added as widget and has to be updated
       NodeWidget *nw = s.value();
-      // qDebug() << "Trying to update data of node " << QString::number(id);
+
       nw->updateData(id, cycle);
-      // qDebug() << "Updated data of node " << QString::number(id);
 
       if (nw->isHidden())
-        graph->queueNodeReveal(id);
-
-      // qDebug() << "Showed the node";
+        revealQueue.append(nw);
 
       // Reset highlighting
-      s.value()->setHighlightingLevel(0);
+      s.value()->setHighlighted(false);
     }
     untracked.removeOne(id);
   }
@@ -95,8 +93,7 @@ void NetworkGraphModel::update(ProtectedCycle &cycle) {
     switch (event->getType()) {
       case EvType::VIEW_EV_HIGHLIGHT_MN:
       case EvType::VIEW_EV_HIGHLIGHT_CN: {
-        uint8_t node  = static_cast<uint8_t>(event->getEventFlags()); // EventFlags is the NodeID for these events
-        int     level = std::stoi(event->getDescription()); // Description is the highlighting level for these events
+        uint8_t node = static_cast<uint8_t>(event->getEventFlags()); // EventFlags is the NodeID for these events
 
         // Invalid node
         if (cycle->getNode(node) == nullptr)
@@ -113,11 +110,31 @@ void NetworkGraphModel::update(ProtectedCycle &cycle) {
             break;
 
           // Set highlighting
-          n.value()->setHighlightingLevel(level);
+          n.value()->setHighlighted(true);
         }
         break;
       }
       default: break;
     }
+  }
+}
+
+void NetworkGraphModel::updateWidget() {
+  for (auto nodeID : createQueue) {
+    graph->createWidget(nodeID, BaseModel::getCurrentCycle());
+  }
+  createQueue.clear();
+
+  for (auto *nw : revealQueue) {
+    nw->show();
+  }
+  revealQueue.clear();
+
+  auto *nodeMap = graph->getNodeWidgets();
+
+  // Update the stylesheet of all shown widgets
+  for (auto *nw : nodeMap->values()) {
+    if (!nw->isHidden())
+      nw->updateStyleSheet();
   }
 }

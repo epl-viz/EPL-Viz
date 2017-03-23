@@ -53,9 +53,9 @@ void ModelThread::loop() {
   while (running) {
     switch (*state) {
       case GUIState::UNINIT: yieldCurrentThread(); break;
+      case GUIState::STOPPED: stop(); break;
       case GUIState::PLAYING:
       case GUIState::PAUSED:
-      case GUIState::STOPPED:
       case GUIState::RECORDING: {
         auto *                   ci      = window->getCaptureInstance();
         CaptureInstance::CIstate cistate = ci->getState();
@@ -70,10 +70,10 @@ void ModelThread::loop() {
           window->changeState(GUIState::UNINIT);
           return;
         }
-        BaseModel::updateAll(window, ci);
 
-        // Wait until the widgets are updated in the other thread
-        emit updateCompleted(BaseModel::getCurrentCycle());
+        // Update models and if it was completed, the widgets
+        if (BaseModel::updateAll(window, ci))
+          emit updateCompleted(); // Wait until the widgets are updated in the GUI thread
 
         break;
       }

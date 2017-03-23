@@ -23,44 +23,33 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-/*!
- * \file ModelThread.hpp
- */
 
 #pragma once
 
-#include "EPLVizDefines.hpp"
-#include "GUIState.hpp"
-#include <QThread>
+#include "PlotCreator.hpp"
+#include "TreeModelItemBase.hpp"
 
 namespace EPL_Viz {
 
 class MainWindow;
-class ProtectedCycle;
 
-class ModelThread : public QThread {
-  Q_OBJECT
-
+class SettingsPlotItem final : public TreeModelItemBase {
  private:
-  EPL_Viz::GUIState *state;
-  MainWindow *       window;
-  bool               running;
+  PlotCreator::PlotCreatorData pltData;
+
+  QVariant dataDisplay(int column);
+  QVariant dataTooltip(int column);
+  QColor dataBackground();
+  QColor dataForground();
 
  public:
-  ModelThread(QObject *parent, GUIState *machineState, MainWindow *win);
-  ModelThread() = delete;
-  ~ModelThread();
+  SettingsPlotItem() = delete;
+  SettingsPlotItem(TreeModelItemBase *parent, PlotCreator::PlotCreatorData d);
 
- protected:
-  void run() Q_DECL_OVERRIDE;
+  virtual ~SettingsPlotItem();
 
- private:
-  void loop();
-
- signals:
-  void resultReady(const QString &result);
-  void updateCompleted();
- public slots:
-  void stop();
+  QVariant data(int column, Qt::ItemDataRole role) override;
+  Qt::ItemFlags flags() override;
+  bool          hasChanged() override;
 };
 }

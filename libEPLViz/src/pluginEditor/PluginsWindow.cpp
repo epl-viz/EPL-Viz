@@ -50,6 +50,8 @@ PluginsWindow::PluginsWindow(MainWindow *mw) : QMainWindow(mw), ui(new Ui::Plugi
   ui->setupUi(this);
   setAttribute(Qt::WA_QuitOnClose); // Quit the application if this is the last window
 
+  connect(this, SIGNAL(cleanUp()), ui->editor, SLOT(cleanUp()));
+
   QString pluginPath   = QString::fromStdString(mw->getSettingsWin()->getConfig().pythonPluginsDir);
   QDir    pluginFolder = QDir(pluginPath);
 

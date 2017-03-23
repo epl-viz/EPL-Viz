@@ -54,20 +54,41 @@ ODDescriptionModel::ODDescriptionModel(MainWindow *window, QTreeView *treeWidget
 }
 
 void ODDescriptionModel::init() {
-  node            = 1;
-  lastUpdatedNode = node;
+  node = UINT8_MAX;
 
   beginResetModel();
   root->clear();
   endResetModel();
 }
 
-void ODDescriptionModel::update(ProtectedCycle &cycle) {
-  auto l    = getLock();
+void ODDescriptionModel::update() {
+  ProtectedCycle &cycle    = BaseModel::getCurrentCycle();
+  auto            l        = getLock();
+  int             children = root->childCount();
+
+  // Check if no node is selected
+  if (node == UINT8_MAX) {
+    // Clear the widget if necessary
+    if (children > 0) {
+      beginResetModel();
+      root->clear();
+      endResetModel();
+    }
+    return;
+  }
+
   auto lock = cycle.getLock();
 
   Node *n = cycle->getNode(node);
+
+  // Check if node exists
   if (!n) {
+    // Clear the widget if necessary
+    if (children > 0) {
+      beginResetModel();
+      root->clear();
+      endResetModel();
+    }
     return;
   }
 
@@ -91,14 +112,13 @@ void ODDescriptionModel::update(ProtectedCycle &cycle) {
   std::sort(oldVec.begin(), oldVec.end());
   std::set_symmetric_difference(chVec.begin(), chVec.end(), oldVec.begin(), oldVec.end(), std::back_inserter(diff));
 
-  if (diff.empty() && node == lastUpdatedNode && !hasFilterChanged) {
+  if (diff.empty() && !hasFilterChanged) {
     // No entry changes
 
     // Do nothing because the OD Description is static
   } else {
     // Rebuild entire model (new / deleted entries are rare)
     beginResetModel();
-
     root->clear();
 
     for (auto i : chVec) {
@@ -117,11 +137,17 @@ void ODDescriptionModel::update(ProtectedCycle &cycle) {
       }
     }
 
+
     endResetModel();
   }
-
-  lastUpdatedNode = node;
 }
 
+void ODDescriptionModel::updateWidget() {}
 
-void ODDescriptionModel::changeNode(uint8_t n) { node = n; }
+
+void ODDescriptionModel::selectNode(uint8_t n) {
+  if (node != n) {
+    node = n;
+    update();
+  }
+}

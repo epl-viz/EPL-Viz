@@ -52,33 +52,33 @@ CycleCommandsModel::CycleCommandsModel(MainWindow *mw, QTreeView *widget)
 CycleCommandsModel::~CycleCommandsModel() {}
 
 void CycleCommandsModel::init() {
-  lastCycle = 0;
-
   beginResetModel();
   root->clear();
   endResetModel();
 }
 
 
-void CycleCommandsModel::update(ProtectedCycle &cycle) {
-  auto l    = getLock();
-  auto lock = cycle.getLock();
-
-  if (lastCycle == cycle->getCycleNum())
-    return;
+void CycleCommandsModel::update() {
+  ProtectedCycle &cycle = BaseModel::getCurrentCycle();
+  auto            l     = getLock();
+  auto            lock  = cycle.getLock();
 
   size_t numPackets = cycle->getPackets().size();
 
   // Delete old tree and add new
   beginResetModel();
   root->clear();
+  endResetModel();
+
+  beginInsertRows(QModelIndex(), 0, static_cast<int>(numPackets - 1));
 
   for (size_t i = 0; i < numPackets; ++i) {
-    root->push_back(new CyCoTreeItem(root, cycle, i));
+    root->push_back(new CyCoTreeItem(root, cycle, i, getMainWindow()));
   }
 
-  endResetModel();
-  lastCycle = cycle->getCycleNum();
+  endInsertRows();
 }
+
+void CycleCommandsModel::updateWidget() {}
 
 void CycleCommandsModel::changeSelection(QModelIndex index) { emit packetChanged(static_cast<uint64_t>(index.row())); }

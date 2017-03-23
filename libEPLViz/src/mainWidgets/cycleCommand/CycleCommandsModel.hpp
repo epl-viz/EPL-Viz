@@ -39,18 +39,15 @@ namespace EPL_Viz {
 class CycleCommandsModel : public TreeModelBase, public BaseModel {
   Q_OBJECT
 
- private:
-  uint32_t lastCycle = 0;
-
  protected:
-  mockable void update(ProtectedCycle &cycle) override;
+  void init() override;
+  void update() override;
+  void updateWidget() override;
 
  public:
   CycleCommandsModel(MainWindow *mw, QTreeView *widget);
   CycleCommandsModel() = delete;
   ~CycleCommandsModel();
-
-  void init() override;
 
   QString getName() override { return "CycleCommandsModel"; }
 

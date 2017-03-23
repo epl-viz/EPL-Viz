@@ -27,6 +27,7 @@
 #pragma once
 
 #include "ProfileManager.hpp"
+#include "SettingsPlotModel.hpp"
 #include "SettingsProfileItem.hpp"
 #include <QDialog>
 #include <QListWidget>
@@ -47,10 +48,13 @@ class SettingsWindow : public QDialog {
   Ui::SettingsWindow *ui;
   MainWindow *        mainWindow;
   ProfileManager *    conf;
+  SettingsPlotModel * plotModel;
 
   std::unordered_map<std::string, std::shared_ptr<SettingsProfileItem>> profiles;
 
   std::string currentProfile = "Default";
+
+  std::vector<QWidget *> disableList;
 
   void loadConfig();
   void saveConfig();
@@ -76,10 +80,24 @@ class SettingsWindow : public QDialog {
   void selectPythonDir();
 
   void setColor();
+  void clearColor();
+
+  void plotNew();
+  void plotEdit();
+  void plotDelete();
+  void plotClear();
+
+ signals:
+  void settingsUpdated();
 
  public:
   explicit SettingsWindow(QWidget *parent, ProfileManager *settings);
   ~SettingsWindow();
+
+  int execPlotsTab();
+
+  void enterRecordingState();
+  void leaveRecordingState();
 
   SettingsProfileItem::Config getConfig();
 };

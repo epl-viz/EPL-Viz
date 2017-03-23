@@ -39,7 +39,7 @@ PacketListItem::PacketListItem(TreeModelItemBase *                           par
 
 PacketListItem::~PacketListItem() {}
 
-Qt::ItemFlags PacketListItem::flags() { return Qt::ItemIsEnabled; }
+Qt::ItemFlags PacketListItem::flags() { return Qt::ItemIsEnabled | Qt::ItemNeverHasChildren; }
 bool          PacketListItem::hasChanged() { return false; }
 
 QVariant PacketListItem::dataDisplay(int column) {
@@ -48,7 +48,7 @@ QVariant PacketListItem::dataDisplay(int column) {
   ASndServiceID asndID;
   switch (column) {
     case 0: // Number
-      return QVariant(static_cast<uint32_t>(index));
+      return QVariant(static_cast<uint32_t>(index + 1));
     case 1: // Cycle
       return QVariant(metaData.cycleNum);
     case 2: // TYPE
@@ -108,10 +108,13 @@ QColor PacketListItem::dataBackground() {
     case PacketType::START_OF_ASYNC: return mw->getSettingsWin()->getConfig().pSoA;
     case PacketType::POLL_REQUEST: return mw->getSettingsWin()->getConfig().pPReq;
     case PacketType::POLL_RESPONSE: return mw->getSettingsWin()->getConfig().pPRes;
-    case PacketType::ASYNC_SEND: return mw->getSettingsWin()->getConfig().PASnd;
+    case PacketType::ASYNC_SEND: return mw->getSettingsWin()->getConfig().pASnd;
+    case PacketType::AINV: return mw->getSettingsWin()->getConfig().pAINV;
+    case PacketType::AMNI: return mw->getSettingsWin()->getConfig().pANMI;
     case PacketType::UNDEF: return mw->getSettingsWin()->getConfig().pInvalid;
-    default: return QColor();
   }
+
+  return QColor();
 }
 
 QColor PacketListItem::dataForground() {
@@ -128,10 +131,16 @@ QColor PacketListItem::dataForground() {
 
 
 QVariant PacketListItem::data(int column, Qt::ItemDataRole role) {
+  QColor col;
   switch (role) {
     case Qt::DisplayRole: return dataDisplay(column);
-    case Qt::BackgroundRole: return QBrush(dataBackground());
-    case Qt::ForegroundRole: return QBrush(dataForground());
+    case Qt::BackgroundRole: col = dataBackground(); break;
+    case Qt::ForegroundRole: col = dataForground(); break;
     default: return QVariant();
   }
+
+  if (!col.isValid())
+    return QVariant();
+
+  return QBrush(col);
 }

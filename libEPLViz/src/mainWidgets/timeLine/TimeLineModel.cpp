@@ -197,6 +197,6 @@ void TimeLineModel::reset() {
     magnifier->setWheelFactor(defaultWheelFactor);
 }
 
-void TimeLineModel::createPlot(uint8_t nodeID, uint16_t index, uint16_t subIndex, std::string cs) {
-  QwtBaseModel::createPlot(nodeID, index, subIndex, cs, QwtPlot::xTop);
+void TimeLineModel::createPlot(uint8_t nodeID, uint16_t index, uint16_t subIndex, std::string cs, QColor color) {
+  QwtBaseModel::createPlot(nodeID, index, subIndex, cs, QwtPlot::xTop, color);
 }

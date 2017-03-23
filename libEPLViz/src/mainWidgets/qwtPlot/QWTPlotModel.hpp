@@ -49,6 +49,6 @@ class QWTPlotModel : public QwtBaseModel {
   virtual ~QWTPlotModel();
 
  public slots:
-  void createPlot(uint8_t nodeID, uint16_t index, uint16_t subIndex, std::string cs);
+  void createPlot(uint8_t nodeID, uint16_t index, uint16_t subIndex, std::string cs, QColor color);
 };
 }

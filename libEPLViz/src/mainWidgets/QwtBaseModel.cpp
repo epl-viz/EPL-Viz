@@ -53,8 +53,9 @@ QwtBaseModel::QwtBaseModel(MainWindow *win, QwtPlot *widget) : BaseModel(win, wi
 }
 
 void QwtBaseModel::init() {
+  updatePlotList();
   for (PlotCreator::PlotCreatorData data : registeredCurves) {
-    createPlot(data.node, data.index, data.subIndex, data.csName);
+    createPlot(data.node, data.index, data.subIndex, data.csName, data.color);
   }
   registeredCurves.clear();
 }
@@ -116,11 +117,8 @@ QString QwtBaseModel::createStringIdentifier(const PlotCreator::PlotCreatorData 
   return createStringIdentifier(data.node, data.index, data.subIndex, data.csName);
 }
 
-void QwtBaseModel::registerCurve(PlotCreator::PlotCreatorData data) { registeredCurves.append(data); }
-
-
 /**
- * @brief QwtBaseModel::createPlot Slot for creating a plot with the given values
+ * @brief QwtBaseModel::createPlot Method for creating a plot with the given values
  * Wether the CycleStorage name is empty or not, decides if the indices or the string should be used.
  * Calls initTTS()
  * @param nodeID ID of the node
@@ -129,7 +127,7 @@ void QwtBaseModel::registerCurve(PlotCreator::PlotCreatorData data) { registered
  * @param csName CycleStorage name, ignored if empty
  */
 void QwtBaseModel::createPlot(
-      uint8_t nodeID, uint16_t mainIndex, uint16_t subIndex, std::string csName, QwtPlot::Axis axis) {
+      uint8_t nodeID, uint16_t mainIndex, uint16_t subIndex, std::string csName, QwtPlot::Axis axis, QColor color) {
   if (subIndex > UINT8_MAX)
     subIndex = 0;
 
@@ -154,6 +152,7 @@ void QwtBaseModel::createPlot(
   shared_ptr<QwtPlotCurve> curve = make_shared<QwtPlotCurve>();
   curve->setXAxis(axis);
   curve->setYAxis(QwtPlot::yLeft);
+  curve->setPen(color, curve->pen().width(), curve->pen().style());
 
   QString title = createStringIdentifier(nodeID, mainIndex, subIndex, csName);
 
@@ -231,4 +230,9 @@ void QwtBaseModel::enablePlot() {
   else
     curve->detach();
   replot();
+}
+
+void QwtBaseModel::updatePlotList() {
+  SettingsProfileItem::Config config = window->getSettingsWin()->getConfig();
+  registeredCurves = config.plots;
 }

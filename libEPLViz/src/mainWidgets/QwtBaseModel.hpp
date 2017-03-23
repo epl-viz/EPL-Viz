@@ -58,13 +58,12 @@ class QwtBaseModel : public QObject, public BaseModel {
   void    init() override;
   QString getName() override { return "QwtBaseModel"; }
   double  getViewportSize();
-  void registerCurve(PlotCreator::PlotCreatorData data);
 
  protected:
   MainWindow *window;
   QwtPlot *   plot;
   QMap<QString, QPair<std::shared_ptr<QwtPlotCurve>, std::shared_ptr<EPL_DataCollect::plugins::TimeSeries>>> curves;
-  QList<PlotCreator::PlotCreatorData> registeredCurves;
+  std::vector<PlotCreator::PlotCreatorData> registeredCurves;
   std::vector<double> xValues;
 
 
@@ -72,7 +71,7 @@ class QwtBaseModel : public QObject, public BaseModel {
   virtual void updateWidget() override;
   QString createStringIdentifier(uint8_t node, uint16_t index, uint16_t subIndex, std::string cs);
   QString createStringIdentifier(const PlotCreator::PlotCreatorData &data);
-  void createPlot(uint8_t nodeID, uint16_t index, uint16_t subIndex, std::string cs, QwtPlot::Axis);
+  void createPlot(uint8_t nodeID, uint16_t index, uint16_t subIndex, std::string cs, QwtPlot::Axis, QColor color = QColor(0, 0, 0));
 
 
 #pragma clang diagnostic push
@@ -95,10 +94,10 @@ class QwtBaseModel : public QObject, public BaseModel {
  signals:
   void requestRedraw();
   void maxValueChanged(int notUsed, int nMax);
-  void createPlotInConnected(uint8_t nodeID, uint16_t index, uint16_t subIndex, std::string cs);
 
  public slots:
-  virtual void createPlot(uint8_t nodeID, uint16_t index, uint16_t subIndex, std::string cs) = 0;
+  void updatePlotList();
+  virtual void createPlot(uint8_t nodeID, uint16_t index, uint16_t subIndex, std::string cs, QColor color) = 0;
   void replot();
   void reset();
   void showContextMenu(const QPoint &point);

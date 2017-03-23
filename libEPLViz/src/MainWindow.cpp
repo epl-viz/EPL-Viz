@@ -152,6 +152,8 @@ void MainWindow::createModels() {
   connect(ui->scrBarTimeline, SIGNAL(valueChanged(int)), timeLineModel, SLOT(updateViewport(int)));
   connect(timeLineModel, SIGNAL(maxValueChanged(int, int)), ui->scrBarTimeline, SLOT(setRange(int, int)));
   connect(this, SIGNAL(cycleChanged()), timeLineModel, SLOT(replot()));
+  connect(settingsWin, SIGNAL(settingsUpdated()), qwtPlot, SLOT(updatePlotList()));
+  connect(settingsWin, SIGNAL(settingsUpdated()), timeLineModel, SLOT(updatePlotList()));
 
   connect(packetListModel,
           SIGNAL(cycleSelected(uint32_t)),
@@ -168,9 +170,9 @@ void MainWindow::createModels() {
           curODModel,
           SLOT(showContextMenu(const QPoint &)));
   connect(curODModel,
-          SIGNAL(drawingPlot(uint8_t, uint16_t, uint16_t, std::string)),
+          SIGNAL(drawingPlot(uint8_t, uint16_t, uint16_t, std::string, QColor)),
           qwtPlot,
-          SLOT(createPlot(uint8_t, uint16_t, uint16_t, std::string)));
+          SLOT(createPlot(uint8_t, uint16_t, uint16_t, std::string, QColor)));
   // Connect Setup Plot
   connect(ui->actionSetup_Plot, SIGNAL(triggered()), this, SLOT(setupPlot()));
 

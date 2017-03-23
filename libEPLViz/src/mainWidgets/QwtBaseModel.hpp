@@ -65,6 +65,8 @@ class QwtBaseModel : public QObject, public BaseModel {
   QwtPlot *   plot;
   QMap<QString, QPair<std::shared_ptr<QwtPlotCurve>, std::shared_ptr<EPL_DataCollect::plugins::TimeSeries>>> curves;
   QList<PlotCreator::PlotCreatorData> registeredCurves;
+  std::vector<double> xValues;
+
 
   virtual void update(ProtectedCycle &cycle) override;
   QString createStringIdentifier(uint8_t node, uint16_t index, uint16_t subIndex, std::string cs);

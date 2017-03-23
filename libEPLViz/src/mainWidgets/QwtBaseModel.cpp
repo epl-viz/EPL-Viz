@@ -81,13 +81,11 @@ void QwtBaseModel::update(ProtectedCycle &cycle) {
 
     size_t oldDataCount = curve->dataSize();
     size_t newDataCount = timeSeries->tsData.size();
-    qDebug() << "Updating BaseModel with timeseries data of the size " + QString::number(newDataCount) + "and " +
-                      QString::number(oldDataCount) + " old values";
     if (oldDataCount == newDataCount)
       return;
 
-    std::vector<double> xValues(newDataCount);
-    for (size_t i = 0; i < newDataCount; ++i) {
+    xValues.reserve(newDataCount);
+    for (size_t i = xValues.size(); i < newDataCount; ++i) {
       xValues[i] = static_cast<double>(i);
     }
 

@@ -64,14 +64,19 @@ class QwtBaseModel : public QObject, public BaseModel {
   QwtPlot *   plot;
   QMap<QString, QPair<std::shared_ptr<QwtPlotCurve>, std::shared_ptr<EPL_DataCollect::plugins::TimeSeries>>> curves;
   std::vector<PlotCreator::PlotCreatorData> registeredCurves;
-  std::vector<double> xValues;
+  std::vector<double>                       xValues;
 
 
   virtual void update() override;
   virtual void updateWidget() override;
   QString createStringIdentifier(uint8_t node, uint16_t index, uint16_t subIndex, std::string cs);
   QString createStringIdentifier(const PlotCreator::PlotCreatorData &data);
-  void createPlot(uint8_t nodeID, uint16_t index, uint16_t subIndex, std::string cs, QwtPlot::Axis, QColor color = QColor(0, 0, 0));
+  void createPlot(uint8_t     nodeID,
+                  uint16_t    index,
+                  uint16_t    subIndex,
+                  std::string cs,
+                  QwtPlot::Axis,
+                  QColor color = QColor(0, 0, 0));
 
 
 #pragma clang diagnostic push
@@ -96,7 +101,7 @@ class QwtBaseModel : public QObject, public BaseModel {
   void maxValueChanged(int notUsed, int nMax);
 
  public slots:
-  void updatePlotList();
+  void         updatePlotList();
   virtual void createPlot(uint8_t nodeID, uint16_t index, uint16_t subIndex, std::string cs, QColor color) = 0;
   void replot();
   void reset();

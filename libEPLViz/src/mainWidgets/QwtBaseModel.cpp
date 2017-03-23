@@ -234,5 +234,5 @@ void QwtBaseModel::enablePlot() {
 
 void QwtBaseModel::updatePlotList() {
   SettingsProfileItem::Config config = window->getSettingsWin()->getConfig();
-  registeredCurves = config.plots;
+  registeredCurves                   = config.plots;
 }

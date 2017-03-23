@@ -526,10 +526,12 @@ void MainWindow::changeState(GUIState nState) {
       config();
 
       backendState = captureInstance->loadPCAP(file);
+      qDebug() << "Opened PCAP " << QString::fromStdString(file);
 
       // Handle Backend errors
       if (backendState != 0) {
         qDebug() << QString("Backend error Code ") + QString::number(backendState);
+        QMessageBox::critical(0, "Error", tr("Received backend error code %1.").arg(backendState));
         changeState(GUIState::UNINIT);
         return;
       }
@@ -574,10 +576,13 @@ void MainWindow::changeState(GUIState nState) {
       config();
 
       backendState = captureInstance->startRecording(interface.toStdString());
+      qDebug() << "Started recording on " << interface;
 
       // Handle Backend errors
       if (backendState != 0) {
         qDebug() << QString("Backend error Code ") + QString::number(backendState);
+        QMessageBox::critical(0, "Error", tr("Received backend error code %1.").arg(backendState));
+
         changeState(GUIState::UNINIT);
         return;
       }

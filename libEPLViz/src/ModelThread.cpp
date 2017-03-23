@@ -53,7 +53,7 @@ void ModelThread::loop() {
   while (running) {
     switch (*state) {
       case GUIState::UNINIT: yieldCurrentThread(); break;
-      case GUIState::STOPPED: stop(); break;
+      case GUIState::STOPPED:
       case GUIState::PLAYING:
       case GUIState::PAUSED:
       case GUIState::RECORDING: {
@@ -72,8 +72,11 @@ void ModelThread::loop() {
         }
 
         // Update models and if it was completed, the widgets
-        if (BaseModel::updateAll(window, ci))
+        if (BaseModel::updateAll(window, ci)) {
+          qDebug() << "BEGIN UPDATING WIDGETS";
           emit updateCompleted(); // Wait until the widgets are updated in the GUI thread
+          qDebug() << "END UPDATING WIDGETS";
+        }
 
         break;
       }

@@ -206,6 +206,8 @@ void MainWindow::createModels() {
   getCycleSetter()->getWidget()->checkButtons();
 
   connect(this, SIGNAL(close()), modelThread, SLOT(stop()));
+
+  modelThread->start();
 }
 
 void MainWindow::destroyModels() {
@@ -215,6 +217,7 @@ void MainWindow::destroyModels() {
 }
 
 void MainWindow::updateWidgets() {
+  qDebug() << "==> Widget Update thread";
   BaseModel::updateAllWidgets();
   ui->eventViewer->updateEvents();
 
@@ -226,25 +229,6 @@ void MainWindow::updateWidgets() {
       changeState(GUIState::STOPPED);
     }
   }
-}
-
-void MainWindow::fixQToolButtons(std::vector<QToolButton *> &btns) {
-  for (auto i : btns) {
-    if (!i)
-      continue;
-    i->setPopupMode(QToolButton::InstantPopup);
-  }
-}
-
-void MainWindow::fixQToolButtons(std::vector<QAction *> &actions, QToolBar *bar) {
-  std::vector<QToolButton *> btns;
-  btns.reserve(actions.size());
-  for (auto i : actions) {
-    if (!i)
-      continue;
-    btns.emplace_back(dynamic_cast<QToolButton *>(bar->widgetForAction(i)));
-  }
-  fixQToolButtons(btns);
 }
 
 bool MainWindow::changeCycle(uint32_t cycle) {
@@ -647,8 +631,6 @@ void MainWindow::config() {
   // Register timeseries cycle storage
   captureInstance->registerCycleStorage<plugins::CSTimeSeriesPtr>(
         EPL_DataCollect::constants::EPL_DC_PLUGIN_TIME_SERIES_CSID);
-
-  modelThread->start();
 
   // Initialize all Models
   BaseModel::initAll(); // TODO do we need to do this here

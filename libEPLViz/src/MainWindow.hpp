@@ -122,9 +122,6 @@ class MainWindow : public QMainWindow {
    */
   EPL_DataCollect::CaptureInstance *getCaptureInstance();
 
-  static void fixQToolButtons(std::vector<QToolButton *> &btns);
-  static void fixQToolButtons(std::vector<QAction *> &actions, QToolBar *bar);
-
   void setFilters(std::vector<EPL_DataCollect::CSViewFilters::Filter> f);
   EPL_DataCollect::CSViewFilters::Filter getFilter();
 

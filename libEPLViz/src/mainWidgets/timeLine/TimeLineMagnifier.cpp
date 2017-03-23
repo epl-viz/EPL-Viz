@@ -32,6 +32,7 @@
 using namespace EPL_Viz;
 
 #include "qwt_plot.h"
+#include <limits>
 
 TimeLineMagnifier::TimeLineMagnifier(QScrollBar *bar, TimeLineModel *model, uint32_t *maxVal, QWidget *canvas)
     : QwtPlotMagnifier(canvas) {
@@ -50,7 +51,9 @@ void TimeLineMagnifier::rescale(double factor) {
     return;
 
   factor = qAbs(factor);
-  if (static_cast<int>(factor) == 1 || static_cast<int>(factor) == 0)
+
+  if (std::fabs(factor - 1) <= std::numeric_limits<double>::epsilon() ||
+      factor <= std::numeric_limits<double>::epsilon())
     return;
 
   bool doReplot = false;

@@ -42,12 +42,18 @@
         <widget class="QWidget" name="widget_3" native="true">
          <layout class="QGridLayout" name="gridLayout">
           <item row="1" column="1">
-           <widget class="HexSpinBox" name="index">
+           <widget class="QSpinBox" name="index">
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+            <property name="prefix">
+             <string>0x</string>
+            </property>
             <property name="maximum">
              <number>65535</number>
             </property>
-            <property name="value">
-             <number>24576</number>
+            <property name="displayIntegerBase">
+             <number>16</number>
             </property>
            </widget>
           </item>
@@ -59,9 +65,18 @@
            </widget>
           </item>
           <item row="2" column="1">
-           <widget class="HexSpinBox" name="subIndex">
+           <widget class="QSpinBox" name="subIndex">
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+            <property name="prefix">
+             <string>0x</string>
+            </property>
             <property name="maximum">
              <number>255</number>
+            </property>
+            <property name="displayIntegerBase">
+             <number>16</number>
             </property>
            </widget>
           </item>
@@ -80,7 +95,10 @@
            </widget>
           </item>
           <item row="0" column="1">
-           <widget class="HexSpinBox" name="node">
+           <widget class="QSpinBox" name="node">
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
             <property name="maximum">
              <number>254</number>
             </property>
@@ -345,13 +363,6 @@
    </item>
   </layout>
  </widget>
- <customwidgets>
-  <customwidget>
-   <class>HexSpinBox</class>
-   <extends>QSpinBox</extends>
-   <header>HexSpinBox.hpp</header>
-  </customwidget>
- </customwidgets>
  <resources/>
  <connections>
   <connection>

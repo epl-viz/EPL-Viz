@@ -10,12 +10,6 @@
     <height>1080</height>
    </rect>
   </property>
-  <property name="sizePolicy">
-   <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
-    <horstretch>2</horstretch>
-    <verstretch>0</verstretch>
-   </sizepolicy>
-  </property>
   <property name="minimumSize">
    <size>
     <width>800</width>
@@ -31,6 +25,12 @@
    </iconset>
   </property>
   <widget class="QWidget" name="centralWidget">
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+     <horstretch>1</horstretch>
+     <verstretch>1</verstretch>
+    </sizepolicy>
+   </property>
    <layout class="QGridLayout" name="gridLayout_2">
     <item row="0" column="0">
      <widget class="QTabWidget" name="tabWidget">
@@ -74,7 +74,7 @@
              <x>0</x>
              <y>0</y>
              <width>1322</width>
-             <height>413</height>
+             <height>313</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_15"/>
@@ -87,9 +87,16 @@
        <attribute name="title">
         <string>Plot</string>
        </attribute>
-       <layout class="QGridLayout" name="gridLayout_14">
-        <item row="0" column="0">
-         <widget class="QwtPlot" name="qwtPlot"/>
+       <layout class="QVBoxLayout" name="verticalLayout_3">
+        <item>
+         <widget class="QwtPlot" name="qwtPlot">
+          <property name="minimumSize">
+           <size>
+            <width>100</width>
+            <height>50</height>
+           </size>
+          </property>
+         </widget>
         </item>
        </layout>
       </widget>
@@ -242,10 +249,10 @@
    <addaction name="actionSettings"/>
   </widget>
   <widget class="TimelineWidget" name="dockTime">
-   <property name="baseSize">
+   <property name="minimumSize">
     <size>
-     <width>0</width>
-     <height>100</height>
+     <width>104</width>
+     <height>122</height>
     </size>
    </property>
    <property name="toolTip">
@@ -254,9 +261,6 @@
    <property name="floating">
     <bool>false</bool>
    </property>
-   <property name="allowedAreas">
-    <set>Qt::AllDockWidgetAreas</set>
-   </property>
    <property name="windowTitle">
     <string>Ti&amp;meline</string>
    </property>
@@ -264,25 +268,19 @@
     <number>4</number>
    </attribute>
    <widget class="QWidget" name="dockWidgetContents_6">
+    <property name="minimumSize">
+     <size>
+      <width>100</width>
+      <height>50</height>
+     </size>
+    </property>
     <layout class="QVBoxLayout" name="verticalLayout">
      <item>
       <widget class="QwtPlot" name="qwtPlotTimeline">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
        <property name="minimumSize">
         <size>
          <width>100</width>
          <height>50</height>
-        </size>
-       </property>
-       <property name="maximumSize">
-        <size>
-         <width>16777215</width>
-         <height>16777215</height>
         </size>
        </property>
       </widget>
@@ -359,7 +357,7 @@
     <string>Shows the Object Dictionary Descriptions that are currently provided by the loaded profiles.</string>
    </property>
    <property name="windowTitle">
-    <string>OD Descriptions</string>
+    <string>OD Desc&amp;riptions</string>
    </property>
    <attribute name="dockWidgetArea">
     <number>2</number>
@@ -415,11 +413,19 @@
     <layout class="QGridLayout" name="gridLayout_20">
      <item row="0" column="0">
       <widget class="QPlainTextEdit" name="pluginLogView">
+       <property name="font">
+        <font>
+         <family>DejaVu Sans Mono</family>
+        </font>
+       </property>
        <property name="undoRedoEnabled">
         <bool>false</bool>
        </property>
        <property name="lineWrapMode">
         <enum>QPlainTextEdit::NoWrap</enum>
+       </property>
+       <property name="tabStopWidth">
+        <number>30</number>
        </property>
        <property name="textInteractionFlags">
         <set>Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
@@ -443,6 +449,11 @@
     <layout class="QGridLayout" name="gridLayout_21">
      <item row="0" column="0">
       <widget class="QPlainTextEdit" name="packetHistoryTextEdit">
+       <property name="font">
+        <font>
+         <family>DejaVu Sans Mono</family>
+        </font>
+       </property>
        <property name="lineWrapMode">
         <enum>QPlainTextEdit::NoWrap</enum>
        </property>
@@ -452,8 +463,14 @@
        <property name="plainText">
         <string/>
        </property>
+       <property name="tabStopWidth">
+        <number>30</number>
+       </property>
        <property name="textInteractionFlags">
         <set>Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+       </property>
+       <property name="placeholderText">
+        <string>Please select a packet in the Cycle Commands widget</string>
        </property>
       </widget>
      </item>

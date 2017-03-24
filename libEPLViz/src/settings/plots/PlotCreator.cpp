@@ -50,9 +50,9 @@ PlotCreator::PlotCreatorData PlotCreator::getNewPlot(PlotCreatorData *oldData) {
 }
 
 void PlotCreator::changeColor() {
-  QPalette pal = palette();
+  QPalette pal = ui->COL_PLOT->palette();
 
-  QColor newColor = QColorDialog::getColor(pal.color(QPalette::Button), this, "Select color");
+  QColor newColor = QColorDialog::getColor(pal.color(QPalette::Window), this, "Select color");
   if (!newColor.isValid())
     return;
 

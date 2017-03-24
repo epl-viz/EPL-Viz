@@ -75,10 +75,6 @@ void CurrentODModel::update() {
   }
 
   bool hasFilterChanged = filter->updateFilter();
-  if (hasFilterChanged) {
-    hasChanged    = true;
-    completeReset = true;
-  }
 
   static std::vector<uint16_t>    oldVec;
   static std::vector<std::string> oldVecCS;
@@ -122,6 +118,8 @@ void CurrentODModel::update() {
     hasChanged    = true;
     completeReset = true;
   }
+
+  lastUpdatedNode = node;
 }
 
 void CurrentODModel::updateWidget() {
@@ -212,8 +210,6 @@ void CurrentODModel::updateWidget() {
 
     endResetModel();
   } else {
-    beginResetModel();
-
     // No entry changes
     for (auto &i : *root->getChildren()) {
       CurODModelItem *od = dynamic_cast<CurODModelItem *>(i);
@@ -227,7 +223,9 @@ void CurrentODModel::updateWidget() {
       }
     }
 
-    endResetModel();
+    emit dataChanged(index(0, 0, QModelIndex()),
+                     index(rowCount(QModelIndex()) - 1, 2, QModelIndex()),
+                     {Qt::DisplayRole, Qt::BackgroundRole});
   }
 
   completeReset = false;

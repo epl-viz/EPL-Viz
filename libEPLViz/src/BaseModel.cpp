@@ -103,6 +103,8 @@ bool BaseModel::updateAll(MainWindow *mw, CaptureInstance *instance) {
     return false;
   }
 
+  forceUpdate = false;
+
   // Update models
   for (auto &i : registeredModels) {
     // qDebug() << "[" << cycle->getCycleNum() << "] Updating " << i->getName();

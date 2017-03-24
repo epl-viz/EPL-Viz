@@ -40,6 +40,14 @@ class PacketListItem final : public TreeModelItemBase {
   size_t                                        index;
   MainWindow *                                  mw;
 
+  EPL_DataCollect::PacketType type;
+  QVariant                    typeVar;
+  QVariant                    source;
+  QVariant                    dest;
+  QVariant                    state;
+  QVariant                    sID;
+  QVariant                    cmdID;
+
   QVariant dataDisplay(int column);
   QColor dataBackground();
   QColor dataForground();

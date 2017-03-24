@@ -35,7 +35,47 @@ PacketListItem::PacketListItem(TreeModelItemBase *                           par
                                MainWindow *                                  mainWin,
                                EPL_DataCollect::InputHandler::PacketMetadata d,
                                size_t                                        ind)
-    : TreeModelItemBase(parent), metaData(d), index(ind), mw(mainWin) {}
+    : TreeModelItemBase(parent), metaData(d), index(ind), mw(mainWin) {
+  uint8_t tmp = metaData.getFiled(InputHandler::PacketMetadata::PACKET_TYPE);
+  type        = static_cast<PacketType>(tmp);
+  typeVar     = EPLEnum2Str::toStr(type).c_str();
+
+  ASndServiceID asndID = static_cast<ASndServiceID>(metaData.getFiled(InputHandler::PacketMetadata::SERVICE_ID));
+
+  source = static_cast<int>(metaData.getFiled(InputHandler::PacketMetadata::SOURCE));
+  dest   = static_cast<int>(metaData.getFiled(InputHandler::PacketMetadata::DESTINATION));
+
+  tmp = metaData.getFiled(InputHandler::PacketMetadata::NMT_STATE);
+  switch (type) {
+    case PacketType::START_OF_ASYNC:
+    case PacketType::POLL_RESPONSE: state = EPLEnum2Str::toStr(static_cast<NMTState>(tmp)).c_str(); break;
+    case PacketType::ASYNC_SEND:
+      if (asndID != ASndServiceID::STATUS_RESPONSE && asndID != ASndServiceID::IDENT_RESPONSE) {
+        break;
+      }
+
+      state = EPLEnum2Str::toStr(static_cast<NMTState>(tmp)).c_str();
+      break;
+    default: break;
+  }
+
+  tmp = metaData.getFiled(InputHandler::PacketMetadata::SERVICE_ID);
+  switch (type) {
+    case PacketType::START_OF_ASYNC: sID = EPLEnum2Str::toStr(static_cast<SoARequestServiceID>(tmp)).c_str(); break;
+    case PacketType::ASYNC_SEND: sID     = EPLEnum2Str::toStr(static_cast<ASndServiceID>(tmp)).c_str(); break;
+    default: break;
+  }
+
+  tmp = metaData.getFiled(InputHandler::PacketMetadata::COMMAND);
+  if (type != PacketType::ASYNC_SEND)
+    return;
+
+  switch (asndID) {
+    case ASndServiceID::SDO: cmdID         = EPLEnum2Str::toStr(static_cast<SDOCommandID>(tmp)).c_str(); break;
+    case ASndServiceID::NMT_COMMAND: cmdID = EPLEnum2Str::toStr(static_cast<NMTCommand>(tmp)).c_str(); break;
+    default: break;
+  }
+}
 
 PacketListItem::~PacketListItem() {}
 
@@ -43,67 +83,21 @@ Qt::ItemFlags PacketListItem::flags() { return Qt::ItemIsEnabled | Qt::ItemNever
 bool          PacketListItem::hasChanged() { return false; }
 
 QVariant PacketListItem::dataDisplay(int column) {
-  uint8_t       tmp;
-  PacketType    tp;
-  ASndServiceID asndID;
   switch (column) {
-    case 0: // Number
-      return QVariant(static_cast<uint32_t>(index + 1));
-    case 1: // Cycle
-      return QVariant(metaData.cycleNum);
-    case 2: // TYPE
-      tmp = metaData.getFiled(InputHandler::PacketMetadata::PACKET_TYPE);
-      return QVariant(EPLEnum2Str::toStr(static_cast<PacketType>(tmp)).c_str());
-    case 3: // SOURCE
-      tmp = metaData.getFiled(InputHandler::PacketMetadata::SOURCE);
-      return QVariant(static_cast<int>(tmp));
-    case 4: // DEST
-      tmp = metaData.getFiled(InputHandler::PacketMetadata::DESTINATION);
-      return QVariant(static_cast<int>(tmp));
-    case 5: // NMTState
-      tmp = metaData.getFiled(InputHandler::PacketMetadata::NMT_STATE);
-      tp  = static_cast<PacketType>(metaData.getFiled(InputHandler::PacketMetadata::PACKET_TYPE));
-      switch (tp) {
-        case PacketType::START_OF_ASYNC:
-        case PacketType::POLL_RESPONSE: return QVariant(EPLEnum2Str::toStr(static_cast<NMTState>(tmp)).c_str());
-        case PacketType::ASYNC_SEND:
-          asndID = static_cast<ASndServiceID>(metaData.getFiled(InputHandler::PacketMetadata::SERVICE_ID));
-          if (asndID != ASndServiceID::STATUS_RESPONSE && asndID != ASndServiceID::IDENT_RESPONSE) {
-            return QVariant();
-          }
-
-          return QVariant(EPLEnum2Str::toStr(static_cast<NMTState>(tmp)).c_str());
-        default: return QVariant();
-      }
-    case 6: // Service ID
-      tmp = metaData.getFiled(InputHandler::PacketMetadata::SERVICE_ID);
-      tp  = static_cast<PacketType>(metaData.getFiled(InputHandler::PacketMetadata::PACKET_TYPE));
-      switch (tp) {
-        case PacketType::START_OF_ASYNC:
-          return QVariant(EPLEnum2Str::toStr(static_cast<SoARequestServiceID>(tmp)).c_str());
-        case PacketType::ASYNC_SEND: return QVariant(EPLEnum2Str::toStr(static_cast<ASndServiceID>(tmp)).c_str());
-        default: return QVariant();
-      }
-    case 7: // Command
-      tmp = metaData.getFiled(InputHandler::PacketMetadata::COMMAND);
-      tp  = static_cast<PacketType>(metaData.getFiled(InputHandler::PacketMetadata::PACKET_TYPE));
-      if (tp != PacketType::ASYNC_SEND)
-        return QVariant();
-
-      asndID = static_cast<ASndServiceID>(metaData.getFiled(InputHandler::PacketMetadata::SERVICE_ID));
-      switch (asndID) {
-        case ASndServiceID::SDO: return QVariant(EPLEnum2Str::toStr(static_cast<SDOCommandID>(tmp)).c_str());
-        case ASndServiceID::NMT_COMMAND: return QVariant(EPLEnum2Str::toStr(static_cast<NMTCommand>(tmp)).c_str());
-        default: return QVariant();
-      }
-
+    case 0: return QVariant(static_cast<uint32_t>(index + 1));
+    case 1: return QVariant(metaData.cycleNum);
+    case 2: return typeVar;
+    case 3: return source;
+    case 4: return dest;
+    case 5: return state;
+    case 6: return sID;
+    case 7: return cmdID;
     default: return QVariant();
   }
 }
 
 QColor PacketListItem::dataBackground() {
-  PacketType tp = static_cast<PacketType>(metaData.getFiled(InputHandler::PacketMetadata::PACKET_TYPE));
-  switch (tp) {
+  switch (type) {
     case PacketType::START_OF_CYCLE: return mw->getSettingsWin()->getConfig().pSoC;
     case PacketType::START_OF_ASYNC: return mw->getSettingsWin()->getConfig().pSoA;
     case PacketType::POLL_REQUEST: return mw->getSettingsWin()->getConfig().pPReq;

@@ -70,7 +70,7 @@ QVariant SettingsPlotItem::dataDisplay(int column) {
 
     case 4: // Node
       if (pltData.defaultODPlot)
-        return QString().number(static_cast<int>(pltData.node), 16).prepend("0x");
+        return static_cast<int>(pltData.node);
 
       return QVariant();
 

@@ -97,6 +97,9 @@
        <layout class="QVBoxLayout" name="verticalLayout_2">
         <item>
          <widget class="QTreeView" name="packetsView">
+          <property name="uniformRowHeights">
+           <bool>true</bool>
+          </property>
           <attribute name="headerDefaultSectionSize">
            <number>135</number>
           </attribute>
@@ -382,6 +385,9 @@ Clicking inside the Timeline will jump back to the selected cycle.</string>
     <layout class="QGridLayout" name="gridLayout_18">
      <item row="0" column="0">
       <widget class="QTreeView" name="cycleCommandsView">
+       <property name="uniformRowHeights">
+        <bool>true</bool>
+       </property>
        <attribute name="headerDefaultSectionSize">
         <number>90</number>
        </attribute>

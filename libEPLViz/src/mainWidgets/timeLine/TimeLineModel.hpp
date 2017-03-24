@@ -51,6 +51,7 @@ class TimeLineModel : public QwtBaseModel {
   QScrollBar *               scrollbar;
   QwtPlotPicker *            point;
   QwtPlotPicker *            area;
+  MainWindow *               mw;
 
 
   QList<std::shared_ptr<QwtPlotMarker>> markers;
@@ -62,7 +63,7 @@ class TimeLineModel : public QwtBaseModel {
  public:
   const static uint32_t DEF_VIEWPORT_SIZE = 10;
 
-  TimeLineModel(MainWindow *mw, QwtPlot *widget);
+  TimeLineModel(MainWindow *mainWin, QwtPlot *widget);
   TimeLineModel() = delete;
   virtual ~TimeLineModel();
 

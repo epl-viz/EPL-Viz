@@ -35,18 +35,22 @@
 
 namespace EPL_Viz {
 
+class MainWindow;
+
 class EventViewerWidget : public QTreeWidget {
   Q_OBJECT
 
  private:
   uint32_t                   appID = UINT32_MAX;
   EPL_DataCollect::EventLog *log   = nullptr;
+  MainWindow *               mw    = nullptr;
 
  public:
   EventViewerWidget(QWidget *parent = nullptr);
   ~EventViewerWidget()              = default;
 
   void updateEvents();
+  void setMainWindow(MainWindow *mainWin) { mw = mainWin; }
 
  private slots:
   void jumpToEvent(QTreeWidgetItem *item);

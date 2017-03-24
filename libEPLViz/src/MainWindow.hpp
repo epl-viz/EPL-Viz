@@ -90,13 +90,7 @@ class MainWindow : public QMainWindow {
  public:
   explicit MainWindow(QWidget *parent = nullptr);
   ~MainWindow();
-  /*!
-   * \brief Changes the cycle to the one before the timestamp
-   * Tries to change the time, if the current state does not allow it, nothing happens.
-   * \param t Time in seconds
-   * \return whether or not the change was a success
-   */
-  mockable bool changeTime(double t);
+
   /*!
    * \brief Changes the cycle
    * Tries to change the cycle, if the current state does not allow it, nothing happens.

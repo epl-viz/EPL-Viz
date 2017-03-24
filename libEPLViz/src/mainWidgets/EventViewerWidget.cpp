@@ -28,6 +28,7 @@
  */
 
 #include "EventViewerWidget.hpp"
+#include "MainWindow.hpp"
 #include <QHeaderView>
 
 using namespace EPL_Viz;
@@ -82,5 +83,24 @@ void EventViewerWidget::updateEvents() {
     evItem->setText(4, QString::number(first));                           // The first cycle occurrence of the event
     evItem->setText(5, QString::number(last));                            // The last cycle occurrence of the event
     evItem->setText(6, QString::fromStdString(event->getPluginID()));     // The name of the plugin that sent the event
+
+    QColor evColor;
+    switch (event->getType()) {
+      case EvType::PROTO_ERROR: evColor    = mw->getSettingsWin()->getConfig().evProtoError; break;
+      case EvType::ERROR: evColor          = mw->getSettingsWin()->getConfig().evError; break;
+      case EvType::WARNING: evColor        = mw->getSettingsWin()->getConfig().evWarning; break;
+      case EvType::INFO: evColor           = mw->getSettingsWin()->getConfig().evInfo; break;
+      case EvType::DEBUG: evColor          = mw->getSettingsWin()->getConfig().evDebug; break;
+      case EvType::PLUGIN_EV_TEXT: evColor = mw->getSettingsWin()->getConfig().evPText; break;
+      default: break;
+    }
+
+    if (evColor.isValid()) {
+      QColor evFornt = evColor.lightness() >= 125 ? "#000000" : "#ffffff";
+      for (int i = 0; i < 7; ++i) {
+        evItem->setBackground(i, evColor);
+        evItem->setForeground(i, evFornt);
+      }
+    }
   }
 }

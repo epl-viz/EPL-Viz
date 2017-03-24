@@ -36,9 +36,7 @@
 using namespace EPL_Viz;
 using namespace EPL_DataCollect;
 
-TimeLineModel::TimeLineModel(MainWindow *mw, QwtPlot *widget) : QwtBaseModel(mw, widget) {
-  (void)mw;
-  (void)widget;
+TimeLineModel::TimeLineModel(MainWindow *mainWin, QwtPlot *widget) : QwtBaseModel(mainWin, widget), mw(mainWin) {
   scrollbar = mw->findChild<QScrollBar *>("scrBarTimeline");
 
   widget->enableAxis(QwtPlot::xBottom, false);
@@ -145,10 +143,13 @@ void TimeLineModel::update() {
 
     QColor col;
     switch (ev->getType()) {
-      case EvType::ERROR: col   = QColor(200, 0, 0); break;
-      case EvType::WARNING: col = QColor(250, 250, 0); break;
-      case EvType::INFO: col    = QColor(0, 200, 0); break;
-      default: col              = QColor(0, 0, 0);
+      case EvType::PROTO_ERROR: col    = mw->getSettingsWin()->getConfig().evProtoError; break;
+      case EvType::ERROR: col          = mw->getSettingsWin()->getConfig().evError; break;
+      case EvType::WARNING: col        = mw->getSettingsWin()->getConfig().evWarning; break;
+      case EvType::INFO: col           = mw->getSettingsWin()->getConfig().evInfo; break;
+      case EvType::DEBUG: col          = mw->getSettingsWin()->getConfig().evDebug; break;
+      case EvType::PLUGIN_EV_TEXT: col = mw->getSettingsWin()->getConfig().evPText; break;
+      default: col                     = QColor(0, 0, 0);
     }
     marker->setLinePen(col);
 

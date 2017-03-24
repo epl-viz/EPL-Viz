@@ -114,6 +114,9 @@
        <layout class="QGridLayout" name="gridLayout_3">
         <item row="0" column="0">
          <widget class="EventViewerWidget" name="eventViewer">
+          <property name="uniformRowHeights">
+           <bool>true</bool>
+          </property>
           <attribute name="headerDefaultSectionSize">
            <number>135</number>
           </attribute>

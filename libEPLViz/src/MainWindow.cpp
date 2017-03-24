@@ -73,6 +73,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
   profileManager = new ProfileManager();
 
   ui->setupUi(this);
+  ui->eventViewer->setMainWindow(this);
   tabifyDockWidget(ui->dockCurrent, ui->dockOD);
 
   CS = new CycleSetterAction(ui->toolBar, this);
@@ -111,12 +112,10 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 MainWindow::~MainWindow() {
   cleanupResources();
   destroyModels();
+  delete settingsWin;
   delete profileManager;
   delete ui;
-  delete settingsWin;
 }
-
-bool MainWindow::changeTime(double) { return true; }
 
 void MainWindow::selectCycle(uint32_t cycle) { changeCycle(cycle); }
 
@@ -594,6 +593,9 @@ void MainWindow::changeState(GUIState nState) {
 
       break;
     case GUIState::STOPPED:
+      if (captureInstance->getState() == CaptureInstance::RUNNING)
+        captureInstance->stopRecording();
+
       // Update GUI button states
       ui->actionStart_Recording->setEnabled(false);
       ui->actionStop_Recording->setEnabled(false);

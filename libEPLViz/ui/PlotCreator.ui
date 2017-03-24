@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Form</string>
+   <string>Create Plot...</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
@@ -125,6 +125,9 @@
           </item>
           <item row="0" column="0">
            <widget class="QLabel" name="label_3">
+            <property name="toolTip">
+             <string>The name of the cycle storage to plot</string>
+            </property>
             <property name="text">
              <string>Cycle Storage name</string>
             </property>
@@ -162,6 +165,9 @@
      <layout class="QVBoxLayout" name="verticalLayout_4">
       <item>
        <widget class="QCheckBox" name="AddToTimeLine">
+        <property name="toolTip">
+         <string>If enabled, adds the plot to the timeline.</string>
+        </property>
         <property name="text">
          <string>Add Plot to Timeline</string>
         </property>
@@ -172,6 +178,9 @@
       </item>
       <item>
        <widget class="QCheckBox" name="AddToPlot">
+        <property name="toolTip">
+         <string>If enabled, adds the plot to the central plot widget.</string>
+        </property>
         <property name="text">
          <string>Add Plot to central plot widget</string>
         </property>

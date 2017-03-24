@@ -37,6 +37,7 @@
 #include "EPLEnum2Str.hpp"
 #include "Node.hpp"
 #include "EPLEnums.h"
+#include <QCheckBox>
 #include <QDebug>
 #include <QFrame>
 #include <QGridLayout>
@@ -51,12 +52,24 @@
 #include <QVBoxLayout>
 #include <QWidget>
 
+namespace EPL_Viz {
+
+class MainWindow;
+
 class NodeWidget : public QFrame {
   Q_OBJECT
 
  private:
   // clang-format off
-  const QString styleFormat = QString("#node%1 { background-color: %2; border-color: rgb(%3, 0, 0); border-style: %4; border-width: 5px; }");
+  const QString styleFormat = QString(
+              "#node%1 {"
+                "background-color: %2;"
+                "border-color: %4;"
+                "border-style: %5;"
+                "border-width: 5px;"
+              "}"
+              "QLabel    { color: %3 }"
+              "QCheckBox { color: %3 }");
 
   const QString typeFormat    = QString("%1");      //%1 is the type string
   const QString statusFormat  = QString("%1");      //%1 is the status string
@@ -70,18 +83,20 @@ class NodeWidget : public QFrame {
   bool highlighted = false;
   bool selected    = false;
 
-  QFrame *      line;
-  QLabel *      nameLabel;
-  QLabel *      statusLabel;
-  QTreeWidget * advancedInfo;
-  QLabel *      typeLabel;
-  QRadioButton *advanced;
+  MainWindow *mw;
+
+  QFrame *     line;
+  QLabel *     nameLabel;
+  QLabel *     statusLabel;
+  QTreeWidget *advancedInfo;
+  QLabel *     typeLabel;
+  QCheckBox *  advanced;
 
  public:
-  NodeWidget(EPL_DataCollect::Node *node, QWidget *parent = nullptr);
+  NodeWidget(MainWindow *mainWin, EPL_DataCollect::Node *node, QWidget *parent = nullptr);
   ~NodeWidget() = default;
 
-  static QString statusToBackground(EPL_DataCollect::NMTState status);
+  QColor statusToBackground(EPL_DataCollect::NMTState status);
 
   bool isSelected();
   void setSelected(bool sel);
@@ -106,3 +121,4 @@ class NodeWidget : public QFrame {
   void updateData(uint8_t nID, EPL_Viz::ProtectedCycle &c);
   void updateStyleSheet();
 };
+}

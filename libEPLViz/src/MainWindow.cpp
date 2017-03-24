@@ -74,7 +74,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
   ui->setupUi(this);
   ui->eventViewer->setMainWindow(this);
-  tabifyDockWidget(ui->dockCurrent, ui->dockOD);
+  ui->networkGraphContents->setMainWindow(this);
+  tabifyDockWidget(ui->dockOD, ui->dockCurrent);
 
   CS = new CycleSetterAction(ui->toolBar, this);
   ui->toolBar->addAction(CS);

@@ -29,10 +29,12 @@
 
 
 #include "NodeWidget.hpp"
+#include "MainWindow.hpp"
 
 using namespace EPL_Viz;
 
-NodeWidget::NodeWidget(EPL_DataCollect::Node *node, QWidget *parent) : QFrame(parent) {
+NodeWidget::NodeWidget(MainWindow *mainWin, EPL_DataCollect::Node *node, QWidget *parent) : QFrame(parent) {
+  mw       = mainWin;
   id       = node->getID();
   idString = QString::number(id);
 
@@ -107,7 +109,7 @@ NodeWidget::NodeWidget(EPL_DataCollect::Node *node, QWidget *parent) : QFrame(pa
   updateIdentityInfo(identity);
 
   // Create the advanced button
-  advanced = new QRadioButton(this);
+  advanced = new QCheckBox(this);
   advanced->setObjectName(QStringLiteral("advanced") + idString);
   advanced->setText("Show advanced information...");
   advanced->setStyleSheet(QStringLiteral(""));
@@ -144,20 +146,22 @@ NodeWidget::NodeWidget(EPL_DataCollect::Node *node, QWidget *parent) : QFrame(pa
 * \param _status The status to retrieve the color of
 * \return The rgb color value for the given status
 */
-QString NodeWidget::statusToBackground(EPL_DataCollect::NMTState _status) {
+QColor NodeWidget::statusToBackground(EPL_DataCollect::NMTState _status) {
   switch (_status) {
-    case EPL_DataCollect::NMTState::OFF: return QString("rgb(158, 158, 158)");
-    case EPL_DataCollect::NMTState::INITIALISING:
-    case EPL_DataCollect::NMTState::RESET_APPLICATION:
+    case EPL_DataCollect::NMTState::OFF: return mw->getSettingsWin()->getConfig().NMT_OFF;
+    case EPL_DataCollect::NMTState::INITIALISING: return mw->getSettingsWin()->getConfig().NMT_INITIALISING;
+    case EPL_DataCollect::NMTState::RESET_APPLICATION: return mw->getSettingsWin()->getConfig().NMT_RESET_APPLICATION;
     case EPL_DataCollect::NMTState::RESET_COMMUNICATION:
+      return mw->getSettingsWin()->getConfig().NMT_RESET_COMMUNICATION;
     case EPL_DataCollect::NMTState::RESET_CONFIGURATION:
-    case EPL_DataCollect::NMTState::NOT_ACTIVE:
-    case EPL_DataCollect::NMTState::PRE_OPERATIONAL_1:
-    case EPL_DataCollect::NMTState::PRE_OPERATIONAL_2: return QString("rgb(255, 193, 7)");
-    case EPL_DataCollect::NMTState::READY_TO_OPERATE: return QString("rgb(33, 150, 243)");
-    case EPL_DataCollect::NMTState::OPERATIONAL: return QString("rgb(139, 195, 74)");
-    case EPL_DataCollect::NMTState::STOPPED: return QString("rgb(244, 67, 54)");
-    case EPL_DataCollect::NMTState::BASIC_ETHERNET: return QString("rgb(156, 39, 176)");
+      return mw->getSettingsWin()->getConfig().NMT_RESET_CONFIGURATION;
+    case EPL_DataCollect::NMTState::NOT_ACTIVE: return mw->getSettingsWin()->getConfig().NMT_NOT_ACTIVE;
+    case EPL_DataCollect::NMTState::PRE_OPERATIONAL_1: return mw->getSettingsWin()->getConfig().NMT_PRE_OPERATIONAL_1;
+    case EPL_DataCollect::NMTState::PRE_OPERATIONAL_2: return mw->getSettingsWin()->getConfig().NMT_PRE_OPERATIONAL_2;
+    case EPL_DataCollect::NMTState::READY_TO_OPERATE: return mw->getSettingsWin()->getConfig().NMT_READY_TO_OPERATE;
+    case EPL_DataCollect::NMTState::OPERATIONAL: return mw->getSettingsWin()->getConfig().NMT_OPERATIONAL;
+    case EPL_DataCollect::NMTState::STOPPED: return mw->getSettingsWin()->getConfig().NMT_STOPPED;
+    case EPL_DataCollect::NMTState::BASIC_ETHERNET: return mw->getSettingsWin()->getConfig().NMT_BASIC_ETHERNET;
   }
   return QString("rgb(0, 0, 0)");
 }
@@ -203,10 +207,11 @@ bool NodeWidget::isSelected() { return selected; }
 
 
 void NodeWidget::updateStyleSheet() {
-  QString statusColor = statusToBackground(status);
-  QString highlight   = (highlighted ? "255" : "0");
+  QColor  statusColor = statusToBackground(status);
+  QString highlight   = (highlighted ? mw->getSettingsWin()->getConfig().NMT_Highligthed.name() : "#000000");
+  QString textColor   = statusColor.lightness() >= 125 ? "#000000" : "#ffffff";
 
-  setStyleSheet(styleFormat.arg(idString, statusColor, highlight, borderStyle()));
+  setStyleSheet(styleFormat.arg(idString, statusColor.name(), textColor, highlight, borderStyle()));
 }
 
 /*!

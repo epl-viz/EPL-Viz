@@ -30,6 +30,8 @@
 #include "NetworkGraphWidget.hpp"
 #include "Node.hpp"
 
+using namespace EPL_Viz;
+
 NetworkGraphWidget::NetworkGraphWidget(QWidget *parent) : QWidget(parent) {}
 
 QMap<uint8_t, NodeWidget *> *NetworkGraphWidget::getNodeWidgets() { return &nodeMap; }
@@ -70,7 +72,7 @@ void NetworkGraphWidget::createWidget(uint8_t nID, EPL_Viz::ProtectedCycle &c) {
     return;
   }
 
-  NodeWidget *nw = new NodeWidget(n, this);
+  NodeWidget *nw = new NodeWidget(mw, n, this);
 
   connect(nw, SIGNAL(nodeClicked(uint8_t)), this, SLOT(selectNode(uint8_t)));
   nodeMap.insert(nID, nw);

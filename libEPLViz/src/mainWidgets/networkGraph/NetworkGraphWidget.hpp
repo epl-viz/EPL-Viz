@@ -36,7 +36,7 @@
 namespace EPL_Viz {
 
 class NetworkGraphModel;
-}
+class MainWindow;
 
 class NetworkGraphWidget : public QWidget {
   Q_OBJECT
@@ -48,12 +48,14 @@ class NetworkGraphWidget : public QWidget {
   uint8_t current = UINT8_MAX;
 
   QMap<uint8_t, NodeWidget *> nodeMap;
+  MainWindow *mw = nullptr;
 
  public:
   NetworkGraphWidget(QWidget *parent = nullptr);
   ~NetworkGraphWidget()              = default;
 
   QMap<uint8_t, NodeWidget *> *getNodeWidgets();
+  void setMainWindow(MainWindow *mainWin) { mw = mainWin; }
 
  private:
   void createWidget(uint8_t nodeID, EPL_Viz::ProtectedCycle &c);
@@ -67,3 +69,4 @@ class NetworkGraphWidget : public QWidget {
   void selectNode(uint8_t node);
   void reset();
 };
+}

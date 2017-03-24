@@ -60,6 +60,7 @@ class ModelThread : public QThread {
  signals:
   void resultReady(const QString &result);
   void updateCompleted();
+  void updateCompletedAlways();
  public slots:
   void stop();
 };

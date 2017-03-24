@@ -77,6 +77,8 @@ void ModelThread::loop() {
           // qDebug() << "END UPDATING WIDGETS";
         }
 
+        emit updateCompletedAlways();
+
         break;
       }
     }

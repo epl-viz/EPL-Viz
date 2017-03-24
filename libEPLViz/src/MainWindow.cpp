@@ -71,10 +71,16 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
   machineState = GUIState::UNINIT;
 
   profileManager = new ProfileManager();
+  progressBar    = new QProgressBar;
+
+  progressBar->setMinimum(0);
+  progressBar->setMaximum(1000);
+  progressBar->setValue(0);
 
   ui->setupUi(this);
   ui->eventViewer->setMainWindow(this);
   ui->networkGraphContents->setMainWindow(this);
+  ui->statusBar->addPermanentWidget(progressBar);
   tabifyDockWidget(ui->dockOD, ui->dockCurrent);
 
   CS = new CycleSetterAction(ui->toolBar, this);
@@ -197,6 +203,7 @@ void MainWindow::createModels() {
   connect(modelThread, &ModelThread::resultReady, this, &MainWindow::handleResults);
   connect(modelThread, &ModelThread::finished, modelThread, &QObject::deleteLater);
   connect(modelThread, SIGNAL(updateCompleted()), this, SLOT(updateWidgets()), Qt::BlockingQueuedConnection);
+  connect(modelThread, SIGNAL(updateCompletedAlways()), this, SLOT(updateProgress()), Qt::BlockingQueuedConnection);
 
   // Connect reset signal to widgets requiring it
   connect(this, SIGNAL(resetGUI()), ui->networkGraphContents, SLOT(reset()));
@@ -229,6 +236,17 @@ void MainWindow::updateWidgets() {
   if (machineState == GUIState::RECORDING || machineState == GUIState::PLAYING || machineState == GUIState::PAUSED) {
     if (captureInstance->getState() == CaptureInstance::DONE) {
       changeState(GUIState::STOPPED);
+    }
+  }
+}
+
+void MainWindow::updateProgress() {
+  if (machineState == GUIState::RECORDING || machineState == GUIState::PLAYING || machineState == GUIState::PAUSED) {
+    if (fileSize > 0 && fileSize != UINT64_MAX) {
+      progressBar->setMaximum(1000);
+      progressBar->setValue(static_cast<int>((captureInstance->getCurrentFileProcessingOffset() * 1000) / fileSize));
+    } else {
+      progressBar->setMaximum(0);
     }
   }
 }
@@ -469,6 +487,10 @@ void MainWindow::changeState(GUIState nState) {
       }
 
       captureInstance = std::make_unique<CaptureInstance>();
+
+      ui->statusBar->showMessage("New");
+      progressBar->setMaximum(1000);
+      progressBar->setValue(0);
       break;
     case GUIState::PLAYING:
 
@@ -508,6 +530,7 @@ void MainWindow::changeState(GUIState nState) {
 
       backendState = captureInstance->loadPCAP(file);
       qDebug() << "Opened PCAP " << QString::fromStdString(file);
+      fileSize = captureInstance->getFileSize();
 
       // Handle Backend errors
       if (backendState != 0) {
@@ -519,6 +542,7 @@ void MainWindow::changeState(GUIState nState) {
 
       setWindowTitle(tr("EPL-Viz - [%1]").arg(QString::fromStdString(file)));
 
+      ui->statusBar->showMessage("Loading file...");
       break;
     case GUIState::RECORDING:
       // Update GUI button states
@@ -557,6 +581,7 @@ void MainWindow::changeState(GUIState nState) {
       config();
 
       backendState = captureInstance->startRecording(interface.toStdString());
+      fileSize     = UINT64_MAX;
       qDebug() << "Started recording on " << interface;
 
       // Handle Backend errors
@@ -570,6 +595,7 @@ void MainWindow::changeState(GUIState nState) {
 
       setWindowTitle(tr("EPL-Viz - Recording on '%1'").arg(interface));
 
+      ui->statusBar->showMessage("Recording live...");
       break;
     case GUIState::PAUSED:
       // Update GUI button states
@@ -584,7 +610,7 @@ void MainWindow::changeState(GUIState nState) {
         ui->actionStatistics->setEnabled(true);
         ui->actionSave->setEnabled(true);
         ui->actionSave_As->setEnabled(true);
-        settingsWin->leaveRecordingState();
+
       } else {
         ui->actionStatistics->setEnabled(false);
         ui->actionSave->setEnabled(false);
@@ -592,6 +618,7 @@ void MainWindow::changeState(GUIState nState) {
         settingsWin->enterRecordingState();
       }
 
+      ui->statusBar->showMessage("Paused");
       break;
     case GUIState::STOPPED:
       if (captureInstance->getState() == CaptureInstance::RUNNING)
@@ -609,6 +636,10 @@ void MainWindow::changeState(GUIState nState) {
 
       ui->pluginSelectorWidget->setEnabled(false);
       settingsWin->leaveRecordingState();
+
+      ui->statusBar->showMessage("Done processing");
+      progressBar->setMaximum(1000);
+      progressBar->setValue(1000);
       break;
   }
   machineState = nState;

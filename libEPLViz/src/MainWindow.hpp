@@ -48,6 +48,7 @@
 #include <QLabel>
 #include <QLinkedList>
 #include <QMainWindow>
+#include <QProgressBar>
 #include <QThread>
 #include <QToolBar>
 #include <QToolButton>
@@ -78,9 +79,11 @@ class MainWindow : public QMainWindow {
   QString                           interface;
   std::string                       file;
   SettingsWindow *                  settingsWin;
+  QProgressBar *                    progressBar;
   bool                              showedPlotSetupMsg;
 
-  QString saveFile;
+  QString  saveFile;
+  uint64_t fileSize = UINT64_MAX;
 
   TimeLineModel *timeline;
   QWTPlotModel * plot;
@@ -146,6 +149,7 @@ class MainWindow : public QMainWindow {
   void startRecording();
   void stopRecording();
   void updateWidgets();
+  void updateProgress();
   void showAbout();
   void showLicense();
   void showStats();

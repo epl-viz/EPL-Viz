@@ -208,7 +208,7 @@ bool NodeWidget::isSelected() { return selected; }
 
 void NodeWidget::updateStyleSheet() {
   QColor  statusColor = statusToBackground(status);
-  QString highlight   = (highlighted ? mw->getSettingsWin()->getConfig().NMT_Highligthed.name() : "#000000");
+  QString highlight   = (highlighted ? mw->getSettingsWin()->getConfig().NMT_Highlighted.name() : "#000000");
   QString textColor   = statusColor.lightness() >= 125 ? "#000000" : "#ffffff";
 
   setStyleSheet(styleFormat.arg(idString, statusColor.name(), textColor, highlight, borderStyle()));

@@ -145,7 +145,7 @@ void SettingsWindow::updateView(bool updateNodes) {
         {ui->COL_Debug, &prof->cfg.evDebug},
         {ui->COL_PText, &prof->cfg.evPText},
 
-        {ui->COL_nHighlighted, &prof->cfg.NMT_Highligthed},
+        {ui->COL_nHighlighted, &prof->cfg.NMT_Highlighted},
         {ui->COL_NMTOFF, &prof->cfg.NMT_OFF},
         {ui->COL_INITIALISING, &prof->cfg.NMT_INITIALISING},
         {ui->COL_RESET_APPLICATION, &prof->cfg.NMT_RESET_APPLICATION},
@@ -224,7 +224,7 @@ void SettingsWindow::saveIntoProfiles() {
         {ui->COL_Debug, &prof->cfg.evDebug},
         {ui->COL_PText, &prof->cfg.evPText},
 
-        {ui->COL_nHighlighted, &prof->cfg.NMT_Highligthed},
+        {ui->COL_nHighlighted, &prof->cfg.NMT_Highlighted},
         {ui->COL_NMTOFF, &prof->cfg.NMT_OFF},
         {ui->COL_INITIALISING, &prof->cfg.NMT_INITIALISING},
         {ui->COL_RESET_APPLICATION, &prof->cfg.NMT_RESET_APPLICATION},
@@ -315,7 +315,7 @@ void SettingsWindow::loadConfig() {
         {"COL_Debug", &prof->cfg.evDebug},
         {"COL_PText", &prof->cfg.evPText},
 
-        {"COL_nHighlighted", &prof->cfg.NMT_Highligthed},
+        {"COL_nHighlighted", &prof->cfg.NMT_Highlighted},
         {"COL_NMTOFF", &prof->cfg.NMT_OFF},
         {"COL_INITIALISING", &prof->cfg.NMT_INITIALISING},
         {"COL_RESET_APPLICATION", &prof->cfg.NMT_RESET_APPLICATION},
@@ -405,7 +405,7 @@ void SettingsWindow::saveConfig() {
         {"COL_Debug", &prof->cfg.evDebug},
         {"COL_PText", &prof->cfg.evPText},
 
-        {"COL_nHighlighted", &prof->cfg.NMT_Highligthed},
+        {"COL_nHighlighted", &prof->cfg.NMT_Highlighted},
         {"COL_NMTOFF", &prof->cfg.NMT_OFF},
         {"COL_INITIALISING", &prof->cfg.NMT_INITIALISING},
         {"COL_RESET_APPLICATION", &prof->cfg.NMT_RESET_APPLICATION},

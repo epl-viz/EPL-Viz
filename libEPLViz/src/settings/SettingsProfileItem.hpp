@@ -65,19 +65,19 @@ class SettingsProfileItem final : public QListWidgetItem {
     QColor evDebug      = QColor("#55AA55");
     QColor evPText      = QColor("#0D4D4D");
 
-    QColor NMT_Highligthed         = QColor("#ff9f00");
-    QColor NMT_OFF                 = QColor("#656565");
-    QColor NMT_INITIALISING        = QColor("#0D4D4D");
-    QColor NMT_RESET_APPLICATION   = QColor("#801515");
-    QColor NMT_RESET_COMMUNICATION = QColor("#801515");
-    QColor NMT_RESET_CONFIGURATION = QColor("#801515");
-    QColor NMT_NOT_ACTIVE          = QColor("#003333");
-    QColor NMT_PRE_OPERATIONAL_1   = QColor("#804515");
-    QColor NMT_PRE_OPERATIONAL_2   = QColor("#D49A6A");
-    QColor NMT_READY_TO_OPERATE    = QColor("#004400");
-    QColor NMT_OPERATIONAL         = QColor("#116611");
-    QColor NMT_STOPPED             = QColor("#550000");
-    QColor NMT_BASIC_ETHERNET      = QColor("#930093");
+    QColor NMT_Highlighted         = QColor("#B71C1C");
+    QColor NMT_OFF                 = QColor("#9E9E9E");
+    QColor NMT_INITIALISING        = QColor("#00BCD4");
+    QColor NMT_RESET_APPLICATION   = QColor("#009688");
+    QColor NMT_RESET_COMMUNICATION = QColor("#009688");
+    QColor NMT_RESET_CONFIGURATION = QColor("#009688");
+    QColor NMT_NOT_ACTIVE          = QColor("#607D8B");
+    QColor NMT_PRE_OPERATIONAL_1   = QColor("#FFEB3B");
+    QColor NMT_PRE_OPERATIONAL_2   = QColor("#FFC107");
+    QColor NMT_READY_TO_OPERATE    = QColor("#2196F3");
+    QColor NMT_OPERATIONAL         = QColor("#8BC34A");
+    QColor NMT_STOPPED             = QColor("#F44336");
+    QColor NMT_BASIC_ETHERNET      = QColor("#9C27B0");
   };
 
  private:

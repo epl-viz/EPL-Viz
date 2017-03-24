@@ -50,6 +50,9 @@
             <verstretch>0</verstretch>
            </sizepolicy>
           </property>
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Shows the network devices and their status within the current cycle.&lt;/p&gt;&lt;p&gt;Clicking on a node will select it.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
           <property name="frameShape">
            <enum>QFrame::NoFrame</enum>
           </property>
@@ -246,8 +249,7 @@
     </size>
    </property>
    <property name="toolTip">
-    <string>Gives a brief historical overview over the network over time.
-Clicking inside the Timeline will jump back to the selected cycle.</string>
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Gives a historical overview of the network over time.&lt;/p&gt;&lt;p&gt;Clicking inside the Timeline will jump to the selected cycle.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
    </property>
    <property name="floating">
     <bool>false</bool>
@@ -323,7 +325,7 @@ Clicking inside the Timeline will jump back to the selected cycle.</string>
         </sizepolicy>
        </property>
        <property name="toolTip">
-        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Shows a list of python plugins that can be enabled.&lt;/p&gt;&lt;p&gt;Plugins with an enabled checkbox will be loaded when starting a recording/loading a capture.&lt;/p&gt;&lt;p&gt;Disabling a plugin during a recording/playback will not allow you to re-enable it.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Shows a list of python plugins that can be enabled.&lt;/p&gt;&lt;p&gt;Plugins with an enabled checkbox will be loaded when starting a recording/loading a capture.&lt;/p&gt;&lt;p&gt;The active working set is determined by the opened files in the plugin editor.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
        </property>
       </widget>
      </item>
@@ -401,7 +403,7 @@ Clicking inside the Timeline will jump back to the selected cycle.</string>
   </widget>
   <widget class="QDockWidget" name="dockPluginLog">
    <property name="toolTip">
-    <string>Shows the output of the plugins.</string>
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Shows the output of the text events of plugins.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
    </property>
    <property name="windowTitle">
     <string>Plu&amp;gin Log</string>
@@ -428,6 +430,9 @@ Clicking inside the Timeline will jump back to the selected cycle.</string>
    </widget>
   </widget>
   <widget class="QDockWidget" name="dockPacketHistory">
+   <property name="toolTip">
+    <string>Displays the wireshark string of the packet selected via the Cycle Viewer.</string>
+   </property>
    <property name="windowTitle">
     <string>Pac&amp;ket Viewer</string>
    </property>
@@ -438,9 +443,6 @@ Clicking inside the Timeline will jump back to the selected cycle.</string>
     <layout class="QGridLayout" name="gridLayout_21">
      <item row="0" column="0">
       <widget class="QPlainTextEdit" name="packetHistoryTextEdit">
-       <property name="toolTip">
-        <string>Shows the wireshark string of the packet currently selected in the Packet Viewer.</string>
-       </property>
        <property name="lineWrapMode">
         <enum>QPlainTextEdit::NoWrap</enum>
        </property>

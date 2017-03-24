@@ -21,7 +21,7 @@
   </property>
   <property name="windowIcon">
    <iconset>
-    <normalon>:/icons/resources/logo3.svg</normalon>
+    <normalon>:/icons/resources/logo.svg</normalon>
    </iconset>
   </property>
   <widget class="QWidget" name="centralWidget">
@@ -257,9 +257,6 @@
    </property>
    <property name="toolTip">
     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Gives a historical overview of the network over time.&lt;/p&gt;&lt;p&gt;Clicking inside the Timeline will jump to the selected cycle.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-   </property>
-   <property name="floating">
-    <bool>false</bool>
    </property>
    <property name="windowTitle">
     <string>Ti&amp;meline</string>
@@ -517,7 +514,9 @@
   </action>
   <action name="actionAbout">
    <property name="icon">
-    <iconset theme="help-about"/>
+    <iconset>
+     <normalon>:/icons/resources/logo.svg</normalon>
+    </iconset>
    </property>
    <property name="text">
     <string>&amp;About</string>

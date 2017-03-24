@@ -38,19 +38,11 @@ using namespace EPL_DataCollect;
 using namespace std;
 
 PacketHistoryModel::PacketHistoryModel(MainWindow *window, QPlainTextEdit *widget) : BaseModel(window, widget) {
-  (void)window;
-
   textBox = widget;
 }
 
-void PacketHistoryModel::init() {
-  selectedPacket = UINT64_MAX;
-
-  textBox->setPlainText("Please select a packet in the Cycle Commands widget.");
-}
-
+void PacketHistoryModel::init() { selectedPacket = UINT64_MAX; }
 void PacketHistoryModel::update() {}
-
 void PacketHistoryModel::updateWidget() { changePacket(UINT64_MAX); }
 
 void PacketHistoryModel::changePacket(uint64_t packet) {
@@ -68,7 +60,7 @@ void PacketHistoryModel::changePacket(uint64_t packet) {
   string         text;
 
   if (selectedPacket == UINT64_MAX)
-    text = "Please select a packet in the Cycle Commands widget.";
+    text = "";
   else if (selectedPacket < packets.size())
     text = packets[selectedPacket].getWiresharkString();
   else

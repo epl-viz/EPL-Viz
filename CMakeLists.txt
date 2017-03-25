@@ -264,7 +264,7 @@ new_project_library(
 
 new_project_executable(
   PATH         "${PROJECT_SOURCE_DIR}/epl-viz"
-  NAME         "EPLViz"
+  NAME         "eplviz"
   TEMPLATE     "${EPL_VIZ_TEMPLATES_DIR}/CMakeLists.exe.txt"
   DEPENDENCIES
     ${Wireshark_LIBRARY} ${GLIB_LIBRARIES} capchild caputils ${PCAP_LIBRARIES}

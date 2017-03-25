@@ -69,26 +69,26 @@ void PluginSelectorWidget::addItem(QString plugin) {
 
 void PluginSelectorWidget::setMainWindow(MainWindow *mw) { main = mw; }
 
-void PluginSelectorWidget::addPlugins(QMap<QString, QString> map) {
-  // Discard the event as adding plugins during runtime is unsafe
-  if (recording)
+void PluginSelectorWidget::updatePluginFolder() {
+  if (!main)
     return;
 
-  QMapIterator<QString, QString> i(map);
-  QString pluginPath = QString();
+  QString path = QString::fromStdString(main->getSettingsWin()->getConfig().pythonPluginsDir);
 
-  // Try to obtain the user plugin directory
-  if (main) {
-    pluginPath = QString::fromStdString(main->getSettingsWin()->getConfig().pythonPluginsDir);
+  // Do not update if the path remained the same
+  if (path == pluginPath)
+    return;
 
-    QDir pluginFolder(pluginPath);
+  pluginPath = path;
 
-    // Check if plugin folder exists
-    if (!pluginFolder.exists())
-      // Try to create the full path to the folder
-      if (!pluginFolder.mkpath(".")) {
-        pluginPath = QString(); // Reset plugin path
-      }
+  QDir pluginFolder(pluginPath);
+
+  // Check if plugin folder exists
+  if (!pluginFolder.exists()) {
+    // Try to create the full path to the folder
+    if (!pluginFolder.mkpath(".")) {
+      pluginPath = QString(); // Reset plugin path
+    }
   }
 
   if (pluginPath == QString()) {
@@ -97,12 +97,30 @@ void PluginSelectorWidget::addPlugins(QMap<QString, QString> map) {
                           "Error",
                           tr("Could not create plugin folder at '%1'. "
                              "Ensure you have access to the folder and try again.")
-                                .arg(QString::fromStdString(main->getSettingsWin()->getConfig().pythonPluginsDir)));
+                                .arg(path));
     return;
   }
 
-  // Add the plugin path to the python runtime paths
-  EPL_DataCollect::plugins::PythonInit::addPath(pluginPath.toStdString());
+  // Discard the old list
+  clear();
+  plugins.clear();
+
+  // Add all plugins from the new folder
+  for (auto pl : pluginFolder.entryList(QDir::Files)) {
+    if (!plugins.contains(pl))
+      addItem(pl);
+  }
+}
+
+void PluginSelectorWidget::setPlugins(QMap<QString, QString> map) {
+  // Do not continue if recording or the plugin folder is invalid
+  if (recording || pluginPath == QString())
+    return;
+
+  clear();
+  plugins.clear();
+
+  QMapIterator<QString, QString> i(map);
 
   while (i.hasNext()) {
     i.next();
@@ -129,9 +147,9 @@ void PluginSelectorWidget::addPlugins(QMap<QString, QString> map) {
     if (newPath != path) {
       if (QFile::exists(newPath)) {
         QMessageBox  msg(this);
-        QPushButton *owBtn     = msg.addButton("Overwrite", QMessageBox::ActionRole);
-        QPushButton *rnBtn     = msg.addButton("Rename", QMessageBox::ActionRole);
-        QPushButton *cancelBtn = msg.addButton("Cancel", QMessageBox::ActionRole);
+        QPushButton *owBtn   = msg.addButton("Overwrite", QMessageBox::ActionRole);
+        QPushButton *rnBtn   = msg.addButton("Rename", QMessageBox::ActionRole);
+        QPushButton *skipBtn = msg.addButton("Skip", QMessageBox::ActionRole);
 
         msg.setText("The file '" + plugin + "' is already present in the plugin folder.");
         msg.setInformativeText("Would you like to overwrite or rename the old file?");
@@ -158,8 +176,8 @@ void PluginSelectorWidget::addPlugins(QMap<QString, QString> map) {
           } else {
             QFile::rename(newPath, renamed);
           }
-        } else if (clicked == cancelBtn) {
-          // Cancelling skips this plugin
+        } else if (clicked == skipBtn) {
+          // Skip this plugin
           continue;
         }
       }
@@ -204,8 +222,12 @@ void PluginSelectorWidget::addPlugins(QMap<QString, QString> map) {
 }*/
 
 void PluginSelectorWidget::loadPlugins(EPL_DataCollect::CaptureInstance *ci) {
-  if (recording)
+  // Abort when already recording or the plugin path is invalid
+  if (recording || pluginPath == QString())
     return;
+
+  // Add the plugin path to the python runtime paths
+  EPL_DataCollect::plugins::PythonInit::addPath(pluginPath.toStdString());
 
   pluginManager = ci->getPluginManager();
 
@@ -219,8 +241,11 @@ void PluginSelectorWidget::loadPlugins(EPL_DataCollect::CaptureInstance *ci) {
       continue;
 
     if (box->isChecked()) {
+      QString plugin = plugins[i];
       // Plugin is enabled, load it in the backend
-      pluginManager->addPlugin(std::make_shared<EPL_DataCollect::plugins::PythonPlugin>(plugins[i].toStdString()));
+      if (!pluginManager->addPlugin(std::make_shared<EPL_DataCollect::plugins::PythonPlugin>(plugin.toStdString()))) {
+        QMessageBox::critical(0, "Error", tr("Could not load the plugin '%1'!").arg(plugin));
+      }
     }
     // TODO: Readd
     /*else {

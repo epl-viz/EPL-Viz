@@ -58,6 +58,7 @@ class QwtBaseModel : public QObject, public BaseModel {
   void    init() override;
   QString getName() override { return "QwtBaseModel"; }
   double  getViewportSize();
+  bool    needUpdateAlways() override;
 
  protected:
   MainWindow *window;

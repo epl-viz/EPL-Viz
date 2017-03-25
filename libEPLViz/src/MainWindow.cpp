@@ -448,7 +448,7 @@ void MainWindow::changeState(GUIState nState) {
   qDebug() << QString::fromStdString(test);
 
   // switch with new state
-  int backendState;
+  CaptureInstance::CIErrorCode backendState;
   switch (nState) {
     case GUIState::UNINIT:
       // Update GUI button states
@@ -533,9 +533,10 @@ void MainWindow::changeState(GUIState nState) {
       fileSize = captureInstance->getFileSize();
 
       // Handle Backend errors
-      if (backendState != 0) {
-        qDebug() << QString("Backend error Code ") + QString::number(backendState);
-        QMessageBox::critical(0, "Error", tr("Received backend error code %1.").arg(backendState));
+      if (backendState != CaptureInstance::OK) {
+        qDebug() << QString("Backend error Code ") + EPLEnum2Str::toStr(backendState).c_str();
+        QMessageBox::critical(
+              this, "Error", tr("Received backend error code ") + EPLEnum2Str::toStr(backendState).c_str());
         changeState(GUIState::UNINIT);
         return;
       }
@@ -586,8 +587,9 @@ void MainWindow::changeState(GUIState nState) {
 
       // Handle Backend errors
       if (backendState != 0) {
-        qDebug() << QString("Backend error Code ") + QString::number(backendState);
-        QMessageBox::critical(0, "Error", tr("Received backend error code %1.").arg(backendState));
+        qDebug() << QString("Backend error Code ") + EPLEnum2Str::toStr(backendState).c_str();
+        QMessageBox::critical(
+              this, "Error", tr("Received backend error code ") + EPLEnum2Str::toStr(backendState).c_str());
 
         changeState(GUIState::UNINIT);
         return;

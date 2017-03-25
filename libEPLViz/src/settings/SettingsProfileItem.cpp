@@ -25,6 +25,8 @@
  */
 
 #include "SettingsProfileItem.hpp"
+#include <QDir>
+#include <QStandardPaths>
 
 using namespace EPL_Viz;
 
@@ -33,5 +35,13 @@ SettingsProfileItem::~SettingsProfileItem() {}
 SettingsProfileItem::SettingsProfileItem(QString str, QListWidget *parent) : QListWidgetItem(str, parent), name(str) {}
 
 SettingsProfileItem::Config SettingsProfileItem::getConfig() { return cfg; }
+
+SettingsProfileItem::Config::Config() {
+  pythonPluginsDir = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation).toStdString();
+  QDir dir(pythonPluginsDir.c_str());
+  if (!dir.exists()) {
+    dir.mkpath(pythonPluginsDir.c_str());
+  }
+}
 
 QString SettingsProfileItem::getName() { return name; }

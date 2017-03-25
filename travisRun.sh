@@ -92,7 +92,7 @@ testExec cd    $BUILD_DIR
 
 msg "START BUILD"
 
-testExec cmake -DENABLE_CODE_COVERAGE=ON -DCMAKE_BUILD_TYPE=Debug -DCMAKE_INSTALL_PREFIX=/EPL -DWireshark_DIR=/EPL .. ..
+testExec cmake -DENABLE_CODE_COVERAGE=ON -DDISABLE_TESTS=OFF -DCMAKE_BUILD_TYPE=Debug -DCMAKE_INSTALL_PREFIX=/EPL -DWireshark_DIR=/EPL .. ..
 testExec make
 testExec chmod -R a+rwx .
 

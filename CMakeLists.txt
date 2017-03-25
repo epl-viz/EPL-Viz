@@ -51,8 +51,9 @@ set( CMAKE_C_STANDARD_REQUIRED   ON )
 set( CMAKE_INCLUDE_CURRENT_DIR       ON )
 set( CMAKE_POSITION_INDEPENDENT_CODE ON )
 
-option( DISABLE_TESTS        "Disables all tests"          OFF )
-option( ENABLE_CODE_COVERAGE "Enables code coverage tests" OFF )
+option( DISABLE_TESTS        "Disables all tests"                            ON )
+option( ENABLE_CODE_COVERAGE "Enables code coverage tests"                   OFF )
+option( USE_SYSTEM_PACKETS   "Use the EPL DataCollect version of the system" ON )
 
 list( APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake" )
 
@@ -60,6 +61,10 @@ list( APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake" )
 set( EPL_VIZ_TEMPLATES_DIR "${PROJECT_SOURCE_DIR}/cmake/templates" )
 set( EPL_VIZ_INCLUDES_DIR  "${PROJECT_SOURCE_DIR}/include" )
 set( PLF_COLONY_DIR        "${PROJECT_SOURCE_DIR}/external/EPL_DataCollect/external/plf_colony/" )
+
+if( NOT DEFINED CM_OVERRIDE_INSTALL_PREFIX )
+  set( CM_OVERRIDE_INSTALL_PREFIX false )
+endif( NOT DEFINED CM_OVERRIDE_INSTALL_PREFIX )
 
 ################################
 # Set up the build environment #
@@ -114,6 +119,8 @@ find_package( PkgConfig        REQUIRED )
 find_package( Threads          REQUIRED )
 find_package( TinyXML2     4.0 REQUIRED )
 pkg_search_module(GLIB REQUIRED glib-2.0)
+
+set( CMAKE_AUTOUIC OFF )
 
 link_directories( ${Wireshark_LIB_DIR} )
 

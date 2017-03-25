@@ -40,7 +40,7 @@ class SettingsProfileItem final : public QListWidgetItem {
   struct Config {
     EPL_DataCollect::CaptureInstance::Config backConf;
     std::unordered_map<int, EPL_DataCollect::CaptureInstance::NodeConfig> nodes;
-    std::string               pythonPluginsDir = "/opt";
+    std::string               pythonPluginsDir;
     int                       currentNode;
     bool                      pauseWhilePlayingFile = true;
     bool                      invertTimeLineZoom    = true;
@@ -78,6 +78,8 @@ class SettingsProfileItem final : public QListWidgetItem {
     QColor NMT_OPERATIONAL         = QColor("#8BC34A");
     QColor NMT_STOPPED             = QColor("#F44336");
     QColor NMT_BASIC_ETHERNET      = QColor("#9C27B0");
+
+    Config();
   };
 
  private:

@@ -25,6 +25,7 @@
  */
 
 #include "SettingsWindow.hpp"
+#include "EPLVizDefines.hpp"
 #include "SettingsProfileItem.hpp"
 #include "ui_settingswindow.h"
 #include <QColorDialog>
@@ -35,6 +36,7 @@
 #include "MainWindow.hpp"
 
 using namespace EPL_Viz;
+using namespace EPL_Viz::constants;
 
 const QRegExp colSetReg("^COL_S_\\w+$");
 const QRegExp colClearReg("^COL_C_\\w+$");
@@ -87,6 +89,12 @@ SettingsWindow::SettingsWindow(QWidget *parent, ProfileManager *settings)
   startCFG.nodes[-1]   = mainWindow->getCaptureInstance()->getDefaultNodeConfig();
   startCFG.currentNode = -1;
   startCFG.backConf    = mainWindow->getCaptureInstance()->getConfig();
+
+  if (!EPL_VIZ_OVERRIDE_INSTALL_PREFIX) {
+    startCFG.backConf.xddDir = std::string(EPL_VIZ_INSTALL_PREFIX) + "/share/eplViz/xdd";
+  } else {
+    startCFG.backConf.xddDir = "/usr/share/eplViz/xdd";
+  }
 
   currentProfile            = "Default";
   SettingsProfileItem *prof = profiles[currentProfile].get();

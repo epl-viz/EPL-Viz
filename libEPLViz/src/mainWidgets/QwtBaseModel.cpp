@@ -236,3 +236,5 @@ void QwtBaseModel::updatePlotList() {
   SettingsProfileItem::Config config = window->getSettingsWin()->getConfig();
   registeredCurves                   = config.plots;
 }
+
+bool QwtBaseModel::needUpdateAlways() { return true; }

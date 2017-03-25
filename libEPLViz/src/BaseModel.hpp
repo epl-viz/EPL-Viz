@@ -97,6 +97,8 @@ class BaseModel {
   inline bool operator==(const BaseModel &other);
   virtual QString getName() = 0;
 
+  virtual bool needUpdateAlways();
+
  protected:
   virtual void update()       = 0;
   virtual void updateWidget() = 0;

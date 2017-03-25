@@ -19,11 +19,6 @@ int main(int argc, char *argv[]) {
     plDir.replace(0, EPL_DC_INSTALL_PREFIX.length(), installPrefix);
   }
 
-  std::cout << plDir << std::endl;
-
-  if (argc >= 1)
-    return 1;
-
   Init                init(plDir);
   plugins::PythonInit pyInit;
   if (!init.getIsOK()) {

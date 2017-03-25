@@ -69,7 +69,7 @@
       <string>First Cycle</string>
      </property>
      <property name="text">
-      <string>...</string>
+      <string>&lt;&lt;</string>
      </property>
      <property name="icon">
       <iconset theme="media-skip-backward"/>
@@ -88,7 +88,7 @@
       <string>Previous Cycle</string>
      </property>
      <property name="text">
-      <string>...</string>
+      <string>&lt;</string>
      </property>
      <property name="icon">
       <iconset theme="media-seek-backward"/>
@@ -139,7 +139,7 @@
          <string>Change Cycle</string>
         </property>
         <property name="text">
-         <string>...</string>
+         <string>Set</string>
         </property>
         <property name="icon">
          <iconset theme="dialog-ok"/>
@@ -161,7 +161,7 @@
       <string>Next Cycle</string>
      </property>
      <property name="text">
-      <string>...</string>
+      <string>&gt;</string>
      </property>
      <property name="icon">
       <iconset theme="media-seek-forward"/>
@@ -180,7 +180,7 @@
       <string>Last Cycle</string>
      </property>
      <property name="text">
-      <string>...</string>
+      <string>&gt;&gt;</string>
      </property>
      <property name="icon">
       <iconset theme="media-skip-forward"/>

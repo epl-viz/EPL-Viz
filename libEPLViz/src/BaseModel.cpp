@@ -98,17 +98,15 @@ bool BaseModel::updateAll(MainWindow *mw, CaptureInstance *instance) {
   if (mw->getCycleNum() == UINT32_MAX || mw->getCycleNum() != oldCycleNum)
     cycle.updateCycle(instance, mw->getCycleNum());
 
-  // Don't send the same cycle again
-  if (!forceUpdate && (cycle->getCycleNum() == UINT32_MAX || cycle->getCycleNum() == oldCycleNum)) {
-    return false;
-  }
-
-  forceUpdate = false;
+  // If it's the same cycle again, we need to ask every model if it wants to update anyway
+  bool needToAsk = !forceUpdate && (cycle->getCycleNum() == UINT32_MAX || cycle->getCycleNum() == oldCycleNum);
+  forceUpdate    = false;
 
   // Update models
   for (auto &i : registeredModels) {
     // qDebug() << "[" << cycle->getCycleNum() << "] Updating " << i->getName();
-    i->update();
+    if (!needToAsk || i->needUpdateAlways())
+      i->update();
     // qDebug() << "[" << cycle->getCycleNum() << "] DONE     " << i->getName();
   }
 
@@ -163,6 +161,8 @@ void BaseModel::dereg(BaseModel *model) {
   registeredModels.removeOne(model);
   // qDebug() << "Deregistered a model";
 }
+
+bool BaseModel::needUpdateAlways() { return false; }
 
 bool BaseModel::operator==(const BaseModel &other) { return this == &other; }
 

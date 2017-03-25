@@ -106,14 +106,20 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
   settingsWin = new SettingsWindow(this, profileManager);
   settingsWin->hide();
 
+  ui->pluginSelectorWidget->setMainWindow(this);
+  ui->pluginSelectorWidget->updatePluginFolder(); // Load the plugin folder
+
+  connect(settingsWin,
+          SIGNAL(settingsUpdated()),
+          ui->pluginSelectorWidget,
+          SLOT(updatePluginFolder())); // Update the plugin selector in case the plugin folder changed
+
   qRegisterMetaType<uint8_t>("uint8_t");
   qRegisterMetaType<uint8_t>("uint16_t");
   qRegisterMetaType<uint8_t>("uint32_t");
   qRegisterMetaType<std::string>("std::string");
 
   showedPlotSetupMsg = false;
-
-  ui->pluginSelectorWidget->setMainWindow(this);
 }
 
 MainWindow::~MainWindow() {
@@ -283,7 +289,7 @@ void MainWindow::openPluginEditor() {
     connect(win->getEditor(),
             SIGNAL(pluginsSaved(QMap<QString, QString>)),
             ui->pluginSelectorWidget,
-            SLOT(addPlugins(QMap<QString, QString>)));
+            SLOT(setPlugins(QMap<QString, QString>)));
   }
 }
 

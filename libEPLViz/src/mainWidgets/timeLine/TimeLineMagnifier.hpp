@@ -38,10 +38,13 @@ class TimeLineMagnifier : public QwtPlotMagnifier {
  private:
   uint32_t *max;
 
+protected:
+  void widgetWheelEvent(QWheelEvent *wheelEvent) override;
+
  public:
   TimeLineMagnifier(QScrollBar *bar, TimeLineModel *model, uint32_t *maxVal, QWidget *canvas);
 
-  void rescale(double factor) override;
+  void rescaleOnCursor(double factor, int x, int parent);
 
  private:
   TimeLineModel *modelRef;

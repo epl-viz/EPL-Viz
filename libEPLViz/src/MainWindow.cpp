@@ -261,6 +261,10 @@ bool MainWindow::changeCycle(uint32_t cycle) {
   if (machineState != GUIState::UNINIT) {
     if (curCycle != cycle) {
       curCycle = cycle;
+
+      if (cycle == UINT32_MAX)
+        continueGUI(); // Continue the playback/recording (Always use the newest cycle)
+
       emit cycleChanged();
     }
     return true;
@@ -448,6 +452,18 @@ void MainWindow::stopRecording() {
   changeState(GUIState::STOPPED);
 }
 
+void MainWindow::continueGUI() {
+  if (pausedState != GUIState::PAUSED) {
+    changeState(pausedState);
+    pausedState = GUIState::PAUSED;
+  }
+}
+
+void MainWindow::pauseGUI() {
+  pausedState = machineState;
+  changeState(GUIState::PAUSED);
+}
+
 void MainWindow::changeState(GUIState nState) {
   std::string test =
         "Change state from " + EPLVizEnum2Str::toStr(machineState) + " to " + EPLVizEnum2Str::toStr(nState);
@@ -609,7 +625,7 @@ void MainWindow::changeState(GUIState nState) {
       break;
     case GUIState::PAUSED:
       // Update GUI button states
-      ui->actionStart_Recording->setEnabled(true);
+      ui->actionStart_Recording->setEnabled(false);
       ui->actionStop_Recording->setEnabled(false);
       ui->pluginEditorButton->setEnabled(false);
       ui->actionPlugins->setEnabled(false);
@@ -627,6 +643,8 @@ void MainWindow::changeState(GUIState nState) {
         ui->actionSave_As->setEnabled(false);
         settingsWin->enterRecordingState();
       }
+
+      curCycle = BaseModel::getCurrentCycle()->getCycleNum();
 
       ui->statusBar->showMessage("Paused");
       break;

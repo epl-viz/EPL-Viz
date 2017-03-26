@@ -67,8 +67,11 @@ class MainWindow : public QMainWindow {
   typedef std::unique_ptr<EPL_DataCollect::CaptureInstance> CI_PTR;
 
  private:
-  uint32_t                          maxCycle = 0;
-  uint32_t                          curCycle = UINT32_MAX;
+  uint32_t maxCycle = 0;
+  uint32_t curCycle = UINT32_MAX;
+
+  GUIState pausedState = GUIState::PAUSED;
+
   Ui::MainWindow *                  ui;
   CycleSetterAction *               CS;
   ProfileManager *                  profileManager;
@@ -102,6 +105,8 @@ class MainWindow : public QMainWindow {
    */
   mockable bool changeCycle(uint32_t cycle);
   mockable void changeState(EPL_Viz::GUIState nState);
+  mockable void continueGUI();
+  mockable void pauseGUI();
   /*!
    * \brief Returns the current state
    * \return the current state

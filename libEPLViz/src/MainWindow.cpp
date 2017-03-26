@@ -544,6 +544,7 @@ void MainWindow::changeState(GUIState nState) {
         QMessageBox::critical(
               this, "Error", tr("Received backend error code ") + EPLEnum2Str::toStr(backendState).c_str());
         changeState(GUIState::UNINIT);
+        emit resetGUI();
         return;
       }
 
@@ -598,6 +599,7 @@ void MainWindow::changeState(GUIState nState) {
               this, "Error", tr("Received backend error code ") + EPLEnum2Str::toStr(backendState).c_str());
 
         changeState(GUIState::UNINIT);
+        emit resetGUI();
         return;
       }
 

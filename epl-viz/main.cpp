@@ -3,6 +3,8 @@
 #include "MainWindow.hpp"
 #include "PythonInit.hpp"
 #include <QApplication>
+#include <QMessageBox>
+#include <stdlib.h>
 
 using namespace EPL_DataCollect;
 using namespace EPL_DataCollect::constants;
@@ -14,17 +16,24 @@ int main(int argc, char *argv[]) {
   std::string plDir         = EPL_DC_WS_PLUGINS_DIR;
   std::string installPrefix = EPL_DC_INSTALL_PREFIX;
 
-  if (EPL_VIZ_OVERRIDE_INSTALL_PREFIX) {
-    installPrefix = "./usr";
+  char *appImageDir = getenv("APPIMAGE_ROOT_DIR");
+  if (appImageDir) {
+    installPrefix = appImageDir;
+    installPrefix += "/usr";
     plDir.replace(0, EPL_DC_INSTALL_PREFIX.length(), installPrefix);
   }
 
-  Init                init(plDir);
+  Init                init(plDir, installPrefix + "/lib");
   plugins::PythonInit pyInit;
-  if (!init.getIsOK()) {
+
+  if (init.getIsOK() != Init::OK) {
+    QApplication a(argc, argv);
+    QMessageBox::critical(nullptr,
+                          "Failed to initialize",
+                          QString("Failed to initialize the EPL DataCollect backend\n  -- Error Code: ") +
+                                EPLEnum2Str::toStr(init.getIsOK()).c_str());
     return 1;
   }
-
   pyInit.addPath(installPrefix + "/lib/eplviz");
 
   QApplication a(argc, argv);

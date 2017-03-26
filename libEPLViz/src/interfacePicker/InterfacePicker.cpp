@@ -47,15 +47,21 @@ bool InterfacePicker::event(QEvent *event) {
   if (event->type() == QEvent::Polish) {
     updateList();
   }
+
   return QDialog::event(event);
 }
 
 void InterfacePicker::updateList() {
-  QListWidget *            list       = findChild<QListWidget *>("interfaceList");
+  QListWidget *list = findChild<QListWidget *>("interfaceList");
+  list->clear();
   std::vector<std::string> interfaces = captureInstance->getDevices();
   for (std::string s : interfaces) {
     list->addItem(QString::fromStdString(s));
   }
+  // Selecting first as default
+  QListWidgetItem *item = list->item(0);
+  if (item != nullptr)
+    list->setItemSelected(item, true);
 }
 
 QString InterfacePicker::getSelection() {

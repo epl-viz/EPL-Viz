@@ -4,14 +4,7 @@ EPL-Viz is a visualizer for ethernetPOWERLINK setups.
 <!-- Discord bot #1 -->
 
 ## Initial Setup
-```bash
-    git clone https://github.com/epl-viz/EPL-Viz.git --recursive
-    cd EPL-Viz
-    ./setupHooks.sh
-    mkdir build && cd build
-    cmake ..
-    make
-```
+See INSTALL.md for instructions
 
 ## CMake options
 
@@ -19,3 +12,4 @@ EPL-Viz is a visualizer for ethernetPOWERLINK setups.
   - `-DDISABLE_TESTS=<ON/OFF>` Flag to disable all tests
   - `-DENABLE_CODE_COVERAGE=<ON/OFF>` Enables / Disables code coverage with gcov
   - `-DWireshark_DIR=<path/to/custom/wireshark/lib/wireshark>` Needed for globals.h, dir should contain cmake files
+  List not complete

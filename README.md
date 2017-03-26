@@ -13,3 +13,8 @@ See INSTALL.md for instructions
   - `-DENABLE_CODE_COVERAGE=<ON/OFF>` Enables / Disables code coverage with gcov
   - `-DWireshark_DIR=<path/to/custom/wireshark/lib/wireshark>` Needed for globals.h, dir should contain cmake files
   List not complete
+
+## Troubleshooting
+* **I can't start a live recording** `FAILED_TO_CAPTURE_ON_INTERFACE`
+
+  https://wiki.wireshark.org/CaptureSetup/CapturePrivileges#Other_Linux_based_systems_or_other_installation_methods

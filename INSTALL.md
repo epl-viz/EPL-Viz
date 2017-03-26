@@ -134,4 +134,6 @@ cmake \
   -DCMAKE_CXX_COMPILER=$(which g++-6) ..
 make -j$(nproc)
 make install
+cd ${BUILD_ROOT}
+mv ./wireshark/build/run/dumpcap ./EPL-Viz/build/bin/
 ```

@@ -677,7 +677,7 @@ void MainWindow::config() {
         EPL_DataCollect::constants::EPL_DC_PLUGIN_TIME_SERIES_CSID);
 
   // Initialize all Models
-  BaseModel::initAll(); // TODO do we need to do this here
+  BaseModel::initAll();
 }
 
 void MainWindow::setFilters(std::vector<EPL_DataCollect::CSViewFilters::Filter> f) {

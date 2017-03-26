@@ -55,6 +55,10 @@ void PluginSelectorWidget::reset() {
 }
 
 void PluginSelectorWidget::addItem(QString plugin) {
+  // Remove python file extensions
+  std::regex ex("\\.pyc?$");
+  plugin = QString::fromStdString(std::regex_replace(plugin.toStdString(), ex, ""));
+
   QListWidgetItem *it  = new QListWidgetItem(this);
   QCheckBox *      box = new QCheckBox(plugin, this);
 
@@ -107,7 +111,10 @@ void PluginSelectorWidget::updatePluginFolder() {
 
   // Add all plugins from the new folder
   for (auto pl : pluginFolder.entryList(QDir::Files)) {
-    if (!plugins.contains(pl))
+    // Remove python file extensions before checking if the plugin is listed
+    std::regex ex("\\.pyc?$");
+
+    if (!plugins.contains(QString::fromStdString(std::regex_replace(pl.toStdString(), ex, ""))))
       addItem(pl);
   }
 }
@@ -128,12 +135,11 @@ void PluginSelectorWidget::setPlugins(QMap<QString, QString> map) {
     QString plugin = i.key();
     QString path   = i.value();
 
-    // Remove python file extensions
+    // Remove python file extensions before checking if the plugin is listed
     std::regex ex("\\.pyc?$");
-    plugin = QString::fromStdString(std::regex_replace(plugin.toStdString(), ex, ""));
 
     // Check if the plugin is already listed
-    if (plugins.contains(plugin))
+    if (plugins.contains(QString::fromStdString(std::regex_replace(plugin.toStdString(), ex, ""))))
       continue;
 
     QString newPath = pluginPath;

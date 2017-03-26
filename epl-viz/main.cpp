@@ -23,7 +23,7 @@ int main(int argc, char *argv[]) {
     plDir.replace(0, EPL_DC_INSTALL_PREFIX.length(), installPrefix);
   }
 
-  Init                init(plDir, installPrefix + "/lib");
+  Init                init(plDir);
   plugins::PythonInit pyInit;
 
   if (init.getIsOK() != Init::OK) {

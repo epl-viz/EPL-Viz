@@ -41,7 +41,11 @@ PacketHistoryModel::PacketHistoryModel(MainWindow *window, QPlainTextEdit *widge
   textBox = widget;
 }
 
-void PacketHistoryModel::init() { selectedPacket = UINT64_MAX; }
+void PacketHistoryModel::init() {
+  selectedPacket = UINT64_MAX;
+  textBox.clear();
+}
+
 void PacketHistoryModel::update() {}
 void PacketHistoryModel::updateWidget() {
   uint32_t currCycle = BaseModel::getCurrentCycle()->getCycleNum();

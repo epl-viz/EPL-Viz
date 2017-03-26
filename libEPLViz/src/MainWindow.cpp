@@ -545,6 +545,7 @@ void MainWindow::changeState(GUIState nState) {
 
       // GUI state is updated, don't restart the recording
       if (machineState == GUIState::PAUSED) {
+        ui->statusBar->showMessage("Processing file...");
         break;
       }
 
@@ -566,7 +567,7 @@ void MainWindow::changeState(GUIState nState) {
 
       setWindowTitle(tr("EPL-Viz - [%1]").arg(QString::fromStdString(file)));
 
-      ui->statusBar->showMessage("Loading file...");
+      ui->statusBar->showMessage("Processing file...");
       break;
     case GUIState::RECORDING:
       // Update GUI button states
@@ -599,6 +600,7 @@ void MainWindow::changeState(GUIState nState) {
 
       // GUI state is updated, don't restart the recording
       if (machineState == GUIState::PAUSED) {
+        ui->statusBar->showMessage("Recording live...");
         break;
       }
 

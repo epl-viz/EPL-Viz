@@ -43,6 +43,7 @@ class PacketHistoryModel : public QObject, public BaseModel {
  private:
   QPlainTextEdit *textBox        = nullptr;
   uint64_t        selectedPacket = UINT64_MAX;
+  uint32_t        lastCycle      = UINT32_MAX;
 
  public:
   PacketHistoryModel(MainWindow *window, QPlainTextEdit *widget);

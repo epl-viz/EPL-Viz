@@ -43,7 +43,15 @@ PacketHistoryModel::PacketHistoryModel(MainWindow *window, QPlainTextEdit *widge
 
 void PacketHistoryModel::init() { selectedPacket = UINT64_MAX; }
 void PacketHistoryModel::update() {}
-void PacketHistoryModel::updateWidget() { changePacket(UINT64_MAX); }
+void PacketHistoryModel::updateWidget() {
+  uint32_t currCycle = BaseModel::getCurrentCycle()->getCycleNum();
+
+  // Don't reset if cycle didn't change
+  if (lastCycle != currCycle) {
+    changePacket(UINT64_MAX);
+    lastCycle = currCycle;
+  }
+}
 
 void PacketHistoryModel::changePacket(uint64_t packet) {
   ProtectedCycle &cycle = BaseModel::getCurrentCycle();

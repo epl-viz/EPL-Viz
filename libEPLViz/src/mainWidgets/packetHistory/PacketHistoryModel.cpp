@@ -43,7 +43,7 @@ PacketHistoryModel::PacketHistoryModel(MainWindow *window, QPlainTextEdit *widge
 
 void PacketHistoryModel::init() {
   selectedPacket = UINT64_MAX;
-  textBox.clear();
+  textBox->clear();
 }
 
 void PacketHistoryModel::update() {}

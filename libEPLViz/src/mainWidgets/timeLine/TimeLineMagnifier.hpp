@@ -44,7 +44,8 @@ protected:
  public:
   TimeLineMagnifier(QScrollBar *bar, TimeLineModel *model, uint32_t *maxVal, QWidget *canvas);
 
-  void rescaleOnCursor(double factor, int x, int parent);
+  void rescale(double factor) override;
+  void rescale(double factor, int x);
 
  private:
   TimeLineModel *modelRef;

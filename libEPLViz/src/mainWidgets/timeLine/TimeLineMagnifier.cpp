@@ -42,11 +42,16 @@ TimeLineMagnifier::TimeLineMagnifier(QScrollBar *bar, TimeLineModel *model, uint
   sBar     = bar;
 }
 
+void TimeLineMagnifier::rescale(double factor) {
+  qDebug() << "Simple rescale called";
+  TimeLineMagnifier::rescale(factor, plot()->canvas()->size().width() / 2);
+}
+
 /**
  * @brief TimeLineMagnifier::rescale Copied from qwt and changed to stop at boundries
  * @param factor Factor
  */
-void TimeLineMagnifier::rescaleOnCursor(double factor, int x, int parent) {
+void TimeLineMagnifier::rescale(double factor, int x) {
   QwtPlot *plt = plot();
   if (plt == NULL)
     return;
@@ -76,11 +81,16 @@ void TimeLineMagnifier::rescaleOnCursor(double factor, int x, int parent) {
         v2 = scaleMap.transform(v2); // scaleMap.p2()
       }
 
-      const double center  = 0.5 * (v1 + v2);
-      const double width_2 = 0.5 * (v2 - v1) * factor;
+      const double width_2 = (v2 - v1) * factor;
+      double relPos;
+      if (axisId == QwtPlot::xTop)
+        relPos = static_cast<double>(x) / plt->canvas()->size().width();
+      else
+        relPos = .5;
+      const double center  = relPos * (v1 + v2);
 
-      v1 = center - width_2;
-      v2 = center + width_2;
+      v1 = center - width_2 * (1 - relPos);
+      v2 = center + width_2 * (relPos);
 
       if (scaleMap.transformation()) {
         v1 = scaleMap.invTransform(v1);
@@ -88,10 +98,11 @@ void TimeLineMagnifier::rescaleOnCursor(double factor, int x, int parent) {
       }
 
       if (axisId == QwtPlot::xTop) {
+        /*
         double relPos = static_cast<double>(x) / parent;
         v1 = relPos * v1;
         v2 = (1 - relPos) * v2;
-
+*/
         if (std::abs(v1 - v2) < 1)
           continue;
         if (v1 < 0)
@@ -120,14 +131,13 @@ void TimeLineMagnifier::rescaleOnCursor(double factor, int x, int parent) {
 void TimeLineMagnifier::widgetWheelEvent(QWheelEvent *wheelEvent) {
   double factor;
   if (wheelEvent->angleDelta().y() > 0)
-    factor = 1.1;
+    factor = wheelFactor();
   else if (wheelEvent->angleDelta().y() < 0)
-    factor = 0.9;
+    factor = 1/wheelFactor();
   else
-    factor = 1;
+    return;
 
   int x = wheelEvent->pos().x();
-  int parent = canvas()->size().width();
 
-  rescaleOnCursor(factor, x, parent);
+  TimeLineMagnifier::rescale(factor, x);
 }

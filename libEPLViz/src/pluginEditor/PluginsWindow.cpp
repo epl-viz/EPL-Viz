@@ -27,12 +27,14 @@
  * \file PluginsWindows.cpp
  */
 
+#include "defines.hpp"
 #include "PluginsWindow.hpp"
 #include "MainWindow.hpp"
 #include "ui_pluginswindow.h"
 #include <QCloseEvent>
 
 using namespace EPL_Viz;
+using namespace EPL_DataCollect::constants;
 
 PluginsWindow *PluginsWindow::create(MainWindow *mw) {
   if (instance) {
@@ -80,7 +82,14 @@ void PluginsWindow::closeEvent(QCloseEvent *event) {
 }
 
 void PluginsWindow::open() {
-  QUrl file = QFileDialog::getOpenFileUrl(0, "Open Python file", QString(), "Python files (*.py);;All Files (*)");
+  char *  appImageDir = getenv("APPDIR");
+  QString defaultPath = QString(EPL_DC_INSTALL_PREFIX.c_str()) + "/share/eplViz/plugins/samples";
+  if (appImageDir) {
+    defaultPath = QString(appImageDir) + "/usr/share/eplViz/plugins/samples";
+  }
+
+  QUrl file = QFileDialog::getOpenFileUrl(
+        0, "Open Python file", QUrl::fromLocalFile(defaultPath), "Python files (*.py);;All Files (*)");
 
   if (file == QUrl())
     return;

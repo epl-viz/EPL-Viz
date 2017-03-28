@@ -1,7 +1,9 @@
-# EPL-Viz [![Build Status](https://travis-ci.org/epl-viz/EPL-Viz.svg?branch=master)](https://travis-ci.org/epl-viz/EPL-Viz) [![Coverage Status](https://coveralls.io/repos/github/epl-viz/EPL-Viz/badge.svg?branch=master)](https://coveralls.io/github/epl-viz/EPL-Viz?branch=master)
+# EPL-Viz [![Build Status](https://travis-ci.org/epl-viz/EPL-Viz.svg?branch=master)](https://travis-ci.org/epl-viz/EPL-Viz)
 
 EPL-Viz is a visualizer for ethernetPOWERLINK setups.
 <!-- Discord bot #1 -->
+
+![EPL-Viz Screenshot][sc1]
 
 ## Initial Setup
 See INSTALL.md for instructions
@@ -18,3 +20,6 @@ See INSTALL.md for instructions
 * **I can't start a live recording** `FAILED_TO_CAPTURE_ON_INTERFACE`
 
   https://wiki.wireshark.org/CaptureSetup/CapturePrivileges#Other_Linux_based_systems_or_other_installation_methods
+
+
+[sc1]: https://raw.githubusercontent.com/epl-viz/EPL-Viz/master/libEPLViz/resources/screenshot1.png

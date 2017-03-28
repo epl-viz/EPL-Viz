@@ -50,6 +50,8 @@ CurrentODModel::CurrentODModel(MainWindow *window, QTreeView *widget)
 
 CurrentODModel::~CurrentODModel() {}
 
+bool CurrentODModel::needUpdateAlways() { return true; }
+
 void CurrentODModel::init() {
   lastUpdatedNode = node;
 
@@ -235,7 +237,6 @@ void CurrentODModel::updateWidget() {
 void CurrentODModel::selectNode(uint8_t n) {
   if (node != n) {
     node = n;
-    forceNextUpdate();
   }
 }
 

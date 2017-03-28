@@ -453,6 +453,10 @@ void MainWindow::stopRecording() {
 }
 
 void MainWindow::continueGUI() {
+  if (machineState == GUIState::STOPPED) {
+    pausedState = GUIState::PAUSED;
+    return;
+  }
   if (pausedState != GUIState::PAUSED) {
     changeState(pausedState);
     pausedState = GUIState::PAUSED;

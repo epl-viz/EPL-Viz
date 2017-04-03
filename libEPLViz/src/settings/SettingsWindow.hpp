@@ -100,5 +100,6 @@ class SettingsWindow : public QDialog {
   void leaveRecordingState();
 
   SettingsProfileItem::Config getConfig();
+  Profile *                   getCurrentProfile();
 };
 }

@@ -59,16 +59,12 @@ void PluginSelectorWidget::addItem(QString plugin) {
   std::regex ex("\\.pyc?$");
   plugin = QString::fromStdString(std::regex_replace(plugin.toStdString(), ex, ""));
 
-  QListWidgetItem *it  = new QListWidgetItem(this);
-  QCheckBox *      box = new QCheckBox(plugin, this);
-
-  box->setToolTip(plugin);
+  QListWidgetItem *it = new QListWidgetItem(plugin, this);
+  it->setFlags(Qt::ItemIsUserCheckable | Qt::ItemIsEnabled | Qt::ItemIsSelectable);
+  it->setCheckState(Qt::Unchecked);
+  it->setToolTip(plugin);
 
   plugins.append(plugin);
-
-  // QObject::connect(box, SIGNAL(stateChanged(int)), this, SLOT(changeState(int)));
-
-  setItemWidget(it, box);
 }
 
 void PluginSelectorWidget::setMainWindow(MainWindow *mw) { main = mw; }
@@ -240,13 +236,7 @@ void PluginSelectorWidget::loadPlugins(EPL_DataCollect::CaptureInstance *ci) {
   for (int i = 0; i < count(); i++) {
     QListWidgetItem *qwi = item(i);
 
-    QCheckBox *box = qobject_cast<QCheckBox *>(itemWidget(qwi));
-
-    // Check if object is valid
-    if (!box)
-      continue;
-
-    if (box->isChecked()) {
+    if (qwi->checkState() == Qt::Checked) {
       QString plugin = plugins[i];
       // Plugin is enabled, load it in the backend
       if (!pluginManager->addPlugin(std::make_shared<EPL_DataCollect::plugins::PythonPlugin>(plugin.toStdString()))) {
@@ -260,6 +250,6 @@ void PluginSelectorWidget::loadPlugins(EPL_DataCollect::CaptureInstance *ci) {
     }*/
   }
 
-  this->setEnabled(false);
+  setEnabled(false);
   recording = true;
 }

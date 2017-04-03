@@ -38,6 +38,7 @@
 #include "NodeWidget.hpp"
 #include "PacketHistoryModel.hpp"
 #include "PluginLogModel.hpp"
+#include "PluginsWindow.hpp"
 #include "ProfileManager.hpp"
 #include "QWTPlotModel.hpp"
 #include "SettingsWindow.hpp"
@@ -82,6 +83,7 @@ class MainWindow : public QMainWindow {
   QString                           interface;
   std::string                       file;
   SettingsWindow *                  settingsWin;
+  PluginsWindow *                   pluginWin;
   QProgressBar *                    progressBar;
   bool                              showedPlotSetupMsg;
 

@@ -238,10 +238,15 @@ void PluginEditorWidget::cleanUp() {
   // Destroy all documents and add them to the map of saved plugins
   for (auto d : list) {
     QString localFile = d->url().toLocalFile();
-    qDebug() << localFile;
 
     if (QFile::exists(localFile)) {
       savedPlugins.insert(d->documentName(), localFile);
+    }
+
+    if (view && doc == d) {
+      delete view;
+      view = nullptr;
+      doc  = nullptr;
     }
 
     delete d;

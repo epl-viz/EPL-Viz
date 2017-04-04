@@ -163,6 +163,7 @@ class MainWindow : public QMainWindow {
   void showStats();
   void selectCycle(uint32_t cycle);
   void setupPlot();
+  void fitTimeline();
 
 
  signals:
@@ -172,5 +173,6 @@ class MainWindow : public QMainWindow {
   void eventsUpdated();
   void recordingStarted(EPL_DataCollect::CaptureInstance *);
   void resetGUI();
+  void fitToPlot();
 };
 }

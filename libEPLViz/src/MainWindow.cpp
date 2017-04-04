@@ -172,6 +172,7 @@ void MainWindow::createModels() {
 
   connect(ui->scrBarTimeline, SIGNAL(valueChanged(int)), timeLineModel, SLOT(updateViewport(int)));
   connect(timeLineModel, SIGNAL(maxValueChanged(int, int)), ui->scrBarTimeline, SLOT(setRange(int, int)));
+  connect(this, SIGNAL(fitToPlot()), timeLineModel, SLOT(fitToPlot()));
   connect(this, SIGNAL(cycleChanged()), timeLineModel, SLOT(replot()));
   connect(settingsWin, SIGNAL(settingsUpdated()), qwtPlot, SLOT(updatePlotList()));
   connect(settingsWin, SIGNAL(settingsUpdated()), timeLineModel, SLOT(updatePlotList()));
@@ -770,3 +771,5 @@ SettingsWindow *   MainWindow::getSettingsWin() { return settingsWin; }
 CycleSetterAction *MainWindow::getCycleSetter() { return CS; }
 
 void MainWindow::handleResults(const QString &result) { qDebug() << "The result is\"" << result << "\""; }
+
+void MainWindow::fitTimeline() { emit fitToPlot(); }

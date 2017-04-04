@@ -59,6 +59,7 @@ class QwtBaseModel : public QObject, public BaseModel {
   QString getName() override { return "QwtBaseModel"; }
   double  getViewportSize();
   bool    needUpdateAlways() override;
+  void setFitToPlot(bool fit);
 
  protected:
   MainWindow *window;
@@ -66,6 +67,7 @@ class QwtBaseModel : public QObject, public BaseModel {
   QMap<QString, QPair<std::shared_ptr<QwtPlotCurve>, std::shared_ptr<EPL_DataCollect::plugins::TimeSeries>>> curves;
   std::vector<PlotCreator::PlotCreatorData> registeredCurves;
   std::vector<double>                       xValues;
+  bool                                      fitToScreen;
 
 
   virtual void update() override;

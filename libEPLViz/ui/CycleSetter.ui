@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>622</width>
+    <width>720</width>
     <height>38</height>
    </rect>
   </property>
@@ -58,6 +58,20 @@
    </item>
    <item>
     <widget class="Line" name="line">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QToolButton" name="btnFitTime">
+     <property name="text">
+      <string>Fit Timeline</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="Line" name="line_2">
      <property name="orientation">
       <enum>Qt::Vertical</enum>
      </property>
@@ -301,6 +315,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>btnFitTime</sender>
+   <signal>clicked()</signal>
+   <receiver>CycleSetter</receiver>
+   <slot>fitTime()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>319</x>
+     <y>18</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>359</x>
+     <y>18</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>changeCycle()</slot>
@@ -308,5 +338,6 @@
   <slot>seekB()</slot>
   <slot>skipF()</slot>
   <slot>skipB()</slot>
+  <slot>fitTime()</slot>
  </slots>
 </ui>

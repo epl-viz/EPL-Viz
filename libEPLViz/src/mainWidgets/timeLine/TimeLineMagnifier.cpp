@@ -97,6 +97,8 @@ void TimeLineMagnifier::rescale(double factor) {
         sBar->setPageStep(static_cast<int>(v2 - v1));
         sBar->setMaximum(static_cast<int>(modelRef->maxXValue - (v2 - v1)));
         sBar->setValue(static_cast<int>(v1));
+
+        modelRef->setFitToPlot(false);
       }
 
       plt->setAxisScale(axisId, v1, v2);

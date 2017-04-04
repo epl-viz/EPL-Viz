@@ -129,3 +129,5 @@ QWidget *CycleSetterAction::createWidget(QWidget *parent) {
   cs = new CycleSetter(parent, mw);
   return cs;
 }
+
+void CycleSetter::fitTime() { mw->fitTimeline(); }

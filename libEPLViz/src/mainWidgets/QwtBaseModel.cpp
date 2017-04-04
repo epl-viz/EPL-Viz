@@ -90,6 +90,7 @@ void QwtBaseModel::update() {
 
     curve->setSamples(xValues.data(), timeSeries->tsData.data(), static_cast<int>(newDataCount));
   }
+
   replot();
 }
 
@@ -171,7 +172,8 @@ void QwtBaseModel::reset() {
   curves.clear();
   registeredCurves.clear();
 
-  maxXValue = 50;
+  maxXValue   = 50;
+  fitToScreen = true;
   replot();
 }
 
@@ -238,3 +240,5 @@ void QwtBaseModel::updatePlotList() {
 }
 
 bool QwtBaseModel::needUpdateAlways() { return true; }
+
+void QwtBaseModel::setFitToPlot(bool fit) { fitToScreen = fit; }

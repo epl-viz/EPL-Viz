@@ -181,7 +181,6 @@ void TimeLineModel::updateViewport(int value) {
   double min = static_cast<double>(value);
   double max = min + viewportSize;
 
-  //postToThread([&] { plot->setAxisScale(QwtPlot::xTop, min, max); }, plot);
   plot->setAxisScale(QwtPlot::xTop, min, max);
   replot();
 }

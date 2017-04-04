@@ -86,7 +86,7 @@ void TimeLineMagnifier::rescale(double factor) {
         v2 = scaleMap.invTransform(v2);
       }
 
-      if (std::abs(v1 - v2) < 1)
+      if (std::abs(v1 - v2) < 10)
         continue;
       if (v1 < 0)
         v1 = 0;
@@ -95,9 +95,7 @@ void TimeLineMagnifier::rescale(double factor) {
 
       if (axisId == QwtPlot::xTop) {
         sBar->setPageStep(static_cast<int>(v2 - v1));
-        sBar->setMaximum(static_cast<int>(modelRef->maxXValue - (v2 - v1)));
         sBar->setValue(static_cast<int>(v1));
-
         modelRef->setFitToPlot(false);
       }
 

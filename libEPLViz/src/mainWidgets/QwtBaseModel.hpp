@@ -101,7 +101,6 @@ class QwtBaseModel : public QObject, public BaseModel {
 
  signals:
   void requestRedraw();
-  void maxValueChanged(int notUsed, int nMax);
 
  public slots:
   void         updatePlotList();

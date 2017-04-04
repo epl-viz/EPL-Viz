@@ -171,7 +171,6 @@ void MainWindow::createModels() {
           SLOT(changePacket(uint64_t))); // Notify the packet viewer of changing packets
 
   connect(ui->scrBarTimeline, SIGNAL(valueChanged(int)), timeLineModel, SLOT(updateViewport(int)));
-  connect(timeLineModel, SIGNAL(maxValueChanged(int, int)), ui->scrBarTimeline, SLOT(setRange(int, int)));
   connect(this, SIGNAL(fitToPlot()), timeLineModel, SLOT(fitToPlot()));
   connect(this, SIGNAL(cycleChanged()), timeLineModel, SLOT(replot()));
   connect(settingsWin, SIGNAL(settingsUpdated()), qwtPlot, SLOT(updatePlotList()));
@@ -183,7 +182,7 @@ void MainWindow::createModels() {
           SLOT(selectCycle(uint32_t))); // Allow the packet viewer widget to change cycle
 
   // Set timeline max value once, since we can't do this in the constructor of the model and want to do it before init
-  emit timeLineModel->maxValueChanged(0, static_cast<int>(timeLineModel->maxXValue - timeLineModel->getViewportSize()));
+  ui->scrBarTimeline->setMaximum(static_cast<int>(timeLineModel->maxXValue - timeLineModel->getViewportSize()));
 
   // Activate and connect rightclick menu for Drawing Plots
   ui->curNodeODWidget->setContextMenuPolicy(Qt::CustomContextMenu);

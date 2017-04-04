@@ -81,6 +81,7 @@ void TimeLineModel::pointSelected(const QPointF &pa) {
   uint32_t x = static_cast<uint32_t>(std::round(pa.x()));
   window->changeCycle(x);
   curCycleMarker.setXValue(x);
+  setFitToPlot(false);
   replot();
 }
 
@@ -128,8 +129,9 @@ void TimeLineModel::update() {
   uint32_t newest = window->getCaptureInstance()->getCycleContainer()->pollCycle().getCycleNum();
   newestCycleMarker.setXValue(static_cast<double>(newest));
   maxXValue = newest;
-  emit maxValueChanged(0, static_cast<int>(maxXValue - getViewportSize()));
-  scrollbar->setMaximum(static_cast<int>(maxXValue));
+
+  postToThread([&] { scrollbar->setMaximum(static_cast<int>(maxXValue - getViewportSize())); }, scrollbar);
+  postToThread([&] { scrollbar->setPageStep(static_cast<int>(getViewportSize())); }, scrollbar);
 
   // Add new markers
   std::vector<EventBase *> nEvents = log->pollEvents(appid);
@@ -179,8 +181,8 @@ void TimeLineModel::updateViewport(int value) {
   double min = static_cast<double>(value);
   double max = min + viewportSize;
 
-  qDebug() << "Setting viewport to " + QString::number(min) + "-" + QString::number(max);
-  postToThread([&] { plot->setAxisScale(QwtPlot::xTop, min, max); }, plot);
+  //postToThread([&] { plot->setAxisScale(QwtPlot::xTop, min, max); }, plot);
+  plot->setAxisScale(QwtPlot::xTop, min, max);
   replot();
 }
 

@@ -229,6 +229,10 @@ void MainWindow::createModels() {
 
   getCycleSetter()->getWidget()->checkButtons();
 
+  connect(this,
+          SIGNAL(close()),
+          ui->pluginSelectorWidget,
+          SLOT(savePlugins())); // Notify the plugin selector to save the currently active plugins
   connect(this, SIGNAL(close()), modelThread, SLOT(stop()));
 
   modelThread->start();
@@ -726,7 +730,7 @@ EPL_DataCollect::CSViewFilters::Filter MainWindow::getFilter() {
 void MainWindow::closeEvent(QCloseEvent *event) {
   profileManager->getDefaultProfile()->writeWindowSettings(this);
   emit close();
-  QWidget::closeEvent(event);
+  event->accept();
 }
 
 bool MainWindow::curODWidgetUpdateData(QTreeWidgetItem *item, QString newData) {

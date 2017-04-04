@@ -36,6 +36,25 @@ using namespace EPL_Viz;
 
 PluginSelectorWidget::PluginSelectorWidget(QWidget *parent) : QListWidget(parent) {}
 
+void PluginSelectorWidget::savePlugins() {
+  if (!main)
+    return;
+
+  Profile *p = main->getSettingsWin()->getCurrentProfile();
+
+  QList<QString> activePlugins;
+
+  for (int i = 0; i < count(); i++) {
+    if (item(i)->checkState() == Qt::Checked) {
+      // Plugin is enabled, add it to the list
+      activePlugins.append(plugins[i]);
+    }
+  }
+
+  // Write the currently active plugins into the active profile so they can be remembered
+  p->writeCustomValue("ActivePlugins", QVariant(activePlugins));
+}
+
 void PluginSelectorWidget::reset() {
   recording = false;
   setEnabled(true);
@@ -61,7 +80,17 @@ void PluginSelectorWidget::addItem(QString plugin) {
 
   QListWidgetItem *it = new QListWidgetItem(plugin, this);
   it->setFlags(Qt::ItemIsUserCheckable | Qt::ItemIsEnabled | Qt::ItemIsSelectable);
-  it->setCheckState(Qt::Unchecked);
+
+  // Retrieve a list of last activated plugins
+  Profile *       p             = main->getSettingsWin()->getCurrentProfile();
+  QList<QVariant> activePlugins = p->readCustomValue("ActivePlugins").toList();
+
+  // Check if the plugin has to be checked according to the previous configuration
+  if (activePlugins.contains(QVariant(plugin)))
+    it->setCheckState(Qt::Checked); // Plugin was previously enabled
+  else
+    it->setCheckState(Qt::Unchecked); // Plugin was not previously enabled
+
   it->setToolTip(plugin);
 
   plugins.append(plugin);

@@ -620,6 +620,10 @@ void SettingsWindow::nodeChange(QListWidgetItem *curr, QListWidgetItem *) {
   if (curr->text() != "Default")
     id = std::stoi(curr->text().toStdString());
 
+  prof->cfg.nodes[prof->cfg.currentNode].autoDeduceSpecificProfile = ui->N_autoDetect->checkState() == Qt::Checked;
+  prof->cfg.nodes[prof->cfg.currentNode].baseProfile               = ui->N_Base->text().toStdString();
+  prof->cfg.nodes[prof->cfg.currentNode].specificProfile           = ui->N_Special->text().toStdString();
+
   prof->cfg.currentNode = id;
   updateView(true);
   // saveConfig();

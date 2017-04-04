@@ -41,18 +41,15 @@ PacketHistoryModel::PacketHistoryModel(MainWindow *window, QPlainTextEdit *widge
   textBox = widget;
 }
 
-void PacketHistoryModel::init() {
-  selectedPacket = UINT64_MAX;
-  textBox->clear();
-}
+void PacketHistoryModel::init() { textBox->clear(); }
 
 void PacketHistoryModel::update() {}
 void PacketHistoryModel::updateWidget() {
   uint32_t currCycle = BaseModel::getCurrentCycle()->getCycleNum();
 
   // Don't reset if cycle didn't change
-  if (lastCycle != currCycle && getMainWindow()->getCycleNum() != UINT32_MAX) {
-    changePacket(UINT64_MAX);
+  if (lastCycle != currCycle) {
+    changePacket(0);
     lastCycle = currCycle;
   }
 }
@@ -61,20 +58,13 @@ void PacketHistoryModel::changePacket(uint64_t packet) {
   ProtectedCycle &cycle = BaseModel::getCurrentCycle();
   auto            lock  = cycle.getLock();
 
-  // Prevent wrong updates
-  if (selectedPacket == packet) {
-    return;
-  }
-
-  selectedPacket = packet;
-
   vector<Packet> packets = cycle->getPackets();
   string         text;
 
-  if (selectedPacket == UINT64_MAX)
+  if (packet == UINT64_MAX)
     text = "";
-  else if (selectedPacket < packets.size())
-    text = packets[selectedPacket].getWiresharkString();
+  else if (packet < packets.size())
+    text = packets[packet].getWiresharkString();
   else
     text = "Packet out of bounds";
 

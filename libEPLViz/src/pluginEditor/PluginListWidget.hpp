@@ -58,4 +58,5 @@ class PluginListWidget : public QListWidget {
   void nameChanged(QString fileName);
   void urlChanged(QString path);
   void fileModified(bool newState);
+  void cleanUp();
 };

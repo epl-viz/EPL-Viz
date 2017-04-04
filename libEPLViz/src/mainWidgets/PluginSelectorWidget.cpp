@@ -36,6 +36,25 @@ using namespace EPL_Viz;
 
 PluginSelectorWidget::PluginSelectorWidget(QWidget *parent) : QListWidget(parent) {}
 
+void PluginSelectorWidget::savePlugins() {
+  if (!main)
+    return;
+
+  Profile *p = main->getSettingsWin()->getCurrentProfile();
+
+  QList<QString> activePlugins;
+
+  for (int i = 0; i < count(); i++) {
+    if (item(i)->checkState() == Qt::Checked) {
+      // Plugin is enabled, add it to the list
+      activePlugins.append(plugins[i]);
+    }
+  }
+
+  // Write the currently active plugins into the active profile so they can be remembered
+  p->writeCustomValue("ActivePlugins", QVariant(activePlugins));
+}
+
 void PluginSelectorWidget::reset() {
   recording = false;
   setEnabled(true);
@@ -59,16 +78,22 @@ void PluginSelectorWidget::addItem(QString plugin) {
   std::regex ex("\\.pyc?$");
   plugin = QString::fromStdString(std::regex_replace(plugin.toStdString(), ex, ""));
 
-  QListWidgetItem *it  = new QListWidgetItem(this);
-  QCheckBox *      box = new QCheckBox(plugin, this);
+  QListWidgetItem *it = new QListWidgetItem(plugin, this);
+  it->setFlags(Qt::ItemIsUserCheckable | Qt::ItemIsEnabled | Qt::ItemIsSelectable);
 
-  box->setToolTip(plugin);
+  // Retrieve a list of last activated plugins
+  Profile *       p             = main->getSettingsWin()->getCurrentProfile();
+  QList<QVariant> activePlugins = p->readCustomValue("ActivePlugins").toList();
+
+  // Check if the plugin has to be checked according to the previous configuration
+  if (activePlugins.contains(QVariant(plugin)))
+    it->setCheckState(Qt::Checked); // Plugin was previously enabled
+  else
+    it->setCheckState(Qt::Unchecked); // Plugin was not previously enabled
+
+  it->setToolTip(plugin);
 
   plugins.append(plugin);
-
-  // QObject::connect(box, SIGNAL(stateChanged(int)), this, SLOT(changeState(int)));
-
-  setItemWidget(it, box);
 }
 
 void PluginSelectorWidget::setMainWindow(MainWindow *mw) { main = mw; }
@@ -240,13 +265,7 @@ void PluginSelectorWidget::loadPlugins(EPL_DataCollect::CaptureInstance *ci) {
   for (int i = 0; i < count(); i++) {
     QListWidgetItem *qwi = item(i);
 
-    QCheckBox *box = qobject_cast<QCheckBox *>(itemWidget(qwi));
-
-    // Check if object is valid
-    if (!box)
-      continue;
-
-    if (box->isChecked()) {
+    if (qwi->checkState() == Qt::Checked) {
       QString plugin = plugins[i];
       // Plugin is enabled, load it in the backend
       if (!pluginManager->addPlugin(std::make_shared<EPL_DataCollect::plugins::PythonPlugin>(plugin.toStdString()))) {
@@ -260,6 +279,6 @@ void PluginSelectorWidget::loadPlugins(EPL_DataCollect::CaptureInstance *ci) {
     }*/
   }
 
-  this->setEnabled(false);
+  setEnabled(false);
   recording = true;
 }

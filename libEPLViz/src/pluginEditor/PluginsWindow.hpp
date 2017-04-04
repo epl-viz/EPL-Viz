@@ -46,25 +46,23 @@ class PluginsWindow : public QMainWindow {
   Q_OBJECT
 
  private:
-  Ui::PluginsWindow *   ui;
-  SettingsWindow *      settings;
-  static PluginsWindow *instance;
-
-  explicit PluginsWindow(MainWindow *mw);
+  Ui::PluginsWindow *ui;
+  SettingsWindow *   settings;
 
  public:
   PluginsWindow() = delete;
+  PluginsWindow(MainWindow *mw);
   ~PluginsWindow();
 
-  static PluginsWindow *create(MainWindow *mw);
   PluginEditorWidget *getEditor();
+  void loadPlugins(MainWindow *mw);
 
  private:
   void closeEvent(QCloseEvent *event);
 
  signals:
   void fileOpened(QUrl filename);
-  void cleanUp();
+  void closed();
 
  public slots:
   void open();

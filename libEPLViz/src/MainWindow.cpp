@@ -106,6 +106,15 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
   settingsWin = new SettingsWindow(this, profileManager);
   settingsWin->hide();
 
+  pluginWin = new PluginsWindow(this);
+  pluginWin->hide();
+
+  // Connect the signal that the plugins were correctly saved in the editor to the plugin selector
+  connect(pluginWin->getEditor(),
+          SIGNAL(pluginsSaved(QMap<QString, QString>)),
+          ui->pluginSelectorWidget,
+          SLOT(setPlugins(QMap<QString, QString>)));
+
   ui->pluginSelectorWidget->setMainWindow(this);
   ui->pluginSelectorWidget->updatePluginFolder(); // Load the plugin folder
 
@@ -220,6 +229,10 @@ void MainWindow::createModels() {
 
   getCycleSetter()->getWidget()->checkButtons();
 
+  connect(this,
+          SIGNAL(close()),
+          ui->pluginSelectorWidget,
+          SLOT(savePlugins())); // Notify the plugin selector to save the currently active plugins
   connect(this, SIGNAL(close()), modelThread, SLOT(stop()));
 
   modelThread->start();
@@ -284,17 +297,8 @@ void MainWindow::setFullscreen(bool makeFullscreen) {
 }
 
 void MainWindow::openPluginEditor() {
-  PluginsWindow *win = PluginsWindow::create(this);
-
-  // Check if the window was newly created
-  if (win) {
-    win->show();
-
-    connect(win->getEditor(),
-            SIGNAL(pluginsSaved(QMap<QString, QString>)),
-            ui->pluginSelectorWidget,
-            SLOT(setPlugins(QMap<QString, QString>)));
-  }
+  pluginWin->loadPlugins(this); // Load all plugins into the plugin window
+  pluginWin->show();
 }
 
 void MainWindow::openInterfacePicker() {
@@ -726,7 +730,7 @@ EPL_DataCollect::CSViewFilters::Filter MainWindow::getFilter() {
 void MainWindow::closeEvent(QCloseEvent *event) {
   profileManager->getDefaultProfile()->writeWindowSettings(this);
   emit close();
-  QWidget::closeEvent(event);
+  event->accept();
 }
 
 bool MainWindow::curODWidgetUpdateData(QTreeWidgetItem *item, QString newData) {

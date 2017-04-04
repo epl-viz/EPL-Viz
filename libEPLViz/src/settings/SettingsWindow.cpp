@@ -780,3 +780,4 @@ void SettingsWindow::leaveRecordingState() {
 }
 
 SettingsProfileItem::Config SettingsWindow::getConfig() { return profiles[currentProfile].get()->cfg; }
+Profile *                   SettingsWindow::getCurrentProfile() { return conf->getProfile(currentProfile.c_str()); }

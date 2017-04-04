@@ -68,5 +68,6 @@ class PluginSelectorWidget : public QListWidget {
   void setPlugins(QMap<QString, QString> map);
   void updatePluginFolder();
   void reset();
+  void savePlugins();
 };
 }

@@ -40,6 +40,7 @@ class CycleCommandsModel : public TreeModelBase, public BaseModel {
   Q_OBJECT
  private:
   std::vector<EPL_DataCollect::Packet> currentPackets;
+  bool                                 hasChanged = false;
 
  protected:
   void init() override;

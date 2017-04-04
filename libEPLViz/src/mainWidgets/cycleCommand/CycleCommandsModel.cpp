@@ -58,9 +58,13 @@ void CycleCommandsModel::init() {
 }
 
 
-void CycleCommandsModel::update() {}
+void CycleCommandsModel::update() { hasChanged = true; }
 
 void CycleCommandsModel::updateWidget() {
+  if (!hasChanged)
+    return;
+
+  hasChanged            = false;
   ProtectedCycle &cycle = BaseModel::getCurrentCycle();
   auto            l     = getLock();
   auto            lock  = cycle.getLock();

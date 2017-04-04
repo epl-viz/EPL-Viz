@@ -51,7 +51,7 @@ void PacketHistoryModel::updateWidget() {
   uint32_t currCycle = BaseModel::getCurrentCycle()->getCycleNum();
 
   // Don't reset if cycle didn't change
-  if (lastCycle != currCycle) {
+  if (lastCycle != currCycle && getMainWindow()->getCycleNum() != UINT32_MAX) {
     changePacket(UINT64_MAX);
     lastCycle = currCycle;
   }
@@ -79,4 +79,5 @@ void PacketHistoryModel::changePacket(uint64_t packet) {
     text = "Packet out of bounds";
 
   textBox->setPlainText(QString::fromStdString(text));
+  lastCycle = cycle->getCycleNum();
 }

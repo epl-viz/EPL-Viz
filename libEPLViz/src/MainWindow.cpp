@@ -162,9 +162,9 @@ void MainWindow::createModels() {
           cyCoModel,
           SLOT(changeSelection(QModelIndex))); // Notify the cycle viewer model that an item was activated
   connect(ui->cycleCommandsView,
-          SIGNAL(clicked(QModelIndex)),
+          SIGNAL(pressed(QModelIndex)),
           cyCoModel,
-          SLOT(changeSelection(QModelIndex))); // Notify the cycle viewer model that an item was clicked
+          SLOT(changeSelection(QModelIndex))); // Notify the cycle viewer model that an item was pressed
   connect(cyCoModel,
           SIGNAL(packetChanged(uint64_t)),
           packetHistoryModel,

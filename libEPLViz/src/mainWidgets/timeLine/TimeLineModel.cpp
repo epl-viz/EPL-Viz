@@ -46,7 +46,7 @@ TimeLineModel::TimeLineModel(MainWindow *mainWin, QwtPlot *widget, QWTPlotModel 
   widget->setAxisAutoScale(QwtPlot::yLeft, true);
 
   widget->setAxisScale(QwtPlot::xTop, 0, DEF_VIEWPORT_SIZE);
-  widget->setAxisAutoScale(QwtPlot::xTop, true);
+  // widget->setAxisAutoScale(QwtPlot::xTop, true);
 
   magnifier = std::make_unique<TimeLineMagnifier>(scrollbar, this, &maxXValue, widget->canvas());
   magnifier->setAxisEnabled(QwtPlot::xTop, true);
@@ -169,18 +169,17 @@ void TimeLineModel::update() {
 void TimeLineModel::updateWidget() {}
 
 void TimeLineModel::updateViewport(int value) {
-  QwtScaleDiv scale = plot->axisScaleDiv(QwtPlot::xTop);
-  double      upper = scale.upperBound();
-  double      lower = scale.lowerBound();
+  double viewportSize = getViewportSize();
 
-  double viewportSize = upper - lower;
-
-  if (viewportSize < 1)
+  if (viewportSize < 1) {
+    qDebug() << "Viewport size is <1";
     return;
+  }
 
   double min = static_cast<double>(value);
   double max = min + viewportSize;
 
+  qDebug() << "Setting viewport to " + QString::number(min) + "-" + QString::number(max);
   postToThread([&] { plot->setAxisScale(QwtPlot::xTop, min, max); }, plot);
   replot();
 }
@@ -202,3 +201,5 @@ void TimeLineModel::reset() {
 void TimeLineModel::createPlot(uint8_t nodeID, uint16_t index, uint16_t subIndex, std::string cs, QColor color) {
   QwtBaseModel::createPlot(nodeID, index, subIndex, cs, QwtPlot::xTop, color);
 }
+
+void TimeLineModel::fitToPlot() { setFitToPlot(true); }

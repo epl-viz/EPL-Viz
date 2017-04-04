@@ -62,13 +62,15 @@ void QwtBaseModel::init() {
 
 double QwtBaseModel::getViewportSize() {
   QwtScaleDiv div = plot->axisScaleDiv(QwtPlot::xTop);
-  return div.upperBound() - div.lowerBound();
+  return std::abs(div.upperBound() - div.lowerBound());
 }
 
 /**
  * @brief QwtBaseModel::replot Replots in the main Thread
  */
 void QwtBaseModel::replot() {
+  if (fitToScreen)
+    postToThread([&] { plot->setAxisScale(QwtPlot::xTop, 0, static_cast<double>(window->getMaxCycle())); }, plot);
   postToThread([&] { plot->replot(); }, plot);
 }
 

@@ -29,6 +29,7 @@
 #include "CaptureInstance.hpp"
 #include "PlotCreator.hpp"
 #include <QListWidget>
+#include <QUrl>
 #include <unordered_map>
 
 namespace EPL_Viz {
@@ -89,6 +90,9 @@ class SettingsProfileItem final : public QListWidgetItem {
  public:
   SettingsProfileItem(QString str, QListWidget *parent);
   ~SettingsProfileItem();
+
+  bool exportProf(QString file);
+  bool importProf(QString file);
 
   Config  getConfig();
   QString getName();

@@ -393,6 +393,22 @@ void MainWindow::open() {
   changeState(GUIState::PLAYING);
 }
 
+void MainWindow::reload() {
+  // Ignore invalid files
+  if (file == "")
+    return;
+
+  std::string f = file;
+
+  // Reset the GUI
+  changeState(GUIState::UNINIT);
+
+  file = f;
+
+  // Reload the GUI
+  changeState(GUIState::PLAYING);
+}
+
 void MainWindow::showAbout() {
   QMessageBox msgBox;
 
@@ -490,6 +506,7 @@ void MainWindow::changeState(GUIState nState) {
       ui->actionSave->setEnabled(false);
       ui->actionSave_As->setEnabled(false);
       ui->actionStatistics->setEnabled(false);
+      ui->actionReload->setEnabled(false);
 
       // Set all widgets to their correct state
       ui->dockTime->setEnabled(false);
@@ -508,7 +525,13 @@ void MainWindow::changeState(GUIState nState) {
 
       settingsWin->leaveRecordingState();
 
-      if (machineState == GUIState::STOPPED) {
+      if (machineState == GUIState::STOPPED || machineState == GUIState::PLAYING) {
+        // Reset local variables
+        maxCycle    = 0;
+        curCycle    = UINT32_MAX;
+        pausedState = GUIState::PAUSED;
+        file        = "";
+
         // Reset all models back to their initial state
         BaseModel::initAll();
         CS->getWidget()->setValue(0);
@@ -533,6 +556,7 @@ void MainWindow::changeState(GUIState nState) {
       ui->actionSave->setEnabled(false); // Saving is not available during playback
       ui->actionSave_As->setEnabled(false);
       ui->actionStatistics->setEnabled(false);
+      ui->actionReload->setEnabled(true);
 
       // Set all widgets to their correct state
       ui->dockTime->setEnabled(true);
@@ -588,6 +612,7 @@ void MainWindow::changeState(GUIState nState) {
       ui->actionSave->setEnabled(true);
       ui->actionSave_As->setEnabled(true);
       ui->actionStatistics->setEnabled(false);
+      ui->actionReload->setEnabled(false);
 
       // Set all widgets to their correct state
       ui->dockTime->setEnabled(true);

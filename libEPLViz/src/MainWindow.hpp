@@ -152,6 +152,7 @@ class MainWindow : public QMainWindow {
   void save();
   void saveAs();
   void open();
+  void reload();
   void handleResults(const QString &);
   void startRecording();
   void stopRecording();

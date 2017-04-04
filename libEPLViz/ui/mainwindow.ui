@@ -35,7 +35,7 @@
     <item row="0" column="0">
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
-       <number>0</number>
+       <number>2</number>
       </property>
       <widget class="QWidget" name="tabNet">
        <attribute name="title">
@@ -73,8 +73,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>1316</width>
-             <height>247</height>
+             <width>1291</width>
+             <height>472</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_15"/>
@@ -179,7 +179,7 @@
      <x>0</x>
      <y>0</y>
      <width>1920</width>
-     <height>20</height>
+     <height>26</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -193,6 +193,8 @@
     <addaction name="separator"/>
     <addaction name="actionStart_Recording"/>
     <addaction name="actionStop_Recording"/>
+    <addaction name="separator"/>
+    <addaction name="actionReload"/>
     <addaction name="separator"/>
     <addaction name="actionQuit"/>
    </widget>
@@ -250,6 +252,8 @@
    <addaction name="separator"/>
    <addaction name="actionSetup_Plot"/>
    <addaction name="actionSettings"/>
+   <addaction name="separator"/>
+   <addaction name="actionReload"/>
   </widget>
   <widget class="TimelineWidget" name="dockTime">
    <property name="sizePolicy">
@@ -618,14 +622,6 @@
     <string>&amp;Plugins</string>
    </property>
   </action>
-  <action name="actionInterfaces">
-   <property name="text">
-    <string>&amp;Interfaces</string>
-   </property>
-   <property name="toolTip">
-    <string>Setup Interfaces</string>
-   </property>
-  </action>
   <action name="actionSetup_Plot">
    <property name="icon">
     <iconset theme="list-add"/>
@@ -651,6 +647,14 @@
    </property>
    <property name="text">
     <string>&amp;Statistics</string>
+   </property>
+  </action>
+  <action name="actionReload">
+   <property name="text">
+    <string>Reload</string>
+   </property>
+   <property name="toolTip">
+    <string>Reloads the current PCAP file</string>
    </property>
   </action>
  </widget>
@@ -921,6 +925,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>actionReload</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>reload()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>959</x>
+     <y>539</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>openPluginEditor()</slot>
@@ -936,5 +956,6 @@
   <slot>showAbout()</slot>
   <slot>showLicense()</slot>
   <slot>showStats()</slot>
+  <slot>reload()</slot>
  </slots>
 </ui>

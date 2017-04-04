@@ -73,8 +73,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>1291</width>
-             <height>472</height>
+             <width>1322</width>
+             <height>313</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_15"/>
@@ -179,7 +179,7 @@
      <x>0</x>
      <y>0</y>
      <width>1920</width>
-     <height>26</height>
+     <height>30</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -650,8 +650,11 @@
    </property>
   </action>
   <action name="actionReload">
+   <property name="icon">
+    <iconset theme="view-refresh"/>
+   </property>
    <property name="text">
-    <string>Reload</string>
+    <string>Rel&amp;oad</string>
    </property>
    <property name="toolTip">
     <string>Reloads the current PCAP file</string>

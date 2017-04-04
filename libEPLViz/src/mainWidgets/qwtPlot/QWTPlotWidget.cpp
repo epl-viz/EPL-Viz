@@ -31,11 +31,3 @@
 #include "QWTPlotWidget.hpp"
 
 QWTPlotWidget::QWTPlotWidget(QWidget *parent) : QWidget(parent) {}
-
-void QWTPlotWidget::changeArea(QRectF rect) {
-  QwtPlot *plot = findChild<QwtPlot *>("qwtPlot");
-  if (static_cast<int>(rect.left()) != static_cast<int>(rect.right())) {
-    plot->setAxisScale(QwtPlot::Axis::xBottom, rect.left(), rect.right());
-    plot->replot();
-  }
-}

@@ -36,7 +36,8 @@
 using namespace EPL_Viz;
 using namespace EPL_DataCollect;
 
-TimeLineModel::TimeLineModel(MainWindow *mainWin, QwtPlot *widget) : QwtBaseModel(mainWin, widget), mw(mainWin) {
+TimeLineModel::TimeLineModel(MainWindow *mainWin, QwtPlot *widget, QWTPlotModel *plotModel)
+    : QwtBaseModel(mainWin, widget), mw(mainWin) {
   scrollbar = mw->findChild<QScrollBar *>("scrBarTimeline");
 
   widget->enableAxis(QwtPlot::xBottom, false);
@@ -68,7 +69,7 @@ TimeLineModel::TimeLineModel(MainWindow *mainWin, QwtPlot *widget) : QwtBaseMode
   area->setMousePattern(QwtEventPattern::MousePatternCode::MouseSelect1, Qt::MouseButton::LeftButton);
 
   connect(point, SIGNAL(selected(QPointF)), this, SLOT(pointSelected(QPointF)));
-  connect(area, SIGNAL(selected(QRectF)), window->findChild<QWTPlotWidget *>("tabGraph"), SLOT(changeArea(QRectF)));
+  connect(area, SIGNAL(selected(QRectF)), plotModel, SLOT(changeArea(QRectF)));
 }
 
 TimeLineModel::~TimeLineModel() {

@@ -150,7 +150,7 @@ void MainWindow::createModels() {
   CurrentODModel *    curODModel         = new CurrentODModel(this, ui->curNodeODWidget);
   PluginLogModel *    pluginLogModel     = new PluginLogModel(this, ui->pluginLogView);
   PacketHistoryModel *packetHistoryModel = new PacketHistoryModel(this, ui->packetHistoryTextEdit);
-  TimeLineModel *     timeLineModel      = new TimeLineModel(this, ui->qwtPlotTimeline);
+  TimeLineModel *     timeLineModel      = new TimeLineModel(this, ui->qwtPlotTimeline, qwtPlot);
   PacketListModel *   packetListModel    = new PacketListModel(this, ui->packetsView);
 
   // save references to the timeline and plot model for the Plot setup Dialog

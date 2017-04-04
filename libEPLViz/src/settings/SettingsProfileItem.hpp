@@ -41,7 +41,7 @@ class SettingsProfileItem final : public QListWidgetItem {
     EPL_DataCollect::CaptureInstance::Config backConf;
     std::unordered_map<int, EPL_DataCollect::CaptureInstance::NodeConfig> nodes;
     std::string               pythonPluginsDir;
-    int                       currentNode;
+    int                       currentNode           = -1;
     bool                      pauseWhilePlayingFile = true;
     bool                      invertTimeLineZoom    = true;
     std::chrono::milliseconds guiThreadWaitTime     = std::chrono::milliseconds(100);

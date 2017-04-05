@@ -105,6 +105,7 @@ class QwtBaseModel : public QObject, public BaseModel {
  public slots:
   void         updatePlotList();
   virtual void createPlot(uint8_t nodeID, uint16_t index, uint16_t subIndex, std::string cs, QColor color) = 0;
+  void replotPostMain();
   void replot();
   void reset();
   void showContextMenu(const QPoint &point);

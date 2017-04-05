@@ -48,6 +48,6 @@ void QWTPlotModel::createPlot(uint8_t nodeID, uint16_t index, uint16_t subIndex,
 void QWTPlotModel::changeArea(QRectF rect) {
   if (static_cast<int>(rect.left()) != static_cast<int>(rect.right())) {
     postToThread([&] { plot->setAxisScale(QwtPlot::Axis::xBottom, rect.left(), rect.right()); }, plot);
-    replot();
+    replotPostMain();
   }
 }

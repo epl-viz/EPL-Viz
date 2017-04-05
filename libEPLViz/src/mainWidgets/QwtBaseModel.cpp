@@ -68,10 +68,16 @@ double QwtBaseModel::getViewportSize() {
 /**
  * @brief QwtBaseModel::replot Replots in the main Thread
  */
-void QwtBaseModel::replot() {
+void QwtBaseModel::replotPostMain() {
   if (fitToScreen)
     postToThread([&] { plot->setAxisScale(QwtPlot::xTop, 0, static_cast<double>(window->getMaxCycle())); }, plot);
   postToThread([&] { plot->replot(); }, plot);
+}
+
+void QwtBaseModel::replot() {
+  if (fitToScreen)
+    plot->setAxisScale(QwtPlot::xTop, 0, static_cast<double>(window->getMaxCycle()));
+  plot->replot();;
 }
 
 void QwtBaseModel::update() {
@@ -92,11 +98,11 @@ void QwtBaseModel::update() {
 
     curve->setSamples(xValues.data(), timeSeries->tsData.data(), static_cast<int>(newDataCount));
   }
-
-  replot();
 }
 
-void QwtBaseModel::updateWidget() {}
+void QwtBaseModel::updateWidget() {
+  replot();
+}
 
 /**
  * @brief createStringIdentifier Returns an identifier for the index;
@@ -176,7 +182,7 @@ void QwtBaseModel::reset() {
 
   maxXValue   = 50;
   fitToScreen = true;
-  replot();
+  replotPostMain();
 }
 
 void QwtBaseModel::showContextMenu(const QPoint &point) {
@@ -233,7 +239,7 @@ void QwtBaseModel::enablePlot() {
     curve->attach(plot);
   else
     curve->detach();
-  replot();
+  replotPostMain();
 }
 
 void QwtBaseModel::updatePlotList() {

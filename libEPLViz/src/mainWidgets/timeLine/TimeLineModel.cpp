@@ -82,7 +82,7 @@ void TimeLineModel::pointSelected(const QPointF &pa) {
   window->changeCycle(x);
   curCycleMarker.setXValue(x);
   setFitToPlot(false);
-  replot();
+  replotPostMain();
 }
 
 void TimeLineModel::init() {
@@ -130,8 +130,8 @@ void TimeLineModel::update() {
   newestCycleMarker.setXValue(static_cast<double>(newest));
   maxXValue = newest;
 
-  postToThread([&] { scrollbar->setMaximum(static_cast<int>(maxXValue - getViewportSize())); }, scrollbar);
-  postToThread([&] { scrollbar->setPageStep(static_cast<int>(getViewportSize())); }, scrollbar);
+//  postToThread([&] { scrollbar->setMaximum(static_cast<int>(maxXValue - getViewportSize())); }, scrollbar);
+//  postToThread([&] { scrollbar->setPageStep(static_cast<int>(getViewportSize())); }, scrollbar);
 
   // Add new markers
   std::vector<EventBase *> nEvents = log->pollEvents(appid);
@@ -168,7 +168,11 @@ void TimeLineModel::update() {
   QwtBaseModel::update();
 }
 
-void TimeLineModel::updateWidget() {}
+void TimeLineModel::updateWidget() {
+  scrollbar->setMaximum(static_cast<int>(maxXValue - getViewportSize()));
+  scrollbar->setPageStep(static_cast<int>(getViewportSize()));
+  QwtBaseModel::updateWidget();
+}
 
 void TimeLineModel::updateViewport(int value) {
   double viewportSize = getViewportSize();

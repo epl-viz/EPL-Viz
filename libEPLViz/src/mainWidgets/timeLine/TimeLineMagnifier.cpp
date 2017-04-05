@@ -107,5 +107,5 @@ void TimeLineMagnifier::rescale(double factor) {
   plt->setAutoReplot(autoReplot);
 
   if (doReplot)
-      modelRef->replot();
+    modelRef->replot();
 };

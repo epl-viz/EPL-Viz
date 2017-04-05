@@ -130,8 +130,8 @@ void TimeLineModel::update() {
   newestCycleMarker.setXValue(static_cast<double>(newest));
   maxXValue = newest;
 
-//  postToThread([&] { scrollbar->setMaximum(static_cast<int>(maxXValue - getViewportSize())); }, scrollbar);
-//  postToThread([&] { scrollbar->setPageStep(static_cast<int>(getViewportSize())); }, scrollbar);
+  //  postToThread([&] { scrollbar->setMaximum(static_cast<int>(maxXValue - getViewportSize())); }, scrollbar);
+  //  postToThread([&] { scrollbar->setPageStep(static_cast<int>(getViewportSize())); }, scrollbar);
 
   // Add new markers
   std::vector<EventBase *> nEvents = log->pollEvents(appid);

@@ -77,7 +77,8 @@ void QwtBaseModel::replotPostMain() {
 void QwtBaseModel::replot() {
   if (fitToScreen)
     plot->setAxisScale(QwtPlot::xTop, 0, static_cast<double>(window->getMaxCycle()));
-  plot->replot();;
+  plot->replot();
+  ;
 }
 
 void QwtBaseModel::update() {
@@ -100,9 +101,7 @@ void QwtBaseModel::update() {
   }
 }
 
-void QwtBaseModel::updateWidget() {
-  replot();
-}
+void QwtBaseModel::updateWidget() { replot(); }
 
 /**
  * @brief createStringIdentifier Returns an identifier for the index;

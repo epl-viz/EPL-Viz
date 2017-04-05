@@ -35,7 +35,7 @@
     <item row="0" column="0">
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
-       <number>2</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="tabNet">
        <attribute name="title">
@@ -248,10 +248,7 @@
    <addaction name="actionStop_Recording"/>
    <addaction name="separator"/>
    <addaction name="actionStatistics"/>
-   <addaction name="actionFullscreen"/>
-   <addaction name="separator"/>
    <addaction name="actionSetup_Plot"/>
-   <addaction name="actionSettings"/>
    <addaction name="separator"/>
    <addaction name="actionReload"/>
   </widget>

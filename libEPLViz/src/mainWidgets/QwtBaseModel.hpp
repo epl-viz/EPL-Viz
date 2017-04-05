@@ -61,6 +61,7 @@ class QwtBaseModel : public QObject, public BaseModel {
   bool    needUpdateAlways() override;
   void setFitToPlot(bool fit);
 
+
  protected:
   MainWindow *window;
   QwtPlot *   plot;
@@ -80,6 +81,7 @@ class QwtBaseModel : public QObject, public BaseModel {
                   std::string cs,
                   QwtPlot::Axis,
                   QColor color = QColor(0, 0, 0));
+  uint32_t calcXMaximum();
 
 
 #pragma clang diagnostic push

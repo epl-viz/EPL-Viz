@@ -61,8 +61,13 @@ void QwtBaseModel::init() {
 }
 
 double QwtBaseModel::getViewportSize() {
-  QwtScaleDiv div = plot->axisScaleDiv(QwtPlot::xTop);
-  return std::abs(div.upperBound() - div.lowerBound());
+  QwtScaleDiv div  = plot->axisScaleDiv(QwtPlot::xTop);
+  double      size = div.upperBound() - div.lowerBound();
+  if (size < 1)
+    size = 1;
+  else if (size > maxXValue)
+    size = maxXValue;
+  return std::abs(size);
 }
 
 /**
@@ -70,13 +75,13 @@ double QwtBaseModel::getViewportSize() {
  */
 void QwtBaseModel::replotPostMain() {
   if (fitToScreen)
-    postToThread([&] { plot->setAxisScale(QwtPlot::xTop, 0, static_cast<double>(window->getMaxCycle())); }, plot);
+    postToThread([&] { plot->setAxisScale(QwtPlot::xTop, 0, static_cast<double>(maxXValue)); }, plot);
   postToThread([&] { plot->replot(); }, plot);
 }
 
 void QwtBaseModel::replot() {
   if (fitToScreen)
-    plot->setAxisScale(QwtPlot::xTop, 0, static_cast<double>(window->getMaxCycle()));
+    plot->setAxisScale(QwtPlot::xTop, 0, static_cast<double>(maxXValue));
   plot->replot();
   ;
 }
@@ -249,3 +254,12 @@ void QwtBaseModel::updatePlotList() {
 bool QwtBaseModel::needUpdateAlways() { return true; }
 
 void QwtBaseModel::setFitToPlot(bool fit) { fitToScreen = fit; }
+
+uint32_t QwtBaseModel::calcXMaximum() {
+  uint32_t max = window->getCaptureInstance()->getCycleBuilder()->getStats().cycleCount;
+  if (max == 0)
+    max = 1;
+  else if (max == UINT32_MAX)
+    max = maxXValue;
+  return max;
+}

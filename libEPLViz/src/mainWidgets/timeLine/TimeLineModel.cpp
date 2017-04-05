@@ -121,17 +121,18 @@ void TimeLineModel::update() {
 
   // Change cyclemarker position
   uint32_t cycleNum = window->getCycleNum();
-  if (cycleNum == UINT32_MAX)
+  if (cycleNum == UINT32_MAX) {
+    // Failsafe for wrong number saved
     cycleNum = cycle->getCycleNum();
+    if (cycleNum == UINT32_MAX)
+      cycleNum = calcXMaximum();
+  }
   curCycleMarker.setXValue(static_cast<double>(cycleNum));
 
   // Set newest Cycle marker
-  uint32_t newest = window->getCaptureInstance()->getCycleContainer()->pollCycle().getCycleNum();
+  uint32_t newest = calcXMaximum();
   newestCycleMarker.setXValue(static_cast<double>(newest));
   maxXValue = newest;
-
-  //  postToThread([&] { scrollbar->setMaximum(static_cast<int>(maxXValue - getViewportSize())); }, scrollbar);
-  //  postToThread([&] { scrollbar->setPageStep(static_cast<int>(getViewportSize())); }, scrollbar);
 
   // Add new markers
   std::vector<EventBase *> nEvents = log->pollEvents(appid);
@@ -169,8 +170,14 @@ void TimeLineModel::update() {
 }
 
 void TimeLineModel::updateWidget() {
-  scrollbar->setMaximum(static_cast<int>(maxXValue - getViewportSize()));
-  scrollbar->setPageStep(static_cast<int>(getViewportSize()));
+  double viewPort = getViewportSize();
+  if (viewPort > 1) {
+    int nMax = static_cast<int>(maxXValue - viewPort);
+    if (nMax > 0) {
+      scrollbar->setMaximum(nMax);
+      scrollbar->setPageStep(static_cast<int>(viewPort));
+    }
+  }
   QwtBaseModel::updateWidget();
 }
 

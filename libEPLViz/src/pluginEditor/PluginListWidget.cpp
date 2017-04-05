@@ -76,8 +76,8 @@ void PluginListWidget::newFile() {
   font.setItalic(true);
   item->setFont(font);
 
-  this->addItem(item);
-  this->setCurrentItem(item);
+  addItem(item);
+  setCurrentItem(item);
 
   newCounter++;
 }
@@ -106,6 +106,7 @@ void PluginListWidget::fileAdded(QUrl file) {
   item->setStatusTip(fileInfo.filePath());
 
   addItem(item);
+  setCurrentItem(item);
 
   emit fileOpened(file);
 }

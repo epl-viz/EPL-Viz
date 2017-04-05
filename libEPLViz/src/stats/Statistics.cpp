@@ -57,5 +57,5 @@ void Statistics::refresh() {
 
   ui->List->addTopLevelItems(items);
   ui->List->expandAll();
-  ui->List->header()->resizeSection(0, 350);
+  ui->List->header()->resizeSection(0, 275);
 }

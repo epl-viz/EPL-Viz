@@ -178,7 +178,7 @@ void TimeLineModel::update() {
 void TimeLineModel::updateWidget() {
   double viewPort = getViewportSize();
   if (viewPort > 1) {
-    int nMax = static_cast<int>(maxXValue - viewPort);
+    int nMax = static_cast<int>(round(maxXValue - viewPort));
     if (nMax > 0) {
       scrollbar->setMaximum(nMax);
       scrollbar->setPageStep(static_cast<int>(viewPort));

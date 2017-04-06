@@ -33,6 +33,7 @@
 #include "QWTPlotWidget.hpp"
 #include "SettingsProfileItem.hpp"
 #include "TimeLineWidget.hpp"
+#include <QApplication>
 using namespace EPL_Viz;
 using namespace EPL_DataCollect;
 
@@ -89,7 +90,12 @@ void TimeLineModel::init() {
   markers.clear();
 
   curCycleMarker.setLineStyle(QwtPlotMarker::VLine);
-  curCycleMarker.setLinePen(QColor(0, 0, 0), 2, Qt::PenStyle::DotLine);
+  QColor col;
+  if (QApplication::palette().background().color().lightness() < 128)
+    col = QColor(240, 240, 240);
+  else
+    col = QColor(10, 10, 10);
+  curCycleMarker.setLinePen(col, 2, Qt::PenStyle::DotLine);
   curCycleMarker.setXAxis(QwtPlot::xTop);
   curCycleMarker.setXValue(static_cast<double>(0));
   curCycleMarker.setLabel(QwtText("View"));

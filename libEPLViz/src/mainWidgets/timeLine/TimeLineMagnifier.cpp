@@ -94,8 +94,8 @@ void TimeLineMagnifier::rescale(double factor) {
         v2 = *max;
 
       if (axisId == QwtPlot::xTop) {
-        sBar->setValue(static_cast<int>(v1));
-        sBar->setPageStep(static_cast<int>(v2 - v1));
+        sBar->setValue(static_cast<int>(round(v1)));
+        sBar->setPageStep(static_cast<int>(round(v2 - v1)));
         modelRef->setFitToPlot(false);
       }
 

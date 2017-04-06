@@ -40,7 +40,4 @@ class QWTPlotWidget : public QWidget {
  public:
   QWTPlotWidget(QWidget *parent = nullptr);
   ~QWTPlotWidget()              = default;
-
- public slots:
-  void changeArea(QRectF rect);
 };

@@ -66,6 +66,8 @@ bool BaseModel::updateAll(MainWindow *mw, CaptureInstance *instance) {
     qDebug() << "[BaseModel] Retrieved new appID " << QString::number(appID);
   }
 
+  uint32_t oldCycleNum = cycle->getCycleNum();
+
   // Poll all events
   auto events = log->pollEvents(appID);
 
@@ -75,24 +77,18 @@ bool BaseModel::updateAll(MainWindow *mw, CaptureInstance *instance) {
         // Check if the GUI is running
         if (state == GUIState::RECORDING || state == GUIState::PLAYING) {
           // Pause recording/playing
-          mw->changeState(GUIState::PAUSED); // TODO: Add configuration option for pausing playing
+          postToThread([&] { mw->pauseGUI(); }, mw); // TODO: Connect with configuration option for pausing playing
         }
         break;
       case EvType::VIEW_STARTCAP:
         // Check if the GUI is paused
         if (state == GUIState::PAUSED) {
-          mw->changeState(GUIState::PLAYING);
+          postToThread([&] { mw->continueGUI(); }, mw);
         }
         break;
       default: break;
     }
   }
-
-  // If the recording is paused, do not continue updating
-  if (state == GUIState::PAUSED && !forceUpdate)
-    return false;
-
-  uint32_t oldCycleNum = cycle->getCycleNum();
 
   // Get Cycle
   if (mw->getCycleNum() == UINT32_MAX || mw->getCycleNum() != oldCycleNum)

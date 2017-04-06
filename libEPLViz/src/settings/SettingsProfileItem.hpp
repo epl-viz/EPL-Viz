@@ -29,6 +29,7 @@
 #include "CaptureInstance.hpp"
 #include "PlotCreator.hpp"
 #include <QListWidget>
+#include <QUrl>
 #include <unordered_map>
 
 namespace EPL_Viz {
@@ -41,29 +42,29 @@ class SettingsProfileItem final : public QListWidgetItem {
     EPL_DataCollect::CaptureInstance::Config backConf;
     std::unordered_map<int, EPL_DataCollect::CaptureInstance::NodeConfig> nodes;
     std::string               pythonPluginsDir;
-    int                       currentNode;
+    int                       currentNode           = -1;
     bool                      pauseWhilePlayingFile = true;
     bool                      invertTimeLineZoom    = true;
     std::chrono::milliseconds guiThreadWaitTime     = std::chrono::milliseconds(100);
 
     std::vector<PlotCreator::PlotCreatorData> plots;
 
-    QColor odHighlight = QColor("#14aaff");
-    QColor pInvalid    = QColor("#801515");
-    QColor pSoC        = QColor("#116611");
-    QColor pSoA        = QColor("#55AA55");
-    QColor pPRes       = QColor("#804515");
-    QColor pPReq       = QColor("#D49A6A");
-    QColor pASnd       = QColor("#D46A6A");
-    QColor pAINV       = QColor("#0D4D4D");
-    QColor pANMI       = QColor("#407F7F");
+    QColor odHighlight = QColor("#673AB7");
+    QColor pInvalid    = QColor("#C62828");
+    QColor pSoC        = QColor("#8BC34A");
+    QColor pSoA        = QColor("#FF5722");
+    QColor pPRes       = QColor("#2196F3");
+    QColor pPReq       = QColor("#03A9F4");
+    QColor pASnd       = QColor("#FF7043");
+    QColor pAINV       = QColor("#009688");
+    QColor pANMI       = QColor("#00796B");
 
-    QColor evProtoError = QColor("#550000");
-    QColor evError      = QColor("#801515");
-    QColor evWarning    = QColor("#806415");
-    QColor evInfo       = QColor("#116611");
-    QColor evDebug      = QColor("#55AA55");
-    QColor evPText      = QColor("#0D4D4D");
+    QColor evProtoError = QColor("#B71C1C");
+    QColor evError      = QColor("#E53935");
+    QColor evWarning    = QColor("#FFB300");
+    QColor evInfo       = QColor("#2196F3");
+    QColor evDebug      = QColor("#CDDC39");
+    QColor evPText      = QColor("#607D8B");
 
     QColor NMT_Highlighted         = QColor("#B71C1C");
     QColor NMT_OFF                 = QColor("#9E9E9E");
@@ -89,6 +90,9 @@ class SettingsProfileItem final : public QListWidgetItem {
  public:
   SettingsProfileItem(QString str, QListWidget *parent);
   ~SettingsProfileItem();
+
+  bool exportProf(QString file);
+  bool importProf(QString file);
 
   Config  getConfig();
   QString getName();

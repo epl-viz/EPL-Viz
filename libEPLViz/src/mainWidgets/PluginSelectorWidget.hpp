@@ -44,10 +44,11 @@ class PluginSelectorWidget : public QListWidget {
   Q_OBJECT
 
  private:
-  bool                            recording = false;
-  EPL_DataCollect::PluginManager *pluginManager;
-  MainWindow *                    main;
+  bool                            recording     = false;
+  EPL_DataCollect::PluginManager *pluginManager = nullptr;
+  MainWindow *                    main          = nullptr;
 
+  QString        pluginPath;
   QList<QString> plugins;
 
  public:
@@ -64,7 +65,9 @@ class PluginSelectorWidget : public QListWidget {
 
  public slots:
   void loadPlugins(EPL_DataCollect::CaptureInstance *ci);
-  void addPlugins(QMap<QString, QString> map);
+  void setPlugins(QMap<QString, QString> map);
+  void updatePluginFolder();
   void reset();
+  void savePlugins();
 };
 }

@@ -73,6 +73,9 @@ class SettingsWindow : public QDialog {
   void newNode();
   void deleteNode();
 
+  void exportProf();
+  void importProf();
+
   void profChange(QListWidgetItem *curr, QListWidgetItem *pref);
   void nodeChange(QListWidgetItem *curr, QListWidgetItem *pref);
 
@@ -100,5 +103,6 @@ class SettingsWindow : public QDialog {
   void leaveRecordingState();
 
   SettingsProfileItem::Config getConfig();
+  Profile *                   getCurrentProfile();
 };
 }

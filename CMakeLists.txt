@@ -62,10 +62,6 @@ set( EPL_VIZ_TEMPLATES_DIR "${PROJECT_SOURCE_DIR}/cmake/templates" )
 set( EPL_VIZ_INCLUDES_DIR  "${PROJECT_SOURCE_DIR}/include" )
 set( PLF_COLONY_DIR        "${PROJECT_SOURCE_DIR}/external/EPL_DataCollect/external/plf_colony/" )
 
-if( NOT DEFINED CM_OVERRIDE_INSTALL_PREFIX )
-  set( CM_OVERRIDE_INSTALL_PREFIX false )
-endif( NOT DEFINED CM_OVERRIDE_INSTALL_PREFIX )
-
 ################################
 # Set up the build environment #
 ################################

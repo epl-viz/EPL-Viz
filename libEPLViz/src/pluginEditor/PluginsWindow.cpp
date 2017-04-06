@@ -27,31 +27,25 @@
  * \file PluginsWindows.cpp
  */
 
+#include "defines.hpp"
 #include "PluginsWindow.hpp"
 #include "MainWindow.hpp"
 #include "ui_pluginswindow.h"
 #include <QCloseEvent>
 
 using namespace EPL_Viz;
-
-PluginsWindow *PluginsWindow::create(MainWindow *mw) {
-  if (instance) {
-    // The window already exists, focus it
-    QApplication::setActiveWindow(instance);
-    return nullptr;
-  } else {
-    // The window needs to be created
-    instance = new PluginsWindow(mw);
-    return instance;
-  }
-}
+using namespace EPL_DataCollect::constants;
 
 PluginsWindow::PluginsWindow(MainWindow *mw) : QMainWindow(mw), ui(new Ui::PluginsWindow) {
   ui->setupUi(this);
-  setAttribute(Qt::WA_QuitOnClose); // Quit the application if this is the last window
 
-  connect(this, SIGNAL(cleanUp()), ui->editor, SLOT(cleanUp()));
+  connect(this, SIGNAL(closed()), ui->editor, SLOT(cleanUp()));
+  connect(this, SIGNAL(closed()), ui->pluginList, SLOT(cleanUp()));
+}
 
+PluginsWindow::~PluginsWindow() { delete ui; }
+
+void PluginsWindow::loadPlugins(MainWindow *mw) {
   QString pluginPath   = QString::fromStdString(mw->getSettingsWin()->getConfig().pythonPluginsDir);
   QDir    pluginFolder = QDir(pluginPath);
 
@@ -66,21 +60,22 @@ PluginsWindow::PluginsWindow(MainWindow *mw) : QMainWindow(mw), ui(new Ui::Plugi
   }
 }
 
-PluginsWindow::~PluginsWindow() {
-  instance = nullptr;
-  delete ui;
-}
-
 PluginEditorWidget *PluginsWindow::getEditor() { return ui->editor; }
 
 void PluginsWindow::closeEvent(QCloseEvent *event) {
-  emit cleanUp();
-  event->accept(); // The application will now quit if this is the last window
-  delete this;     // Delete this window
+  (void)event;
+  emit closed();
 }
 
 void PluginsWindow::open() {
-  QUrl file = QFileDialog::getOpenFileUrl(0, "Open Python file", QString(), "Python files (*.py);;All Files (*)");
+  char *  appImageDir = getenv("APPDIR");
+  QString defaultPath = QString(EPL_DC_INSTALL_PREFIX.c_str()) + "/share/eplViz/plugins/samples";
+  if (appImageDir) {
+    defaultPath = QString(appImageDir) + "/usr/share/eplViz/plugins/samples";
+  }
+
+  QUrl file = QFileDialog::getOpenFileUrl(
+        0, "Open Python file", QUrl::fromLocalFile(defaultPath), "Python files (*.py);;All Files (*)");
 
   if (file == QUrl())
     return;
@@ -100,5 +95,3 @@ void PluginsWindow::closeFile() {
     delete ui->pluginList->takeItem(ui->pluginList->row(item));
   }
 }
-
-PluginsWindow *PluginsWindow::instance;

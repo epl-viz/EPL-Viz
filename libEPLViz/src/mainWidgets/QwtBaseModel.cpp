@@ -61,15 +61,29 @@ void QwtBaseModel::init() {
 }
 
 double QwtBaseModel::getViewportSize() {
-  QwtScaleDiv div = plot->axisScaleDiv(QwtPlot::xTop);
-  return div.upperBound() - div.lowerBound();
+  QwtScaleDiv div  = plot->axisScaleDiv(QwtPlot::xTop);
+  double      size = div.upperBound() - div.lowerBound();
+  if (size < 1)
+    size = 1;
+  else if (size > maxXValue)
+    size = maxXValue;
+  return std::abs(size);
 }
 
 /**
  * @brief QwtBaseModel::replot Replots in the main Thread
  */
-void QwtBaseModel::replot() {
+void QwtBaseModel::replotPostMain() {
+  if (fitToScreen)
+    postToThread([&] { plot->setAxisScale(QwtPlot::xTop, 0, static_cast<double>(maxXValue)); }, plot);
   postToThread([&] { plot->replot(); }, plot);
+}
+
+void QwtBaseModel::replot() {
+  if (fitToScreen)
+    plot->setAxisScale(QwtPlot::xTop, 0, static_cast<double>(maxXValue));
+  plot->replot();
+  ;
 }
 
 void QwtBaseModel::update() {
@@ -90,10 +104,9 @@ void QwtBaseModel::update() {
 
     curve->setSamples(xValues.data(), timeSeries->tsData.data(), static_cast<int>(newDataCount));
   }
-  replot();
 }
 
-void QwtBaseModel::updateWidget() {}
+void QwtBaseModel::updateWidget() { replot(); }
 
 /**
  * @brief createStringIdentifier Returns an identifier for the index;
@@ -171,8 +184,9 @@ void QwtBaseModel::reset() {
   curves.clear();
   registeredCurves.clear();
 
-  maxXValue = 50;
-  replot();
+  maxXValue   = 50;
+  fitToScreen = true;
+  replotPostMain();
 }
 
 void QwtBaseModel::showContextMenu(const QPoint &point) {
@@ -212,7 +226,7 @@ void QwtBaseModel::showContextMenu(const QPoint &point) {
   }
 
   menu.addActions(actions);
-  menu.exec();
+  menu.exec(plot->mapToGlobal(point));
   actions.clear();
 }
 
@@ -229,7 +243,7 @@ void QwtBaseModel::enablePlot() {
     curve->attach(plot);
   else
     curve->detach();
-  replot();
+  replotPostMain();
 }
 
 void QwtBaseModel::updatePlotList() {
@@ -238,3 +252,14 @@ void QwtBaseModel::updatePlotList() {
 }
 
 bool QwtBaseModel::needUpdateAlways() { return true; }
+
+void QwtBaseModel::setFitToPlot(bool fit) { fitToScreen = fit; }
+
+uint32_t QwtBaseModel::calcXMaximum() {
+  uint32_t max = window->getCaptureInstance()->getCycleBuilder()->getStats().cycleCount;
+  if (max == 0)
+    max = 1;
+  else if (max == UINT32_MAX)
+    max = maxXValue;
+  return max;
+}

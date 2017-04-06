@@ -23,6 +23,9 @@
       </sizepolicy>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout">
+      <property name="rightMargin">
+       <number>3</number>
+      </property>
       <item>
        <widget class="QListWidget" name="profList"/>
       </item>
@@ -33,6 +36,9 @@
           <number>0</number>
          </property>
          <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
           <number>0</number>
          </property>
          <item>
@@ -62,6 +68,13 @@
     </widget>
    </item>
    <item>
+    <widget class="Line" name="line_3">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+    </widget>
+   </item>
+   <item>
     <widget class="QWidget" name="c2" native="true">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
@@ -70,8 +83,17 @@
       </sizepolicy>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_2">
+      <property name="leftMargin">
+       <number>3</number>
+      </property>
       <item>
        <widget class="QTabWidget" name="tabWidget">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+          <horstretch>0</horstretch>
+          <verstretch>1</verstretch>
+         </sizepolicy>
+        </property>
         <property name="currentIndex">
          <number>0</number>
         </property>
@@ -348,7 +370,7 @@
           <item>
            <widget class="QTabWidget" name="colors_tabs">
             <property name="currentIndex">
-             <number>0</number>
+             <number>1</number>
             </property>
             <widget class="QWidget" name="packColrss">
              <attribute name="title">
@@ -1803,17 +1825,11 @@
                   </widget>
                  </item>
                  <item>
-                  <spacer name="verticalSpacer_11">
+                  <widget class="Line" name="line_2">
                    <property name="orientation">
-                    <enum>Qt::Vertical</enum>
+                    <enum>Qt::Horizontal</enum>
                    </property>
-                   <property name="sizeHint" stdset="0">
-                    <size>
-                     <width>20</width>
-                     <height>40</height>
-                    </size>
-                   </property>
-                  </spacer>
+                  </widget>
                  </item>
                  <item>
                   <widget class="QWidget" name="widget_33" native="true">
@@ -2850,6 +2866,19 @@
                 </layout>
                </widget>
               </item>
+              <item>
+               <spacer name="verticalSpacer_10">
+                <property name="orientation">
+                 <enum>Qt::Vertical</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>20</width>
+                  <height>40</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
              </layout>
             </widget>
            </widget>
@@ -3217,6 +3246,9 @@
          <property name="rightMargin">
           <number>0</number>
          </property>
+         <property name="bottomMargin">
+          <number>0</number>
+         </property>
          <item>
           <widget class="QPushButton" name="apply">
            <property name="sizePolicy">
@@ -3250,10 +3282,49 @@
           </widget>
          </item>
          <item>
+          <widget class="Line" name="line">
+           <property name="orientation">
+            <enum>Qt::Vertical</enum>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="importBTN">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+             <horstretch>2</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="text">
+            <string>Import</string>
+           </property>
+           <property name="icon">
+            <iconset theme="document-open"/>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="exportBTN">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+             <horstretch>2</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="text">
+            <string>Export</string>
+           </property>
+           <property name="icon">
+            <iconset theme="document-save"/>
+           </property>
+          </widget>
+         </item>
+         <item>
           <widget class="QWidget" name="spacerWidget" native="true">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-             <horstretch>5</horstretch>
+             <horstretch>4</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
@@ -3541,6 +3612,38 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>exportBTN</sender>
+   <signal>clicked()</signal>
+   <receiver>SettingsWindow</receiver>
+   <slot>exportProf()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>716</x>
+     <y>645</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>566</x>
+     <y>340</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>importBTN</sender>
+   <signal>clicked()</signal>
+   <receiver>SettingsWindow</receiver>
+   <slot>importProf()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>598</x>
+     <y>645</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>566</x>
+     <y>340</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>apply()</slot>
@@ -3559,5 +3662,7 @@
   <slot>plotDelete()</slot>
   <slot>plotEdit()</slot>
   <slot>plotClear()</slot>
+  <slot>exportProf()</slot>
+  <slot>importProf()</slot>
  </slots>
 </ui>

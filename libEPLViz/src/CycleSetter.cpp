@@ -63,6 +63,7 @@ void CycleSetter::changeCycle() {
 
 void CycleSetter::skipF() {
   mw->changeCycle(UINT32_MAX);
+  mw->fitTimeline();
   ui->skipF->setEnabled(false);
   ui->seekF->setEnabled(false);
   ui->skipB->setEnabled(true);
@@ -71,6 +72,7 @@ void CycleSetter::skipF() {
 
 void CycleSetter::skipB() {
   mw->changeCycle(0);
+  mw->fitTimeline();
   ui->skipB->setEnabled(false);
   ui->seekB->setEnabled(false);
   ui->skipF->setEnabled(true);
@@ -129,3 +131,5 @@ QWidget *CycleSetterAction::createWidget(QWidget *parent) {
   cs = new CycleSetter(parent, mw);
   return cs;
 }
+
+void CycleSetter::fitTime() { mw->fitTimeline(); }

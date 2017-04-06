@@ -59,6 +59,8 @@ class QwtBaseModel : public QObject, public BaseModel {
   QString getName() override { return "QwtBaseModel"; }
   double  getViewportSize();
   bool    needUpdateAlways() override;
+  void setFitToPlot(bool fit);
+
 
  protected:
   MainWindow *window;
@@ -66,6 +68,7 @@ class QwtBaseModel : public QObject, public BaseModel {
   QMap<QString, QPair<std::shared_ptr<QwtPlotCurve>, std::shared_ptr<EPL_DataCollect::plugins::TimeSeries>>> curves;
   std::vector<PlotCreator::PlotCreatorData> registeredCurves;
   std::vector<double>                       xValues;
+  bool                                      fitToScreen;
 
 
   virtual void update() override;
@@ -78,6 +81,7 @@ class QwtBaseModel : public QObject, public BaseModel {
                   std::string cs,
                   QwtPlot::Axis,
                   QColor color = QColor(0, 0, 0));
+  uint32_t calcXMaximum();
 
 
 #pragma clang diagnostic push
@@ -99,11 +103,11 @@ class QwtBaseModel : public QObject, public BaseModel {
 
  signals:
   void requestRedraw();
-  void maxValueChanged(int notUsed, int nMax);
 
  public slots:
   void         updatePlotList();
   virtual void createPlot(uint8_t nodeID, uint16_t index, uint16_t subIndex, std::string cs, QColor color) = 0;
+  void replotPostMain();
   void replot();
   void reset();
   void showContextMenu(const QPoint &point);

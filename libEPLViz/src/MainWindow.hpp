@@ -38,6 +38,7 @@
 #include "NodeWidget.hpp"
 #include "PacketHistoryModel.hpp"
 #include "PluginLogModel.hpp"
+#include "PluginsWindow.hpp"
 #include "ProfileManager.hpp"
 #include "QWTPlotModel.hpp"
 #include "SettingsWindow.hpp"
@@ -67,8 +68,11 @@ class MainWindow : public QMainWindow {
   typedef std::unique_ptr<EPL_DataCollect::CaptureInstance> CI_PTR;
 
  private:
-  uint32_t                          maxCycle = 0;
-  uint32_t                          curCycle = UINT32_MAX;
+  uint32_t maxCycle = 0;
+  uint32_t curCycle = UINT32_MAX;
+
+  GUIState pausedState = GUIState::PAUSED;
+
   Ui::MainWindow *                  ui;
   CycleSetterAction *               CS;
   ProfileManager *                  profileManager;
@@ -79,6 +83,7 @@ class MainWindow : public QMainWindow {
   QString                           interface;
   std::string                       file;
   SettingsWindow *                  settingsWin;
+  PluginsWindow *                   pluginWin;
   QProgressBar *                    progressBar;
   bool                              showedPlotSetupMsg;
 
@@ -102,6 +107,8 @@ class MainWindow : public QMainWindow {
    */
   mockable bool changeCycle(uint32_t cycle);
   mockable void changeState(EPL_Viz::GUIState nState);
+  mockable void continueGUI();
+  mockable void pauseGUI();
   /*!
    * \brief Returns the current state
    * \return the current state
@@ -145,6 +152,7 @@ class MainWindow : public QMainWindow {
   void save();
   void saveAs();
   void open();
+  void reload();
   void handleResults(const QString &);
   void startRecording();
   void stopRecording();
@@ -155,6 +163,7 @@ class MainWindow : public QMainWindow {
   void showStats();
   void selectCycle(uint32_t cycle);
   void setupPlot();
+  void fitTimeline();
 
 
  signals:
@@ -164,5 +173,6 @@ class MainWindow : public QMainWindow {
   void eventsUpdated();
   void recordingStarted(EPL_DataCollect::CaptureInstance *);
   void resetGUI();
+  void fitToPlot();
 };
 }

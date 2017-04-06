@@ -41,6 +41,10 @@
 #include <QWidget>
 #include <shared_mutex>
 
+#include <QCoreApplication>
+#include <QEvent>
+#include <QObject>
+
 namespace EPL_Viz {
 
 class MainWindow;
@@ -89,6 +93,24 @@ class BaseModel {
   static ProtectedCycle           cycle;
   static bool                     forceUpdate;
   MainWindow *                    mainWindow;
+
+
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunused-local-typedef"
+
+  template <typename F>
+  static void postToThread(F &&fun, QObject *obj) {
+    struct Event : public QEvent {
+      typedef typename std::decay<F>::type Fun;
+      Fun                                  funEl;
+      Event(Fun &&funny) : QEvent(QEvent::None), funEl(std::move(funny)) {}
+      Event(const Fun &funny) : QEvent(QEvent::None), funEl(funny) {}
+      ~Event() { funEl(); }
+    };
+    QCoreApplication::postEvent(obj, new Event(std::forward<F>(fun)));
+  }
+
+#pragma clang diagnostic push
 
  public:
   BaseModel(MainWindow *mw, QWidget *widget);

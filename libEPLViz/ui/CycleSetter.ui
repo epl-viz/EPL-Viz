@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>622</width>
+    <width>675</width>
     <height>38</height>
    </rect>
   </property>
@@ -64,12 +64,38 @@
     </widget>
    </item>
    <item>
+    <widget class="QToolButton" name="btnFitTime">
+     <property name="toolTip">
+      <string>Timeline fit width</string>
+     </property>
+     <property name="text">
+      <string>Fit Timeline</string>
+     </property>
+     <property name="icon">
+      <iconset theme="zoom-fit-best"/>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>22</width>
+       <height>22</height>
+      </size>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="Line" name="line_2">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+    </widget>
+   </item>
+   <item>
     <widget class="QToolButton" name="skipB">
      <property name="toolTip">
       <string>First Cycle</string>
      </property>
      <property name="text">
-      <string>...</string>
+      <string>&lt;&lt;</string>
      </property>
      <property name="icon">
       <iconset theme="media-skip-backward"/>
@@ -88,7 +114,7 @@
       <string>Previous Cycle</string>
      </property>
      <property name="text">
-      <string>...</string>
+      <string>&lt;</string>
      </property>
      <property name="icon">
       <iconset theme="media-seek-backward"/>
@@ -139,7 +165,7 @@
          <string>Change Cycle</string>
         </property>
         <property name="text">
-         <string>...</string>
+         <string>Set</string>
         </property>
         <property name="icon">
          <iconset theme="dialog-ok"/>
@@ -161,7 +187,7 @@
       <string>Next Cycle</string>
      </property>
      <property name="text">
-      <string>...</string>
+      <string>&gt;</string>
      </property>
      <property name="icon">
       <iconset theme="media-seek-forward"/>
@@ -180,7 +206,7 @@
       <string>Last Cycle</string>
      </property>
      <property name="text">
-      <string>...</string>
+      <string>&gt;&gt;</string>
      </property>
      <property name="icon">
       <iconset theme="media-skip-forward"/>
@@ -301,6 +327,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>btnFitTime</sender>
+   <signal>clicked()</signal>
+   <receiver>CycleSetter</receiver>
+   <slot>fitTime()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>319</x>
+     <y>18</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>359</x>
+     <y>18</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>changeCycle()</slot>
@@ -308,5 +350,6 @@
   <slot>seekB()</slot>
   <slot>skipF()</slot>
   <slot>skipB()</slot>
+  <slot>fitTime()</slot>
  </slots>
 </ui>

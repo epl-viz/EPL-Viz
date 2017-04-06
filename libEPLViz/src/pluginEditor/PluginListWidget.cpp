@@ -76,8 +76,8 @@ void PluginListWidget::newFile() {
   font.setItalic(true);
   item->setFont(font);
 
-  this->addItem(item);
-  this->setCurrentItem(item);
+  addItem(item);
+  setCurrentItem(item);
 
   newCounter++;
 }
@@ -91,21 +91,30 @@ void PluginListWidget::fileAdded(QUrl file) {
   if (currentItem())
     currentItem()->setSelected(false);
 
-  qDebug() << "Adding file...";
-
   // Create a QFileInfo to extract name and path of file
   QFileInfo fileInfo(file.toLocalFile());
 
+  qDebug() << "Adding file " << fileInfo.filePath();
+
+
   // Create new entry
   QListWidgetItem *item = new QListWidgetItem();
+
   item->setText(fileInfo.fileName());
   item->setSelected(true);
   item->setToolTip(fileInfo.filePath());
   item->setStatusTip(fileInfo.filePath());
-  this->addItem(item);
-  this->setCurrentItem(item);
+
+  addItem(item);
+  setCurrentItem(item);
 
   emit fileOpened(file);
+}
+
+void PluginListWidget::cleanUp() {
+  newCounter = 1;
+  modified   = false;
+  clear();
 }
 
 void PluginListWidget::fileModified(bool newState) {

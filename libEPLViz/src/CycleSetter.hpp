@@ -41,6 +41,7 @@ class CycleSetter : public QWidget {
   void seekB();
   void skipF();
   void skipB();
+  void fitTime();
 };
 
 class MouseTrackingWidget : public QWidget {

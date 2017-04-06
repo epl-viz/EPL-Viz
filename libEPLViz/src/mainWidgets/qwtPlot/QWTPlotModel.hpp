@@ -50,5 +50,6 @@ class QWTPlotModel : public QwtBaseModel {
 
  public slots:
   void createPlot(uint8_t nodeID, uint16_t index, uint16_t subIndex, std::string cs, QColor color);
+  void changeArea(QRectF rect);
 };
 }

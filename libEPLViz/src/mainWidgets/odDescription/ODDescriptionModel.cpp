@@ -53,6 +53,8 @@ ODDescriptionModel::ODDescriptionModel(MainWindow *window, QTreeView *treeWidget
   treeWidget->setModel(filter);
 }
 
+bool ODDescriptionModel::needUpdateAlways() { return true; }
+
 void ODDescriptionModel::init() {
   node = UINT8_MAX;
 
@@ -148,6 +150,5 @@ void ODDescriptionModel::updateWidget() {
 void ODDescriptionModel::selectNode(uint8_t n) {
   if (node != n) {
     node = n;
-    forceNextUpdate();
   }
 }

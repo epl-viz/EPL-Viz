@@ -33,10 +33,12 @@
 #include "QWTPlotWidget.hpp"
 #include "SettingsProfileItem.hpp"
 #include "TimeLineWidget.hpp"
+#include <QApplication>
 using namespace EPL_Viz;
 using namespace EPL_DataCollect;
 
-TimeLineModel::TimeLineModel(MainWindow *mainWin, QwtPlot *widget) : QwtBaseModel(mainWin, widget), mw(mainWin) {
+TimeLineModel::TimeLineModel(MainWindow *mainWin, QwtPlot *widget, QWTPlotModel *plotModel)
+    : QwtBaseModel(mainWin, widget), mw(mainWin) {
   scrollbar = mw->findChild<QScrollBar *>("scrBarTimeline");
 
   widget->enableAxis(QwtPlot::xBottom, false);
@@ -45,7 +47,7 @@ TimeLineModel::TimeLineModel(MainWindow *mainWin, QwtPlot *widget) : QwtBaseMode
   widget->setAxisAutoScale(QwtPlot::yLeft, true);
 
   widget->setAxisScale(QwtPlot::xTop, 0, DEF_VIEWPORT_SIZE);
-  widget->setAxisAutoScale(QwtPlot::xTop, true);
+  // widget->setAxisAutoScale(QwtPlot::xTop, true);
 
   magnifier = std::make_unique<TimeLineMagnifier>(scrollbar, this, &maxXValue, widget->canvas());
   magnifier->setAxisEnabled(QwtPlot::xTop, true);
@@ -68,7 +70,7 @@ TimeLineModel::TimeLineModel(MainWindow *mainWin, QwtPlot *widget) : QwtBaseMode
   area->setMousePattern(QwtEventPattern::MousePatternCode::MouseSelect1, Qt::MouseButton::LeftButton);
 
   connect(point, SIGNAL(selected(QPointF)), this, SLOT(pointSelected(QPointF)));
-  connect(area, SIGNAL(selected(QRectF)), window->findChild<QWTPlotWidget *>("tabGraph"), SLOT(changeArea(QRectF)));
+  connect(area, SIGNAL(selected(QRectF)), plotModel, SLOT(changeArea(QRectF)));
 }
 
 TimeLineModel::~TimeLineModel() {
@@ -80,14 +82,20 @@ void TimeLineModel::pointSelected(const QPointF &pa) {
   uint32_t x = static_cast<uint32_t>(std::round(pa.x()));
   window->changeCycle(x);
   curCycleMarker.setXValue(x);
-  replot();
+  setFitToPlot(false);
+  replotPostMain();
 }
 
 void TimeLineModel::init() {
   markers.clear();
 
   curCycleMarker.setLineStyle(QwtPlotMarker::VLine);
-  curCycleMarker.setLinePen(QColor(0, 0, 0), 2, Qt::PenStyle::DotLine);
+  QColor col;
+  if (QApplication::palette().background().color().lightness() < 128)
+    col = QColor(240, 240, 240);
+  else
+    col = QColor(10, 10, 10);
+  curCycleMarker.setLinePen(col, 2, Qt::PenStyle::DotLine);
   curCycleMarker.setXAxis(QwtPlot::xTop);
   curCycleMarker.setXValue(static_cast<double>(0));
   curCycleMarker.setLabel(QwtText("View"));
@@ -119,16 +127,18 @@ void TimeLineModel::update() {
 
   // Change cyclemarker position
   uint32_t cycleNum = window->getCycleNum();
-  if (cycleNum == UINT32_MAX)
+  if (cycleNum == UINT32_MAX) {
+    // Failsafe for wrong number saved
     cycleNum = cycle->getCycleNum();
+    if (cycleNum == UINT32_MAX)
+      cycleNum = calcXMaximum();
+  }
   curCycleMarker.setXValue(static_cast<double>(cycleNum));
 
   // Set newest Cycle marker
-  uint32_t newest = window->getCaptureInstance()->getCycleContainer()->pollCycle().getCycleNum();
+  uint32_t newest = calcXMaximum();
   newestCycleMarker.setXValue(static_cast<double>(newest));
   maxXValue = newest;
-  emit maxValueChanged(0, static_cast<int>(maxXValue - getViewportSize()));
-  scrollbar->setMaximum(static_cast<int>(maxXValue));
 
   // Add new markers
   std::vector<EventBase *> nEvents = log->pollEvents(appid);
@@ -165,17 +175,25 @@ void TimeLineModel::update() {
   QwtBaseModel::update();
 }
 
-void TimeLineModel::updateWidget() {}
+void TimeLineModel::updateWidget() {
+  double viewPort = getViewportSize();
+  if (viewPort > 1) {
+    int nMax = static_cast<int>(round(maxXValue - viewPort));
+    if (nMax > 0) {
+      scrollbar->setMaximum(nMax);
+      scrollbar->setPageStep(static_cast<int>(viewPort));
+    }
+  }
+  QwtBaseModel::updateWidget();
+}
 
 void TimeLineModel::updateViewport(int value) {
-  QwtScaleDiv scale = plot->axisScaleDiv(QwtPlot::xTop);
-  double      upper = scale.upperBound();
-  double      lower = scale.lowerBound();
+  double viewportSize = getViewportSize();
 
-  double viewportSize = upper - lower;
-
-  if (viewportSize < 1)
+  if (viewportSize < 1) {
+    qDebug() << "Viewport size is <1";
     return;
+  }
 
   double min = static_cast<double>(value);
   double max = min + viewportSize;
@@ -201,3 +219,5 @@ void TimeLineModel::reset() {
 void TimeLineModel::createPlot(uint8_t nodeID, uint16_t index, uint16_t subIndex, std::string cs, QColor color) {
   QwtBaseModel::createPlot(nodeID, index, subIndex, cs, QwtPlot::xTop, color);
 }
+
+void TimeLineModel::fitToPlot() { setFitToPlot(true); }

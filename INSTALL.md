@@ -111,6 +111,7 @@ cmake \
   -DCMAKE_CXX_COMPILER=$(which g++-6) ..
 make -j$(nproc)
 make install
+cp "${PREFIX}/bin/dumpcap" ./bin
 ```
 
 ## Building EPL-Viz
@@ -134,4 +135,10 @@ cmake \
   -DCMAKE_CXX_COMPILER=$(which g++-6) ..
 make -j$(nproc)
 make install
+cp "${PREFIX}/bin/dumpcap" ./bin
 ```
+
+### :warning: NOTE:
+
+You have to give dumpcap special privileges to enable live captureing!
+You can use `sudo setcap cap_net_admin,cap_net_raw+eip "${PREFIX}/bin/dumpcap"` for instance.

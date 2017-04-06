@@ -62,6 +62,7 @@ class ODDescriptionModel final : public TreeModelBase, public BaseModel {
   void init() override;
   void update() override;
   void updateWidget() override;
+  bool needUpdateAlways() override;
 
  public slots:
   void selectNode(uint8_t);

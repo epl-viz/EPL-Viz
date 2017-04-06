@@ -82,12 +82,12 @@ void TimeLineMagnifier::rescale(double factor, int x) {
       }
 
       const double width_2 = (v2 - v1) * factor;
-      double relPos;
+      double       relPos;
       if (axisId == QwtPlot::xTop)
         relPos = static_cast<double>(x) / plt->canvas()->size().width();
       else
-        relPos = .5;
-      const double center  = relPos * (v1 + v2);
+        relPos            = .5;
+      const double center = relPos * (v1 + v2);
 
       v1 = center - width_2 * (1 - relPos);
       v2 = center + width_2 * (relPos);
@@ -97,22 +97,17 @@ void TimeLineMagnifier::rescale(double factor, int x) {
         v2 = scaleMap.invTransform(v2);
       }
 
-      if (axisId == QwtPlot::xTop) {
-        /*
-        double relPos = static_cast<double>(x) / parent;
-        v1 = relPos * v1;
-        v2 = (1 - relPos) * v2;
-*/
-        if (std::abs(v1 - v2) < 1)
-          continue;
-        if (v1 < 0)
-          v1 = 0;
-        if (v2 > *max)
-          v2 = *max;
+      if (std::abs(v1 - v2) < 10)
+        continue;
+      if (v1 < 0)
+        v1 = 0;
+      if (v2 > *max)
+        v2 = *max;
 
-        sBar->setPageStep(static_cast<int>(v2 - v1));
-        sBar->setMaximum(static_cast<int>(modelRef->maxXValue - (v2 - v1)));
-        sBar->setValue(static_cast<int>(v1));
+      if (axisId == QwtPlot::xTop) {
+        sBar->setValue(static_cast<int>(round(v1)));
+        sBar->setPageStep(static_cast<int>(round(v2 - v1)));
+        modelRef->setFitToPlot(false);
       }
 
       plt->setAxisScale(axisId, v1, v2);
@@ -123,9 +118,7 @@ void TimeLineMagnifier::rescale(double factor, int x) {
   plt->setAutoReplot(autoReplot);
 
   if (doReplot)
-    plt->replot();
-
-  modelRef->replot();
+    modelRef->replot();
 };
 
 void TimeLineMagnifier::widgetWheelEvent(QWheelEvent *wheelEvent) {
@@ -133,7 +126,7 @@ void TimeLineMagnifier::widgetWheelEvent(QWheelEvent *wheelEvent) {
   if (wheelEvent->angleDelta().y() > 0)
     factor = wheelFactor();
   else if (wheelEvent->angleDelta().y() < 0)
-    factor = 1/wheelFactor();
+    factor = 1 / wheelFactor();
   else
     return;
 

@@ -49,7 +49,7 @@
      <x>0</x>
      <y>0</y>
      <width>1112</width>
-     <height>30</height>
+     <height>26</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -437,7 +437,7 @@
    <sender>editor</sender>
    <signal>cleanupDone()</signal>
    <receiver>PluginsWindow</receiver>
-   <slot>close()</slot>
+   <slot>hide()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>694</x>

@@ -106,14 +106,29 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
   settingsWin = new SettingsWindow(this, profileManager);
   settingsWin->hide();
 
+  pluginWin = new PluginsWindow(this);
+  pluginWin->hide();
+
+  // Connect the signal that the plugins were correctly saved in the editor to the plugin selector
+  connect(pluginWin->getEditor(),
+          SIGNAL(pluginsSaved(QMap<QString, QString>)),
+          ui->pluginSelectorWidget,
+          SLOT(setPlugins(QMap<QString, QString>)));
+
+  ui->pluginSelectorWidget->setMainWindow(this);
+  ui->pluginSelectorWidget->updatePluginFolder(); // Load the plugin folder
+
+  connect(settingsWin,
+          SIGNAL(settingsUpdated()),
+          ui->pluginSelectorWidget,
+          SLOT(updatePluginFolder())); // Update the plugin selector in case the plugin folder changed
+
   qRegisterMetaType<uint8_t>("uint8_t");
   qRegisterMetaType<uint8_t>("uint16_t");
   qRegisterMetaType<uint8_t>("uint32_t");
   qRegisterMetaType<std::string>("std::string");
 
   showedPlotSetupMsg = false;
-
-  ui->pluginSelectorWidget->setMainWindow(this);
 }
 
 MainWindow::~MainWindow() {
@@ -135,7 +150,7 @@ void MainWindow::createModels() {
   CurrentODModel *    curODModel         = new CurrentODModel(this, ui->curNodeODWidget);
   PluginLogModel *    pluginLogModel     = new PluginLogModel(this, ui->pluginLogView);
   PacketHistoryModel *packetHistoryModel = new PacketHistoryModel(this, ui->packetHistoryTextEdit);
-  TimeLineModel *     timeLineModel      = new TimeLineModel(this, ui->qwtPlotTimeline);
+  TimeLineModel *     timeLineModel      = new TimeLineModel(this, ui->qwtPlotTimeline, qwtPlot);
   PacketListModel *   packetListModel    = new PacketListModel(this, ui->packetsView);
 
   // save references to the timeline and plot model for the Plot setup Dialog
@@ -147,16 +162,16 @@ void MainWindow::createModels() {
           cyCoModel,
           SLOT(changeSelection(QModelIndex))); // Notify the cycle viewer model that an item was activated
   connect(ui->cycleCommandsView,
-          SIGNAL(clicked(QModelIndex)),
+          SIGNAL(pressed(QModelIndex)),
           cyCoModel,
-          SLOT(changeSelection(QModelIndex))); // Notify the cycle viewer model that an item was clicked
+          SLOT(changeSelection(QModelIndex))); // Notify the cycle viewer model that an item was pressed
   connect(cyCoModel,
           SIGNAL(packetChanged(uint64_t)),
           packetHistoryModel,
           SLOT(changePacket(uint64_t))); // Notify the packet viewer of changing packets
 
   connect(ui->scrBarTimeline, SIGNAL(valueChanged(int)), timeLineModel, SLOT(updateViewport(int)));
-  connect(timeLineModel, SIGNAL(maxValueChanged(int, int)), ui->scrBarTimeline, SLOT(setRange(int, int)));
+  connect(this, SIGNAL(fitToPlot()), timeLineModel, SLOT(fitToPlot()));
   connect(this, SIGNAL(cycleChanged()), timeLineModel, SLOT(replot()));
   connect(settingsWin, SIGNAL(settingsUpdated()), qwtPlot, SLOT(updatePlotList()));
   connect(settingsWin, SIGNAL(settingsUpdated()), timeLineModel, SLOT(updatePlotList()));
@@ -165,9 +180,6 @@ void MainWindow::createModels() {
           SIGNAL(cycleSelected(uint32_t)),
           this,
           SLOT(selectCycle(uint32_t))); // Allow the packet viewer widget to change cycle
-
-  // Set timeline max value once, since we can't do this in the constructor of the model and want to do it before init
-  emit timeLineModel->maxValueChanged(0, static_cast<int>(timeLineModel->maxXValue - timeLineModel->getViewportSize()));
 
   // Activate and connect rightclick menu for Drawing Plots
   ui->curNodeODWidget->setContextMenuPolicy(Qt::CustomContextMenu);
@@ -214,6 +226,10 @@ void MainWindow::createModels() {
 
   getCycleSetter()->getWidget()->checkButtons();
 
+  connect(this,
+          SIGNAL(close()),
+          ui->pluginSelectorWidget,
+          SLOT(savePlugins())); // Notify the plugin selector to save the currently active plugins
   connect(this, SIGNAL(close()), modelThread, SLOT(stop()));
 
   modelThread->start();
@@ -255,6 +271,10 @@ bool MainWindow::changeCycle(uint32_t cycle) {
   if (machineState != GUIState::UNINIT) {
     if (curCycle != cycle) {
       curCycle = cycle;
+
+      if (cycle == UINT32_MAX)
+        continueGUI(); // Continue the playback/recording (Always use the newest cycle)
+
       emit cycleChanged();
     }
     return true;
@@ -274,17 +294,8 @@ void MainWindow::setFullscreen(bool makeFullscreen) {
 }
 
 void MainWindow::openPluginEditor() {
-  PluginsWindow *win = PluginsWindow::create(this);
-
-  // Check if the window was newly created
-  if (win) {
-    win->show();
-
-    connect(win->getEditor(),
-            SIGNAL(pluginsSaved(QMap<QString, QString>)),
-            ui->pluginSelectorWidget,
-            SLOT(addPlugins(QMap<QString, QString>)));
-  }
+  pluginWin->loadPlugins(this); // Load all plugins into the plugin window
+  pluginWin->show();
 }
 
 void MainWindow::openInterfacePicker() {
@@ -379,6 +390,22 @@ void MainWindow::open() {
   changeState(GUIState::PLAYING);
 }
 
+void MainWindow::reload() {
+  // Ignore invalid files
+  if (file == "")
+    return;
+
+  std::string f = file;
+
+  // Reset the GUI
+  changeState(GUIState::UNINIT);
+
+  file = f;
+
+  // Reload the GUI
+  changeState(GUIState::PLAYING);
+}
+
 void MainWindow::showAbout() {
   QMessageBox msgBox;
 
@@ -442,6 +469,22 @@ void MainWindow::stopRecording() {
   changeState(GUIState::STOPPED);
 }
 
+void MainWindow::continueGUI() {
+  if (machineState == GUIState::STOPPED) {
+    pausedState = GUIState::PAUSED;
+    return;
+  }
+  if (pausedState != GUIState::PAUSED) {
+    changeState(pausedState);
+    pausedState = GUIState::PAUSED;
+  }
+}
+
+void MainWindow::pauseGUI() {
+  pausedState = machineState;
+  changeState(GUIState::PAUSED);
+}
+
 void MainWindow::changeState(GUIState nState) {
   std::string test =
         "Change state from " + EPLVizEnum2Str::toStr(machineState) + " to " + EPLVizEnum2Str::toStr(nState);
@@ -460,6 +503,7 @@ void MainWindow::changeState(GUIState nState) {
       ui->actionSave->setEnabled(false);
       ui->actionSave_As->setEnabled(false);
       ui->actionStatistics->setEnabled(false);
+      ui->actionReload->setEnabled(false);
 
       // Set all widgets to their correct state
       ui->dockTime->setEnabled(false);
@@ -478,7 +522,13 @@ void MainWindow::changeState(GUIState nState) {
 
       settingsWin->leaveRecordingState();
 
-      if (machineState == GUIState::STOPPED) {
+      if (machineState == GUIState::STOPPED || machineState == GUIState::PLAYING) {
+        // Reset local variables
+        maxCycle    = 0;
+        curCycle    = UINT32_MAX;
+        pausedState = GUIState::PAUSED;
+        file        = "";
+
         // Reset all models back to their initial state
         BaseModel::initAll();
         CS->getWidget()->setValue(0);
@@ -503,6 +553,7 @@ void MainWindow::changeState(GUIState nState) {
       ui->actionSave->setEnabled(false); // Saving is not available during playback
       ui->actionSave_As->setEnabled(false);
       ui->actionStatistics->setEnabled(false);
+      ui->actionReload->setEnabled(true);
 
       // Set all widgets to their correct state
       ui->dockTime->setEnabled(true);
@@ -523,6 +574,7 @@ void MainWindow::changeState(GUIState nState) {
 
       // GUI state is updated, don't restart the recording
       if (machineState == GUIState::PAUSED) {
+        ui->statusBar->showMessage("Processing file...");
         break;
       }
 
@@ -538,12 +590,13 @@ void MainWindow::changeState(GUIState nState) {
         QMessageBox::critical(
               this, "Error", tr("Received backend error code ") + EPLEnum2Str::toStr(backendState).c_str());
         changeState(GUIState::UNINIT);
+        emit resetGUI();
         return;
       }
 
       setWindowTitle(tr("EPL-Viz - [%1]").arg(QString::fromStdString(file)));
 
-      ui->statusBar->showMessage("Loading file...");
+      ui->statusBar->showMessage("Processing file...");
       break;
     case GUIState::RECORDING:
       // Update GUI button states
@@ -556,6 +609,7 @@ void MainWindow::changeState(GUIState nState) {
       ui->actionSave->setEnabled(true);
       ui->actionSave_As->setEnabled(true);
       ui->actionStatistics->setEnabled(false);
+      ui->actionReload->setEnabled(false);
 
       // Set all widgets to their correct state
       ui->dockTime->setEnabled(true);
@@ -576,6 +630,7 @@ void MainWindow::changeState(GUIState nState) {
 
       // GUI state is updated, don't restart the recording
       if (machineState == GUIState::PAUSED) {
+        ui->statusBar->showMessage("Recording live...");
         break;
       }
 
@@ -592,6 +647,7 @@ void MainWindow::changeState(GUIState nState) {
               this, "Error", tr("Received backend error code ") + EPLEnum2Str::toStr(backendState).c_str());
 
         changeState(GUIState::UNINIT);
+        emit resetGUI();
         return;
       }
 
@@ -601,7 +657,7 @@ void MainWindow::changeState(GUIState nState) {
       break;
     case GUIState::PAUSED:
       // Update GUI button states
-      ui->actionStart_Recording->setEnabled(true);
+      ui->actionStart_Recording->setEnabled(false);
       ui->actionStop_Recording->setEnabled(false);
       ui->pluginEditorButton->setEnabled(false);
       ui->actionPlugins->setEnabled(false);
@@ -619,6 +675,8 @@ void MainWindow::changeState(GUIState nState) {
         ui->actionSave_As->setEnabled(false);
         settingsWin->enterRecordingState();
       }
+
+      curCycle = BaseModel::getCurrentCycle()->getCycleNum();
 
       ui->statusBar->showMessage("Paused");
       break;
@@ -671,7 +729,7 @@ void MainWindow::config() {
         EPL_DataCollect::constants::EPL_DC_PLUGIN_TIME_SERIES_CSID);
 
   // Initialize all Models
-  BaseModel::initAll(); // TODO do we need to do this here
+  BaseModel::initAll();
 }
 
 void MainWindow::setFilters(std::vector<EPL_DataCollect::CSViewFilters::Filter> f) {
@@ -694,7 +752,7 @@ EPL_DataCollect::CSViewFilters::Filter MainWindow::getFilter() {
 void MainWindow::closeEvent(QCloseEvent *event) {
   profileManager->getDefaultProfile()->writeWindowSettings(this);
   emit close();
-  QWidget::closeEvent(event);
+  event->accept();
 }
 
 bool MainWindow::curODWidgetUpdateData(QTreeWidgetItem *item, QString newData) {
@@ -709,3 +767,5 @@ SettingsWindow *   MainWindow::getSettingsWin() { return settingsWin; }
 CycleSetterAction *MainWindow::getCycleSetter() { return CS; }
 
 void MainWindow::handleResults(const QString &result) { qDebug() << "The result is\"" << result << "\""; }
+
+void MainWindow::fitTimeline() { emit fitToPlot(); }

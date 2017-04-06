@@ -31,6 +31,7 @@
 
 #include "BaseModel.hpp"
 #include "Cycle.hpp"
+#include "QWTPlotModel.hpp"
 #include "QwtBaseModel.hpp"
 #include "TimeLineMagnifier.hpp"
 
@@ -63,7 +64,7 @@ class TimeLineModel : public QwtBaseModel {
  public:
   const static uint32_t DEF_VIEWPORT_SIZE = 10;
 
-  TimeLineModel(MainWindow *mainWin, QwtPlot *widget);
+  TimeLineModel(MainWindow *mainWin, QwtPlot *widget, QWTPlotModel *plotModel);
   TimeLineModel() = delete;
   virtual ~TimeLineModel();
 
@@ -78,5 +79,6 @@ class TimeLineModel : public QwtBaseModel {
   void reset();
   void pointSelected(const QPointF &pa);
   void createPlot(uint8_t nodeID, uint16_t index, uint16_t subIndex, std::string cs, QColor color) override;
+  void fitToPlot();
 };
 }

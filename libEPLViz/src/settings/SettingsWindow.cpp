@@ -90,10 +90,11 @@ SettingsWindow::SettingsWindow(QWidget *parent, ProfileManager *settings)
   startCFG.currentNode = -1;
   startCFG.backConf    = mainWindow->getCaptureInstance()->getConfig();
 
-  if (!EPL_VIZ_OVERRIDE_INSTALL_PREFIX) {
+  char *appImageDir = getenv("APPDIR");
+  if (!appImageDir) {
     startCFG.backConf.xddDir = std::string(EPL_VIZ_INSTALL_PREFIX) + "/share/eplViz/xdd";
   } else {
-    startCFG.backConf.xddDir = "/usr/share/eplViz/xdd";
+    startCFG.backConf.xddDir = std::string(appImageDir) + "/usr/share/eplViz/xdd";
   }
 
   currentProfile            = "Default";
@@ -619,6 +620,10 @@ void SettingsWindow::nodeChange(QListWidgetItem *curr, QListWidgetItem *) {
   if (curr->text() != "Default")
     id = std::stoi(curr->text().toStdString());
 
+  prof->cfg.nodes[prof->cfg.currentNode].autoDeduceSpecificProfile = ui->N_autoDetect->checkState() == Qt::Checked;
+  prof->cfg.nodes[prof->cfg.currentNode].baseProfile               = ui->N_Base->text().toStdString();
+  prof->cfg.nodes[prof->cfg.currentNode].specificProfile           = ui->N_Special->text().toStdString();
+
   prof->cfg.currentNode = id;
   updateView(true);
   // saveConfig();
@@ -762,6 +767,29 @@ void SettingsWindow::plotClear() {
   updateView();
 }
 
+const QString exportFileFilter = "EPL-Viz Profiles (*.eplProf);; All Files (*)";
+
+void SettingsWindow::exportProf() {
+  SettingsProfileItem *prof = profiles[currentProfile].get();
+  QString              file = QFileDialog::getSaveFileName(this, "Export profile file", "", exportFileFilter);
+
+  if (file == "")
+    return;
+
+  prof->exportProf(file);
+}
+
+void SettingsWindow::importProf() {
+  SettingsProfileItem *prof = profiles[currentProfile].get();
+  QString              file = QFileDialog::getOpenFileName(this, "Import profile file", "", exportFileFilter);
+
+  if (file == "")
+    return;
+
+  prof->importProf(file);
+  updateView();
+}
+
 
 int SettingsWindow::execPlotsTab() {
   ui->tabWidget->setCurrentIndex(2);
@@ -779,3 +807,4 @@ void SettingsWindow::leaveRecordingState() {
 }
 
 SettingsProfileItem::Config SettingsWindow::getConfig() { return profiles[currentProfile].get()->cfg; }
+Profile *                   SettingsWindow::getCurrentProfile() { return conf->getProfile(currentProfile.c_str()); }

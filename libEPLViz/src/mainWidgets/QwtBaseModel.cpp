@@ -226,7 +226,7 @@ void QwtBaseModel::showContextMenu(const QPoint &point) {
   }
 
   menu.addActions(actions);
-  menu.exec();
+  menu.exec(plot->mapToGlobal(point));
   actions.clear();
 }
 

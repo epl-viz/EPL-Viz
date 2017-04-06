@@ -54,17 +54,17 @@ void PacketHistoryModel::updateWidget() {
   }
 }
 
-void PacketHistoryModel::changePacket(uint64_t packet) {
+void PacketHistoryModel::changePacket(uint64_t pkg) {
   ProtectedCycle &cycle = BaseModel::getCurrentCycle();
   auto            lock  = cycle.getLock();
 
   vector<Packet> packets = cycle->getPackets();
   string         text;
 
-  if (packet == UINT64_MAX)
+  if (pkg == UINT64_MAX)
     text = "";
-  else if (packet < packets.size())
-    text = packets[packet].getWiresharkString();
+  else if (pkg < packets.size())
+    text = BaseModel::getMainWindow()->getCaptureInstance()->getInputHandler()->generateWiresharkString(packets[pkg]);
   else
     text = "Packet out of bounds";
 

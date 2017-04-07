@@ -68,7 +68,6 @@ class MainWindow : public QMainWindow {
   typedef std::unique_ptr<EPL_DataCollect::CaptureInstance> CI_PTR;
 
  private:
-  uint32_t maxCycle = 0;
   uint32_t curCycle = UINT32_MAX;
 
   GUIState pausedState = GUIState::PAUSED;
@@ -128,9 +127,6 @@ class MainWindow : public QMainWindow {
 
   void setFilters(std::vector<EPL_DataCollect::CSViewFilters::Filter> f);
   EPL_DataCollect::CSViewFilters::Filter getFilter();
-
-  uint32_t getMaxCycle() const noexcept { return maxCycle; }
-  void setMaxCycle(uint32_t c) noexcept { maxCycle = c; }
 
  protected:
   void closeEvent(QCloseEvent *event) override;

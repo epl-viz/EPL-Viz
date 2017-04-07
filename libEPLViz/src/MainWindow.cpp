@@ -524,7 +524,6 @@ void MainWindow::changeState(GUIState nState) {
 
       if (machineState == GUIState::STOPPED || machineState == GUIState::PLAYING) {
         // Reset local variables
-        maxCycle    = 0;
         curCycle    = UINT32_MAX;
         pausedState = GUIState::PAUSED;
         file        = "";
@@ -710,7 +709,6 @@ void MainWindow::config() {
   // Notify widgets that recording/playback has started
   emit recordingStarted(getCaptureInstance());
   CS->getWidget()->clearFilters();
-  maxCycle = 0;
   getCycleSetter()->getWidget()->checkButtons();
   getCycleSetter()->getWidget()->setValue(0);
 

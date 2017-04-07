@@ -106,10 +106,6 @@ bool BaseModel::updateAll(MainWindow *mw, CaptureInstance *instance) {
     // qDebug() << "[" << cycle->getCycleNum() << "] DONE     " << i->getName();
   }
 
-  uint32_t cycleNum = cycle->getCycleNum();
-  if (cycleNum > mw->getMaxCycle())
-    mw->setMaxCycle(cycleNum);
-
   return true;
 }
 

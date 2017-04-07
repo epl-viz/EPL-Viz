@@ -343,6 +343,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>counter</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>CycleSetter</receiver>
+   <slot>changeTempCycle(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>486</x>
+     <y>18</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>337</x>
+     <y>18</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>changeCycle()</slot>
@@ -351,5 +367,6 @@
   <slot>skipF()</slot>
   <slot>skipB()</slot>
   <slot>fitTime()</slot>
+  <slot>changeTempCycle(int)</slot>
  </slots>
 </ui>

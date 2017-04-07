@@ -33,8 +33,6 @@
 
 namespace EPL_Viz {
 
-class MainWindow;
-
 class Profile {
  private:
   QSettings *settings;
@@ -46,9 +44,6 @@ class Profile {
   ~Profile() = default;
 
   QString getName();
-
-  void writeWindowSettings(MainWindow *window);
-  void readWindowSettings(MainWindow *window);
 
   void writeInterface(QString interface);
   /**

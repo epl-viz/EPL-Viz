@@ -81,7 +81,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
   ui->eventViewer->setMainWindow(this);
   ui->networkGraphContents->setMainWindow(this);
   ui->statusBar->addPermanentWidget(progressBar);
-  tabifyDockWidget(ui->dockOD, ui->dockCurrent);
 
   CS = new CycleSetterAction(ui->toolBar, this);
   ui->toolBar->addAction(CS);
@@ -100,7 +99,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
           this,
           SLOT(selectCycle(uint32_t))); // Allow the event viewer widget to change cycle as well
 
-  profileManager->getDefaultProfile()->readWindowSettings(this);
+  profileManager->readWindowSettings(this);
   captureInstance = std::make_unique<CaptureInstance>();
 
   settingsWin = new SettingsWindow(this, profileManager);
@@ -751,7 +750,7 @@ EPL_DataCollect::CSViewFilters::Filter MainWindow::getFilter() {
 }
 
 void MainWindow::closeEvent(QCloseEvent *event) {
-  profileManager->getDefaultProfile()->writeWindowSettings(this);
+  profileManager->writeWindowSettings(this);
   emit close();
   event->accept();
 }

@@ -60,7 +60,9 @@ class ProfileManager {
   std::vector<QString> getProfiles();
   void deleteProfile(QString profileName);
 
-  void setDefaultProfile(Profile *profile);
+  void writeWindowSettings(MainWindow *window);
+  void readWindowSettings(MainWindow *window);
+
   QSettings *getRawSettings();
 };
 }

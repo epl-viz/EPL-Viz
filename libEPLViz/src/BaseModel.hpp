@@ -92,6 +92,7 @@ class BaseModel {
   static uint32_t                 appID;
   static ProtectedCycle           cycle;
   static bool                     forceUpdate;
+  static std::mutex               updateLocker;
   MainWindow *                    mainWindow;
 
 
@@ -120,6 +121,8 @@ class BaseModel {
   virtual QString getName() = 0;
 
   virtual bool needUpdateAlways();
+
+  static std::unique_lock<std::mutex> getUpdateLock() { return std::unique_lock<std::mutex>(updateLocker); }
 
  protected:
   virtual void update()       = 0;

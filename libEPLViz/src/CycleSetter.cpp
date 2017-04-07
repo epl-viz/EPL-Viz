@@ -93,8 +93,6 @@ void CycleSetter::changeTempCycle(int) {
   if (val == lastValueSet)
     return;
 
-  qDebug() << "SET CYCLE: " << val << " -- " << lastValueSet;
-
   lastValueSet = UINT32_MAX;
 
   mw->changeCycle(val);

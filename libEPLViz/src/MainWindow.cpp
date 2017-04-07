@@ -535,7 +535,10 @@ void MainWindow::changeState(GUIState nState) {
         emit resetGUI();
       }
 
-      captureInstance = std::make_unique<CaptureInstance>();
+      {
+        auto lock       = BaseModel::getUpdateLock();
+        captureInstance = std::make_unique<CaptureInstance>();
+      }
 
       ui->statusBar->showMessage("New");
       progressBar->setMaximum(1000);

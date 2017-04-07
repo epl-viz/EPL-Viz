@@ -188,9 +188,9 @@ void MainWindow::createModels() {
           curODModel,
           SLOT(showContextMenu(const QPoint &)));
   connect(curODModel,
-          SIGNAL(drawingPlot(uint8_t, uint16_t, uint16_t, std::string, QColor)),
-          qwtPlot,
-          SLOT(createPlot(uint8_t, uint16_t, uint16_t, std::string, QColor)));
+          SIGNAL(drawingPlot(uint8_t, uint16_t, uint8_t, std::string, QColor)),
+          settingsWin,
+          SLOT(createPlot(uint8_t, uint16_t, uint8_t, std::string, QColor)));
   // Connect Setup Plot
   connect(ui->actionSetup_Plot, SIGNAL(triggered()), this, SLOT(setupPlot()));
 

@@ -606,6 +606,30 @@ void SettingsWindow::plotClear() {
   updateView();
 }
 
+void SettingsWindow::createPlot(uint8_t nodeID, uint16_t index, uint8_t subIndex, std::string cs, QColor color) {
+  show();
+  ui->tabWidget->setCurrentIndex(2);
+
+  SettingsProfileItem *prof = profiles[currentProfile].get();
+
+  PlotCreator::PlotCreatorData pData;
+  pData.index         = index;
+  pData.subIndex      = subIndex;
+  pData.node          = nodeID;
+  pData.csName        = cs;
+  pData.defaultODPlot = cs.empty();
+  pData.color         = color;
+  pData.addToPlot     = true;
+  pData.addToTimeLine = true;
+
+  auto newPlt = PlotCreator::getNewPlot(&pData);
+  if (!newPlt.isOK)
+    return;
+
+  prof->cfg.plots.emplace_back(newPlt);
+  updateView();
+}
+
 const QString exportFileFilter = "EPL-Viz Profiles (*.eplProf);; All Files (*)";
 
 void SettingsWindow::exportProf() {

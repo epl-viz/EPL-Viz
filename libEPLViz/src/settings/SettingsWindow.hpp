@@ -90,6 +90,8 @@ class SettingsWindow : public QDialog {
   void plotDelete();
   void plotClear();
 
+  void createPlot(uint8_t nodeID, uint16_t index, uint8_t subIndex, std::string cs, QColor color);
+
  signals:
   void settingsUpdated();
 

@@ -244,12 +244,23 @@ void CurrentODModel::showContextMenu(const QPoint &pos) {
   QMenu myMenu;
   myMenu.addAction("Draw Plot");
 
-  QModelIndex index = view->indexAt(pos);
-  if (index.isValid()) {
-    QAction *selectedAction = myMenu.exec(view->mapToGlobal(pos));
-    if (selectedAction) {
-      CurODModelItem *item = static_cast<CurODModelItem *>(index.internalPointer());
-      emit            drawingPlot(node, item->getIndex(), item->getSubIndex(), "", QColor(0, 0, 0));
-    }
+  QModelIndex ind = view->indexAt(pos);
+
+  if (!ind.isValid())
+    return;
+
+  // Why is this necessary???
+  ind = index(ind.row(), ind.column(), ind.parent());
+  if (!ind.isValid())
+    return;
+
+  CurODModelItem *item           = static_cast<CurODModelItem *>(getItem(ind));
+  QAction *       selectedAction = myMenu.exec(view->mapToGlobal(pos));
+  if (selectedAction) {
+    emit drawingPlot(node,
+                     item->getIndex(),
+                     static_cast<uint8_t>(item->getSubIndex() > UINT8_MAX ? 0 : item->getSubIndex()),
+                     "",
+                     QColor(rand() % 255, rand() % 255, rand() % 255));
   }
 }

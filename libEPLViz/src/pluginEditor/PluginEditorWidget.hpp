@@ -27,21 +27,30 @@
  */
 
 #pragma once
+#ifdef USE_KTEXTEDITOR
 #include <KTextEditor/Document>
 #include <KTextEditor/Editor>
 #include <KTextEditor/View>
+#endif
 #include <QFile>
+#include <QFileInfo>
 #include <QGridLayout>
+#include <QMap>
 #include <QMessageBox>
+#include <QUrl>
 #include <QWidget>
 
 class PluginEditorWidget : public QWidget {
   Q_OBJECT
 
  private:
-  KTextEditor::Document *doc    = nullptr;
-  KTextEditor::View *    view   = nullptr;
-  QGridLayout *          layout = nullptr;
+#ifdef USE_KTEXTEDITOR
+  KTextEditor::Document *doc  = nullptr;
+  KTextEditor::View *    view = nullptr;
+#else
+  QMap<QString, QString> files;
+#endif
+  QGridLayout *layout = nullptr;
 
   bool showStatusBar = false;
 

@@ -29,6 +29,7 @@
 
 include( FindPackageHandleStandardArgs )
 
+find_library( QWT_LIBRARIES NAMES qwt qwt-qt5 HINTS ${QWT_ROOT}/lib )
 find_path(
   QWT_INCLUDE_DIRS
     NAMES qwt.h
@@ -38,14 +39,22 @@ find_path(
       ${QWT_ROOT}/include/qwt
 )
 
-find_library( QWT_LIBRARIES NAMES qwt qwt-qt5 HINTS ${QWT_ROOT}/lib )
+if( QWT_LIBRARIES MATCHES ".*\.framework" )
+    set(QWT_INCLUDE_DIRS "${QWT_LIBRARIES}/Headers")
+endif()
 
 find_package_handle_standard_args(QWT REQUIRED_VARS QWT_LIBRARIES QWT_INCLUDE_DIRS)
 
+
 if( QWT_FOUND )
-  if( NOT TARGET Qwt::Qwt )
+if( NOT TARGET Qwt::Qwt )
     add_library( Qwt::Qwt UNKNOWN IMPORTED )
-    set_target_properties( Qwt::Qwt PROPERTIES INTERFACE_INCLUDE_DIRECTORIES "${QWT_INCLUDE_DIRS}" )
-    set_target_properties( Qwt::Qwt PROPERTIES IMPORTED_LOCATION "${QWT_LIBRARIES}" )
-  endif( NOT TARGET Qwt::Qwt )
+    if(APPLE)
+        set_target_properties( Qwt::Qwt PROPERTIES INTERFACE_INCLUDE_DIRECTORIES "${QWT_INCLUDE_DIRS}" )
+        set_target_properties( Qwt::Qwt PROPERTIES IMPORTED_LOCATION "${QWT_LIBRARIES}/qwt" )
+    else()
+        set_target_properties( Qwt::Qwt PROPERTIES INTERFACE_INCLUDE_DIRECTORIES "${QWT_INCLUDE_DIRS}" )
+        set_target_properties( Qwt::Qwt PROPERTIES IMPORTED_LOCATION "${QWT_LIBRARIES}" )
+    endif()
+    endif( NOT TARGET Qwt::Qwt )
 endif( QWT_FOUND )

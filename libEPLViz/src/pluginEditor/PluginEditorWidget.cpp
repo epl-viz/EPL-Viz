@@ -284,6 +284,7 @@ void PluginEditorWidget::openFile(QUrl file) {
 
 void PluginEditorWidget::cleanUp() {
   emit pluginsSaved(files);
+  files.clear();
   emit cleanupDone();
 }
 

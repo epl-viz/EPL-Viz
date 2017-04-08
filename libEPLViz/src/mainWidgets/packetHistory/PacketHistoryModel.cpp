@@ -50,7 +50,6 @@ void PacketHistoryModel::updateWidget() {
   // Don't reset if cycle didn't change
   if (lastCycle != currCycle) {
     changePacket(0);
-    lastCycle = currCycle;
   }
 }
 

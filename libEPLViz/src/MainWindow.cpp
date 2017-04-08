@@ -259,7 +259,12 @@ void MainWindow::updateProgress() {
   if (machineState == GUIState::RECORDING || machineState == GUIState::PLAYING || machineState == GUIState::PAUSED) {
     if (fileSize > 0 && fileSize != UINT64_MAX) {
       progressBar->setMaximum(1000);
-      progressBar->setValue(static_cast<int>((captureInstance->getCurrentFileProcessingOffset() * 1000) / fileSize));
+
+      uint64_t offset = captureInstance->getCurrentFileProcessingOffset();
+      if (offset == 0)
+        offset = captureInstance->getInputHandler()->getNumBytesRead();
+
+      progressBar->setValue(static_cast<int>((offset * 1000) / fileSize));
     } else {
       progressBar->setMaximum(0);
     }

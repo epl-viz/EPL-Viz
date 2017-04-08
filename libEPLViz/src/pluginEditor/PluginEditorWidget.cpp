@@ -36,7 +36,7 @@ PluginEditorWidget::PluginEditorWidget(QWidget *parent) : QWidget(parent) { layo
 
 PluginEditorWidget::~PluginEditorWidget() {}
 
-#ifdef USE_KTEXTEDITOR
+#if USE_KTEXTEDITOR
 
 void PluginEditorWidget::selectPlugin(QString plugin) {
   // Find the specified document for the given plugin

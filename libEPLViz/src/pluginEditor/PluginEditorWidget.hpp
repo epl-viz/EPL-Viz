@@ -27,7 +27,8 @@
  */
 
 #pragma once
-#ifdef USE_KTEXTEDITOR
+#include "EPLVizDefines.hpp"
+#if USE_KTEXTEDITOR
 #include <KTextEditor/Document>
 #include <KTextEditor/Editor>
 #include <KTextEditor/View>
@@ -44,7 +45,7 @@ class PluginEditorWidget : public QWidget {
   Q_OBJECT
 
  private:
-#ifdef USE_KTEXTEDITOR
+#if USE_KTEXTEDITOR
   KTextEditor::Document *doc  = nullptr;
   KTextEditor::View *    view = nullptr;
 #else

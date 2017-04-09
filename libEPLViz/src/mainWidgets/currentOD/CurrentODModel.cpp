@@ -254,13 +254,25 @@ void CurrentODModel::showContextMenu(const QPoint &pos) {
   if (!ind.isValid())
     return;
 
-  CurODModelItem *item           = static_cast<CurODModelItem *>(getItem(ind));
-  QAction *       selectedAction = myMenu.exec(view->mapToGlobal(pos));
-  if (selectedAction) {
+  CurODModelItem *   item           = dynamic_cast<CurODModelItem *>(getItem(ind));
+  CurODCycleStorage *csItem         = dynamic_cast<CurODCycleStorage *>(getItem(ind));
+  QAction *          selectedAction = myMenu.exec(view->mapToGlobal(pos));
+  QColor             color(rand() % 255, rand() % 255, rand() % 255);
+
+  if (!selectedAction)
+    return;
+
+  if (item) {
     emit drawingPlot(node,
                      item->getIndex(),
                      static_cast<uint8_t>(item->getSubIndex() > UINT8_MAX ? 0 : item->getSubIndex()),
                      "",
-                     QColor(rand() % 255, rand() % 255, rand() % 255));
+                     color);
+    return;
+  }
+
+  if (csItem) {
+    emit drawingPlot(node, 0, 0, csItem->getIndex(), color);
+    return;
   }
 }

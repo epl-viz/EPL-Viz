@@ -27,6 +27,7 @@
 #include "SettingsWindow.hpp"
 #include "EPLVizDefines.hpp"
 #include "SettingsProfileItem.hpp"
+#include "SettingsWriter.hpp"
 #include "ui_settingswindow.h"
 #include <QColorDialog>
 #include <QFileDialog>
@@ -37,6 +38,7 @@
 
 using namespace EPL_Viz;
 using namespace EPL_Viz::constants;
+using namespace std::chrono;
 
 const QRegExp colSetReg("^COL_S_\\w+$");
 const QRegExp colClearReg("^COL_C_\\w+$");
@@ -125,6 +127,7 @@ void SettingsWindow::updateView(bool updateNodes) {
   SettingsProfileItem *prof = profiles[currentProfile].get();
   ui->G_XDDDir->setText(prof->cfg.backConf.xddDir.c_str());
   ui->G_PausePlay->setCheckState(prof->cfg.pauseWhilePlayingFile ? Qt::Checked : Qt::Unchecked);
+  ui->TL_ChancheCycleImm->setCheckState(prof->cfg.immidiateCycleChange ? Qt::Checked : Qt::Unchecked);
   ui->TL_Invert->setCheckState(prof->cfg.invertTimeLineZoom ? Qt::Checked : Qt::Unchecked);
   ui->G_SleepTime->setValue(static_cast<int>(prof->cfg.guiThreadWaitTime.count()));
   ui->SM_interval->setValue(static_cast<int>(prof->cfg.backConf.smConfig.saveInterval));
@@ -135,6 +138,7 @@ void SettingsWindow::updateView(bool updateNodes) {
   ui->IH_CheckPrefetch->setValue(static_cast<int>(prof->cfg.backConf.ihConfig.checkPrefetch));
   ui->IH_DeleteCyclesAfter->setValue(static_cast<int>(prof->cfg.backConf.ihConfig.deleteCyclesAfter.count()));
   ui->IH_LoopWait->setValue(static_cast<int>(prof->cfg.backConf.ihConfig.loopWaitTimeout.count()));
+  ui->IH_PreSoCCycles->setCheckState(prof->cfg.backConf.ihConfig.enablePreSOCCycles ? Qt::Checked : Qt::Unchecked);
 
   std::vector<std::pair<QFrame *, QColor *>> colorSelctor = {
         {ui->COL_ODHighlight, &prof->cfg.odHighlight},
@@ -201,19 +205,22 @@ void SettingsWindow::updateView(bool updateNodes) {
 }
 
 void SettingsWindow::saveIntoProfiles() {
-  SettingsProfileItem *prof                     = profiles[currentProfile].get();
-  prof->cfg.backConf.xddDir                     = ui->G_XDDDir->text().toStdString();
-  prof->cfg.pauseWhilePlayingFile               = ui->G_PausePlay->checkState() == Qt::Checked;
-  prof->cfg.invertTimeLineZoom                  = ui->TL_Invert->checkState() == Qt::Checked;
-  prof->cfg.guiThreadWaitTime                   = std::chrono::milliseconds(ui->G_SleepTime->value());
-  prof->cfg.backConf.smConfig.saveInterval      = static_cast<uint32_t>(ui->SM_interval->value());
-  prof->cfg.pythonPluginsDir                    = ui->PY_pluginDIR->text().toStdString();
-  prof->cfg.backConf.ihConfig.eplFrameName      = ui->IH_EPLFrameName->text().toStdString();
-  prof->cfg.backConf.ihConfig.prefetchSize      = static_cast<uint8_t>(ui->IH_Prefetch->value());
-  prof->cfg.backConf.ihConfig.cleanupInterval   = static_cast<uint8_t>(ui->IH_CleanupI->value());
-  prof->cfg.backConf.ihConfig.checkPrefetch     = static_cast<uint8_t>(ui->IH_CheckPrefetch->value());
-  prof->cfg.backConf.ihConfig.deleteCyclesAfter = std::chrono::milliseconds(ui->IH_DeleteCyclesAfter->value());
-  prof->cfg.backConf.ihConfig.loopWaitTimeout   = std::chrono::milliseconds(ui->IH_LoopWait->value());
+  SettingsProfileItem *prof                      = profiles[currentProfile].get();
+  prof->cfg.backConf.xddDir                      = ui->G_XDDDir->text().toStdString();
+  prof->cfg.pauseWhilePlayingFile                = ui->G_PausePlay->checkState() == Qt::Checked;
+  prof->cfg.immidiateCycleChange                 = ui->TL_ChancheCycleImm->checkState() == Qt::Checked;
+  prof->cfg.invertTimeLineZoom                   = ui->TL_Invert->checkState() == Qt::Checked;
+  prof->cfg.guiThreadWaitTime                    = milliseconds(ui->G_SleepTime->value());
+  prof->cfg.backConf.smConfig.saveInterval       = static_cast<uint32_t>(ui->SM_interval->value());
+  prof->cfg.pythonPluginsDir                     = ui->PY_pluginDIR->text().toStdString();
+  prof->cfg.backConf.ihConfig.eplFrameName       = ui->IH_EPLFrameName->text().toStdString();
+  prof->cfg.backConf.ihConfig.prefetchSize       = static_cast<uint8_t>(ui->IH_Prefetch->value());
+  prof->cfg.backConf.ihConfig.cleanupInterval    = static_cast<uint8_t>(ui->IH_CleanupI->value());
+  prof->cfg.backConf.ihConfig.checkPrefetch      = static_cast<uint8_t>(ui->IH_CheckPrefetch->value());
+  prof->cfg.backConf.ihConfig.deleteCyclesAfter  = milliseconds(ui->IH_DeleteCyclesAfter->value());
+  prof->cfg.backConf.ihConfig.loopWaitTimeout    = milliseconds(ui->IH_LoopWait->value());
+  prof->cfg.backConf.ihConfig.enablePreSOCCycles = ui->IH_PreSoCCycles->checkState() == Qt::Checked;
+
 
   std::vector<std::pair<QFrame *, QColor *>> colorSelctor = {
         {ui->COL_ODHighlight, &prof->cfg.odHighlight},
@@ -285,185 +292,17 @@ void SettingsWindow::saveIntoProfiles() {
 }
 
 void SettingsWindow::loadConfig() {
-  SettingsProfileItem *prof       = profiles[currentProfile].get();
-  Profile *            sp         = conf->getProfile(currentProfile.c_str());
-  prof->cfg.backConf.xddDir       = sp->readCustomValue("EPL_DC/xddDir").toString().toStdString();
-  prof->cfg.pauseWhilePlayingFile = sp->readCustomValue("pauseWhilePlayingFile").toBool();
-  prof->cfg.invertTimeLineZoom    = sp->readCustomValue("invertTimeLineZoom").toBool();
-  prof->cfg.guiThreadWaitTime     = std::chrono::milliseconds(sp->readCustomValue("guiThreadWaitTime").toInt());
-  prof->cfg.backConf.smConfig.saveInterval =
-        static_cast<uint32_t>(sp->readCustomValue("EPL_DC/SM/saveInterval").toInt());
-  prof->cfg.pythonPluginsDir               = sp->readCustomValue("pythonPluginsDir").toString().toStdString();
-  prof->cfg.backConf.ihConfig.eplFrameName = sp->readCustomValue("EPL_DC/IH/eplFrameName").toString().toStdString();
-  prof->cfg.backConf.ihConfig.prefetchSize =
-        static_cast<uint8_t>(sp->readCustomValue("EPL_DC/IH/prefetchSize").toInt());
-  prof->cfg.backConf.ihConfig.cleanupInterval =
-        static_cast<uint8_t>(sp->readCustomValue("EPL_DC/IH/cleanupInterval").toInt());
-  prof->cfg.backConf.ihConfig.checkPrefetch =
-        static_cast<uint8_t>(sp->readCustomValue("EPL_DC/IH/checkPrefetch").toInt());
-  prof->cfg.backConf.ihConfig.deleteCyclesAfter =
-        std::chrono::milliseconds(sp->readCustomValue("EPL_DC/IH/deleteCyclesAfter").toInt());
-  prof->cfg.backConf.ihConfig.loopWaitTimeout =
-        std::chrono::milliseconds(sp->readCustomValue("EPL_DC/IH/loopWaitTimeout").toInt());
-
-  std::vector<std::pair<QString, QColor *>> colorSelctor = {
-        {"COL_odHighlight", &prof->cfg.odHighlight},
-        {"COL_PASnd", &prof->cfg.pASnd},
-        {"COL_pInvalid", &prof->cfg.pInvalid},
-        {"COL_pPReq", &prof->cfg.pPReq},
-        {"COL_pPRes", &prof->cfg.pPRes},
-        {"COL_pSoA", &prof->cfg.pSoA},
-        {"COL_pSoC", &prof->cfg.pSoC},
-        {"COL_ANMI", &prof->cfg.pANMI},
-        {"COL_AINV", &prof->cfg.pAINV},
-
-        {"COL_ProtoError", &prof->cfg.evProtoError},
-        {"COL_Error", &prof->cfg.evError},
-        {"COL_Warning", &prof->cfg.evWarning},
-        {"COL_Info", &prof->cfg.evInfo},
-        {"COL_Debug", &prof->cfg.evDebug},
-        {"COL_PText", &prof->cfg.evPText},
-
-        {"COL_nHighlighted", &prof->cfg.NMT_Highlighted},
-        {"COL_NMTOFF", &prof->cfg.NMT_OFF},
-        {"COL_INITIALISING", &prof->cfg.NMT_INITIALISING},
-        {"COL_RESET_APPLICATION", &prof->cfg.NMT_RESET_APPLICATION},
-        {"COL_RESET_COMMUNICATION", &prof->cfg.NMT_RESET_COMMUNICATION},
-        {"COL_RESET_CONFIGURATION", &prof->cfg.NMT_RESET_CONFIGURATION},
-        {"COL_NOT_ACTIVE", &prof->cfg.NMT_NOT_ACTIVE},
-        {"COL_PRE_OPERATIONAL_1", &prof->cfg.NMT_PRE_OPERATIONAL_1},
-        {"COL_PRE_OPERATIONAL_2", &prof->cfg.NMT_PRE_OPERATIONAL_2},
-        {"COL_READY_TO_OPERATE", &prof->cfg.NMT_READY_TO_OPERATE},
-        {"COL_OPERATIONAL", &prof->cfg.NMT_OPERATIONAL},
-        {"COL_STOPPED", &prof->cfg.NMT_STOPPED},
-        {"COL_BASIC_ETHERNET", &prof->cfg.NMT_BASIC_ETHERNET},
-  };
-
-  for (auto i : colorSelctor) {
-    i.second->setNamedColor(sp->readCustomValue(i.first).toString());
-  }
-
-  prof->cfg.nodes.clear();
-  prof->cfg.plots.clear();
-
-  int size = sp->beginReadArray("nodes");
-  for (int i = 0; i < size; ++i) {
-    sp->setArrayIndex(i);
-    int         index                                = sp->readCustomValue("id").toInt();
-    bool        autoDed                              = sp->readCustomValue("autoDeduceSpecificProfile").toBool();
-    std::string base                                 = sp->readCustomValue("baseProfile").toString().toStdString();
-    std::string specificProfile                      = sp->readCustomValue("specificProfile").toString().toStdString();
-    prof->cfg.nodes[index].autoDeduceSpecificProfile = autoDed;
-    prof->cfg.nodes[index].baseProfile               = base;
-    prof->cfg.nodes[index].specificProfile           = specificProfile;
-  }
-  sp->endArray();
-
-  size = sp->beginReadArray("plots");
-  for (int i = 0; i < size; ++i) {
-    sp->setArrayIndex(i);
-    prof->cfg.plots.emplace_back();
-    auto &plt = prof->cfg.plots.back();
-
-    plt.isOK          = true;
-    plt.defaultODPlot = sp->readCustomValue("defaultODPlot").toBool();
-    plt.node          = static_cast<uint8_t>(sp->readCustomValue("node").toInt());
-    plt.index         = static_cast<uint16_t>(sp->readCustomValue("index").toInt());
-    plt.subIndex      = static_cast<uint8_t>(sp->readCustomValue("subIndex").toInt());
-    plt.addToTimeLine = sp->readCustomValue("addToTimeLine").toBool();
-    plt.addToPlot     = sp->readCustomValue("addToPlot").toBool();
-    plt.csName        = sp->readCustomValue("csName").toString().toStdString();
-    plt.color.setNamedColor(sp->readCustomValue("color").toString());
-  }
-  sp->endArray();
+  SettingsProfileItem *prof = profiles[currentProfile].get();
+  Profile *            sp   = conf->getProfile(currentProfile.c_str());
+  SettingsWriter       writer(sp);
+  prof->readCfg(&writer);
 }
 
 void SettingsWindow::saveConfig() {
   SettingsProfileItem *prof = profiles[currentProfile].get();
   Profile *            sp   = conf->getProfile(currentProfile.c_str());
-  sp->writeCustomValue("EPL_DC/xddDir", prof->cfg.backConf.xddDir.c_str());
-  sp->writeCustomValue("pauseWhilePlayingFile", prof->cfg.pauseWhilePlayingFile);
-  sp->writeCustomValue("invertTimeLineZoom", prof->cfg.invertTimeLineZoom);
-  sp->writeCustomValue("guiThreadWaitTime", static_cast<int>(prof->cfg.guiThreadWaitTime.count()));
-  sp->writeCustomValue("EPL_DC/SM/saveInterval", prof->cfg.backConf.smConfig.saveInterval);
-  sp->writeCustomValue("pythonPluginsDir", prof->cfg.pythonPluginsDir.c_str());
-  sp->writeCustomValue("EPL_DC/IH/eplFrameName", prof->cfg.backConf.ihConfig.eplFrameName.c_str());
-  sp->writeCustomValue("EPL_DC/IH/prefetchSize", prof->cfg.backConf.ihConfig.prefetchSize);
-  sp->writeCustomValue("EPL_DC/IH/cleanupInterval", prof->cfg.backConf.ihConfig.cleanupInterval);
-  sp->writeCustomValue("EPL_DC/IH/checkPrefetch", prof->cfg.backConf.ihConfig.checkPrefetch);
-  sp->writeCustomValue("EPL_DC/IH/deleteCyclesAfter",
-                       static_cast<int>(prof->cfg.backConf.ihConfig.deleteCyclesAfter.count()));
-  sp->writeCustomValue("EPL_DC/IH/loopWaitTimeout",
-                       static_cast<int>(prof->cfg.backConf.ihConfig.loopWaitTimeout.count()));
-
-  std::vector<std::pair<QString, QColor *>> colorSelctor = {
-        {"COL_odHighlight", &prof->cfg.odHighlight},
-        {"COL_PASnd", &prof->cfg.pASnd},
-        {"COL_pInvalid", &prof->cfg.pInvalid},
-        {"COL_pPReq", &prof->cfg.pPReq},
-        {"COL_pPRes", &prof->cfg.pPRes},
-        {"COL_pSoA", &prof->cfg.pSoA},
-        {"COL_pSoC", &prof->cfg.pSoC},
-        {"COL_ANMI", &prof->cfg.pANMI},
-        {"COL_AINV", &prof->cfg.pAINV},
-
-        {"COL_ProtoError", &prof->cfg.evProtoError},
-        {"COL_Error", &prof->cfg.evError},
-        {"COL_Warning", &prof->cfg.evWarning},
-        {"COL_Info", &prof->cfg.evInfo},
-        {"COL_Debug", &prof->cfg.evDebug},
-        {"COL_PText", &prof->cfg.evPText},
-
-        {"COL_nHighlighted", &prof->cfg.NMT_Highlighted},
-        {"COL_NMTOFF", &prof->cfg.NMT_OFF},
-        {"COL_INITIALISING", &prof->cfg.NMT_INITIALISING},
-        {"COL_RESET_APPLICATION", &prof->cfg.NMT_RESET_APPLICATION},
-        {"COL_RESET_COMMUNICATION", &prof->cfg.NMT_RESET_COMMUNICATION},
-        {"COL_RESET_CONFIGURATION", &prof->cfg.NMT_RESET_CONFIGURATION},
-        {"COL_NOT_ACTIVE", &prof->cfg.NMT_NOT_ACTIVE},
-        {"COL_PRE_OPERATIONAL_1", &prof->cfg.NMT_PRE_OPERATIONAL_1},
-        {"COL_PRE_OPERATIONAL_2", &prof->cfg.NMT_PRE_OPERATIONAL_2},
-        {"COL_READY_TO_OPERATE", &prof->cfg.NMT_READY_TO_OPERATE},
-        {"COL_OPERATIONAL", &prof->cfg.NMT_OPERATIONAL},
-        {"COL_STOPPED", &prof->cfg.NMT_STOPPED},
-        {"COL_BASIC_ETHERNET", &prof->cfg.NMT_BASIC_ETHERNET},
-  };
-
-  for (auto i : colorSelctor) {
-    if (i.second->isValid()) {
-      sp->writeCustomValue(i.first, i.second->name());
-    } else {
-      sp->writeCustomValue(i.first, "<NOT SET>");
-    }
-  }
-
-  sp->beginWriteArray("nodes");
-  int counter = 0;
-  for (auto i : prof->cfg.nodes) {
-    sp->setArrayIndex(counter);
-    sp->writeCustomValue("id", i.first);
-    sp->writeCustomValue("autoDeduceSpecificProfile", i.second.autoDeduceSpecificProfile);
-    sp->writeCustomValue("baseProfile", i.second.baseProfile.c_str());
-    sp->writeCustomValue("specificProfile", i.second.specificProfile.c_str());
-    ++counter;
-  }
-  sp->endArray();
-
-  sp->beginWriteArray("plots");
-  counter = 0;
-  for (auto i : prof->cfg.plots) {
-    sp->setArrayIndex(counter);
-    sp->writeCustomValue("defaultODPlot", i.defaultODPlot);
-    sp->writeCustomValue("node", static_cast<int>(i.node));
-    sp->writeCustomValue("index", static_cast<int>(i.index));
-    sp->writeCustomValue("subIndex", static_cast<int>(i.subIndex));
-    sp->writeCustomValue("addToTimeLine", i.addToTimeLine);
-    sp->writeCustomValue("addToPlot", i.addToPlot);
-    sp->writeCustomValue("csName", i.csName.c_str());
-    sp->writeCustomValue("color", i.color.name());
-    ++counter;
-  }
-  sp->endArray();
+  SettingsWriter       writer(sp);
+  prof->writeCfg(&writer);
 
   conf->getRawSettings()->setValue("currentProfile", currentProfile.c_str());
   conf->getRawSettings()->sync();
@@ -764,6 +603,30 @@ void SettingsWindow::plotClear() {
 
   SettingsProfileItem *prof = profiles[currentProfile].get();
   prof->cfg.plots.clear();
+  updateView();
+}
+
+void SettingsWindow::createPlot(uint8_t nodeID, uint16_t index, uint8_t subIndex, std::string cs, QColor color) {
+  show();
+  ui->tabWidget->setCurrentIndex(2);
+
+  SettingsProfileItem *prof = profiles[currentProfile].get();
+
+  PlotCreator::PlotCreatorData pData;
+  pData.index         = index;
+  pData.subIndex      = subIndex;
+  pData.node          = nodeID;
+  pData.csName        = cs;
+  pData.defaultODPlot = cs.empty();
+  pData.color         = color;
+  pData.addToPlot     = true;
+  pData.addToTimeLine = true;
+
+  auto newPlt = PlotCreator::getNewPlot(&pData);
+  if (!newPlt.isOK)
+    return;
+
+  prof->cfg.plots.emplace_back(newPlt);
   updateView();
 }
 

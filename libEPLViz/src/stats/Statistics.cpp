@@ -19,6 +19,16 @@ void Statistics::refresh() {
   auto             ihStats = ci->getInputHandler()->getStats();
   ui->List->clear();
 
+  // Make sure not to devide by 0
+  if (stats.cycleCount == 0)
+    stats.cycleCount = 1;
+
+  if (ihStats.packetsParsed == 0)
+    ihStats.packetsParsed = 1;
+
+  if (ihStats.cyclesParsed == 0)
+    ihStats.cyclesParsed = 1;
+
   QList<QTreeWidgetItem *> items;
   QTreeWidgetItem *        pItem = nullptr;
   items.append(new QTreeWidgetItem({"Cycle count", std::to_string(stats.cycleCount).c_str()}));

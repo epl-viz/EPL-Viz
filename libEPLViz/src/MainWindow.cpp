@@ -81,7 +81,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
   ui->eventViewer->setMainWindow(this);
   ui->networkGraphContents->setMainWindow(this);
   ui->statusBar->addPermanentWidget(progressBar);
-  tabifyDockWidget(ui->dockOD, ui->dockCurrent);
 
   CS = new CycleSetterAction(ui->toolBar, this);
   ui->toolBar->addAction(CS);
@@ -100,7 +99,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
           this,
           SLOT(selectCycle(uint32_t))); // Allow the event viewer widget to change cycle as well
 
-  profileManager->getDefaultProfile()->readWindowSettings(this);
+  profileManager->readWindowSettings(this);
   captureInstance = std::make_unique<CaptureInstance>();
 
   settingsWin = new SettingsWindow(this, profileManager);
@@ -188,9 +187,9 @@ void MainWindow::createModels() {
           curODModel,
           SLOT(showContextMenu(const QPoint &)));
   connect(curODModel,
-          SIGNAL(drawingPlot(uint8_t, uint16_t, uint16_t, std::string, QColor)),
-          qwtPlot,
-          SLOT(createPlot(uint8_t, uint16_t, uint16_t, std::string, QColor)));
+          SIGNAL(drawingPlot(uint8_t, uint16_t, uint8_t, std::string, QColor)),
+          settingsWin,
+          SLOT(createPlot(uint8_t, uint16_t, uint8_t, std::string, QColor)));
   // Connect Setup Plot
   connect(ui->actionSetup_Plot, SIGNAL(triggered()), this, SLOT(setupPlot()));
 
@@ -260,7 +259,12 @@ void MainWindow::updateProgress() {
   if (machineState == GUIState::RECORDING || machineState == GUIState::PLAYING || machineState == GUIState::PAUSED) {
     if (fileSize > 0 && fileSize != UINT64_MAX) {
       progressBar->setMaximum(1000);
-      progressBar->setValue(static_cast<int>((captureInstance->getCurrentFileProcessingOffset() * 1000) / fileSize));
+
+      uint64_t offset = captureInstance->getCurrentFileProcessingOffset();
+      if (offset == 0)
+        offset = captureInstance->getInputHandler()->getNumBytesRead();
+
+      progressBar->setValue(static_cast<int>((offset * 1000) / fileSize));
     } else {
       progressBar->setMaximum(0);
     }
@@ -524,7 +528,6 @@ void MainWindow::changeState(GUIState nState) {
 
       if (machineState == GUIState::STOPPED || machineState == GUIState::PLAYING) {
         // Reset local variables
-        maxCycle    = 0;
         curCycle    = UINT32_MAX;
         pausedState = GUIState::PAUSED;
         file        = "";
@@ -536,7 +539,10 @@ void MainWindow::changeState(GUIState nState) {
         emit resetGUI();
       }
 
-      captureInstance = std::make_unique<CaptureInstance>();
+      {
+        auto lock       = BaseModel::getUpdateLock();
+        captureInstance = std::make_unique<CaptureInstance>();
+      }
 
       ui->statusBar->showMessage("New");
       progressBar->setMaximum(1000);
@@ -710,7 +716,6 @@ void MainWindow::config() {
   // Notify widgets that recording/playback has started
   emit recordingStarted(getCaptureInstance());
   CS->getWidget()->clearFilters();
-  maxCycle = 0;
   getCycleSetter()->getWidget()->checkButtons();
   getCycleSetter()->getWidget()->setValue(0);
 
@@ -750,7 +755,7 @@ EPL_DataCollect::CSViewFilters::Filter MainWindow::getFilter() {
 }
 
 void MainWindow::closeEvent(QCloseEvent *event) {
-  profileManager->getDefaultProfile()->writeWindowSettings(this);
+  profileManager->writeWindowSettings(this);
   emit close();
   event->accept();
 }

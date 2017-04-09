@@ -23,46 +23,26 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-/*!
- * \file ProfileManager.hpp
- */
+
 #pragma once
 
+#include "AbstractWriter.hpp"
 #include "Profile.hpp"
-#include <QMap>
-#include <QSettings>
-#include <QString>
-#include <vector>
 
 namespace EPL_Viz {
 
-class MainWindow;
-
-namespace profStrings {
-static const QString DEFAULT_PROF = "Default";
-static const QString PROF_LIST    = "profileList";
-static const QString PROF_ITEM    = "profile";
-}
-
-class ProfileManager {
- private:
-  QSettings *          appSettings;
-  std::vector<QString> profiles;
-
-  void updateProfiles();
+class SettingsWriter final : public AbstractWriter {
+  Profile *prof;
 
  public:
-  ProfileManager();
-  ~ProfileManager();
+  SettingsWriter(Profile *prof);
 
-  Profile *getDefaultProfile();
-  Profile *getProfile(QString profileName);
-  std::vector<QString> getProfiles();
-  void deleteProfile(QString profileName);
+  QVariant value(QString const &str, QVariant const &def = QVariant()) override;
+  void setValue(QString const &str, QVariant const &val) override;
 
-  void writeWindowSettings(MainWindow *window);
-  void readWindowSettings(MainWindow *window);
-
-  QSettings *getRawSettings();
+  void beginWriteArray(QString const &str) override;
+  int beginReadArray(QString const &str) override;
+  void setArrayIndex(int i) override;
+  void endArray() override;
 };
 }

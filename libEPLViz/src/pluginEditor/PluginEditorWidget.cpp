@@ -36,6 +36,8 @@ PluginEditorWidget::PluginEditorWidget(QWidget *parent) : QWidget(parent) { layo
 
 PluginEditorWidget::~PluginEditorWidget() {}
 
+#if USE_KTEXTEDITOR
+
 void PluginEditorWidget::selectPlugin(QString plugin) {
   // Find the specified document for the given plugin
   for (auto d : KTextEditor::Editor::instance()->documents()) {
@@ -255,3 +257,47 @@ void PluginEditorWidget::cleanUp() {
   emit pluginsSaved(savedPlugins);
   emit cleanupDone();
 }
+#else
+// KTextEditor is not in use, create a simple replacement
+// TODO Add code for a simple editor
+
+void PluginEditorWidget::closeDocument(QString name) { files.remove(name); }
+
+void PluginEditorWidget::loadDocument(QUrl fileName) { (void)fileName; }
+
+void PluginEditorWidget::createWidget() {}
+
+void PluginEditorWidget::statusBarToggled(bool enabled) { (void)enabled; }
+
+void PluginEditorWidget::configEditor() {
+  QMessageBox::information(0, "Info", tr("There is currently no configuration for this editor"));
+}
+
+void PluginEditorWidget::selectPlugin(QString plugin) { (void)plugin; }
+
+void PluginEditorWidget::openFile(QUrl file) {
+  QFileInfo fileInfo(file.toLocalFile());
+
+  if (fileInfo.exists() && fileInfo.isFile())
+    files.insert(fileInfo.fileName(), fileInfo.filePath());
+}
+
+void PluginEditorWidget::cleanUp() {
+  emit pluginsSaved(files);
+  files.clear();
+  emit cleanupDone();
+}
+
+void PluginEditorWidget::save() {}
+
+void PluginEditorWidget::saveAs() {}
+
+void PluginEditorWidget::newFile() {}
+
+void PluginEditorWidget::modified() {}
+
+void PluginEditorWidget::nameChange() {}
+
+void PluginEditorWidget::urlChange() {}
+
+#endif

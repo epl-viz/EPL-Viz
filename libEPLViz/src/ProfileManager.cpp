@@ -112,3 +112,17 @@ void ProfileManager::updateProfiles() {
 QSettings *ProfileManager::getRawSettings() { return appSettings; }
 
 std::vector<QString> ProfileManager::getProfiles() { return profiles; }
+
+void ProfileManager::writeWindowSettings(MainWindow *window) {
+  appSettings->beginGroup("MainWindow");
+  appSettings->setValue("geometry", window->saveGeometry());
+  appSettings->setValue("state", window->saveState());
+  appSettings->endGroup();
+}
+
+void ProfileManager::readWindowSettings(MainWindow *window) {
+  appSettings->beginGroup("MainWindow");
+  window->restoreGeometry(appSettings->value("geometry").toByteArray());
+  window->restoreState(appSettings->value("state").toByteArray());
+  appSettings->endGroup();
+}

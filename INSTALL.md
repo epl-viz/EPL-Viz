@@ -9,8 +9,8 @@ sudo add-apt-repository ppa:ubuntu-toolchain-r/test
 sudo apt update
 
 sudo apt install cmake git gcc-6 g++-6
-sudo apt install qt5-default libqt5svg5-dev qtmultimedia5-dev qttools5-dev-tools qtcreator extra-cmake-modules libkf5texteditor-dev
-sudo apt install libglib2.0-dev libkrb5-dev flex liblua5.2-dev zlib1g-dev bison libxml2-dev libgeoip-dev
+sudo apt install qt5-default libqt5svg5-dev qtmultimedia5-dev qttools5-dev-tools extra-cmake-modules libkf5texteditor-dev
+sudo apt install libglib2.0-dev libkrb5-dev flex liblua5.2-dev zlib1g-dev bison libxml2-dev libgeoip-dev libc-ares-dev libssh-gcrypt-dev
 sudo apt install python3.5-dev python3-pip
 
 pip3 install cython

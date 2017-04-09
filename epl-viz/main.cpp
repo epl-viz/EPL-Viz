@@ -11,10 +11,13 @@ using namespace EPL_DataCollect::constants;
 using namespace EPL_Viz;
 using namespace EPL_Viz::constants;
 using namespace std;
+using namespace std::chrono;
 
 int main(int argc, char *argv[]) {
   std::string plDir         = EPL_DC_WS_PLUGINS_DIR;
   std::string installPrefix = EPL_DC_INSTALL_PREFIX;
+
+  srand(static_cast<unsigned int>(system_clock::to_time_t(system_clock::now())));
 
   char *appImageDir = getenv("APPDIR");
   if (appImageDir) {

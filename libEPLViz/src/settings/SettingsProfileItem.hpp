@@ -26,6 +26,7 @@
 
 #pragma once
 
+#include "AbstractWriter.hpp"
 #include "CaptureInstance.hpp"
 #include "PlotCreator.hpp"
 #include <QListWidget>
@@ -44,8 +45,9 @@ class SettingsProfileItem final : public QListWidgetItem {
     std::string               pythonPluginsDir;
     int                       currentNode           = -1;
     bool                      pauseWhilePlayingFile = true;
+    bool                      immidiateCycleChange  = true;
     bool                      invertTimeLineZoom    = true;
-    std::chrono::milliseconds guiThreadWaitTime     = std::chrono::milliseconds(100);
+    std::chrono::milliseconds guiThreadWaitTime     = std::chrono::milliseconds(50);
 
     std::vector<PlotCreator::PlotCreatorData> plots;
 
@@ -90,6 +92,9 @@ class SettingsProfileItem final : public QListWidgetItem {
  public:
   SettingsProfileItem(QString str, QListWidget *parent);
   ~SettingsProfileItem();
+
+  bool writeCfg(AbstractWriter *writer);
+  bool readCfg(AbstractWriter *writer);
 
   bool exportProf(QString file);
   bool importProf(QString file);

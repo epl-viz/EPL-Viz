@@ -25,11 +25,13 @@
  */
 
 #include "SettingsProfileItem.hpp"
+#include "ProfileExporter.hpp"
 #include <QDir>
 #include <QSettings>
 #include <QStandardPaths>
 
 using namespace EPL_Viz;
+using namespace std::chrono;
 
 SettingsProfileItem::~SettingsProfileItem() {}
 
@@ -47,21 +49,21 @@ SettingsProfileItem::Config::Config() {
 
 QString SettingsProfileItem::getName() { return name; }
 
-bool SettingsProfileItem::exportProf(QString file) {
-  QSettings settings(file, QSettings::IniFormat, nullptr);
-
-  settings.setValue("EPL_DC/xddDir", cfg.backConf.xddDir.c_str());
-  settings.setValue("pauseWhilePlayingFile", cfg.pauseWhilePlayingFile);
-  settings.setValue("invertTimeLineZoom", cfg.invertTimeLineZoom);
-  settings.setValue("guiThreadWaitTime", static_cast<int>(cfg.guiThreadWaitTime.count()));
-  settings.setValue("EPL_DC/SM/saveInterval", cfg.backConf.smConfig.saveInterval);
-  settings.setValue("pythonPluginsDir", cfg.pythonPluginsDir.c_str());
-  settings.setValue("EPL_DC/IH/eplFrameName", cfg.backConf.ihConfig.eplFrameName.c_str());
-  settings.setValue("EPL_DC/IH/prefetchSize", cfg.backConf.ihConfig.prefetchSize);
-  settings.setValue("EPL_DC/IH/cleanupInterval", cfg.backConf.ihConfig.cleanupInterval);
-  settings.setValue("EPL_DC/IH/checkPrefetch", cfg.backConf.ihConfig.checkPrefetch);
-  settings.setValue("EPL_DC/IH/deleteCyclesAfter", static_cast<int>(cfg.backConf.ihConfig.deleteCyclesAfter.count()));
-  settings.setValue("EPL_DC/IH/loopWaitTimeout", static_cast<int>(cfg.backConf.ihConfig.loopWaitTimeout.count()));
+bool SettingsProfileItem::writeCfg(AbstractWriter *writer) {
+  writer->setValue("EPL_DC/xddDir", cfg.backConf.xddDir.c_str());
+  writer->setValue("pauseWhilePlayingFile", cfg.pauseWhilePlayingFile);
+  writer->setValue("immidiateCycleChange", cfg.immidiateCycleChange);
+  writer->setValue("invertTimeLineZoom", cfg.invertTimeLineZoom);
+  writer->setValue("guiThreadWaitTime", static_cast<int>(cfg.guiThreadWaitTime.count()));
+  writer->setValue("EPL_DC/SM/saveInterval", cfg.backConf.smConfig.saveInterval);
+  writer->setValue("pythonPluginsDir", cfg.pythonPluginsDir.c_str());
+  writer->setValue("EPL_DC/IH/eplFrameName", cfg.backConf.ihConfig.eplFrameName.c_str());
+  writer->setValue("EPL_DC/IH/prefetchSize", cfg.backConf.ihConfig.prefetchSize);
+  writer->setValue("EPL_DC/IH/cleanupInterval", cfg.backConf.ihConfig.cleanupInterval);
+  writer->setValue("EPL_DC/IH/checkPrefetch", cfg.backConf.ihConfig.checkPrefetch);
+  writer->setValue("EPL_DC/IH/deleteCyclesAfter", static_cast<int>(cfg.backConf.ihConfig.deleteCyclesAfter.count()));
+  writer->setValue("EPL_DC/IH/loopWaitTimeout", static_cast<int>(cfg.backConf.ihConfig.loopWaitTimeout.count()));
+  writer->setValue("EPL_DC/IH/enablePreSOCCycles", cfg.backConf.ihConfig.enablePreSOCCycles);
 
   std::vector<std::pair<QString, QColor *>> colorSelctor = {
         {"COL_odHighlight", &cfg.odHighlight},
@@ -98,60 +100,57 @@ bool SettingsProfileItem::exportProf(QString file) {
 
   for (auto i : colorSelctor) {
     if (i.second->isValid()) {
-      settings.setValue(i.first, i.second->name());
+      writer->setValue(i.first, i.second->name());
     } else {
-      settings.setValue(i.first, "<NOT SET>");
+      writer->setValue(i.first, "<NOT SET>");
     }
   }
 
-  settings.beginWriteArray("nodes");
+  writer->beginWriteArray("nodes");
   int counter = 0;
   for (auto i : cfg.nodes) {
-    settings.setArrayIndex(counter);
-    settings.setValue("id", i.first);
-    settings.setValue("autoDeduceSpecificProfile", i.second.autoDeduceSpecificProfile);
-    settings.setValue("baseProfile", i.second.baseProfile.c_str());
-    settings.setValue("specificProfile", i.second.specificProfile.c_str());
+    writer->setArrayIndex(counter);
+    writer->setValue("id", i.first);
+    writer->setValue("autoDeduceSpecificProfile", i.second.autoDeduceSpecificProfile);
+    writer->setValue("baseProfile", i.second.baseProfile.c_str());
+    writer->setValue("specificProfile", i.second.specificProfile.c_str());
     ++counter;
   }
-  settings.endArray();
+  writer->endArray();
 
-  settings.beginWriteArray("plots");
+  writer->beginWriteArray("plots");
   counter = 0;
   for (auto i : cfg.plots) {
-    settings.setArrayIndex(counter);
-    settings.setValue("defaultODPlot", i.defaultODPlot);
-    settings.setValue("node", static_cast<int>(i.node));
-    settings.setValue("index", static_cast<int>(i.index));
-    settings.setValue("subIndex", static_cast<int>(i.subIndex));
-    settings.setValue("addToTimeLine", i.addToTimeLine);
-    settings.setValue("addToPlot", i.addToPlot);
-    settings.setValue("csName", i.csName.c_str());
-    settings.setValue("color", i.color.name());
+    writer->setArrayIndex(counter);
+    writer->setValue("defaultODPlot", i.defaultODPlot);
+    writer->setValue("node", static_cast<int>(i.node));
+    writer->setValue("index", static_cast<int>(i.index));
+    writer->setValue("subIndex", static_cast<int>(i.subIndex));
+    writer->setValue("addToTimeLine", i.addToTimeLine);
+    writer->setValue("addToPlot", i.addToPlot);
+    writer->setValue("csName", i.csName.c_str());
+    writer->setValue("color", i.color.name());
     ++counter;
   }
-  settings.endArray();
-  settings.sync();
+  writer->endArray();
   return true;
 }
 
-bool SettingsProfileItem::importProf(QString file) {
-  QSettings settings(file, QSettings::IniFormat, nullptr);
-
-  cfg.backConf.xddDir                   = settings.value("EPL_DC/xddDir").toString().toStdString();
-  cfg.pauseWhilePlayingFile             = settings.value("pauseWhilePlayingFile").toBool();
-  cfg.invertTimeLineZoom                = settings.value("invertTimeLineZoom").toBool();
-  cfg.guiThreadWaitTime                 = std::chrono::milliseconds(settings.value("guiThreadWaitTime").toInt());
-  cfg.backConf.smConfig.saveInterval    = static_cast<uint32_t>(settings.value("EPL_DC/SM/saveInterval").toInt());
-  cfg.pythonPluginsDir                  = settings.value("pythonPluginsDir").toString().toStdString();
-  cfg.backConf.ihConfig.eplFrameName    = settings.value("EPL_DC/IH/eplFrameName").toString().toStdString();
-  cfg.backConf.ihConfig.prefetchSize    = static_cast<uint8_t>(settings.value("EPL_DC/IH/prefetchSize").toInt());
-  cfg.backConf.ihConfig.cleanupInterval = static_cast<uint8_t>(settings.value("EPL_DC/IH/cleanupInterval").toInt());
-  cfg.backConf.ihConfig.checkPrefetch   = static_cast<uint8_t>(settings.value("EPL_DC/IH/checkPrefetch").toInt());
-  cfg.backConf.ihConfig.deleteCyclesAfter =
-        std::chrono::milliseconds(settings.value("EPL_DC/IH/deleteCyclesAfter").toInt());
-  cfg.backConf.ihConfig.loopWaitTimeout =
-        std::chrono::milliseconds(settings.value("EPL_DC/IH/loopWaitTimeout").toInt());
+bool SettingsProfileItem::readCfg(AbstractWriter *writer) {
+  cfg.backConf.xddDir                      = writer->value("EPL_DC/xddDir").toString().toStdString();
+  cfg.pauseWhilePlayingFile                = writer->value("pauseWhilePlayingFile").toBool();
+  cfg.immidiateCycleChange                 = writer->value("immidiateCycleChange").toBool();
+  cfg.invertTimeLineZoom                   = writer->value("invertTimeLineZoom").toBool();
+  cfg.guiThreadWaitTime                    = milliseconds(writer->value("guiThreadWaitTime").toInt());
+  cfg.backConf.smConfig.saveInterval       = static_cast<uint32_t>(writer->value("EPL_DC/SM/saveInterval").toInt());
+  cfg.pythonPluginsDir                     = writer->value("pythonPluginsDir").toString().toStdString();
+  cfg.backConf.ihConfig.eplFrameName       = writer->value("EPL_DC/IH/eplFrameName").toString().toStdString();
+  cfg.backConf.ihConfig.prefetchSize       = static_cast<uint8_t>(writer->value("EPL_DC/IH/prefetchSize").toInt());
+  cfg.backConf.ihConfig.cleanupInterval    = static_cast<uint8_t>(writer->value("EPL_DC/IH/cleanupInterval").toInt());
+  cfg.backConf.ihConfig.checkPrefetch      = static_cast<uint8_t>(writer->value("EPL_DC/IH/checkPrefetch").toInt());
+  cfg.backConf.ihConfig.deleteCyclesAfter  = milliseconds(writer->value("EPL_DC/IH/deleteCyclesAfter").toInt());
+  cfg.backConf.ihConfig.loopWaitTimeout    = milliseconds(writer->value("EPL_DC/IH/loopWaitTimeout").toInt());
+  cfg.backConf.ihConfig.enablePreSOCCycles = writer->value("EPL_DC/IH/enablePreSOCCycles").toBool();
 
   std::vector<std::pair<QString, QColor *>> colorSelctor = {
         {"COL_odHighlight", &cfg.odHighlight},
@@ -187,42 +186,51 @@ bool SettingsProfileItem::importProf(QString file) {
   };
 
   for (auto i : colorSelctor) {
-    i.second->setNamedColor(settings.value(i.first).toString());
+    i.second->setNamedColor(writer->value(i.first).toString());
   }
 
   cfg.nodes.clear();
   cfg.plots.clear();
 
-  int size = settings.beginReadArray("nodes");
+  int size = writer->beginReadArray("nodes");
   for (int i = 0; i < size; ++i) {
-    settings.setArrayIndex(i);
-    int         index                          = settings.value("id").toInt();
-    bool        autoDed                        = settings.value("autoDeduceSpecificProfile").toBool();
-    std::string base                           = settings.value("baseProfile").toString().toStdString();
-    std::string specificProfile                = settings.value("specificProfile").toString().toStdString();
+    writer->setArrayIndex(i);
+    int         index                          = writer->value("id").toInt();
+    bool        autoDed                        = writer->value("autoDeduceSpecificProfile").toBool();
+    std::string base                           = writer->value("baseProfile").toString().toStdString();
+    std::string specificProfile                = writer->value("specificProfile").toString().toStdString();
     cfg.nodes[index].autoDeduceSpecificProfile = autoDed;
     cfg.nodes[index].baseProfile               = base;
     cfg.nodes[index].specificProfile           = specificProfile;
   }
-  settings.endArray();
+  writer->endArray();
 
-  size = settings.beginReadArray("plots");
+  size = writer->beginReadArray("plots");
   for (int i = 0; i < size; ++i) {
-    settings.setArrayIndex(i);
+    writer->setArrayIndex(i);
     cfg.plots.emplace_back();
     auto &plt = cfg.plots.back();
 
     plt.isOK          = true;
-    plt.defaultODPlot = settings.value("defaultODPlot").toBool();
-    plt.node          = static_cast<uint8_t>(settings.value("node").toInt());
-    plt.index         = static_cast<uint16_t>(settings.value("index").toInt());
-    plt.subIndex      = static_cast<uint8_t>(settings.value("subIndex").toInt());
-    plt.addToTimeLine = settings.value("addToTimeLine").toBool();
-    plt.addToPlot     = settings.value("addToPlot").toBool();
-    plt.csName        = settings.value("csName").toString().toStdString();
-    plt.color.setNamedColor(settings.value("color").toString());
+    plt.defaultODPlot = writer->value("defaultODPlot").toBool();
+    plt.node          = static_cast<uint8_t>(writer->value("node").toInt());
+    plt.index         = static_cast<uint16_t>(writer->value("index").toInt());
+    plt.subIndex      = static_cast<uint8_t>(writer->value("subIndex").toInt());
+    plt.addToTimeLine = writer->value("addToTimeLine").toBool();
+    plt.addToPlot     = writer->value("addToPlot").toBool();
+    plt.csName        = writer->value("csName").toString().toStdString();
+    plt.color.setNamedColor(writer->value("color").toString());
   }
-  settings.endArray();
-
+  writer->endArray();
   return true;
+}
+
+bool SettingsProfileItem::exportProf(QString file) {
+  ProfileExporter exp(file);
+  return writeCfg(&exp);
+}
+
+bool SettingsProfileItem::importProf(QString file) {
+  ProfileExporter exp(file);
+  return readCfg(&exp);
 }

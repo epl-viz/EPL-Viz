@@ -21,6 +21,8 @@ class CycleSetter : public QWidget {
   MainWindow *                          mw;
   std::chrono::system_clock::time_point leaveTP = std::chrono::system_clock::now();
 
+  uint32_t lastValueSet = UINT32_MAX;
+
  public:
   explicit CycleSetter(QWidget *parent, MainWindow *main);
   ~CycleSetter();
@@ -35,8 +37,11 @@ class CycleSetter : public QWidget {
   void resetTimer() { leaveTP = std::chrono::system_clock::now(); }
   void checkButtons();
 
+  void updateCounterRange();
+
  public slots:
   void changeCycle();
+  void changeTempCycle(int c);
   void seekF();
   void seekB();
   void skipF();

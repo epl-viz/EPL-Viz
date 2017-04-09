@@ -124,7 +124,7 @@
                 <string> ms</string>
                </property>
                <property name="minimum">
-                <number>25</number>
+                <number>5</number>
                </property>
                <property name="maximum">
                 <number>10000</number>
@@ -140,6 +140,20 @@
              </item>
              <item row="1" column="1">
               <widget class="QCheckBox" name="TL_Invert">
+               <property name="text">
+                <string/>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="0">
+              <widget class="QLabel" name="label_45">
+               <property name="text">
+                <string>Chanche Cycles immediately when changing the selector </string>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="1">
+              <widget class="QCheckBox" name="TL_ChancheCycleImm">
                <property name="text">
                 <string/>
                </property>
@@ -370,7 +384,7 @@
           <item>
            <widget class="QTabWidget" name="colors_tabs">
             <property name="currentIndex">
-             <number>1</number>
+             <number>0</number>
             </property>
             <widget class="QWidget" name="packColrss">
              <attribute name="title">
@@ -3142,6 +3156,23 @@
                    </property>
                    <property name="maximum">
                     <number>255</number>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="6" column="0">
+                  <widget class="QLabel" name="label_27">
+                   <property name="text">
+                    <string>Enable Pre SoC Cycles</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="6" column="1">
+                  <widget class="QCheckBox" name="IH_PreSoCCycles">
+                   <property name="toolTip">
+                    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;When enabled, every Start of Assync (SoA) packet is treated as a Start of Cycle (SoC) packet &lt;span style=&quot; font-weight:600;&quot;&gt;until the first SoC packet arrives&lt;/span&gt;.&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;p&gt;This is useful when debugging a network, bevore the normal traffic starts.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                   </property>
+                   <property name="text">
+                    <string/>
                    </property>
                   </widget>
                  </item>

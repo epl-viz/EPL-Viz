@@ -23,46 +23,21 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-/*!
- * \file ProfileManager.hpp
- */
-#pragma once
 
-#include "Profile.hpp"
-#include <QMap>
-#include <QSettings>
-#include <QString>
-#include <vector>
+#include "SettingsWriter.hpp"
 
-namespace EPL_Viz {
+using namespace EPL_Viz;
 
-class MainWindow;
+SettingsWriter::SettingsWriter(Profile *p) : prof(p) {}
 
-namespace profStrings {
-static const QString DEFAULT_PROF = "Default";
-static const QString PROF_LIST    = "profileList";
-static const QString PROF_ITEM    = "profile";
-}
+QVariant SettingsWriter::value(QString const &str, QVariant const &) { return prof->readCustomValue(str); }
 
-class ProfileManager {
- private:
-  QSettings *          appSettings;
-  std::vector<QString> profiles;
+void SettingsWriter::setValue(QString const &str, QVariant const &val) { prof->writeCustomValue(str, val); }
 
-  void updateProfiles();
+void SettingsWriter::beginWriteArray(QString const &str) { prof->beginWriteArray(str); }
 
- public:
-  ProfileManager();
-  ~ProfileManager();
+int SettingsWriter::beginReadArray(QString const &str) { return prof->beginReadArray(str); }
 
-  Profile *getDefaultProfile();
-  Profile *getProfile(QString profileName);
-  std::vector<QString> getProfiles();
-  void deleteProfile(QString profileName);
+void SettingsWriter::setArrayIndex(int i) { prof->setArrayIndex(i); }
 
-  void writeWindowSettings(MainWindow *window);
-  void readWindowSettings(MainWindow *window);
-
-  QSettings *getRawSettings();
-};
-}
+void SettingsWriter::endArray() { prof->endArray(); }

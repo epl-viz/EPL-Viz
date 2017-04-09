@@ -55,6 +55,8 @@ bool BaseModel::updateAll(MainWindow *mw, CaptureInstance *instance) {
     return false;
   }
 
+  auto lock = getUpdateLock();
+
   GUIState state = mw->getState();
 
   EventLog *log = instance->getEventLog();
@@ -105,10 +107,6 @@ bool BaseModel::updateAll(MainWindow *mw, CaptureInstance *instance) {
       i->update();
     // qDebug() << "[" << cycle->getCycleNum() << "] DONE     " << i->getName();
   }
-
-  uint32_t cycleNum = cycle->getCycleNum();
-  if (cycleNum > mw->getMaxCycle())
-    mw->setMaxCycle(cycleNum);
 
   return true;
 }
@@ -165,3 +163,4 @@ bool BaseModel::operator==(const BaseModel &other) { return this == &other; }
 uint32_t       BaseModel::appID;
 ProtectedCycle BaseModel::cycle;
 bool           BaseModel::forceUpdate;
+std::mutex     BaseModel::updateLocker;

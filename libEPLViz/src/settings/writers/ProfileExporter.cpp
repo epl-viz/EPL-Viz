@@ -23,46 +23,23 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-/*!
- * \file ProfileManager.hpp
- */
-#pragma once
 
-#include "Profile.hpp"
-#include <QMap>
-#include <QSettings>
-#include <QString>
-#include <vector>
+#include "ProfileExporter.hpp"
 
-namespace EPL_Viz {
+using namespace EPL_Viz;
 
-class MainWindow;
+ProfileExporter::ProfileExporter(QString file) : settings(file, QSettings::IniFormat, nullptr) {}
 
-namespace profStrings {
-static const QString DEFAULT_PROF = "Default";
-static const QString PROF_LIST    = "profileList";
-static const QString PROF_ITEM    = "profile";
-}
+ProfileExporter::~ProfileExporter() { settings.sync(); }
 
-class ProfileManager {
- private:
-  QSettings *          appSettings;
-  std::vector<QString> profiles;
+QVariant ProfileExporter::value(QString const &str, QVariant const &def) { return settings.value(str, def); }
 
-  void updateProfiles();
+void ProfileExporter::setValue(QString const &str, QVariant const &val) { settings.setValue(str, val); }
 
- public:
-  ProfileManager();
-  ~ProfileManager();
+void ProfileExporter::beginWriteArray(QString const &str) { settings.beginWriteArray(str); }
 
-  Profile *getDefaultProfile();
-  Profile *getProfile(QString profileName);
-  std::vector<QString> getProfiles();
-  void deleteProfile(QString profileName);
+int ProfileExporter::beginReadArray(QString const &str) { return settings.beginReadArray(str); }
 
-  void writeWindowSettings(MainWindow *window);
-  void readWindowSettings(MainWindow *window);
+void ProfileExporter::setArrayIndex(int i) { settings.setArrayIndex(i); }
 
-  QSettings *getRawSettings();
-};
-}
+void ProfileExporter::endArray() { settings.endArray(); }

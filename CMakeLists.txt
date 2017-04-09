@@ -54,6 +54,7 @@ set( CMAKE_POSITION_INDEPENDENT_CODE ON )
 option( DISABLE_TESTS        "Disables all tests"                            ON )
 option( ENABLE_CODE_COVERAGE "Enables code coverage tests"                   OFF )
 option( USE_SYSTEM_PACKETS   "Use the EPL DataCollect version of the system" ON )
+option( USE_KTEXTEDITOR      "Use the KF5 Texteditor"                        ON )
 
 list( APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake" )
 
@@ -105,7 +106,6 @@ find_package( ECM 1.1.0 REQUIRED NO_MODULE )
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${ECM_MODULE_PATH} ${ECM_KDE_MODULE_DIR} )
 
 find_package( Qt5 5.5 COMPONENTS ${EPL_VIZ_QT_COMPONENTS} REQUIRED )
-find_package( KF5     REQUIRED COMPONENTS TextEditor)
 find_package( Qwt              REQUIRED )
 find_package( PythonInterp 3.5 REQUIRED ) # Exec python with PYTHON_EXECUTABLE
 find_package( PythonLibs   3.5 REQUIRED )
@@ -115,6 +115,16 @@ find_package( PkgConfig        REQUIRED )
 find_package( Threads          REQUIRED )
 find_package( TinyXML2     4.0 REQUIRED )
 pkg_search_module(GLIB REQUIRED glib-2.0)
+
+if( USE_KTEXTEDITOR )
+  find_package( KF5     REQUIRED COMPONENTS TextEditor)
+  set( KDE_LIBRARIES KF5::TextEditor )
+  set( CM_USE_KTEXTEDITOR  1)
+else( USE_KTEXTEDITOR )
+  set( KDE_LIBRARIES "" )
+  set( CM_USE_KTEXTEDITOR  0)
+endif( USE_KTEXTEDITOR )
+
 
 set( CMAKE_AUTOUIC OFF )
 
@@ -254,7 +264,7 @@ new_project_library(
   TEMPLATE     "${EPL_VIZ_TEMPLATES_DIR}/CMakeLists.lib.txt"
   DEPENDENCIES ${EPL_VIZ_QT_DEP_LIST}
     ${Wireshark_LIBRARY} ${GLIB_LIBRARIES} capchild caputils ${PCAP_LIBRARIES} libwireshark
-    epl_DataCollect_shared Qwt::Qwt KF5::TextEditor
+    epl_DataCollect_shared Qwt::Qwt ${KDE_LIBRARIES}
     eplp_timeSeries_shared eplp_python_shared eplp_protocolValidator_shared eplp_defaultFilter_shared
 )
 
@@ -264,7 +274,7 @@ new_project_executable(
   TEMPLATE     "${EPL_VIZ_TEMPLATES_DIR}/CMakeLists.exe.txt"
   DEPENDENCIES
     ${Wireshark_LIBRARY} ${GLIB_LIBRARIES} capchild caputils ${PCAP_LIBRARIES}
-    libEPLViz Qwt::Qwt KF5::TextEditor eplp_timeSeries_shared eplp_protocolValidator_shared eplp_python_shared eplp_defaultFilter_shared
+    libEPLViz Qwt::Qwt eplp_timeSeries_shared eplp_protocolValidator_shared eplp_python_shared eplp_defaultFilter_shared ${KDE_LIBRARIES}
 )
 
 if( NOT DISABLE_TESTS )
@@ -274,7 +284,7 @@ if( NOT DISABLE_TESTS )
     TEMPLATE     "${EPL_VIZ_TEMPLATES_DIR}/CMakeLists.exe.txt"
     DEPENDENCIES
       ${Wireshark_LIBRARY} ${GLIB_LIBRARIES} capchild caputils ${PCAP_LIBRARIES}
-      libEPLViz epl_DataCollect_shared Qwt::Qwt KF5::TextEditor
+      libEPLViz epl_DataCollect_shared Qwt::Qwt ${KDE_LIBRARIES}
       eplp_timeSeries_shared eplp_protocolValidator_shared eplp_python_shared eplp_defaultFilter_shared
   )
 endif( NOT DISABLE_TESTS )

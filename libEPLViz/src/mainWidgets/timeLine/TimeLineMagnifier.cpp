@@ -29,6 +29,7 @@
 
 #include "TimeLineMagnifier.hpp"
 #include "TimeLineModel.hpp"
+#include <QWheelEvent>
 using namespace EPL_Viz;
 
 #include "qwt_plot.h"
@@ -41,11 +42,16 @@ TimeLineMagnifier::TimeLineMagnifier(QScrollBar *bar, TimeLineModel *model, uint
   sBar     = bar;
 }
 
+void TimeLineMagnifier::rescale(double factor) {
+  qDebug() << "Simple rescale called";
+  TimeLineMagnifier::rescale(factor, plot()->canvas()->size().width() / 2);
+}
+
 /**
  * @brief TimeLineMagnifier::rescale Copied from qwt and changed to stop at boundries
  * @param factor Factor
  */
-void TimeLineMagnifier::rescale(double factor) {
+void TimeLineMagnifier::rescale(double factor, int x) {
   QwtPlot *plt = plot();
   if (plt == NULL)
     return;
@@ -75,11 +81,16 @@ void TimeLineMagnifier::rescale(double factor) {
         v2 = scaleMap.transform(v2); // scaleMap.p2()
       }
 
-      const double center  = 0.5 * (v1 + v2);
-      const double width_2 = 0.5 * (v2 - v1) * factor;
+      const double width  = v2 - v1;
+      const double nWidth = width * factor;
+      double       relPos;
+      if (axisId == QwtPlot::xTop)
+        relPos = static_cast<double>(x) / plt->canvas()->size().width();
+      else
+        relPos = .5;
 
-      v1 = center - width_2;
-      v2 = center + width_2;
+      v1 = v1 - (relPos * (nWidth - width));
+      v2 = v1 + nWidth;
 
       if (scaleMap.transformation()) {
         v1 = scaleMap.invTransform(v1);
@@ -109,3 +120,17 @@ void TimeLineMagnifier::rescale(double factor) {
   if (doReplot)
     modelRef->replot();
 };
+
+void TimeLineMagnifier::widgetWheelEvent(QWheelEvent *wheelEvent) {
+  double factor;
+  if (wheelEvent->angleDelta().y() > 0)
+    factor = wheelFactor();
+  else if (wheelEvent->angleDelta().y() < 0)
+    factor = 1 / wheelFactor();
+  else
+    return;
+
+  int x = wheelEvent->pos().x();
+
+  TimeLineMagnifier::rescale(factor, x);
+}

@@ -1,7 +1,5 @@
 # Ubuntu 16.04
 
-:warning: Uninstalling all system wireshark versions is highly recommended! :warning:
-
 ## Installing packets:
 
 ```bash

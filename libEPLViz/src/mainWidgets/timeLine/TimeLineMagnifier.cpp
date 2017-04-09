@@ -81,16 +81,16 @@ void TimeLineMagnifier::rescale(double factor, int x) {
         v2 = scaleMap.transform(v2); // scaleMap.p2()
       }
 
-      const double width_2 = (v2 - v1) * factor;
+      const double width  = v2 - v1;
+      const double nWidth = width * factor;
       double       relPos;
       if (axisId == QwtPlot::xTop)
         relPos = static_cast<double>(x) / plt->canvas()->size().width();
       else
-        relPos            = .5;
-      const double center = relPos * (v1 + v2);
+        relPos = .5;
 
-      v1 = center - width_2 * (1 - relPos);
-      v2 = center + width_2 * (relPos);
+      v1 = v1 - (relPos * (nWidth - width));
+      v2 = v1 + nWidth;
 
       if (scaleMap.transformation()) {
         v1 = scaleMap.invTransform(v1);

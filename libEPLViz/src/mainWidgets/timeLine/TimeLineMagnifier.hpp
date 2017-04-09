@@ -38,7 +38,7 @@ class TimeLineMagnifier : public QwtPlotMagnifier {
  private:
   uint32_t *max;
 
-protected:
+ protected:
   void widgetWheelEvent(QWheelEvent *wheelEvent) override;
 
  public:

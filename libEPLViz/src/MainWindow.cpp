@@ -131,6 +131,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 }
 
 MainWindow::~MainWindow() {
+  modelThread->quit();
+  modelThread->requestInterruption();
+  modelThread->wait();
   cleanupResources();
   destroyModels();
   delete settingsWin;
@@ -242,6 +245,7 @@ void MainWindow::destroyModels() {
 
 void MainWindow::updateWidgets() {
   // qDebug() << "==> Widget Update thread";
+  auto lock = BaseModel::getUpdateLock();
   BaseModel::updateAllWidgets(this);
   ui->eventViewer->updateEvents();
 
@@ -260,6 +264,7 @@ void MainWindow::updateProgress() {
     if (fileSize > 0 && fileSize != UINT64_MAX) {
       progressBar->setMaximum(1000);
 
+      auto     lock   = BaseModel::getUpdateLock();
       uint64_t offset = captureInstance->getCurrentFileProcessingOffset();
       if (offset == 0)
         offset = captureInstance->getInputHandler()->getNumBytesRead();

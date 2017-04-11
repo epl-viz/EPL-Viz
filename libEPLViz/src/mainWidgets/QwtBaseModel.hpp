@@ -80,9 +80,9 @@ class QwtBaseModel : public QObject, public BaseModel {
                   uint16_t    subIndex,
                   std::string cs,
                   QwtPlot::Axis,
-                  QColor color = QColor(0, 0, 0),
-                  bool usedInTime = true,
-                  bool usedInPlot = true);
+                  QColor color      = QColor(0, 0, 0),
+                  bool   usedInTime = true,
+                  bool   usedInPlot = true);
   uint32_t calcXMaximum();
 
 
@@ -107,8 +107,14 @@ class QwtBaseModel : public QObject, public BaseModel {
   void requestRedraw();
 
  public slots:
-  void updatePlotList();
-  virtual void createPlot(uint8_t nodeID, uint16_t index, uint16_t subIndex, std::string cs, QColor color, bool usedInTime = true, bool usedInPlot = true) = 0;
+  void         updatePlotList();
+  virtual void createPlot(uint8_t     nodeID,
+                          uint16_t    index,
+                          uint16_t    subIndex,
+                          std::string cs,
+                          QColor      color,
+                          bool        usedInTime = true,
+                          bool        usedInPlot = true) = 0;
   void replotPostMain();
   void replot();
   void reset();

@@ -41,7 +41,13 @@ QWTPlotModel::QWTPlotModel(MainWindow *win, QwtPlot *widget) : QwtBaseModel(win,
 
 QWTPlotModel::~QWTPlotModel() {}
 
-void QWTPlotModel::createPlot(uint8_t nodeID, uint16_t index, uint16_t subIndex, std::string cs, QColor color, bool usedInTime, bool usedInPlot) {
+void QWTPlotModel::createPlot(uint8_t     nodeID,
+                              uint16_t    index,
+                              uint16_t    subIndex,
+                              std::string cs,
+                              QColor      color,
+                              bool        usedInTime,
+                              bool        usedInPlot) {
   QwtBaseModel::createPlot(nodeID, index, subIndex, cs, QwtPlot::xBottom, color, usedInTime, usedInPlot);
 }
 

@@ -139,8 +139,14 @@ QString QwtBaseModel::createStringIdentifier(const PlotCreator::PlotCreatorData 
  * @param subIndex subindex to be plotted
  * @param csName CycleStorage name, ignored if empty
  */
-void QwtBaseModel::createPlot(
-      uint8_t nodeID, uint16_t mainIndex, uint16_t subIndex, std::string csName, QwtPlot::Axis axis, QColor color, bool usedInTime, bool usedInPlot) {
+void QwtBaseModel::createPlot(uint8_t       nodeID,
+                              uint16_t      mainIndex,
+                              uint16_t      subIndex,
+                              std::string   csName,
+                              QwtPlot::Axis axis,
+                              QColor        color,
+                              bool          usedInTime,
+                              bool          usedInPlot) {
   if (subIndex > UINT8_MAX)
     subIndex = 0;
 

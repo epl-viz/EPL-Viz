@@ -55,7 +55,7 @@ QwtBaseModel::QwtBaseModel(MainWindow *win, QwtPlot *widget) : BaseModel(win, wi
 void QwtBaseModel::init() {
   updatePlotList();
   for (PlotCreator::PlotCreatorData data : registeredCurves) {
-    createPlot(data.node, data.index, data.subIndex, data.csName, data.color);
+    createPlot(data.node, data.index, data.subIndex, data.csName, data.color, data.addToTimeLine, data.addToPlot);
   }
   registeredCurves.clear();
 }
@@ -140,7 +140,7 @@ QString QwtBaseModel::createStringIdentifier(const PlotCreator::PlotCreatorData 
  * @param csName CycleStorage name, ignored if empty
  */
 void QwtBaseModel::createPlot(
-      uint8_t nodeID, uint16_t mainIndex, uint16_t subIndex, std::string csName, QwtPlot::Axis axis, QColor color) {
+      uint8_t nodeID, uint16_t mainIndex, uint16_t subIndex, std::string csName, QwtPlot::Axis axis, QColor color, bool usedInTime, bool usedInPlot) {
   if (subIndex > UINT8_MAX)
     subIndex = 0;
 
@@ -170,7 +170,9 @@ void QwtBaseModel::createPlot(
   QString title = createStringIdentifier(nodeID, mainIndex, subIndex, csName);
 
   curve->setTitle(title);
-  curve->attach(plot);
+
+  if ((axis == QwtPlot::xBottom && usedInPlot) || (axis == QwtPlot::xTop && usedInTime))
+    curve->attach(plot);
 
   curves.insert(title, QPair<shared_ptr<QwtPlotCurve>, shared_ptr<plugins::TimeSeries>>(curve, timeSeries));
 }

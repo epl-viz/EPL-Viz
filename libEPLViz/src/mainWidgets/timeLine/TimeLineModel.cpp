@@ -216,8 +216,8 @@ void TimeLineModel::reset() {
     magnifier->setWheelFactor(defaultWheelFactor);
 }
 
-void TimeLineModel::createPlot(uint8_t nodeID, uint16_t index, uint16_t subIndex, std::string cs, QColor color) {
-  QwtBaseModel::createPlot(nodeID, index, subIndex, cs, QwtPlot::xTop, color);
+void TimeLineModel::createPlot(uint8_t nodeID, uint16_t index, uint16_t subIndex, std::string cs, QColor color, bool usedInTime, bool usedInPlot) {
+  QwtBaseModel::createPlot(nodeID, index, subIndex, cs, QwtPlot::xTop, color, usedInTime, usedInPlot);
 }
 
 void TimeLineModel::fitToPlot() { setFitToPlot(true); }

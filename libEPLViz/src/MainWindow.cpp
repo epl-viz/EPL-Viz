@@ -174,6 +174,7 @@ void MainWindow::createModels() {
 
   connect(ui->scrBarTimeline, SIGNAL(valueChanged(int)), timeLineModel, SLOT(updateViewport(int)));
   connect(this, SIGNAL(fitToPlot()), timeLineModel, SLOT(fitToPlot()));
+  connect(this, SIGNAL(fitToPlot()), qwtPlot, SLOT(fitToPlot()));
   connect(this, SIGNAL(cycleChanged()), timeLineModel, SLOT(replot()));
   connect(settingsWin, SIGNAL(settingsUpdated()), qwtPlot, SLOT(updatePlotList()));
   connect(settingsWin, SIGNAL(settingsUpdated()), timeLineModel, SLOT(updatePlotList()));

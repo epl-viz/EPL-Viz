@@ -34,6 +34,7 @@
 #include "SettingsProfileItem.hpp"
 #include "TimeLineWidget.hpp"
 #include <QApplication>
+
 using namespace EPL_Viz;
 using namespace EPL_DataCollect;
 
@@ -66,7 +67,7 @@ TimeLineModel::TimeLineModel(MainWindow *mainWin, QwtPlot *widget, QWTPlotModel 
   point->setMousePattern(QwtEventPattern::MousePatternCode::MouseSelect1, Qt::MouseButton::LeftButton);
   area = new QwtPlotPicker(plot->canvas());
   area->setAxis(QwtPlot::xTop, QwtPlot::yLeft);
-  area->setStateMachine(new QwtPickerDragLineMachine());
+  area->setStateMachine(new QwtPickerDragRectMachine());
   area->setMousePattern(QwtEventPattern::MousePatternCode::MouseSelect1, Qt::MouseButton::LeftButton);
 
   connect(point, SIGNAL(selected(QPointF)), this, SLOT(pointSelected(QPointF)));

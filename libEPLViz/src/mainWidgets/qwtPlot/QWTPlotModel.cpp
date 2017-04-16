@@ -53,7 +53,12 @@ void QWTPlotModel::createPlot(uint8_t     nodeID,
 
 void QWTPlotModel::changeArea(QRectF rect) {
   if (static_cast<int>(rect.left()) != static_cast<int>(rect.right())) {
-    postToThread([&] { plot->setAxisScale(QwtPlot::Axis::xBottom, rect.left(), rect.right()); }, plot);
-    replotPostMain();
+    plot->setAxisScale(QwtPlot::Axis::xBottom, rect.left(), rect.right());
+    plot->replot();
   }
+}
+
+void QWTPlotModel::fitToPlot() {
+  plot->setAxisScale(QwtPlot::Axis::xBottom, 0, static_cast<double>(calcXMaximum()));
+  plot->replot();
 }

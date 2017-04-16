@@ -42,6 +42,7 @@ namespace EPL_Viz {
 class MainWindow;
 
 class QWTPlotModel : public QwtBaseModel {
+  Q_OBJECT
 
  public:
   QWTPlotModel(MainWindow *win, QwtPlot *widget);
@@ -57,5 +58,6 @@ class QWTPlotModel : public QwtBaseModel {
                   bool        usedInTime = true,
                   bool        usedInPlot = true) override;
   void changeArea(QRectF rect);
+  void fitToPlot();
 };
 }

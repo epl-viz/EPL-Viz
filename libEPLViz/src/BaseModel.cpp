@@ -114,9 +114,7 @@ void BaseModel::updateAllWidgets(MainWindow *mw) {
   CycleStorageBase *b   = cycle->getCycleStorage(EPL_DC_PLUGIN_VIEW_FILTERS_CSID);
   CSViewFilters *   csF = dynamic_cast<CSViewFilters *>(b);
 
-  if (csF == nullptr) {
-    qDebug() << "Not registered " << EPL_DC_PLUGIN_VIEW_FILTERS_CSID.c_str();
-  } else {
+  if (csF) {
     auto filters = csF->getFilters();
     mw->setFilters(filters);
   }

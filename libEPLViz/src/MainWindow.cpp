@@ -420,8 +420,6 @@ void MainWindow::reload() {
 }
 
 void MainWindow::showAbout() {
-  QMessageBox msgBox;
-
   QString version = "Version ";
   version += std::to_string(EPL_VIZ_VERSION_MAJOR).c_str();
   version += ".";
@@ -430,12 +428,14 @@ void MainWindow::showAbout() {
   version += std::to_string(EPL_VIZ_VERSION_SUBMINOR).c_str();
   version += " +";
   version += std::to_string(EPL_VIZ_GIT_LAST_TAG_DIFF).c_str();
-  version += " Commit ";
+  version += " (";
   version += EPL_VIZ_VERSION_GIT;
+  version += ")";
 
-  msgBox.setText("Created by EPL-Vizards. Copyright (c) 2017\n\n" + version);
-  msgBox.exec();
+  QMessageBox::about(this, "EPL-Viz", "Created by EPL-Vizards. Copyright (c) 2017\n\n" + version);
 }
+
+void MainWindow::showAboutQt() { QMessageBox::aboutQt(this, "EPL-Viz Qt"); }
 
 void MainWindow::showLicense() {
   QMessageBox msgBox;

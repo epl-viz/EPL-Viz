@@ -156,6 +156,7 @@ class MainWindow : public QMainWindow {
   void updateWidgets();
   void updateProgress();
   void showAbout();
+  void showAboutQt();
   void showLicense();
   void showStats();
   void selectCycle(uint32_t cycle);

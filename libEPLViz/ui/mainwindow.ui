@@ -210,8 +210,9 @@
     <property name="title">
      <string>Help</string>
     </property>
-    <addaction name="actionAbout"/>
     <addaction name="actionLicence"/>
+    <addaction name="actionAbout"/>
+    <addaction name="actionAbout_Qt"/>
    </widget>
    <widget class="QMenu" name="menuView">
     <property name="title">
@@ -657,6 +658,14 @@
     <string>Reloads the current PCAP file</string>
    </property>
   </action>
+  <action name="actionAbout_Qt">
+   <property name="icon">
+    <iconset theme=":/qt-project.org/qmessagebox/images/qtlogo-64.png"/>
+   </property>
+   <property name="text">
+    <string>About Qt</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
@@ -941,6 +950,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>actionAbout_Qt</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>showAboutQt()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>959</x>
+     <y>539</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>openPluginEditor()</slot>
@@ -957,5 +982,6 @@
   <slot>showLicense()</slot>
   <slot>showStats()</slot>
   <slot>reload()</slot>
+  <slot>showAboutQt()</slot>
  </slots>
 </ui>

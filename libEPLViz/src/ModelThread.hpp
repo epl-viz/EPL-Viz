@@ -46,6 +46,10 @@ class ModelThread : public QThread {
   MainWindow *       window;
   bool               running;
 
+  enum RESULT { CONTINUE, RESET, UPDATE, NOTHING };
+
+  RESULT update();
+
  public:
   ModelThread(QObject *parent, GUIState *machineState, MainWindow *win);
   ModelThread() = delete;

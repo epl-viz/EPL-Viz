@@ -246,6 +246,10 @@ void MainWindow::destroyModels() {
 void MainWindow::updateWidgets() {
   // qDebug() << "==> Widget Update thread";
   auto lock = BaseModel::getUpdateLock();
+
+  if (captureInstance->getState() != CaptureInstance::DONE && captureInstance->getState() != CaptureInstance::RUNNING)
+    return;
+
   BaseModel::updateAllWidgets(this);
   ui->eventViewer->updateEvents();
 

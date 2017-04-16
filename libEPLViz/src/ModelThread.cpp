@@ -34,6 +34,16 @@
 #include "MainWindow.hpp"
 #include <QDebug>
 
+#if __cplusplus <= 201402L
+#if defined(__clang__)
+#define FALLTHROUGH [[clang::fallthrough]]
+#else
+#define FALLTHROUGH
+#endif
+#else
+#define FALLTHROUGH [[fallthrough]]
+#endif
+
 using namespace EPL_Viz;
 using namespace EPL_DataCollect;
 
@@ -49,6 +59,25 @@ ModelThread::~ModelThread() {
   wait();
 }
 
+ModelThread::RESULT ModelThread::update() {
+  auto                     lock    = BaseModel::getUpdateLock();
+  auto *                   ci      = window->getCaptureInstance();
+  CaptureInstance::CIstate cistate = ci->getState();
+  if (cistate == CaptureInstance::CIstate::SETUP)
+    return CONTINUE;
+
+  if (cistate != CaptureInstance::CIstate::RUNNING && cistate != CaptureInstance::CIstate::DONE) {
+    qDebug() << QString::fromStdString("Stopped because ci changed state to state " + EPLEnum2Str::toStr(cistate));
+    return RESET;
+  }
+
+  // Update models and if it was completed, the widgets
+  if (BaseModel::updateAll(window, ci))
+    return UPDATE;
+
+  return NOTHING;
+}
+
 void ModelThread::loop() {
   while (running) {
     switch (*state) {
@@ -57,27 +86,12 @@ void ModelThread::loop() {
       case GUIState::PLAYING:
       case GUIState::PAUSED:
       case GUIState::RECORDING: {
-        auto *                   ci      = window->getCaptureInstance();
-        CaptureInstance::CIstate cistate = ci->getState();
-        if (cistate == CaptureInstance::CIstate::SETUP)
-          continue;
-
-        if (cistate != CaptureInstance::CIstate::RUNNING && cistate != CaptureInstance::CIstate::DONE) {
-          qDebug() << QString::fromStdString("Stopped because ci changed state to state " +
-                                             EPLEnum2Str::toStr(cistate));
-          // TODO message to gui?
-          window->changeState(GUIState::UNINIT);
-          return;
+        switch (update()) {
+          case CONTINUE: continue;
+          case RESET: window->changeState(GUIState::UNINIT); break;
+          case UPDATE: emit  updateCompleted(); FALLTHROUGH;
+          case NOTHING: emit updateCompletedAlways(); break;
         }
-
-        // Update models and if it was completed, the widgets
-        if (BaseModel::updateAll(window, ci)) {
-          // qDebug() << "BEGIN UPDATING WIDGETS";
-          emit updateCompleted(); // Wait until the widgets are updated in the GUI thread
-          // qDebug() << "END UPDATING WIDGETS";
-        }
-
-        emit updateCompletedAlways();
 
         break;
       }

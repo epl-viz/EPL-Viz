@@ -55,8 +55,6 @@ bool BaseModel::updateAll(MainWindow *mw, CaptureInstance *instance) {
     return false;
   }
 
-  auto lock = getUpdateLock();
-
   GUIState state = mw->getState();
 
   EventLog *log = instance->getEventLog();

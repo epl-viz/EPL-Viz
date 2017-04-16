@@ -72,9 +72,10 @@ class MainWindow : public QMainWindow {
 
   GUIState pausedState = GUIState::PAUSED;
 
+  ProfileManager profileManager;
+
   Ui::MainWindow *                  ui;
   CycleSetterAction *               CS;
-  ProfileManager *                  profileManager;
   GUIState                          machineState;
   ModelThread *                     modelThread;
   QLinkedList<EPL_Viz::BaseModel *> models;

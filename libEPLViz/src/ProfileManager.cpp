@@ -33,7 +33,11 @@ using namespace EPL_Viz;
 using namespace profStrings;
 
 ProfileManager::ProfileManager() {
-  appSettings = new QSettings("EPL-Vizards", "EPL-Viz");
+  QString username = qgetenv("USER");
+  if (username == "") {
+    username = qgetenv("USERNAME");
+  }
+  appSettings = new QSettings("EPL-Vizards", "EPL-Viz_" + username);
   int size    = appSettings->beginReadArray(PROF_LIST);
   for (int i = 0; i < size; ++i) {
     appSettings->setArrayIndex(i);

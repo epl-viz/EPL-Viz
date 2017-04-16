@@ -650,6 +650,13 @@ void SettingsWindow::importProf() {
     return;
 
   prof->importProf(file);
+
+  ui->nodesList->clear();
+  for (auto i : prof->cfg.nodes) {
+    QString name = std::to_string(i.first).c_str();
+    ui->nodesList->addItem(new QListWidgetItem(i.first < 0 ? "Default" : name, ui->nodesList));
+  }
+
   updateView();
 }
 

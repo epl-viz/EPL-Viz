@@ -65,13 +65,20 @@ using namespace EPL_DataCollect::constants;
 using namespace EPL_DataCollect::plugins;
 
 
-MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow) {
+MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
   initResources();
+
+  profileManager.readWindowSettings(this);
+  captureInstance = std::make_unique<CaptureInstance>();
+
+  settingsWin = new SettingsWindow(this, &profileManager);
+  settingsWin->hide();
 
   machineState = GUIState::UNINIT;
 
-  profileManager = new ProfileManager();
-  progressBar    = new QProgressBar;
+  ui = new Ui::MainWindow;
+
+  progressBar = new QProgressBar;
 
   progressBar->setMinimum(0);
   progressBar->setMaximum(1000);
@@ -98,12 +105,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
           SIGNAL(eventSelected(uint32_t)),
           this,
           SLOT(selectCycle(uint32_t))); // Allow the event viewer widget to change cycle as well
-
-  profileManager->readWindowSettings(this);
-  captureInstance = std::make_unique<CaptureInstance>();
-
-  settingsWin = new SettingsWindow(this, profileManager);
-  settingsWin->hide();
 
   pluginWin = new PluginsWindow(this);
   pluginWin->hide();
@@ -137,7 +138,6 @@ MainWindow::~MainWindow() {
   cleanupResources();
   destroyModels();
   delete settingsWin;
-  delete profileManager;
   delete ui;
 }
 
@@ -760,7 +760,7 @@ EPL_DataCollect::CSViewFilters::Filter MainWindow::getFilter() {
 }
 
 void MainWindow::closeEvent(QCloseEvent *event) {
-  profileManager->writeWindowSettings(this);
+  profileManager.writeWindowSettings(this);
   emit close();
   event->accept();
 }

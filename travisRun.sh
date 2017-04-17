@@ -96,24 +96,9 @@ testExec cmake -DENABLE_CODE_COVERAGE=ON -DDISABLE_TESTS=OFF -DUSE_SYSTEM_PACKET
 testExec make
 testExec chmod -R a+rwx .
 
-msg "START TEST"
-
-testExec make check
-
 if (( $ERROR_COUNT == 0 )); then
   msg "Installing files"
   testExec make install
-fi
-
-if [[ "$CXX" == "g++" ]]; then
-  msg "Parsing coverage data"
-  testExec lcov --directory . --capture --output-file coverage.info
-  testExec lcov --remove coverage.info '/usr/*' '/EPL/*' '*catch*.h*' '*/EPL_DataCollect/*' '*/FakeIt/*' '/ui_*.h' '/moc_*.cpp' '/qrc_*.cpp' --output-file coverage.info
-  testExec lcov --list coverage.info
-  testExec cp coverage.info /
-else
-  msg "Creating a dummy coverage file"
-  testExec touch /coverage.info
 fi
 
 exit $ERROR_COUNT

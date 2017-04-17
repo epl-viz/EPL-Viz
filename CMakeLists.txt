@@ -51,7 +51,6 @@ set( CMAKE_C_STANDARD_REQUIRED   ON )
 set( CMAKE_INCLUDE_CURRENT_DIR       ON )
 set( CMAKE_POSITION_INDEPENDENT_CODE ON )
 
-option( DISABLE_TESTS        "Disables all tests"                            ON )
 option( ENABLE_CODE_COVERAGE "Enables code coverage tests"                   OFF )
 option( USE_SYSTEM_PACKETS   "Use the EPL DataCollect version of the system" ON )
 option( USE_KTEXTEDITOR      "Use the KF5 Texteditor"                        ON )
@@ -150,46 +149,6 @@ endforeach( I IN LISTS EPL_VIZ_QT_COMPONENTS )
 
 find_package( Git REQUIRED )
 
-set( CM_ENABLE_MOCKING 0 )
-
-if( NOT DISABLE_TESTS )
-  set( FUNC_RED_PREFIX "${PROJECT_BINARY_DIR}/funcRedirect" )
-  set( FUNC_RED_INSTALL_DIR "${FUNC_RED_PREFIX}/install_dir" )
-  set( FUNC_RED_LIB_DIR     "${FUNC_RED_INSTALL_DIR}/lib" )
-
-  set( FUNC_RED_INCLUDE_DIRS "${FUNC_RED_INSTALL_DIR}/include/funcRedirect" )
-
-  ExternalProject_Add( catch
-    PREFIX            ${CMAKE_BINARY_DIR}/catch
-    GIT_REPOSITORY    https://github.com/philsquared/Catch.git
-    UPDATE_COMMAND    ${GIT_EXECUTABLE} pull
-    CONFIGURE_COMMAND ""
-    BUILD_COMMAND     ""
-    INSTALL_COMMAND   ""
-  )
-
-  ExternalProject_Add( FakeIt
-    PREFIX            ${CMAKE_BINARY_DIR}/FakeIt
-    GIT_REPOSITORY    https://github.com/eranpeer/FakeIt.git
-    UPDATE_COMMAND    ${GIT_EXECUTABLE} pull
-    CONFIGURE_COMMAND ""
-    BUILD_COMMAND     ""
-    INSTALL_COMMAND   ""
-  )
-
-  ExternalProject_Get_Property( catch source_dir )
-  set( CATCH_INCLUDE_DIR "${source_dir}/include" )
-
-  ExternalProject_Get_Property( FakeIt source_dir )
-  set( FAKE_IT_INCLUDE_DIR "${source_dir}/single_header/standalone" )
-
-  if( CMAKE_CXX_COMPILER_ID STREQUAL Clang OR CMAKE_CXX_COMPILER_ID STREQUAL GNU )
-    string( APPEND CMAKE_CXX_FLAGS " -isystem ${FAKE_IT_INCLUDE_DIR} " )
-  endif( CMAKE_CXX_COMPILER_ID STREQUAL Clang OR CMAKE_CXX_COMPILER_ID STREQUAL GNU )
-
-  set( CM_ENABLE_MOCKING 1 )
-endif( NOT DISABLE_TESTS )
-
 
 #############################
 # Add internal dependencies #
@@ -263,8 +222,7 @@ new_project_library(
   NAME         "libEPLViz"
   TEMPLATE     "${EPL_VIZ_TEMPLATES_DIR}/CMakeLists.lib.txt"
   DEPENDENCIES ${EPL_VIZ_QT_DEP_LIST}
-    ${Wireshark_LIBRARY} ${GLIB_LIBRARIES} capchild caputils ${PCAP_LIBRARIES} libwireshark
-    epl_DataCollect_shared Qwt::Qwt ${KDE_LIBRARIES}
+    Qwt::Qwt ${KDE_LIBRARIES} epl_DataCollect_shared
     eplp_timeSeries_shared eplp_python_shared eplp_protocolValidator_shared eplp_defaultFilter_shared
 )
 
@@ -272,22 +230,8 @@ new_project_executable(
   PATH         "${PROJECT_SOURCE_DIR}/epl-viz"
   NAME         "eplviz"
   TEMPLATE     "${EPL_VIZ_TEMPLATES_DIR}/CMakeLists.exe.txt"
-  DEPENDENCIES
-    ${Wireshark_LIBRARY} ${GLIB_LIBRARIES} capchild caputils ${PCAP_LIBRARIES}
-    libEPLViz Qwt::Qwt eplp_timeSeries_shared eplp_protocolValidator_shared eplp_python_shared eplp_defaultFilter_shared ${KDE_LIBRARIES}
+  DEPENDENCIES libEPLViz
 )
-
-if( NOT DISABLE_TESTS )
-  new_project_executable(
-    PATH         "${PROJECT_SOURCE_DIR}/tests"
-    NAME         "testExec"
-    TEMPLATE     "${EPL_VIZ_TEMPLATES_DIR}/CMakeLists.exe.txt"
-    DEPENDENCIES
-      ${Wireshark_LIBRARY} ${GLIB_LIBRARIES} capchild caputils ${PCAP_LIBRARIES}
-      libEPLViz epl_DataCollect_shared Qwt::Qwt ${KDE_LIBRARIES}
-      eplp_timeSeries_shared eplp_protocolValidator_shared eplp_python_shared eplp_defaultFilter_shared
-  )
-endif( NOT DISABLE_TESTS )
 
 ##############################
 # Update include directories #
@@ -328,11 +272,6 @@ endif( NOT EXISTS "${EPL_VIZ_INCLUDES_DIR}" )
 foreach( I IN LISTS EPL-Viz_SUBDIR_LIST )
   add_subdirectory( "${I}" )
 endforeach( I IN LISTS EPL-Viz_SUBDIR_LIST )
-
-if( NOT DISABLE_TESTS )
-  add_dependencies( testExec catch FakeIt )
-  add_custom_target( check COMMAND testExec )
-endif( NOT DISABLE_TESTS )
 
 if( NOT USE_SYSTEM_PACKETS )
   add_dependencies( libEPLViz EPL_DataCollect )

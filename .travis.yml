@@ -16,7 +16,3 @@ install:
 
 script:
   - docker run -p 127.0.0.1:80:4567 -t --name builder -v "$PWD":"$PWD" -w "$PWD" eplviz/archlinux_base ./travisRun.sh $CXX
-
-after_success:
-  - docker cp builder:coverage.info .
-  - coveralls-lcov --source-encoding=ISO-8859-1 coverage.info

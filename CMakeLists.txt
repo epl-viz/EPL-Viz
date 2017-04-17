@@ -118,10 +118,10 @@ pkg_search_module(GLIB REQUIRED glib-2.0)
 if( USE_KTEXTEDITOR )
   find_package( KF5     REQUIRED COMPONENTS TextEditor)
   set( KDE_LIBRARIES KF5::TextEditor )
-  set( CM_USE_KTEXTEDITOR  1)
+  set( PLATFORM_TARGET "ALL_KDE" )
 else( USE_KTEXTEDITOR )
   set( KDE_LIBRARIES "" )
-  set( CM_USE_KTEXTEDITOR  0)
+  set( PLATFORM_TARGET "" )
 endif( USE_KTEXTEDITOR )
 
 
@@ -216,6 +216,11 @@ endif( USE_SYSTEM_PACKETS )
 # Write dummy files, so that they can be detected
 file( WRITE "${PROJECT_SOURCE_DIR}/libEPLViz/src/utils/EPLVizEnum2Str.hpp" "" )
 file( WRITE "${PROJECT_SOURCE_DIR}/libEPLViz/src/utils/EPLVizEnum2Str.cpp" "" )
+
+message( "" )
+
+add_platform( TARGET KDE )
+check_platform()
 
 new_project_library(
   PATH         "${PROJECT_SOURCE_DIR}/libEPLViz"

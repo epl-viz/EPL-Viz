@@ -31,8 +31,7 @@
 
 #pragma once
 
-#define EPL_VIZ_ENABLE_MOCKING @CM_ENABLE_MOCKING@
-#define USE_KTEXTEDITOR @CM_USE_KTEXTEDITOR@
+#define USE_KTEXTEDITOR @CM_ALL_KDE@
 
 namespace EPL_Viz {
 

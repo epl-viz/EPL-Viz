@@ -32,7 +32,7 @@ endif( NOT IS_DIRECTORY "${UI_DIR}" )
 file( GLOB UI_FILE_LIST "${CMAKE_CURRENT_LIST_DIR}/ui/*.ui" )
 
 set( OUT_DIR "${PROJECT_BINARY_DIR}/${CM_CURRENT_LIB_LC}" )
-message( STATUS "    - Include file output dir: ${OUT_DIR}" )
+message( STATUS "    - UI include file output dir: ${OUT_DIR}" )
 
 set( CM_GENERATED_UI_FILES "" )
 set( CM_GENERATE_UI_CMD    "" )
@@ -40,7 +40,6 @@ set( CM_GENERATE_UI_CMD    "" )
 foreach( I IN LISTS UI_FILE_LIST )
   file( RELATIVE_PATH UI_FILE_NAME "${UI_DIR}" "${I}" )
   string( REGEX REPLACE "^([^\.]+)\.ui" "ui_\\1.h" INC_NAME "${UI_FILE_NAME}" )
-  message( STATUS "    - Found UI file ${UI_FILE_NAME}" )
 
   set( OUTFILE "${OUT_DIR}/${INC_NAME}" )
   set( infile  "${I}" )

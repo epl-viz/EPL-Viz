@@ -254,7 +254,7 @@ include_directories( SYSTEM
   ${PCAP_INCLUDE_DIRS}
 )
 
-link_directories( ${Wireshark_LIB_DIR} )
+link_directories( ${Wireshark_LIB_DIR} ${EPL_DC_LIB_WS_LIB_DIR} )
 
 # Add Qt5 include dirs
 foreach( I IN LISTS EPL_VIZ_QT_COMPONENTS )

@@ -85,20 +85,13 @@ testExec popd
 testExec popd
 
 msg "Setting up the build env"
-testExec lcov --directory . --zerocounters
 testExec ./checkFormat.sh --only-check
 testExec mkdir $BUILD_DIR
 testExec cd    $BUILD_DIR
 
 msg "START BUILD"
 
-testExec cmake -DENABLE_CODE_COVERAGE=ON -DDISABLE_TESTS=OFF -DUSE_SYSTEM_PACKETS=OFF -DCMAKE_BUILD_TYPE=Debug -DCMAKE_INSTALL_PREFIX=/EPL -DWireshark_DIR=/EPL .. ..
-testExec make
-testExec chmod -R a+rwx .
-
-if (( $ERROR_COUNT == 0 )); then
-  msg "Installing files"
-  testExec make install
-fi
+testExec cmake -DUSE_SYSTEM_PACKETS=OFF -DCMAKE_BUILD_TYPE=Debug -DCMAKE_INSTALL_PREFIX=/EPL ..
+testExec make install
 
 exit $ERROR_COUNT

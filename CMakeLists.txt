@@ -74,7 +74,7 @@ run_git()
 
 add_compiler(
   GNU MIN_VERSION "6.2"
-  ALL        "-Wall -Wextra -Wfloat-equal -Wshadow -Wno-unknown-pragmas -fno-strict-aliasing"
+  ALL        "-Wall -Wextra -Wfloat-equal -Wshadow -Wno-unknown-pragmas -fno-strict-aliasing -fdiagnostics-color=always"
   DEBUG      "-O0 -Werror" ${COVERAGE_COMPILER_FLAG}
   RELEASE    "-O3"
   SANITIZE   "-fsanitize=${SANITIZERS}"
@@ -82,7 +82,7 @@ add_compiler(
 
 add_compiler(
   Clang MIN_VERSION 3.9
-  ALL        "-Weverything -ftemplate-backtrace-limit=0 -fno-strict-aliasing"
+  ALL        "-Weverything -ftemplate-backtrace-limit=0 -fno-strict-aliasing -fcolor-diagnostics"
              "-Wno-c++98-compat -Wno-c++98-compat-pedantic -Wno-padded"
              "-Wno-gnu-anonymous-struct -Wno-nested-anon-types -Wno-exit-time-destructors"
              "-Wno-global-constructors -Wno-switch-enum -Wno-reserved-id-macro"

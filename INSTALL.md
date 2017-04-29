@@ -53,9 +53,7 @@ cmake -DPCAP_HINTS="${PREFIX}" -DCMAKE_INSTALL_PREFIX="${PREFIX}" ..
 make -j$(nproc)
 make install # may require root
 
-# Install additional files not covered with make install
-cp ./run/libcapchild.a ${PREFIX}/lib
-cp ./run/libcaputils.a ${PREFIX}/lib
+# Install include files not covered with make install
 cd ..
 mkdir -p "${PREFIX}/include/wireshark"
 find . -name "*.h" ! -path "*build*" -exec cp --parents {} "${PREFIX}/include/wireshark" \;

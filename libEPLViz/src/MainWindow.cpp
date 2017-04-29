@@ -40,7 +40,6 @@
 #include "PluginsWindow.hpp"
 #include "ProtocolValidator.hpp"
 #include "SettingsWindow.hpp"
-#include "SettingsWindow.hpp"
 #include "Statistics.hpp"
 #include "TimeLineModel.hpp"
 #include "TimeSeriesBuilder.hpp"

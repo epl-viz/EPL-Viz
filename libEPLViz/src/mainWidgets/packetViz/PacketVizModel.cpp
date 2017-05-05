@@ -52,9 +52,12 @@ void PacketVizModel::update() {
     return;
 
   microseconds diff = duration_cast<microseconds>(packets.back().getTimeStamp() - packets.front().getTimeStamp());
+  currentCycleTime  = static_cast<int>(diff.count());
+  maxCycleTime      = currentCycleTime;
+  averageCycleTime  = maxCycleTime;
 
   switch (timeing) {
-    case CURRENT: packetViz->setMaxTime(static_cast<int>(diff.count())); break;
+    case CURRENT: packetViz->setMaxTime(currentCycleTime); break;
     case MAX:
     case AVERAGE: break;
   }

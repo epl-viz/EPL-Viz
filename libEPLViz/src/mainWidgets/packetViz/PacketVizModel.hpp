@@ -42,9 +42,9 @@ class PacketVizModel : public BaseModel {
   PacketVizWidget *packetViz = nullptr;
 
   CycleTimeing timeing          = CURRENT;
-  uint32_t     averageCycleTime = 0;
-  uint32_t     maxCycleTime     = 0;
-  uint32_t     currentCycleTime = 0;
+  int          averageCycleTime = 0;
+  int          maxCycleTime     = 0;
+  int          currentCycleTime = 0;
 
   QComboBox *timeSelector = nullptr;
 

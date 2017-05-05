@@ -290,11 +290,11 @@ enum2str_generate(
   PATH       "${PROJECT_SOURCE_DIR}/libEPLViz/src/utils"
   CLASS_NAME "EPLVizEnum2Str"
   FUNC_NAME  "toStr"
-  INCLUDES   "GUIState.hpp"
+  INCLUDES   "GUIState.hpp" "PacketVizModel.hpp"
   INDENT_STR "  "
   NAMESPACE  "EPL_Viz"
   ENUMS
-    "GUIState"
+    "GUIState" "PacketVizModel::CycleTimeing"
   BLACKLIST
 )
 

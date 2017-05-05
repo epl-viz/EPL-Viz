@@ -515,6 +515,94 @@
     </layout>
    </widget>
   </widget>
+  <widget class="QDockWidget" name="dockPacketViz">
+   <property name="windowTitle">
+    <string>Packet Vi&amp;zualizer (time in us)</string>
+   </property>
+   <attribute name="dockWidgetArea">
+    <number>8</number>
+   </attribute>
+   <widget class="QWidget" name="packetVizContainer">
+    <layout class="QVBoxLayout" name="verticalLayout_4">
+     <property name="spacing">
+      <number>0</number>
+     </property>
+     <property name="leftMargin">
+      <number>3</number>
+     </property>
+     <property name="topMargin">
+      <number>3</number>
+     </property>
+     <property name="rightMargin">
+      <number>3</number>
+     </property>
+     <property name="bottomMargin">
+      <number>3</number>
+     </property>
+     <item>
+      <widget class="PacketVizWidget" name="packetViz" native="true">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <layout class="QVBoxLayout" name="verticalLayout_6">
+        <property name="spacing">
+         <number>0</number>
+        </property>
+        <property name="leftMargin">
+         <number>0</number>
+        </property>
+        <property name="topMargin">
+         <number>0</number>
+        </property>
+        <property name="rightMargin">
+         <number>0</number>
+        </property>
+        <property name="bottomMargin">
+         <number>0</number>
+        </property>
+       </layout>
+      </widget>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout">
+       <item>
+        <spacer name="horizontalSpacer">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item>
+        <widget class="QLabel" name="label">
+         <property name="text">
+          <string>Total time</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QComboBox" name="pVizTimeSelector">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+    </layout>
+   </widget>
+  </widget>
   <action name="actionQuit">
    <property name="icon">
     <iconset theme="application-exit"/>
@@ -663,7 +751,7 @@
     <iconset theme=":/qt-project.org/qmessagebox/images/qtlogo-64.png"/>
    </property>
    <property name="text">
-    <string>About Qt</string>
+    <string>About &amp;Qt</string>
    </property>
   </action>
  </widget>
@@ -706,6 +794,15 @@
    <class>EventViewerWidget</class>
    <extends>QTreeWidget</extends>
    <header>EventViewerWidget.hpp</header>
+  </customwidget>
+  <customwidget>
+   <class>PacketVizWidget</class>
+   <extends>QWidget</extends>
+   <header>PacketVizWidget.hpp</header>
+   <container>1</container>
+   <slots>
+    <slot>timeIndexChanged(int)</slot>
+   </slots>
   </customwidget>
  </customwidgets>
  <resources/>
@@ -963,6 +1060,22 @@
     <hint type="destinationlabel">
      <x>959</x>
      <y>539</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pVizTimeSelector</sender>
+   <signal>currentIndexChanged(int)</signal>
+   <receiver>packetViz</receiver>
+   <slot>timeIndexChanged(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1872</x>
+     <y>1034</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1544</x>
+     <y>971</y>
     </hint>
    </hints>
   </connection>

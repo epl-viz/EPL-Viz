@@ -37,6 +37,7 @@
 #include "ModelThread.hpp"
 #include "NodeWidget.hpp"
 #include "PacketHistoryModel.hpp"
+#include "PacketVizModel.hpp"
 #include "PluginLogModel.hpp"
 #include "PluginsWindow.hpp"
 #include "ProfileManager.hpp"

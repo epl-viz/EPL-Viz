@@ -67,7 +67,6 @@ using namespace EPL_DataCollect::plugins;
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
   initResources();
 
-  profileManager.readWindowSettings(this);
   captureInstance = std::make_unique<CaptureInstance>();
 
   settingsWin = new SettingsWindow(this, &profileManager);
@@ -87,6 +86,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
   ui->eventViewer->setMainWindow(this);
   ui->networkGraphContents->setMainWindow(this);
   ui->statusBar->addPermanentWidget(progressBar);
+  profileManager.readWindowSettings(this);
+
 
   CS = new CycleSetterAction(ui->toolBar, this);
   ui->toolBar->addAction(CS);
@@ -153,6 +154,7 @@ void MainWindow::createModels() {
   PacketHistoryModel *packetHistoryModel = new PacketHistoryModel(this, ui->packetHistoryTextEdit);
   TimeLineModel *     timeLineModel      = new TimeLineModel(this, ui->qwtPlotTimeline, qwtPlot);
   PacketListModel *   packetListModel    = new PacketListModel(this, ui->packetsView);
+  PacketVizModel *    packetVizModel     = new PacketVizModel(this, ui->packetViz, ui->pVizTimeSelector);
 
   // save references to the timeline and plot model for the Plot setup Dialog
   plot     = qwtPlot;
@@ -207,6 +209,7 @@ void MainWindow::createModels() {
   models.append(oddescrModel);
   models.append(timeLineModel);
   models.append(packetListModel);
+  models.append(packetVizModel);
 
   QWidget *network = ui->networkGraphContents;
   connect(network, SIGNAL(nodeSelected(uint8_t)), curODModel, SLOT(selectNode(uint8_t)));

@@ -61,6 +61,9 @@ class PacketListItem final : public TreeModelItemBase {
 
   virtual ~PacketListItem();
 
+  uint64_t packetIndex();
+  uint32_t cycleNum();
+
   QVariant data(int column, Qt::ItemDataRole role) override;
   bool          hasChanged() override;
   Qt::ItemFlags flags() override;

@@ -84,4 +84,7 @@ void CycleCommandsModel::updateWidget() {
   endResetModel();
 }
 
-void CycleCommandsModel::changeSelection(QModelIndex index) { emit packetChanged(static_cast<uint64_t>(index.row())); }
+void CycleCommandsModel::changeSelection(QModelIndex index) {
+  CyCoTreeItem *currItem = static_cast<CyCoTreeItem *>(index.internalPointer());
+  emit          packetChanged(currItem->globalPacketIndex());
+}

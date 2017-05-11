@@ -65,5 +65,6 @@ class PacketListModel final : public TreeModelBase, public BaseModel {
 
  signals:
   void cycleSelected(uint32_t cycleNum);
+  void packetChanged(uint64_t packetNum);
 };
 }

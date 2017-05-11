@@ -172,6 +172,14 @@ void MainWindow::createModels() {
           SIGNAL(packetChanged(uint64_t)),
           packetHistoryModel,
           SLOT(changePacket(uint64_t))); // Notify the packet viewer of changing packets
+  connect(packetListModel,
+          SIGNAL(packetChanged(uint64_t)),
+          packetHistoryModel,
+          SLOT(changePacket(uint64_t))); // Notify the packet viewer of changing packets
+  connect(packetVizModel,
+          SIGNAL(packetChanged(uint64_t)),
+          packetHistoryModel,
+          SLOT(changePacket(uint64_t))); // Notify the packet viewer of changing packets
 
   connect(ui->scrBarTimeline, SIGNAL(valueChanged(int)), timeLineModel, SLOT(updateViewport(int)));
   connect(this, SIGNAL(fitToPlot()), timeLineModel, SLOT(fitToPlot()));

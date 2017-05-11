@@ -82,6 +82,9 @@ PacketListItem::~PacketListItem() {}
 Qt::ItemFlags PacketListItem::flags() { return Qt::ItemIsEnabled | Qt::ItemNeverHasChildren; }
 bool          PacketListItem::hasChanged() { return false; }
 
+uint64_t PacketListItem::packetIndex() { return index; }
+uint32_t PacketListItem::cycleNum() { return metaData.cycleNum; }
+
 QVariant PacketListItem::dataDisplay(int column) {
   switch (column) {
     case 0: return QVariant(static_cast<uint32_t>(index + 1));

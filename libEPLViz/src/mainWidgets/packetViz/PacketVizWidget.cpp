@@ -84,7 +84,7 @@ void PacketVizWidget::redraw() {
 }
 
 
-void PacketVizWidget::setPackets(std::vector<EPL_DataCollect::InputHandler::PacketMetadata> d) {
+void PacketVizWidget::setPackets(std::vector<EPL_DataCollect::InputHandler::PacketMetadata> d, uint64_t startIndex) {
   packetData = d;
 
   if (packetData.empty()) {
@@ -103,8 +103,10 @@ void PacketVizWidget::setPackets(std::vector<EPL_DataCollect::InputHandler::Pack
       packetWidgets.emplace_back(new PacketVizPacket(this));
     }
 
-    packetWidgets[i]->setPacketData(
-          packetData[i], static_cast<int>(packetData[i + 1].timeStamp - packetData[i].timeStamp) / 1000, cfg);
+    packetWidgets[i]->setPacketData(packetData[i],
+                                    static_cast<int>(packetData[i + 1].timeStamp - packetData[i].timeStamp) / 1000,
+                                    startIndex + i,
+                                    cfg);
     packetWidgets[i]->show();
   }
 
@@ -127,3 +129,4 @@ void PacketVizWidget::timeIndexChanged(int index) {
 
 void PacketVizWidget::setModel(PacketVizModel *m) { model = m; }
 void PacketVizWidget::setMaxTime(int t) { maxTime = t; }
+void PacketVizWidget::packetSelected(uint64_t pkg) { model->packetSelected(pkg); }

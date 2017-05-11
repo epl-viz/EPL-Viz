@@ -60,6 +60,8 @@ class CyCoTreeItem final : public TreeModelItemBase {
                MainWindow *                          mainWin);
   virtual ~CyCoTreeItem();
 
+  uint64_t globalPacketIndex();
+
   QVariant data(int column, Qt::ItemDataRole role) override;
   bool          hasChanged() override;
   Qt::ItemFlags flags() override;

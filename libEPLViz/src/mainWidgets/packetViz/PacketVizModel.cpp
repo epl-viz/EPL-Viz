@@ -46,8 +46,10 @@ PacketVizModel::~PacketVizModel() {}
 
 void PacketVizModel::init() {
   packetViz->setMaxTime(1);
-  packetViz->setPackets({});
+  packetViz->setPackets({}, 0);
 }
+
+void PacketVizModel::packetSelected(uint64_t pkg) { emit packetChanged(pkg); }
 
 void PacketVizModel::update() {
   ProtectedCycle &cycle = BaseModel::getCurrentCycle();
@@ -59,13 +61,18 @@ void PacketVizModel::update() {
     return;
 
   dataToSet.clear();
-  auto startP = packets.front().getPacketIndex();
+  startPacketIndex = packets.front().getPacketIndex();
 
-  auto metaData   = getMainWindow()->getCaptureInstance()->getInputHandler()->getPacketsMetadata();
   auto maxPackets = getMainWindow()->getSettingsWin()->getConfig().packetVizMaxPackets;
-  for (size_t i = startP; i < metaData->size() && (i - startP) <= packets.size() && (i - startP) <= maxPackets; ++i) {
-    auto tempData = metaData->at(i);
-    dataToSet.emplace_back(tempData);
+
+  { // No scope so that metaData can be destroyed ASAP
+    auto metaData = getMainWindow()->getCaptureInstance()->getInputHandler()->getPacketsMetadata();
+    for (size_t i = startPacketIndex;
+         i < metaData->size() && (i - startPacketIndex) <= packets.size() && (i - startPacketIndex) <= maxPackets;
+         ++i) {
+      auto tempData = metaData->at(i);
+      dataToSet.emplace_back(tempData);
+    }
   }
 
   if (dataToSet.empty())
@@ -83,9 +90,11 @@ void PacketVizModel::update() {
   }
 }
 
+void PacketVizModel::packetHasChanged(uint64_t pkg) { (void)pkg; }
+
 void PacketVizModel::updateWidget() {
   packetViz->redraw();
-  packetViz->setPackets(dataToSet);
+  packetViz->setPackets(dataToSet, startPacketIndex);
 }
 
 void PacketVizModel::timeIndexChanged(int index) {

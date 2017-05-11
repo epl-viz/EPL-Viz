@@ -45,13 +45,20 @@ class PacketVizPacket : public QWidget {
  private:
   Ui::PacketVizPacket *ui;
   PacketVizWidget *    parentWidget = nullptr;
+  uint64_t             pkgIndex;
 
   QColor calcBGColor(EPL_DataCollect::PacketType type, SettingsProfileItem::Config &cfg);
+
+ protected:
+  void mousePressEvent(QMouseEvent *event) override;
 
  public:
   explicit PacketVizPacket(QWidget *parent = 0);
   ~PacketVizPacket();
 
-  void setPacketData(EPL_DataCollect::InputHandler::PacketMetadata data, int relTime, SettingsProfileItem::Config &cfg);
+  void setPacketData(EPL_DataCollect::InputHandler::PacketMetadata data,
+                     int                                           relTime,
+                     uint64_t                                      pIndex,
+                     SettingsProfileItem::Config &                 cfg);
 };
 }

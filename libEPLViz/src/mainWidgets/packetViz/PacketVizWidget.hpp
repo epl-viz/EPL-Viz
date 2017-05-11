@@ -62,7 +62,9 @@ class PacketVizWidget : public QWidget {
   void setMaxTime(int t);
 
   void redraw();
-  void setPackets(std::vector<EPL_DataCollect::InputHandler::PacketMetadata> d);
+  void setPackets(std::vector<EPL_DataCollect::InputHandler::PacketMetadata> d, uint64_t startIndex);
+
+  void packetSelected(uint64_t pkg);
 
  signals:
 

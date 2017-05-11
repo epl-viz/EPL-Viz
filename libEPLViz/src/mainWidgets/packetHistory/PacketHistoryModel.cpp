@@ -45,28 +45,34 @@ void PacketHistoryModel::init() { textBox->clear(); }
 
 void PacketHistoryModel::update() {}
 void PacketHistoryModel::updateWidget() {
-  uint32_t currCycle = BaseModel::getCurrentCycle()->getCycleNum();
+  ProtectedCycle &cycle     = BaseModel::getCurrentCycle();
+  auto            lock      = cycle.getLock();
+  uint32_t        currCycle = cycle->getCycleNum();
 
   // Don't reset if cycle didn't change
   if (lastCycle != currCycle) {
-    changePacket(0);
+    auto packets = cycle->getPackets();
+    if (!packets.empty())
+      changePacket(packets.front().getPacketIndex());
   }
 }
 
 void PacketHistoryModel::changePacket(uint64_t pkg) {
-  ProtectedCycle &cycle = BaseModel::getCurrentCycle();
-  auto            lock  = cycle.getLock();
+  string text;
 
-  vector<Packet> packets = cycle->getPackets();
-  string         text;
+  {
+    auto metaData = getMainWindow()->getCaptureInstance()->getInputHandler()->getPacketsMetadata();
+    if (metaData->size() <= pkg) {
+      qDebug() << "PKG " << pkg << " out of bounds";
+      return;
+    }
+    lastCycle = metaData->at(pkg).cycleNum;
+  }
 
   if (pkg == UINT64_MAX)
     text = "";
-  else if (pkg < packets.size())
-    text = BaseModel::getMainWindow()->getCaptureInstance()->getInputHandler()->generateWiresharkString(packets[pkg]);
   else
-    text = "Packet out of bounds";
+    text = BaseModel::getMainWindow()->getCaptureInstance()->getInputHandler()->generateWiresharkString(pkg);
 
   textBox->setPlainText(QString::fromStdString(text));
-  lastCycle = cycle->getCycleNum();
 }

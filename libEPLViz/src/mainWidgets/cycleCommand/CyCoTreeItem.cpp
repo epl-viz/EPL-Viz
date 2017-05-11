@@ -44,6 +44,7 @@ CyCoTreeItem::~CyCoTreeItem() {}
 
 Qt::ItemFlags CyCoTreeItem::flags() { return Qt::ItemIsEnabled | Qt::ItemNeverHasChildren; }
 bool          CyCoTreeItem::hasChanged() { return false; }
+uint64_t      CyCoTreeItem::globalPacketIndex() { return packets[pIndex].getPacketIndex(); }
 
 QVariant CyCoTreeItem::dataDisplay(int column) {
   Packet &                 packet = packets.at(pIndex);

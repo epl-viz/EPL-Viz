@@ -36,7 +36,9 @@
 
 namespace EPL_Viz {
 
-class PacketVizModel : public BaseModel {
+class PacketVizModel : public QObject, public BaseModel {
+  Q_OBJECT
+
  public:
   enum CycleTimeing { CURRENT, MAX, AVERAGE };
 
@@ -48,6 +50,7 @@ class PacketVizModel : public BaseModel {
   int          averageCycleTime = 0;
   int          maxCycleTime     = 0;
   int          currentCycleTime = 0;
+  uint64_t     startPacketIndex = 0;
 
   QComboBox *timeSelector = nullptr;
 
@@ -62,5 +65,13 @@ class PacketVizModel : public BaseModel {
   QString getName() override { return "PacketViz"; }
 
   void timeIndexChanged(int index);
+
+  void packetSelected(uint64_t pkg);
+
+ signals:
+  void packetChanged(uint64_t);
+
+ public slots:
+  void packetHasChanged(uint64_t pkg);
 };
 }

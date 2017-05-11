@@ -41,6 +41,7 @@ PacketVizPacket::PacketVizPacket(QWidget *parent) : QWidget(parent), ui(new Ui::
 }
 
 PacketVizPacket::~PacketVizPacket() { delete ui; }
+void PacketVizPacket::mousePressEvent(QMouseEvent *) { parentWidget->packetSelected(pkgIndex); }
 
 QColor PacketVizPacket::calcBGColor(EPL_DataCollect::PacketType type, SettingsProfileItem::Config &cfg) {
   switch (type) {
@@ -57,7 +58,11 @@ QColor PacketVizPacket::calcBGColor(EPL_DataCollect::PacketType type, SettingsPr
   return QColor();
 }
 
-void PacketVizPacket::setPacketData(InputHandler::PacketMetadata pData, int relTime, SettingsProfileItem::Config &cfg) {
+void PacketVizPacket::setPacketData(InputHandler::PacketMetadata pData,
+                                    int                          relTime,
+                                    uint64_t                     pIndex,
+                                    SettingsProfileItem::Config &cfg) {
+  pkgIndex          = pIndex;
   PacketType pType  = static_cast<PacketType>(pData.getFiled(InputHandler::PacketMetadata::PACKET_TYPE));
   int        source = static_cast<int>(pData.getFiled(InputHandler::PacketMetadata::SOURCE));
   int        dest   = static_cast<int>(pData.getFiled(InputHandler::PacketMetadata::DESTINATION));

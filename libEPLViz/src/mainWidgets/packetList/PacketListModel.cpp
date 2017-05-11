@@ -70,26 +70,9 @@ void PacketListModel::init() {
 }
 
 void PacketListModel::jumpToPacket(QModelIndex packet) {
-  uint64_t packetIndex = 0;
-  int      row         = packet.row() - 1;
-
-  QVariant    cycle = static_cast<PacketListItem *>(packet.internalPointer())->data(1, Qt::DisplayRole);
-  QModelIndex prev  = packet.sibling(row, 1);
-
-  // Determine the packet index in the current cycle
-  while (prev.isValid() && row >= 0) {
-    if (prev.data(Qt::DisplayRole) != cycle) {
-      packetIndex++; // FIXME: The start of cycle shows as belonging to the old cycle in the table
-      break;
-    }
-
-    packetIndex++;
-    row--;
-    prev = packet.sibling(row, 1);
-  }
-
-  uint32_t cycleNum = static_cast<uint32_t>(std::atoi(cycle.toString().toStdString().c_str()));
-  emit     cycleSelected(cycleNum);
+  PacketListItem *currItem = static_cast<PacketListItem *>(packet.internalPointer());
+  emit            cycleSelected(currItem->cycleNum());
+  emit            packetChanged(currItem->packetIndex());
 }
 
 void PacketListModel::update() {}

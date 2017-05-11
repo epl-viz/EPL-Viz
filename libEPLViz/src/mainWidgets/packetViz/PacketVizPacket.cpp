@@ -70,12 +70,31 @@ void PacketVizPacket::setPacketData(InputHandler::PacketMetadata pData,
   QColor   bgColor = calcBGColor(pType, cfg);
   QPalette pal     = palette();
 
-  pal.setColor(QPalette::Window, bgColor);
+  pal.setBrush(QPalette::Window, QBrush(bgColor, Qt::BDiagPattern));
   pal.setColor(QPalette::WindowText, bgColor.lightness() >= 125 ? QColor("#000000") : QColor("#ffffff"));
 
   setPalette(pal);
 
+  pal.setBrush(QPalette::Window, QBrush(bgColor, Qt::SolidPattern));
+  ui->baseBack->setPalette(pal);
+
   ui->pType->setText(EPLEnum2Str::toStr(static_cast<PacketType>(pType)).c_str());
   ui->pSourceDest->setText(QString::fromStdString(std::to_string(source)) + " --> " + std::to_string(dest).c_str());
   ui->pDur->setText(QString::fromStdString(std::to_string(relTime)) + " μs");
+}
+
+void PacketVizPacket::resizeAll(int x, int y) {
+  std::vector<QLabel *> sizes = {ui->pType, ui->pSourceDest, ui->pDur};
+  int                   minX  = 0;
+
+  for (QLabel *i : sizes) {
+    int s = i->fontMetrics().boundingRect(i->text()).width();
+    minX  = s > minX ? s : minX;
+  }
+
+  minX += ui->container->layout()->margin() * 2;
+
+  resize(x < minX ? minX : x, y);
+  ui->container->resize(size());
+  ui->baseBack->resize(x, y);
 }

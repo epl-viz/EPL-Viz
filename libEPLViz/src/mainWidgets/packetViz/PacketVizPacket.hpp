@@ -56,6 +56,8 @@ class PacketVizPacket : public QWidget {
   explicit PacketVizPacket(QWidget *parent = 0);
   ~PacketVizPacket();
 
+  void resizeAll(int x, int y);
+
   void setPacketData(EPL_DataCollect::InputHandler::PacketMetadata data,
                      int                                           relTime,
                      uint64_t                                      pIndex,

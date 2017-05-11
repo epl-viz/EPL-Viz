@@ -79,7 +79,7 @@ void PacketVizWidget::redraw() {
     endX   = endX < winSize.width() ? endX : winSize.width();
 
     packetWidgets[i]->move(startX, isMN ? startY : startY + (endY - startY) / 2);
-    packetWidgets[i]->resize(endX - startX, (endY - startY) / 2);
+    packetWidgets[i]->resizeAll(endX - startX, (endY - startY) / 2);
   }
 }
 

@@ -28,11 +28,12 @@
 #include "EPLEnum2Str.hpp"
 #include "PacketVizWidget.hpp"
 #include "ui_PacketVizPacket.h"
+#include <QPainter>
 
 using namespace EPL_Viz;
 using namespace EPL_DataCollect;
 
-PacketVizPacket::PacketVizPacket(QWidget *parent) : QWidget(parent), ui(new Ui::PacketVizPacket) {
+PacketVizPacket::PacketVizPacket(QWidget *parent) : QFrame(parent), ui(new Ui::PacketVizPacket) {
   ui->setupUi(this);
   parentWidget = dynamic_cast<PacketVizWidget *>(parent);
 
@@ -97,4 +98,12 @@ void PacketVizPacket::resizeAll(int x, int y) {
   resize(x < minX ? minX : x, y);
   ui->container->resize(size());
   ui->baseBack->resize(x, y);
+}
+
+void PacketVizPacket::setHMode(HighlightMode m) {
+  hMode = m;
+  switch (hMode) {
+    case NONE: ui->container->setFrameShape(QFrame::NoFrame); break;
+    case SELECTED: ui->container->setFrameShape(QFrame::Box); break;
+  }
 }

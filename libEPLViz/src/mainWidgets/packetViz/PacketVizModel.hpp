@@ -51,6 +51,7 @@ class PacketVizModel : public QObject, public BaseModel {
   int          maxCycleTime     = 0;
   int          currentCycleTime = 0;
   uint64_t     startPacketIndex = 0;
+  uint64_t     stopPacketIndex  = 0;
 
   QComboBox *timeSelector = nullptr;
 

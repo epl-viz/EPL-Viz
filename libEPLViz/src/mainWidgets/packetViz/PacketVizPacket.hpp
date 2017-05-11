@@ -28,7 +28,7 @@
 
 #include "SettingsWindow.hpp"
 #include <InputHandler.hpp>
-#include <QWidget>
+#include <QFrame>
 #include <qwt/qwt_scale_draw.h>
 
 namespace Ui {
@@ -39,13 +39,17 @@ namespace EPL_Viz {
 
 class PacketVizWidget;
 
-class PacketVizPacket : public QWidget {
+class PacketVizPacket : public QFrame {
   Q_OBJECT
+ public:
+  enum HighlightMode { NONE, SELECTED };
 
  private:
   Ui::PacketVizPacket *ui;
   PacketVizWidget *    parentWidget = nullptr;
   uint64_t             pkgIndex;
+
+  HighlightMode hMode = NONE;
 
   QColor calcBGColor(EPL_DataCollect::PacketType type, SettingsProfileItem::Config &cfg);
 
@@ -57,6 +61,11 @@ class PacketVizPacket : public QWidget {
   ~PacketVizPacket();
 
   void resizeAll(int x, int y);
+
+  HighlightMode getHMode() { return hMode; }
+  void setHMode(HighlightMode m);
+
+  uint64_t getPkgIndex() const noexcept { return pkgIndex; }
 
   void setPacketData(EPL_DataCollect::InputHandler::PacketMetadata data,
                      int                                           relTime,

@@ -39,8 +39,9 @@ class PacketVizModel;
 class PacketVizWidget : public QWidget {
   Q_OBJECT
  private:
-  QwtScaleEngine *scaleEngine = nullptr;
-  QwtScaleWidget *scaleWidget = nullptr;
+  QwtScaleEngine *scaleEngine    = nullptr;
+  QwtScaleWidget *scaleWidget    = nullptr;
+  uint64_t        selectedPacket = 0;
 
   QWidget *parentWidget = nullptr;
 
@@ -64,9 +65,10 @@ class PacketVizWidget : public QWidget {
   void redraw();
   void setPackets(std::vector<EPL_DataCollect::InputHandler::PacketMetadata> d, uint64_t startIndex);
 
-  void packetSelected(uint64_t pkg);
+  uint64_t getSelectedPacket() const { return selectedPacket; }
+  void setSelectedPacket(uint64_t p);
 
- signals:
+  void packetSelected(uint64_t pkg);
 
  public slots:
   void timeIndexChanged(int index);

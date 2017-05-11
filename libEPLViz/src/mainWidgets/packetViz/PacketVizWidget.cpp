@@ -51,14 +51,14 @@ PacketVizWidget::~PacketVizWidget() {
 }
 
 void PacketVizWidget::redraw() {
-  scaleWidget->setGeometry(0, 0, parentWidget->size().width(), 30);
+  auto  cfg     = model->getMainWindow()->getSettingsWin()->getConfig();
+  QSize winSize = size();
+
+  scaleWidget->setGeometry(3, 0, size().width() - 3, static_cast<int>(cfg.packetVizScaleHeight));
   scaleWidget->setScaleDiv(scaleEngine->divideScale(0, maxTime, 10, 10));
 
   if (packetData.empty())
     return;
-
-  auto  cfg     = model->getMainWindow()->getSettingsWin()->getConfig();
-  QSize winSize = size();
 
   int startY = static_cast<int>(cfg.packetVizScaleHeight);
   int endY   = winSize.height();
@@ -77,6 +77,12 @@ void PacketVizWidget::redraw() {
 
     startX = startX < winSize.width() ? startX : winSize.width();
     endX   = endX < winSize.width() ? endX : winSize.width();
+
+    if (packetWidgets[i]->getPkgIndex() == selectedPacket) {
+      packetWidgets[i]->setHMode(PacketVizPacket::SELECTED);
+    } else {
+      packetWidgets[i]->setHMode(PacketVizPacket::NONE);
+    }
 
     packetWidgets[i]->move(startX, isMN ? startY : startY + (endY - startY) / 2);
     packetWidgets[i]->resizeAll(endX - startX, (endY - startY) / 2);
@@ -125,6 +131,11 @@ void PacketVizWidget::resizeEvent(QResizeEvent *ev) {
 void PacketVizWidget::timeIndexChanged(int index) {
   if (model)
     model->timeIndexChanged(index);
+}
+
+void PacketVizWidget::setSelectedPacket(uint64_t p) {
+  selectedPacket = p;
+  redraw();
 }
 
 void PacketVizWidget::setModel(PacketVizModel *m) { model = m; }

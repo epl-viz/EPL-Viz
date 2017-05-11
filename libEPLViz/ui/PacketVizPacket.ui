@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
  <class>PacketVizPacket</class>
- <widget class="QWidget" name="PacketVizPacket">
+ <widget class="QFrame" name="PacketVizPacket">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -28,7 +28,7 @@
   <property name="autoFillBackground">
    <bool>true</bool>
   </property>
-  <widget class="QWidget" name="container" native="true">
+  <widget class="QFrame" name="container">
    <property name="geometry">
     <rect>
      <x>0</x>
@@ -42,6 +42,9 @@
      <horstretch>0</horstretch>
      <verstretch>0</verstretch>
     </sizepolicy>
+   </property>
+   <property name="lineWidth">
+    <number>2</number>
    </property>
    <layout class="QVBoxLayout" name="verticalLayout">
     <item>

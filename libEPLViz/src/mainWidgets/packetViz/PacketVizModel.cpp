@@ -62,7 +62,9 @@ void PacketVizModel::update() {
 
   dataToSet.clear();
   startPacketIndex = packets.front().getPacketIndex();
+  stopPacketIndex  = packets.back().getPacketIndex();
 
+  // Autoselect first packet on update
   auto maxPackets = getMainWindow()->getSettingsWin()->getConfig().packetVizMaxPackets;
 
   { // No scope so that metaData can be destroyed ASAP
@@ -90,11 +92,14 @@ void PacketVizModel::update() {
   }
 }
 
-void PacketVizModel::packetHasChanged(uint64_t pkg) { (void)pkg; }
+void PacketVizModel::packetHasChanged(uint64_t pkg) { packetViz->setSelectedPacket(pkg); }
 
 void PacketVizModel::updateWidget() {
   packetViz->redraw();
   packetViz->setPackets(dataToSet, startPacketIndex);
+
+  if (!(packetViz->getSelectedPacket() >= startPacketIndex && packetViz->getSelectedPacket() <= stopPacketIndex))
+    packetViz->setSelectedPacket(startPacketIndex);
 }
 
 void PacketVizModel::timeIndexChanged(int index) {

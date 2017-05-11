@@ -26,19 +26,51 @@
 
 #include "PacketVizPacket.hpp"
 #include "EPLEnum2Str.hpp"
+#include "PacketVizWidget.hpp"
 #include "ui_PacketVizPacket.h"
 
 using namespace EPL_Viz;
 using namespace EPL_DataCollect;
 
-PacketVizPacket::PacketVizPacket(QWidget *parent) : QWidget(parent), ui(new Ui::PacketVizPacket) { ui->setupUi(this); }
+PacketVizPacket::PacketVizPacket(QWidget *parent) : QWidget(parent), ui(new Ui::PacketVizPacket) {
+  ui->setupUi(this);
+  parentWidget = dynamic_cast<PacketVizWidget *>(parent);
+
+  if (!parentWidget)
+    qDebug() << "ERROR: !!! INVALID PARENT !!!";
+}
 
 PacketVizPacket::~PacketVizPacket() { delete ui; }
 
-void PacketVizPacket::setPacketData(InputHandler::PacketMetadata data, QwtScaleDraw *scaleDraw) {
-  ui->pType->setText(EPLEnum2Str::toStr(static_cast<PacketType>(data.getFiled(
-                                              EPL_DataCollect::InputHandler::PacketMetadata::PACKET_TYPE)))
-                           .c_str());
+QColor PacketVizPacket::calcBGColor(EPL_DataCollect::PacketType type, SettingsProfileItem::Config &cfg) {
+  switch (type) {
+    case PacketType::START_OF_CYCLE: return cfg.pSoC;
+    case PacketType::START_OF_ASYNC: return cfg.pSoA;
+    case PacketType::POLL_REQUEST: return cfg.pPReq;
+    case PacketType::POLL_RESPONSE: return cfg.pPRes;
+    case PacketType::ASYNC_SEND: return cfg.pASnd;
+    case PacketType::AINV: return cfg.pAINV;
+    case PacketType::AMNI: return cfg.pANMI;
+    case PacketType::UNDEF: return cfg.pInvalid;
+  }
 
-  move(static_cast<int>(scaleDraw->labelPosition(1000).rx()), 0);
+  return QColor();
+}
+
+void PacketVizPacket::setPacketData(InputHandler::PacketMetadata pData, int relTime, SettingsProfileItem::Config &cfg) {
+  PacketType pType  = static_cast<PacketType>(pData.getFiled(InputHandler::PacketMetadata::PACKET_TYPE));
+  int        source = static_cast<int>(pData.getFiled(InputHandler::PacketMetadata::SOURCE));
+  int        dest   = static_cast<int>(pData.getFiled(InputHandler::PacketMetadata::DESTINATION));
+
+  QColor   bgColor = calcBGColor(pType, cfg);
+  QPalette pal     = palette();
+
+  pal.setColor(QPalette::Window, bgColor);
+  pal.setColor(QPalette::WindowText, bgColor.lightness() >= 125 ? QColor("#000000") : QColor("#ffffff"));
+
+  setPalette(pal);
+
+  ui->pType->setText(EPLEnum2Str::toStr(static_cast<PacketType>(pType)).c_str());
+  ui->pSourceDest->setText(QString::fromStdString(std::to_string(source)) + " --> " + std::to_string(dest).c_str());
+  ui->pDur->setText(QString::fromStdString(std::to_string(relTime)) + " μs");
 }

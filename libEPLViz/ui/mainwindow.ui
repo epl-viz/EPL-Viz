@@ -73,8 +73,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>1322</width>
-             <height>313</height>
+             <width>1325</width>
+             <height>225</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_15"/>
@@ -179,7 +179,7 @@
      <x>0</x>
      <y>0</y>
      <width>1920</width>
-     <height>30</height>
+     <height>23</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -517,7 +517,7 @@
   </widget>
   <widget class="QDockWidget" name="dockPacketViz">
    <property name="windowTitle">
-    <string>Packet Vi&amp;zualizer (time in us)</string>
+    <string>Packet Vi&amp;zualizer (time in μs)</string>
    </property>
    <attribute name="dockWidgetArea">
     <number>8</number>
@@ -546,6 +546,12 @@
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>100</width>
+         <height>50</height>
+        </size>
        </property>
       </widget>
      </item>

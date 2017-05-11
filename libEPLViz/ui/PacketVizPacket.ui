@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>227</width>
-    <height>60</height>
+    <width>114</width>
+    <height>85</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -19,8 +19,32 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout">
-   <item row="2" column="0">
+  <property name="autoFillBackground">
+   <bool>true</bool>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <widget class="QLabel" name="pType">
+     <property name="text">
+      <string>Packet Type</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QLabel" name="pSourceDest">
+     <property name="text">
+      <string>Souce --&gt; Dest</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QLabel" name="pDur">
+     <property name="text">
+      <string>Packet Duration</string>
+     </property>
+    </widget>
+   </item>
+   <item>
     <spacer name="verticalSpacer">
      <property name="orientation">
       <enum>Qt::Vertical</enum>
@@ -32,34 +56,6 @@
       </size>
      </property>
     </spacer>
-   </item>
-   <item row="0" column="0">
-    <widget class="QLabel" name="label">
-     <property name="text">
-      <string>Type</string>
-     </property>
-    </widget>
-   </item>
-   <item row="0" column="1">
-    <widget class="QLabel" name="pType">
-     <property name="text">
-      <string>Packet Type</string>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="0">
-    <widget class="QLabel" name="label_3">
-     <property name="text">
-      <string>Time</string>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="1">
-    <widget class="QLabel" name="pDur">
-     <property name="text">
-      <string>Packet Duration</string>
-     </property>
-    </widget>
    </item>
   </layout>
  </widget>

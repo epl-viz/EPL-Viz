@@ -123,6 +123,7 @@ class BaseModel {
   virtual bool needUpdateAlways();
 
   static std::unique_lock<std::mutex> getUpdateLock() { return std::unique_lock<std::mutex>(updateLocker); }
+  MainWindow *                        getMainWindow();
 
  protected:
   virtual void update()       = 0;
@@ -135,8 +136,6 @@ class BaseModel {
   static void forceNextUpdate() { forceUpdate = true; }
 
   static ProtectedCycle &getCurrentCycle();
-
-  MainWindow *getMainWindow();
 
  private:
   static bool updateAll(MainWindow *mw, EPL_DataCollect::CaptureInstance *instance);

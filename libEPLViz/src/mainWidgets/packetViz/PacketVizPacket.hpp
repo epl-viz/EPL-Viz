@@ -26,6 +26,7 @@
 
 #pragma once
 
+#include "SettingsWindow.hpp"
 #include <InputHandler.hpp>
 #include <QWidget>
 #include <qwt/qwt_scale_draw.h>
@@ -36,16 +37,21 @@ class PacketVizPacket;
 
 namespace EPL_Viz {
 
+class PacketVizWidget;
+
 class PacketVizPacket : public QWidget {
   Q_OBJECT
 
  private:
   Ui::PacketVizPacket *ui;
+  PacketVizWidget *    parentWidget = nullptr;
+
+  QColor calcBGColor(EPL_DataCollect::PacketType type, SettingsProfileItem::Config &cfg);
 
  public:
   explicit PacketVizPacket(QWidget *parent = 0);
   ~PacketVizPacket();
 
-  void setPacketData(EPL_DataCollect::InputHandler::PacketMetadata data, QwtScaleDraw *scaleDraw);
+  void setPacketData(EPL_DataCollect::InputHandler::PacketMetadata data, int relTime, SettingsProfileItem::Config &cfg);
 };
 }

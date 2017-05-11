@@ -47,7 +47,8 @@ class SettingsProfileItem final : public QListWidgetItem {
     bool                      pauseWhilePlayingFile = true;
     bool                      immidiateCycleChange  = true;
     bool                      invertTimeLineZoom    = false;
-    uint32_t                  packetVizMaxPackets   = 50;
+    uint32_t                  packetVizMaxPackets   = 25;
+    uint32_t                  packetVizScaleHeight  = 30;
     std::chrono::milliseconds guiThreadWaitTime     = std::chrono::milliseconds(50);
 
     std::vector<PlotCreator::PlotCreatorData> plots;

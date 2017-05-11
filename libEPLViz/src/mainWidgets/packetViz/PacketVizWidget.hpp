@@ -44,7 +44,8 @@ class PacketVizWidget : public QWidget {
 
   QWidget *parentWidget = nullptr;
 
-  PacketVizModel *model = nullptr;
+  PacketVizModel *                                           model = nullptr;
+  std::vector<EPL_DataCollect::InputHandler::PacketMetadata> packetData;
 
   std::vector<PacketVizPacket *> packetWidgets;
 
@@ -61,7 +62,7 @@ class PacketVizWidget : public QWidget {
   void setMaxTime(int t);
 
   void redraw();
-  void setPackets(std::vector<EPL_DataCollect::InputHandler::PacketMetadata> data);
+  void setPackets(std::vector<EPL_DataCollect::InputHandler::PacketMetadata> d);
 
  signals:
 

@@ -28,6 +28,7 @@
 
 #include "BaseModel.hpp"
 #include "PacketVizWidget.hpp"
+#include "SettingsWindow.hpp"
 #include <InputHandler.hpp>
 #include <QComboBox>
 #include <qwt_scale_engine.h>
@@ -56,7 +57,7 @@ class PacketVizModel : public BaseModel {
 
   void update() override;
   void updateWidget() override;
-  void init() override {}
+  void init() override;
 
   QString getName() override { return "PacketViz"; }
 

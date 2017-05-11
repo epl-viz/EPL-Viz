@@ -55,6 +55,7 @@ bool SettingsProfileItem::writeCfg(AbstractWriter *writer) {
   writer->setValue("immidiateCycleChange", cfg.immidiateCycleChange);
   writer->setValue("invertTimeLineZoom", cfg.invertTimeLineZoom);
   writer->setValue("packetVizMaxPackets", cfg.packetVizMaxPackets);
+  writer->setValue("packetVizScaleHeight", cfg.packetVizScaleHeight);
   writer->setValue("guiThreadWaitTime", static_cast<int>(cfg.guiThreadWaitTime.count()));
   writer->setValue("EPL_DC/SM/saveInterval", cfg.backConf.smConfig.saveInterval);
   writer->setValue("pythonPluginsDir", cfg.pythonPluginsDir.c_str());
@@ -143,6 +144,7 @@ bool SettingsProfileItem::readCfg(AbstractWriter *writer) {
   cfg.immidiateCycleChange                 = writer->value("immidiateCycleChange").toBool();
   cfg.invertTimeLineZoom                   = writer->value("invertTimeLineZoom").toBool();
   cfg.packetVizMaxPackets                  = static_cast<uint32_t>(writer->value("packetVizMaxPackets").toInt());
+  cfg.packetVizScaleHeight                 = static_cast<uint32_t>(writer->value("packetVizScaleHeight").toInt());
   cfg.guiThreadWaitTime                    = milliseconds(writer->value("guiThreadWaitTime").toInt());
   cfg.backConf.smConfig.saveInterval       = static_cast<uint32_t>(writer->value("EPL_DC/SM/saveInterval").toInt());
   cfg.pythonPluginsDir                     = writer->value("pythonPluginsDir").toString().toStdString();

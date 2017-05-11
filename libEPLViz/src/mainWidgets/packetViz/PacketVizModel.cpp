@@ -36,12 +36,18 @@ PacketVizModel::PacketVizModel(MainWindow *mw, PacketVizWidget *pvw, QComboBox *
   packetViz    = pvw;
   timeSelector = ts;
   timeSelector->addItem("Current Cycle", static_cast<int>(CURRENT));
-  timeSelector->addItem("Max Cycle", static_cast<int>(MAX));
-  timeSelector->addItem("Average Cycle", static_cast<int>(AVERAGE));
+  //  timeSelector->addItem("Max Cycle", static_cast<int>(MAX));
+  //  timeSelector->addItem("Average Cycle", static_cast<int>(AVERAGE));
   packetViz->setModel(this);
+  packetViz->setMaxTime(1);
 }
 
 PacketVizModel::~PacketVizModel() {}
+
+void PacketVizModel::init() {
+  packetViz->setMaxTime(1);
+  packetViz->setPackets({});
+}
 
 void PacketVizModel::update() {
   ProtectedCycle &cycle = BaseModel::getCurrentCycle();
@@ -52,17 +58,6 @@ void PacketVizModel::update() {
   if (packets.empty())
     return;
 
-  microseconds diff = duration_cast<microseconds>(packets.back().getTimeStamp() - packets.front().getTimeStamp());
-  currentCycleTime  = static_cast<int>(diff.count());
-  maxCycleTime      = currentCycleTime;
-  averageCycleTime  = maxCycleTime;
-
-  switch (timeing) {
-    case CURRENT: packetViz->setMaxTime(currentCycleTime); break;
-    case MAX:
-    case AVERAGE: break;
-  }
-
   dataToSet.clear();
   auto startP = packets.front().getPacketIndex();
 
@@ -71,6 +66,20 @@ void PacketVizModel::update() {
   for (size_t i = startP; i < metaData->size() && (i - startP) <= packets.size() && (i - startP) <= maxPackets; ++i) {
     auto tempData = metaData->at(i);
     dataToSet.emplace_back(tempData);
+  }
+
+  if (dataToSet.empty())
+    return;
+
+  int64_t diff     = dataToSet.back().timeStamp - dataToSet.front().timeStamp;
+  currentCycleTime = static_cast<int>(diff / 1000);
+  maxCycleTime     = currentCycleTime;
+  averageCycleTime = maxCycleTime;
+
+  switch (timeing) {
+    case CURRENT: packetViz->setMaxTime(currentCycleTime); break;
+    case MAX: packetViz->setMaxTime(maxCycleTime); break;
+    case AVERAGE: packetViz->setMaxTime(averageCycleTime); break;
   }
 }
 

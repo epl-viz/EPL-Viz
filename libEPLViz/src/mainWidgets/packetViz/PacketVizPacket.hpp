@@ -26,46 +26,26 @@
 
 #pragma once
 
-#include "PacketVizPacket.hpp"
+#include <InputHandler.hpp>
 #include <QWidget>
-#include <qwt_scale_engine.h>
-#include <qwt_scale_widget.h>
-#include <vector>
+#include <qwt/qwt_scale_draw.h>
+
+namespace Ui {
+class PacketVizPacket;
+}
 
 namespace EPL_Viz {
 
-class PacketVizModel;
-
-class PacketVizWidget : public QWidget {
+class PacketVizPacket : public QWidget {
   Q_OBJECT
+
  private:
-  QwtScaleEngine *scaleEngine = nullptr;
-  QwtScaleWidget *scaleWidget = nullptr;
-
-  QWidget *parentWidget = nullptr;
-
-  PacketVizModel *model = nullptr;
-
-  std::vector<PacketVizPacket *> packetWidgets;
-
-  int maxTime = 0;
-
- protected:
-  void resizeEvent(QResizeEvent *ev) override;
+  Ui::PacketVizPacket *ui;
 
  public:
-  explicit PacketVizWidget(QWidget *parent = 0);
-  virtual ~PacketVizWidget();
+  explicit PacketVizPacket(QWidget *parent = 0);
+  ~PacketVizPacket();
 
-  void setModel(PacketVizModel *m);
-  void setMaxTime(int t);
-
-  void redraw();
-  void setPackets(std::vector<EPL_DataCollect::InputHandler::PacketMetadata> data);
-
- signals:
-
- public slots:
-  void timeIndexChanged(int index);
+  void setPacketData(EPL_DataCollect::InputHandler::PacketMetadata data, QwtScaleDraw *scaleDraw);
 };
 }

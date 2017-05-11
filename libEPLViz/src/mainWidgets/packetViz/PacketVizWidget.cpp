@@ -41,13 +41,34 @@ PacketVizWidget::PacketVizWidget(QWidget *parent) : QWidget(parent) {
   scaleWidget->show();
 }
 
-PacketVizWidget::~PacketVizWidget() {}
+PacketVizWidget::~PacketVizWidget() {
+  for (auto *i : packetWidgets)
+    delete i;
+
+  packetWidgets.clear();
+}
 
 void PacketVizWidget::redraw() {
   scaleWidget->setGeometry(0, 0, parentWidget->size().width(), 30);
   scaleWidget->setScaleDiv(scaleEngine->divideScale(0, maxTime, 10, 10));
 }
 
+
+void PacketVizWidget::setPackets(std::vector<EPL_DataCollect::InputHandler::PacketMetadata> data) {
+  size_t i;
+  for (i = 0; i < data.size(); ++i) {
+    if (i >= packetWidgets.size()) {
+      packetWidgets.emplace_back(new PacketVizPacket(this));
+    }
+
+    packetWidgets[i]->setPacketData(data[i], scaleWidget->scaleDraw());
+    packetWidgets[i]->show();
+  }
+
+  for (size_t j = i; j < packetWidgets.size(); ++j) {
+    packetWidgets[i]->hide();
+  }
+}
 
 void PacketVizWidget::resizeEvent(QResizeEvent *ev) {
   QWidget::resizeEvent(ev);

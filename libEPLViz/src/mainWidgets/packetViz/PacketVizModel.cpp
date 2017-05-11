@@ -26,6 +26,7 @@
 
 #include "PacketVizModel.hpp"
 #include "EPLVizEnum2Str.hpp"
+#include "MainWindow.hpp"
 
 using namespace EPL_Viz;
 using namespace std;
@@ -61,9 +62,22 @@ void PacketVizModel::update() {
     case MAX:
     case AVERAGE: break;
   }
+
+  dataToSet.clear();
+  auto startP = packets.front().getPacketIndex();
+
+  auto metaData   = getMainWindow()->getCaptureInstance()->getInputHandler()->getPacketsMetadata();
+  auto maxPackets = getMainWindow()->getSettingsWin()->getConfig().packetVizMaxPackets;
+  for (size_t i = startP; i < metaData->size() && (i - startP) <= packets.size() && (i - startP) <= maxPackets; ++i) {
+    auto tempData = metaData->at(i);
+    dataToSet.emplace_back(tempData);
+  }
 }
 
-void PacketVizModel::updateWidget() { packetViz->redraw(); }
+void PacketVizModel::updateWidget() {
+  packetViz->redraw();
+  packetViz->setPackets(dataToSet);
+}
 
 void PacketVizModel::timeIndexChanged(int index) {
   qDebug() << EPLVizEnum2Str::toStr(static_cast<CycleTimeing>(timeSelector->itemData(index).toInt())).c_str();

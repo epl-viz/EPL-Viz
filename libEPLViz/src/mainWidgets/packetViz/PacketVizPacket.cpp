@@ -24,48 +24,21 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
-
 #include "PacketVizPacket.hpp"
-#include <QWidget>
-#include <qwt_scale_engine.h>
-#include <qwt_scale_widget.h>
-#include <vector>
+#include "EPLEnum2Str.hpp"
+#include "ui_PacketVizPacket.h"
 
-namespace EPL_Viz {
+using namespace EPL_Viz;
+using namespace EPL_DataCollect;
 
-class PacketVizModel;
+PacketVizPacket::PacketVizPacket(QWidget *parent) : QWidget(parent), ui(new Ui::PacketVizPacket) { ui->setupUi(this); }
 
-class PacketVizWidget : public QWidget {
-  Q_OBJECT
- private:
-  QwtScaleEngine *scaleEngine = nullptr;
-  QwtScaleWidget *scaleWidget = nullptr;
+PacketVizPacket::~PacketVizPacket() { delete ui; }
 
-  QWidget *parentWidget = nullptr;
+void PacketVizPacket::setPacketData(InputHandler::PacketMetadata data, QwtScaleDraw *scaleDraw) {
+  ui->pType->setText(EPLEnum2Str::toStr(static_cast<PacketType>(data.getFiled(
+                                              EPL_DataCollect::InputHandler::PacketMetadata::PACKET_TYPE)))
+                           .c_str());
 
-  PacketVizModel *model = nullptr;
-
-  std::vector<PacketVizPacket *> packetWidgets;
-
-  int maxTime = 0;
-
- protected:
-  void resizeEvent(QResizeEvent *ev) override;
-
- public:
-  explicit PacketVizWidget(QWidget *parent = 0);
-  virtual ~PacketVizWidget();
-
-  void setModel(PacketVizModel *m);
-  void setMaxTime(int t);
-
-  void redraw();
-  void setPackets(std::vector<EPL_DataCollect::InputHandler::PacketMetadata> data);
-
- signals:
-
- public slots:
-  void timeIndexChanged(int index);
-};
+  move(static_cast<int>(scaleDraw->labelPosition(1000).rx()), 0);
 }

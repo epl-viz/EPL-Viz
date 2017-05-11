@@ -28,6 +28,7 @@
 
 #include "BaseModel.hpp"
 #include "PacketVizWidget.hpp"
+#include <InputHandler.hpp>
 #include <QComboBox>
 #include <qwt_scale_engine.h>
 #include <qwt_scale_widget.h>
@@ -39,7 +40,8 @@ class PacketVizModel : public BaseModel {
   enum CycleTimeing { CURRENT, MAX, AVERAGE };
 
  private:
-  PacketVizWidget *packetViz = nullptr;
+  PacketVizWidget *                                          packetViz = nullptr;
+  std::vector<EPL_DataCollect::InputHandler::PacketMetadata> dataToSet;
 
   CycleTimeing timeing          = CURRENT;
   int          averageCycleTime = 0;

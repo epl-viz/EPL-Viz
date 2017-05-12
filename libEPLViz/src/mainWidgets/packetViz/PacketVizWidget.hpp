@@ -72,5 +72,6 @@ class PacketVizWidget : public QWidget {
 
  public slots:
   void timeIndexChanged(int index);
+  void fixedTimeChanged(int time);
 };
 }

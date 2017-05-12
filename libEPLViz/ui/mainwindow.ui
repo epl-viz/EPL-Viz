@@ -35,7 +35,7 @@
     <item row="0" column="0">
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
-       <number>0</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="tabNet">
        <attribute name="title">
@@ -587,6 +587,39 @@
          </property>
         </widget>
        </item>
+       <item>
+        <spacer name="horizontalSpacer_2">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeType">
+          <enum>QSizePolicy::Minimum</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item>
+        <widget class="QLabel" name="label_2">
+         <property name="text">
+          <string>Set time</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QSpinBox" name="pVizFixedTime">
+         <property name="suffix">
+          <string> μs</string>
+         </property>
+         <property name="maximum">
+          <number>2147483647</number>
+         </property>
+        </widget>
+       </item>
       </layout>
      </item>
     </layout>
@@ -791,6 +824,7 @@
    <container>1</container>
    <slots>
     <slot>timeIndexChanged(int)</slot>
+    <slot>fixedTimeChanged(int)</slot>
    </slots>
   </customwidget>
  </customwidgets>
@@ -1065,6 +1099,22 @@
     <hint type="destinationlabel">
      <x>1544</x>
      <y>971</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pVizFixedTime</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>packetViz</receiver>
+   <slot>fixedTimeChanged(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1855</x>
+     <y>1039</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1664</x>
+     <y>941</y>
     </hint>
    </hints>
   </connection>

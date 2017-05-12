@@ -31,6 +31,7 @@
 #include "SettingsWindow.hpp"
 #include <InputHandler.hpp>
 #include <QComboBox>
+#include <QSpinBox>
 #include <qwt_scale_engine.h>
 #include <qwt_scale_widget.h>
 
@@ -40,7 +41,7 @@ class PacketVizModel : public QObject, public BaseModel {
   Q_OBJECT
 
  public:
-  enum CycleTimeing { CURRENT, MAX, AVERAGE };
+  enum CycleTimeing { CURRENT, FIXED, MAX, AVERAGE };
 
  private:
   PacketVizWidget *                                          packetViz = nullptr;
@@ -48,15 +49,17 @@ class PacketVizModel : public QObject, public BaseModel {
 
   CycleTimeing timeing          = CURRENT;
   int          averageCycleTime = 0;
+  int          fixedTime        = 0;
   int          maxCycleTime     = 0;
   int          currentCycleTime = 0;
   uint64_t     startPacketIndex = 0;
   uint64_t     stopPacketIndex  = 0;
 
-  QComboBox *timeSelector = nullptr;
+  QComboBox *timeSelector      = nullptr;
+  QSpinBox * fixedTimeSelector = nullptr;
 
  public:
-  PacketVizModel(MainWindow *mw, PacketVizWidget *pvw, QComboBox *ts);
+  PacketVizModel(MainWindow *mw, PacketVizWidget *pvw, QComboBox *ts, QSpinBox *sp);
   virtual ~PacketVizModel();
 
   void update() override;
@@ -66,6 +69,7 @@ class PacketVizModel : public QObject, public BaseModel {
   QString getName() override { return "PacketViz"; }
 
   void timeIndexChanged(int index);
+  void fixedTimeChanged(int time);
 
   void packetSelected(uint64_t pkg);
 
@@ -74,5 +78,6 @@ class PacketVizModel : public QObject, public BaseModel {
 
  public slots:
   void packetHasChanged(uint64_t pkg);
+  void settingsUpdated();
 };
 }

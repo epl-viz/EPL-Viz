@@ -32,17 +32,39 @@ using namespace EPL_Viz;
 using namespace std;
 using namespace chrono;
 
-PacketVizModel::PacketVizModel(MainWindow *mw, PacketVizWidget *pvw, QComboBox *ts) : BaseModel(mw, pvw) {
-  packetViz    = pvw;
-  timeSelector = ts;
+PacketVizModel::PacketVizModel(MainWindow *mw, PacketVizWidget *pvw, QComboBox *ts, QSpinBox *sp) : BaseModel(mw, pvw) {
+  packetViz         = pvw;
+  fixedTimeSelector = sp;
+  timeSelector      = ts;
   timeSelector->addItem("Current Cycle", static_cast<int>(CURRENT));
+  timeSelector->addItem("Fixed Time", static_cast<int>(FIXED));
   //  timeSelector->addItem("Max Cycle", static_cast<int>(MAX));
   //  timeSelector->addItem("Average Cycle", static_cast<int>(AVERAGE));
   packetViz->setModel(this);
   packetViz->setMaxTime(1);
+
+  connect(mw->getSettingsWin(), SIGNAL(settingsUpdated()), this, SLOT(settingsUpdated()));
+  settingsUpdated();
 }
 
 PacketVizModel::~PacketVizModel() {}
+
+void PacketVizModel::settingsUpdated() {
+  QVariant ti = getMainWindow()->getSettingsWin()->getCurrentProfile()->readCustomValue("PacketVizTiming");
+  QVariant ft = getMainWindow()->getSettingsWin()->getCurrentProfile()->readCustomValue("PacketVizFixedTime");
+
+  ti = ti == QVariant() ? QVariant(static_cast<int>(CURRENT)) : ti;
+  ft = ft == QVariant() ? QVariant(10000) : ft;
+
+  timeSelector->setCurrentIndex(timeSelector->findData(ti));
+  fixedTimeSelector->setValue(ft.toInt());
+
+  if (ti.toInt() == static_cast<int>(FIXED)) {
+    fixedTimeSelector->setEnabled(true);
+  } else {
+    fixedTimeSelector->setEnabled(false);
+  }
+}
 
 void PacketVizModel::init() {
   packetViz->setMaxTime(1);
@@ -87,6 +109,7 @@ void PacketVizModel::update() {
 
   switch (timeing) {
     case CURRENT: packetViz->setMaxTime(currentCycleTime); break;
+    case FIXED: packetViz->setMaxTime(fixedTime); break;
     case MAX: packetViz->setMaxTime(maxCycleTime); break;
     case AVERAGE: packetViz->setMaxTime(averageCycleTime); break;
   }
@@ -103,5 +126,18 @@ void PacketVizModel::updateWidget() {
 }
 
 void PacketVizModel::timeIndexChanged(int index) {
-  qDebug() << EPLVizEnum2Str::toStr(static_cast<CycleTimeing>(timeSelector->itemData(index).toInt())).c_str();
+  timeing = static_cast<CycleTimeing>(timeSelector->itemData(index).toInt());
+  getMainWindow()->getSettingsWin()->getCurrentProfile()->writeCustomValue("PacketVizTiming",
+                                                                           static_cast<int>(timeing));
+
+  if (timeing == FIXED) {
+    fixedTimeSelector->setEnabled(true);
+  } else {
+    fixedTimeSelector->setEnabled(false);
+  }
+}
+
+void PacketVizModel::fixedTimeChanged(int time) {
+  fixedTime = time;
+  getMainWindow()->getSettingsWin()->getCurrentProfile()->writeCustomValue("PacketVizFixedTime", fixedTime);
 }

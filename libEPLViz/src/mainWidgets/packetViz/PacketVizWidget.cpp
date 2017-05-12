@@ -141,3 +141,4 @@ void PacketVizWidget::setSelectedPacket(uint64_t p) {
 void PacketVizWidget::setModel(PacketVizModel *m) { model = m; }
 void PacketVizWidget::setMaxTime(int t) { maxTime = t; }
 void PacketVizWidget::packetSelected(uint64_t pkg) { model->packetSelected(pkg); }
+void PacketVizWidget::fixedTimeChanged(int time) { model->fixedTimeChanged(time); }

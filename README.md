@@ -16,6 +16,17 @@ See INSTALL.md for instructions
   - `-DWireshark_DIR=<path/to/custom/wireshark/lib/wireshark>` Needed for globals.h, dir should contain cmake files
   List not complete
 
+## Features
+
+### Pre SoC Cycles
+
+In some scenarios debugging the network traffic that came before
+the first SoC is neccessary.
+
+When enabled every SoA is treated as a SoC, before the firtst SoC is detected.
+
+To enable Pre SoC Cycles check the box in Settings --> Backend --> Input Handler --> Enable Pre SoC Cycles.
+
 ## Troubleshooting
 * **I can't start a live recording** `FAILED_TO_CAPTURE_ON_INTERFACE`
 

@@ -71,7 +71,7 @@ void PacketVizPacket::setPacketData(InputHandler::PacketMetadata pData,
   QColor   bgColor = calcBGColor(pType, cfg);
   QPalette pal     = palette();
 
-  pal.setBrush(QPalette::Window, QBrush(bgColor, Qt::BDiagPattern));
+  pal.setBrush(QPalette::Window, QBrush(bgColor, Qt::DiagCrossPattern));
   pal.setColor(QPalette::WindowText, bgColor.lightness() >= 125 ? QColor("#000000") : QColor("#ffffff"));
 
   setPalette(pal);

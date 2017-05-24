@@ -41,25 +41,25 @@ class PacketVizModel : public QObject, public BaseModel {
   Q_OBJECT
 
  public:
-  enum CycleTimeing { CURRENT, FIXED, MAX, AVERAGE };
+  enum CycleTimeing { CURRENT, FIXED };
 
  private:
   PacketVizWidget *                                          packetViz = nullptr;
   std::vector<EPL_DataCollect::InputHandler::PacketMetadata> dataToSet;
 
   CycleTimeing timeing          = CURRENT;
-  int          averageCycleTime = 0;
   int          fixedTime        = 0;
-  int          maxCycleTime     = 0;
   int          currentCycleTime = 0;
   uint64_t     startPacketIndex = 0;
   uint64_t     stopPacketIndex  = 0;
 
-  QComboBox *timeSelector      = nullptr;
-  QSpinBox * fixedTimeSelector = nullptr;
+  QComboBox * timeSelector      = nullptr;
+  QSpinBox *  fixedTimeSelector = nullptr;
+  QSpinBox *  zoomSpinBox       = nullptr;
+  QScrollBar *scrollBar         = nullptr;
 
  public:
-  PacketVizModel(MainWindow *mw, PacketVizWidget *pvw, QComboBox *ts, QSpinBox *sp);
+  PacketVizModel(MainWindow *mw, PacketVizWidget *pvw, QComboBox *ts, QSpinBox *sp, QSpinBox *zoom, QScrollBar *scroll);
   virtual ~PacketVizModel();
 
   void update() override;
@@ -72,6 +72,7 @@ class PacketVizModel : public QObject, public BaseModel {
   void fixedTimeChanged(int time);
 
   void packetSelected(uint64_t pkg);
+  void saveZoom();
 
  signals:
   void packetChanged(uint64_t);

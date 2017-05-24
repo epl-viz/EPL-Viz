@@ -51,11 +51,27 @@ PacketVizWidget::~PacketVizWidget() {
 }
 
 void PacketVizWidget::redraw() {
+  if (!zoomSpin || !scrollBar)
+    return;
+
   auto  cfg     = model->getMainWindow()->getSettingsWin()->getConfig();
   QSize winSize = size();
 
+  int visibleArea = static_cast<int>((1.0f / (static_cast<float>(zoomSpin->value()) / 100.0f)) * maxTime);
+  if (zoomSpin->value() <= 100)
+    visibleArea = maxTime;
+
+  int minX = scrollBar->value();
+  int maxX = scrollBar->value() + visibleArea;
+
+  if (minX < 0)
+    minX = 0;
+
+  if (maxX > maxTime)
+    maxX = maxTime;
+
   scaleWidget->setGeometry(3, 0, size().width() - 3, static_cast<int>(cfg.packetVizScaleHeight));
-  scaleWidget->setScaleDiv(scaleEngine->divideScale(0, maxTime, 10, 10));
+  scaleWidget->setScaleDiv(scaleEngine->divideScale(minX, maxX, 10, 10));
 
   if (packetData.empty())
     return;
@@ -138,7 +154,66 @@ void PacketVizWidget::setSelectedPacket(uint64_t p) {
   redraw();
 }
 
+void PacketVizWidget::updateScrollBar() {
+  int visibleArea = static_cast<int>((1.0f / (static_cast<float>(zoomSpin->value()) / 100.0f)) * maxTime);
+  if (zoomSpin->value() <= 100)
+    visibleArea = maxTime;
+
+  int oldValue = scrollBar->value();
+
+  if ((maxTime - visibleArea) < 0)
+    return;
+
+  if ((maxTime - visibleArea) != scrollBar->maximum())
+    scrollBar->setMaximum(maxTime - visibleArea);
+
+  if (visibleArea != scrollBar->pageStep())
+    scrollBar->setPageStep(visibleArea);
+
+  if (oldValue <= scrollBar->maximum())
+    scrollBar->setValue(oldValue);
+}
+
+void PacketVizWidget::setMaxTime(int t) {
+  maxTime = t;
+  updateScrollBar();
+}
+
 void PacketVizWidget::setModel(PacketVizModel *m) { model = m; }
-void PacketVizWidget::setMaxTime(int t) { maxTime = t; }
 void PacketVizWidget::packetSelected(uint64_t pkg) { model->packetSelected(pkg); }
 void PacketVizWidget::fixedTimeChanged(int time) { model->fixedTimeChanged(time); }
+void PacketVizWidget::setZoomSpinBox(QSpinBox *sp) { zoomSpin = sp; }
+void PacketVizWidget::setScrollBar(QScrollBar *sb) { scrollBar = sb; }
+
+void PacketVizWidget::zoomSliderLocationChanged(int) { redraw(); }
+void PacketVizWidget::zoomChanged(int) {
+  updateScrollBar();
+  redraw();
+  model->saveZoom();
+}
+
+void PacketVizWidget::zoomInc() {
+  if (!zoomSpin)
+    return;
+
+  int zoom = zoomSpin->value() + 10;
+
+  zoomSpin->setValue(zoom);
+  updateScrollBar();
+  redraw();
+  model->saveZoom();
+}
+
+void PacketVizWidget::zoomDec() {
+  if (!zoomSpin)
+    return;
+
+  int zoom = zoomSpin->value() - 10;
+  if (zoom < 100)
+    zoom = 100;
+
+  zoomSpin->setValue(zoom);
+  updateScrollBar();
+  redraw();
+  model->saveZoom();
+}

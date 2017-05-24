@@ -32,15 +32,21 @@ using namespace EPL_Viz;
 using namespace std;
 using namespace chrono;
 
-PacketVizModel::PacketVizModel(MainWindow *mw, PacketVizWidget *pvw, QComboBox *ts, QSpinBox *sp) : BaseModel(mw, pvw) {
+PacketVizModel::PacketVizModel(
+      MainWindow *mw, PacketVizWidget *pvw, QComboBox *ts, QSpinBox *sp, QSpinBox *zoom, QScrollBar *scroll)
+    : BaseModel(mw, pvw) {
   packetViz         = pvw;
   fixedTimeSelector = sp;
+  zoomSpinBox       = zoom;
+  scrollBar         = scroll;
   timeSelector      = ts;
   timeSelector->addItem("Current Cycle", static_cast<int>(CURRENT));
   timeSelector->addItem("Fixed Time", static_cast<int>(FIXED));
   //  timeSelector->addItem("Max Cycle", static_cast<int>(MAX));
   //  timeSelector->addItem("Average Cycle", static_cast<int>(AVERAGE));
   packetViz->setModel(this);
+  packetViz->setZoomSpinBox(zoomSpinBox);
+  packetViz->setScrollBar(scrollBar);
   packetViz->setMaxTime(1);
 
   connect(mw->getSettingsWin(), SIGNAL(settingsUpdated()), this, SLOT(settingsUpdated()));
@@ -52,18 +58,27 @@ PacketVizModel::~PacketVizModel() {}
 void PacketVizModel::settingsUpdated() {
   QVariant ti = getMainWindow()->getSettingsWin()->getCurrentProfile()->readCustomValue("PacketVizTiming");
   QVariant ft = getMainWindow()->getSettingsWin()->getCurrentProfile()->readCustomValue("PacketVizFixedTime");
+  QVariant zm = getMainWindow()->getSettingsWin()->getCurrentProfile()->readCustomValue("PacketVizZoom");
 
   ti = ti == QVariant() ? QVariant(static_cast<int>(CURRENT)) : ti;
   ft = ft == QVariant() ? QVariant(10000) : ft;
+  zm = zm == QVariant() ? QVariant(100) : zm;
 
   timeSelector->setCurrentIndex(timeSelector->findData(ti));
   fixedTimeSelector->setValue(ft.toInt());
+  zoomSpinBox->setValue(zm.toInt());
+
+  packetViz->zoomChanged(zoomSpinBox->value());
 
   if (ti.toInt() == static_cast<int>(FIXED)) {
     fixedTimeSelector->setEnabled(true);
   } else {
     fixedTimeSelector->setEnabled(false);
   }
+}
+
+void PacketVizModel::saveZoom() {
+  getMainWindow()->getSettingsWin()->getCurrentProfile()->writeCustomValue("PacketVizZoom", zoomSpinBox->value());
 }
 
 void PacketVizModel::init() {
@@ -104,14 +119,12 @@ void PacketVizModel::update() {
 
   int64_t diff     = dataToSet.back().timeStamp - dataToSet.front().timeStamp;
   currentCycleTime = static_cast<int>(diff / 1000);
-  maxCycleTime     = currentCycleTime;
-  averageCycleTime = maxCycleTime;
+  if (currentCycleTime > std::numeric_limits<int>::max())
+    currentCycleTime = std::numeric_limits<int>::max();
 
   switch (timeing) {
     case CURRENT: packetViz->setMaxTime(currentCycleTime); break;
     case FIXED: packetViz->setMaxTime(fixedTime); break;
-    case MAX: packetViz->setMaxTime(maxCycleTime); break;
-    case AVERAGE: packetViz->setMaxTime(averageCycleTime); break;
   }
 }
 

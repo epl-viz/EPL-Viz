@@ -154,7 +154,8 @@ void MainWindow::createModels() {
   PacketHistoryModel *packetHistoryModel = new PacketHistoryModel(this, ui->packetHistoryTextEdit);
   TimeLineModel *     timeLineModel      = new TimeLineModel(this, ui->qwtPlotTimeline, qwtPlot);
   PacketListModel *   packetListModel    = new PacketListModel(this, ui->packetsView);
-  PacketVizModel *    packetVizModel = new PacketVizModel(this, ui->packetViz, ui->pVizTimeSelector, ui->pVizFixedTime);
+  PacketVizModel *    packetVizModel     = new PacketVizModel(
+        this, ui->packetViz, ui->pVizTimeSelector, ui->pVizFixedTime, ui->pVizZoomSpin, ui->pVizScrollBar);
 
   // save references to the timeline and plot model for the Plot setup Dialog
   plot     = qwtPlot;

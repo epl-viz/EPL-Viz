@@ -27,6 +27,8 @@
 #pragma once
 
 #include "PacketVizPacket.hpp"
+#include <QScrollBar>
+#include <QSpinBox>
 #include <QWidget>
 #include <qwt_scale_engine.h>
 #include <qwt_scale_widget.h>
@@ -43,14 +45,17 @@ class PacketVizWidget : public QWidget {
   QwtScaleWidget *scaleWidget    = nullptr;
   uint64_t        selectedPacket = 0;
 
-  QWidget *parentWidget = nullptr;
+  QWidget *   parentWidget = nullptr;
+  QSpinBox *  zoomSpin     = nullptr;
+  QScrollBar *scrollBar    = nullptr;
 
   PacketVizModel *                                           model = nullptr;
   std::vector<EPL_DataCollect::InputHandler::PacketMetadata> packetData;
 
   std::vector<PacketVizPacket *> packetWidgets;
 
-  int maxTime = 0;
+  int  maxTime = 0;
+  void updateScrollBar();
 
  protected:
   void resizeEvent(QResizeEvent *ev) override;
@@ -60,6 +65,8 @@ class PacketVizWidget : public QWidget {
   virtual ~PacketVizWidget();
 
   void setModel(PacketVizModel *m);
+  void setZoomSpinBox(QSpinBox *sp);
+  void setScrollBar(QScrollBar *sb);
   void setMaxTime(int t);
 
   void redraw();
@@ -73,5 +80,10 @@ class PacketVizWidget : public QWidget {
  public slots:
   void timeIndexChanged(int index);
   void fixedTimeChanged(int time);
+
+  void zoomSliderLocationChanged(int loc);
+  void zoomChanged(int newZ);
+  void zoomInc();
+  void zoomDec();
 };
 }

@@ -49,6 +49,7 @@ class SettingsProfileItem final : public QListWidgetItem {
     bool                      invertTimeLineZoom    = false;
     uint32_t                  packetVizMaxPackets   = 25;
     uint32_t                  packetVizScaleHeight  = 30;
+    bool                      packetVizDisableText  = false;
     std::chrono::milliseconds guiThreadWaitTime     = std::chrono::milliseconds(50);
 
     std::vector<PlotCreator::PlotCreatorData> plots;

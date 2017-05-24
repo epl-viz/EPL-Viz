@@ -131,6 +131,7 @@ void SettingsWindow::updateView(bool updateNodes) {
   ui->TL_Invert->setCheckState(prof->cfg.invertTimeLineZoom ? Qt::Checked : Qt::Unchecked);
   ui->PV_MaxPacketsInView->setValue(static_cast<int>(prof->cfg.packetVizMaxPackets));
   ui->PV_ScaleHeight->setValue(static_cast<int>(prof->cfg.packetVizScaleHeight));
+  ui->PV_DisableText->setCheckState(prof->cfg.packetVizDisableText ? Qt::Checked : Qt::Unchecked);
   ui->G_SleepTime->setValue(static_cast<int>(prof->cfg.guiThreadWaitTime.count()));
   ui->SM_interval->setValue(static_cast<int>(prof->cfg.backConf.smConfig.saveInterval));
   ui->PY_pluginDIR->setText(prof->cfg.pythonPluginsDir.c_str());
@@ -214,6 +215,7 @@ void SettingsWindow::saveIntoProfiles() {
   prof->cfg.invertTimeLineZoom                   = ui->TL_Invert->checkState() == Qt::Checked;
   prof->cfg.packetVizMaxPackets                  = static_cast<uint32_t>(ui->PV_MaxPacketsInView->value());
   prof->cfg.packetVizScaleHeight                 = static_cast<uint32_t>(ui->PV_ScaleHeight->value());
+  prof->cfg.packetVizDisableText                 = ui->PV_DisableText->checkState() == Qt::Checked;
   prof->cfg.guiThreadWaitTime                    = milliseconds(ui->G_SleepTime->value());
   prof->cfg.backConf.smConfig.saveInterval       = static_cast<uint32_t>(ui->SM_interval->value());
   prof->cfg.pythonPluginsDir                     = ui->PY_pluginDIR->text().toStdString();

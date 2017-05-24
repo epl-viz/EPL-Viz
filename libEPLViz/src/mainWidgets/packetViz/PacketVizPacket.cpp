@@ -79,9 +79,21 @@ void PacketVizPacket::setPacketData(InputHandler::PacketMetadata pData,
   pal.setBrush(QPalette::Window, QBrush(bgColor, Qt::SolidPattern));
   ui->baseBack->setPalette(pal);
 
-  ui->pType->setText(EPLEnum2Str::toStr(static_cast<PacketType>(pType)).c_str());
-  ui->pSourceDest->setText(QString::fromStdString(std::to_string(source)) + " --> " + std::to_string(dest).c_str());
-  ui->pDur->setText(QString::fromStdString(std::to_string(relTime)) + " μs");
+  QString l1 = EPLEnum2Str::toStr(static_cast<PacketType>(pType)).c_str();
+  QString l2 = QString::fromStdString(std::to_string(source)) + " --> " + std::to_string(dest).c_str();
+  QString l3 = QString::fromStdString(std::to_string(relTime)) + " μs";
+
+  if (!cfg.packetVizDisableText) {
+    ui->pType->setText(EPLEnum2Str::toStr(static_cast<PacketType>(pType)).c_str());
+    ui->pSourceDest->setText(QString::fromStdString(std::to_string(source)) + " --> " + std::to_string(dest).c_str());
+    ui->pDur->setText(QString::fromStdString(std::to_string(relTime)) + " μs");
+  } else {
+    ui->pType->setText("");
+    ui->pSourceDest->setText("");
+    ui->pDur->setText("");
+  }
+
+  setToolTip("PacketType: " + l1 + "\nSource / Dest: " + l2 + "\nDuration: " + l3);
 }
 
 void PacketVizPacket::resizeAll(int x, int y) {

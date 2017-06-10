@@ -220,7 +220,7 @@ void NodeWidget::updateStyleSheet() {
  */
 void NodeWidget::updateIdentityInfo(EPL_DataCollect::Node::IDENT identity) {
   QString name = validateString(identity.HostName);
-  QString type = validateUInt(identity.Profile);
+  QString type = validateUInt(identity.DeviceType);
 
   // Update name
   nameLabel->setText(nameFormat.arg(name, idString));

@@ -394,7 +394,7 @@ void MainWindow::saveAs() {
     return;
 
   QString ws = "Wireshark Files (";
-  for (GSList *types = wtap_get_all_file_extensions_list(); types; types = types->next) {
+  for (GSList *types = wtap_get_all_capture_file_extensions_list(); types; types = types->next) {
     ws.append("*.");
     ws.append(static_cast<char *>(types->data));
     ws.append(" ");
@@ -413,7 +413,7 @@ void MainWindow::saveAs() {
 }
 void MainWindow::open() {
   QString ws = "Wireshark Files (";
-  for (GSList *types = wtap_get_all_file_extensions_list(); types; types = types->next) {
+  for (GSList *types = wtap_get_all_capture_file_extensions_list(); types; types = types->next) {
     ws.append("*.");
     ws.append(static_cast<char *>(types->data));
     ws.append(" ");

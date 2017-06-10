@@ -38,7 +38,7 @@
 #if defined(__clang__)
 #define FALLTHROUGH [[clang::fallthrough]]
 #else
-#define FALLTHROUGH
+#define FALLTHROUGH [[gcc::fallthrough]]
 #endif
 #else
 #define FALLTHROUGH [[fallthrough]]

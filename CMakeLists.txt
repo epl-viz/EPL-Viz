@@ -62,6 +62,21 @@ set( EPL_VIZ_TEMPLATES_DIR "${PROJECT_SOURCE_DIR}/cmake/templates" )
 set( EPL_VIZ_INCLUDES_DIR  "${PROJECT_SOURCE_DIR}/include" )
 set( PLF_COLONY_DIR        "${PROJECT_SOURCE_DIR}/external/EPL_DataCollect/external/plf_colony/" )
 
+#########
+# CPack #
+#########
+
+set( CPACK_PACKAGE_NAMEs               "EPL-Viz" )
+set( CPACK_PACKAGE_VENDOR              "EPL-Vizards" )
+set( CPACK_PACKAGE_DESCRIPTION_SUMMARY "A EthernetPOWERLINK network debugger and visualizer" )
+set( CPACK_PACKAGE_INSTALL_DIRECTORY   "EPL-Viz" )
+set( CPACK_GENERATOR                   "WIX" )
+set( CPACK_PACKAGE_EXECUTABLES         "eplviz;EPL-Viz" )
+set( CPACK_RESOURCE_FILE_LICENSE       "${PROJECT_SOURCE_DIR}/LICENCE.txt" )
+set( CPACK_PACKAGE_ICON                "${PROJECT_SOURCE_DIR}/libEPLViz/resources/logo.ico" )
+set( CPACK_WIX_PRODUCT_ICON            "${PROJECT_SOURCE_DIR}/libEPLViz/resources/logo.ico" )
+#set( CPACK_WIX_UPGRADE_GUID            "E78571A3-B852-42FB-82A4-3D0C3DE459E3" )
+
 ##############################################
 # Tell the great Windows compiler what to do #
 ##############################################
@@ -71,6 +86,9 @@ set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 if(WIN32)
   set(WIRESHARK_TARGET_PLATFORM win64)
   set(PROCESSOR_ARCHITECTURE amd64)
+  set(CMAKE_WIN32_EXECUTABLE ON)
+  set(EPL_VIZ_ICO "${PROJECT_SOURCE_DIR}/libEPLViz/resources/logo.ico")
+  set(EPLV_WINDOWS_ICON "${PROJECT_BINARY_DIR}/epl-viz.rc")
 endif(WIN32)
 
 if( WIRESHARK_BASE_DIR )
@@ -90,6 +108,12 @@ if( ENABLE_CODE_COVERAGE )
 endif( ENABLE_CODE_COVERAGE )
 
 run_git()
+
+configure_file( "${PROJECT_SOURCE_DIR}/libEPLViz/resources/epl-viz.rc.in" "${PROJECT_BINARY_DIR}/epl-viz.rc" )
+
+set( CPACK_PACKAGE_VERSION_MAJOR ${CM_VERSION_MAJOR} )
+set( CPACK_PACKAGE_VERSION_MINOR ${CM_VERSION_MINOR} )
+set( CPACK_PACKAGE_VERSION_PATCH ${CM_VERSION_SUBMINOR} )
 
 add_compiler(
   GNU MIN_VERSION "6.2"
@@ -343,4 +367,19 @@ install(
   DESTINATION include/eplViz
 )
 
+if( WIN32 )
+  # Some stuff for CPack
+  file( GLOB DLLS "${CMAKE_INSTALL_PREFIX}/bin/*.dll" )
+  set( DLLS ${DLLS} ${CMAKE_INSTALL_PREFIX}/bin/dumpcap.exe )
+  install( FILES ${DLLS} DESTINATION bin )
+
+  set( DLL_DIRS audio bearer iconengines imageformats mediaservice platforms playlistformats plugins printsupport )
+  foreach( I IN LISTS DLL_DIRS )
+    file( GLOB DLLS "${CMAKE_INSTALL_PREFIX}/bin/${I}/*.dll" )
+    install( FILES ${DLLS} DESTINATION bin/${I} )
+  endforeach( I IN LISTS DLL_DIRS )
+endif( WIN32 )
+
 generate_format_command( format 3.9.1 )
+
+include( CPack )

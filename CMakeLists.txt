@@ -120,6 +120,10 @@ add_definitions(-DWS_NORETURN=) # For some reason wireshark needs this
 
 set( EPL_VIZ_QT_COMPONENTS Core Widgets )
 
+if( USE_KTEXTEDITOR )
+  find_package( ECM 1.1.0 REQUIRED NO_MODULE )
+endif( USE_KTEXTEDITOR )
+
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${ECM_MODULE_PATH} ${ECM_KDE_MODULE_DIR} )
 
 find_package( Qt5 5.5 COMPONENTS ${EPL_VIZ_QT_COMPONENTS} REQUIRED )
@@ -133,7 +137,6 @@ find_package( TinyXML2     4.0 REQUIRED )
 find_package( GLIB2            REQUIRED )
 
 if( USE_KTEXTEDITOR )
-  find_package( ECM 1.1.0 REQUIRED NO_MODULE )
   find_package( KF5       REQUIRED COMPONENTS TextEditor)
   set( KDE_LIBRARIES KF5::TextEditor )
   set( PLATFORM_TARGET "ALL_KDE" )

@@ -29,8 +29,8 @@
 
 #pragma once
 
-#include <QDockWidget>
 #include "QWTPlotWidget.hpp"
+#include <QDockWidget>
 
 namespace EPL_Viz {
 

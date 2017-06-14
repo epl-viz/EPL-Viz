@@ -62,6 +62,25 @@ set( EPL_VIZ_TEMPLATES_DIR "${PROJECT_SOURCE_DIR}/cmake/templates" )
 set( EPL_VIZ_INCLUDES_DIR  "${PROJECT_SOURCE_DIR}/include" )
 set( PLF_COLONY_DIR        "${PROJECT_SOURCE_DIR}/external/EPL_DataCollect/external/plf_colony/" )
 
+##############################################
+# Tell the great Windows compiler what to do #
+##############################################
+
+set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
+
+if(WIN32)
+  set(WIRESHARK_TARGET_PLATFORM win64)
+  set(PROCESSOR_ARCHITECTURE amd64)
+endif(WIN32)
+
+if( WIRESHARK_BASE_DIR )
+  set( ENV{WIRESHARK_BASE_DIR} "${WIRESHARK_BASE_DIR}" )
+  set( ENV{WIRESHARK_LIB_DIR}  "${WIRESHARK_BASE_DIR}/wireshark-${WIRESHARK_TARGET_PLATFORM}-libs-2.4" )
+  if( NOT EXISTS "$ENV{WIRESHARK_LIB_DIR}" )
+    set( ENV{WIRESHARK_LIB_DIR}  "${WIRESHARK_BASE_DIR}/wireshark-${WIRESHARK_TARGET_PLATFORM}-libs" )
+  endif( NOT EXISTS "$ENV{WIRESHARK_LIB_DIR}" )
+endif( WIRESHARK_BASE_DIR )
+
 ################################
 # Set up the build environment #
 ################################

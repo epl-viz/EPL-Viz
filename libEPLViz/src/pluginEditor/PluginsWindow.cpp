@@ -68,7 +68,10 @@ void PluginsWindow::closeEvent(QCloseEvent *event) {
 }
 
 void PluginsWindow::open() {
-  char *  appImageDir = getenv("APPDIR");
+  char *appImageDir = nullptr;
+#if !defined(WIN32) && !defined(_WIN32) && !defined(__WIN32)
+  appImageDir = getenv("APPDIR");
+#endif
   QString defaultPath = QString(EPL_DC_INSTALL_PREFIX.c_str()) + "/share/eplViz/plugins/samples";
   if (appImageDir) {
     defaultPath = QString(appImageDir) + "/usr/share/eplViz/plugins/samples";

@@ -92,7 +92,10 @@ SettingsWindow::SettingsWindow(QWidget *parent, ProfileManager *settings)
   startCFG.currentNode = -1;
   startCFG.backConf    = mainWindow->getCaptureInstance()->getConfig();
 
-  char *appImageDir = getenv("APPDIR");
+  char *appImageDir = nullptr;
+#if !defined(WIN32) && !defined(_WIN32) && !defined(__WIN32)
+  appImageDir = getenv("APPDIR");
+#endif
   if (!appImageDir) {
     startCFG.backConf.xddDir = std::string(EPL_VIZ_INSTALL_PREFIX) + "/share/eplViz/xdd";
   } else {

@@ -341,7 +341,7 @@ void MainWindow::openPluginEditor() {
 void MainWindow::openInterfacePicker() {
   QString name = InterfacePicker::getInterface(this, captureInstance.get());
   if (!name.isEmpty())
-    interface = name;
+    interfaceSTR = name;
 }
 
 void MainWindow::openSettings() { settingsWin->exec(); }
@@ -498,7 +498,7 @@ void MainWindow::showStats() { Statistics(this).exec(); }
 void MainWindow::startRecording() {
   openInterfacePicker();
 
-  if (!interface.isEmpty()) {
+  if (!interfaceSTR.isEmpty()) {
     qDebug() << "start Recording";
     changeState(GUIState::RECORDING);
   }
@@ -678,9 +678,9 @@ void MainWindow::changeState(GUIState nState) {
 
       config();
 
-      backendState = captureInstance->startRecording(interface.toStdString());
+      backendState = captureInstance->startRecording(interfaceSTR.toStdString());
       fileSize     = UINT64_MAX;
-      qDebug() << "Started recording on " << interface;
+      qDebug() << "Started recording on " << interfaceSTR;
 
       // Handle Backend errors
       if (backendState != 0) {
@@ -693,7 +693,7 @@ void MainWindow::changeState(GUIState nState) {
         return;
       }
 
-      setWindowTitle(tr("EPL-Viz - Recording on '%1'").arg(interface));
+      setWindowTitle(tr("EPL-Viz - Recording on '%1'").arg(interfaceSTR));
 
       ui->statusBar->showMessage("Recording live...");
       break;
@@ -810,3 +810,5 @@ CycleSetterAction *MainWindow::getCycleSetter() { return CS; }
 void MainWindow::handleResults(const QString &result) { qDebug() << "The result is\"" << result << "\""; }
 
 void MainWindow::fitTimeline() { emit fitToPlot(); }
+
+QwtPlot *MainWindow::getPlotWidget() { return ui->qwtPlotTimeline; }

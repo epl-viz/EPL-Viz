@@ -29,7 +29,7 @@
 #include "SettingsWindow.hpp"
 #include <InputHandler.hpp>
 #include <QFrame>
-#include <qwt/qwt_scale_draw.h>
+#include <qwt_scale_draw.h>
 
 namespace Ui {
 class PacketVizPacket;

@@ -119,8 +119,14 @@ void PacketVizModel::update() {
 
   int64_t diff     = dataToSet.back().timeStamp - dataToSet.front().timeStamp;
   currentCycleTime = static_cast<int>(diff / 1000);
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32)
+  if (currentCycleTime > INT32_MAX)
+    currentCycleTime = INT32_MAX;
+#else
+  // MSVC does not like max() :(   ==> Fallback to old constants
   if (currentCycleTime > std::numeric_limits<int>::max())
     currentCycleTime = std::numeric_limits<int>::max();
+#endif
 
   switch (timeing) {
     case CURRENT: packetViz->setMaxTime(currentCycleTime); break;

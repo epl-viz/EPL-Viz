@@ -30,6 +30,7 @@
 #pragma once
 
 #include <QDockWidget>
+#include "QWTPlotWidget.hpp"
 
 namespace EPL_Viz {
 

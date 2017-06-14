@@ -45,7 +45,7 @@ class Profile {
 
   QString getName();
 
-  void writeInterface(QString interface);
+  void writeInterface(QString interfaceSTR);
   /**
    * @brief readInterface Returns the saved Interface name or the QString "none"
    * @return A string

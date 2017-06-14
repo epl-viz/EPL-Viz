@@ -48,7 +48,7 @@ bool TimelineWidget::event(QEvent *event) {
   // Only handling Polish events
   if (event->type() == QEvent::Polish) {
     qDebug() << "Polish event thrown";
-    QwtPlot *plot = this->findChild<QwtPlot *>("qwtPlotTimeline");
+    QwtPlot *plot = window->getPlotWidget();
     // Event gets thrown multiple times, even when not all children have been created
     if (plot) {
       // Configure axis

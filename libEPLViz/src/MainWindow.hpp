@@ -81,7 +81,7 @@ class MainWindow : public QMainWindow {
   ModelThread *                     modelThread;
   QLinkedList<EPL_Viz::BaseModel *> models;
   CI_PTR                            captureInstance;
-  QString                           interface;
+  QString                           interfaceSTR;
   std::string                       file;
   SettingsWindow *                  settingsWin;
   PluginsWindow *                   pluginWin;
@@ -163,6 +163,8 @@ class MainWindow : public QMainWindow {
   void selectCycle(uint32_t cycle);
   void setupPlot();
   void fitTimeline();
+
+  QwtPlot *getPlotWidget();
 
 
  signals:

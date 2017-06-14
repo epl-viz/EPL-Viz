@@ -39,7 +39,7 @@ Profile::Profile(QSettings *set, QString profileName) {
 
 QString Profile::getName() { return name; }
 
-void Profile::writeInterface(QString interface) { settings->setValue(name + "interface", interface); }
+void Profile::writeInterface(QString interfaceSTR) { settings->setValue(name + "interface", interfaceSTR); }
 
 QString Profile::readInterface() { return settings->value(name + "interface", QVariant("none")).toString(); }
 

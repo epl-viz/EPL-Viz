@@ -10,3 +10,6 @@ customPreComit.sh
 .DS_Store
 customPreCommit.sh
 EPLVizEnum2Str.*
+
+/.vs
+/CMakeSettings.json

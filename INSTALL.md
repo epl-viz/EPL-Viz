@@ -6,7 +6,7 @@
 sudo add-apt-repository ppa:ubuntu-toolchain-r/test
 sudo apt update
 
-sudo apt install cmake git gcc-6 g++-6
+sudo apt install cmake git gcc-7 g++-7
 sudo apt install qt5-default libqt5svg5-dev qtmultimedia5-dev qttools5-dev-tools extra-cmake-modules libkf5texteditor-dev
 sudo apt install libglib2.0-dev libkrb5-dev flex liblua5.2-dev zlib1g-dev bison libxml2-dev libgeoip-dev libc-ares-dev libssh-gcrypt-dev
 sudo apt install python3.5-dev python3-pip
@@ -53,7 +53,7 @@ cmake -DPCAP_HINTS="${PREFIX}" -DCMAKE_INSTALL_PREFIX="${PREFIX}" ..
 make -j$(nproc)
 make install # may require root
 
-# Install include files not covered with make install
+# Install include files not covered by make install
 cd ..
 mkdir -p "${PREFIX}/include/wireshark"
 find . -name "*.h" ! -path "*build*" -exec cp --parents {} "${PREFIX}/include/wireshark" \;
@@ -103,8 +103,8 @@ cmake \
   -DWireshark_DIR="${PREFIX}/lib/wireshark" \
   -DPCAP_HINTS="${PREFIX}" \
   -DTinyXML2_ROOT="${PREFIX}" \
-  -DCMAKE_C_COMPILER=$(which gcc-6) \
-  -DCMAKE_CXX_COMPILER=$(which g++-6) ..
+  -DCMAKE_C_COMPILER=$(which gcc-7) \
+  -DCMAKE_CXX_COMPILER=$(which g++-7) ..
 make -j$(nproc)
 make install
 cp "${PREFIX}/bin/dumpcap" ./bin
@@ -127,8 +127,8 @@ cmake \
   -DQWT_ROOT="${PREFIX}" \
   -DTinyXML2_ROOT="${PREFIX}" \
   -DPYTHON_EXECUTABLE=/usr/bin/python3 \
-  -DCMAKE_C_COMPILER=$(which gcc-6) \
-  -DCMAKE_CXX_COMPILER=$(which g++-6) ..
+  -DCMAKE_C_COMPILER=$(which gcc-7) \
+  -DCMAKE_CXX_COMPILER=$(which g++-7) ..
 make -j$(nproc)
 make install
 cp "${PREFIX}/bin/dumpcap" ./bin
@@ -136,5 +136,5 @@ cp "${PREFIX}/bin/dumpcap" ./bin
 
 ### :warning: NOTE:
 
-You have to give dumpcap special privileges to enable live captureing!
-You can use `sudo setcap cap_net_admin,cap_net_raw+eip "${PREFIX}/bin/dumpcap"` for instance.
+You have to give dumpcap special privileges to enable live capturing!
+For instance you can use `sudo setcap cap_net_admin,cap_net_raw+eip "${PREFIX}/bin/dumpcap"`.

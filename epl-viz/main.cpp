@@ -3,6 +3,7 @@
 #include "MainWindow.hpp"
 #include "PythonInit.hpp"
 #include <QApplication>
+#include <QIcon>
 #include <QMessageBox>
 
 #if !defined(WIN32) && !defined(_WIN32) && !defined(__WIN32)
@@ -43,7 +44,22 @@ int main(int argc, char *argv[]) {
   pyInit.addPath(installPrefix + "/lib/eplViz");
 
   QApplication a(argc, argv);
-  MainWindow   w;
+
+  if (QIcon::fromTheme("application-exit").isNull()) {
+    QWidget temp;
+    qDebug() << "[THEME] Using integrated theme icons";
+    if (temp.palette().window().color().lightness() >= 125) {
+      qDebug() << "[THEME] Using LIGHT theme icons";
+      QIcon::setThemeName("Breeze_icons_Normal");
+    } else {
+      qDebug() << "[THEME] Using DARK theme icons";
+      QIcon::setThemeName("Breeze_icons_Dark");
+    };
+  } else {
+    qDebug() << "[THEME] Using system theme";
+  }
+
+  MainWindow w;
   w.show();
 
   return a.exec();

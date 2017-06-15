@@ -23,16 +23,18 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-set( UI_DIR "${CMAKE_CURRENT_LIST_DIR}/ui" )
+set( UI_DIR  "${CMAKE_CURRENT_LIST_DIR}/ui" )
+set( QRC_DIR "${PROJECT_SOURCE_DIR}/libEPLViz" )
 
 if( NOT IS_DIRECTORY "${UI_DIR}" )
   message( FATAL_ERROR "UI dir '${UI_DIR}' not found!" )
 endif( NOT IS_DIRECTORY "${UI_DIR}" )
 
-file( GLOB UI_FILE_LIST "${CMAKE_CURRENT_LIST_DIR}/ui/*.ui" )
+file( GLOB UI_FILE_LIST "${UI_DIR}/*.ui" )
+file( GLOB RC_FILE_LIST "${QRC_DIR}/*.qrc" )
 
 set( OUT_DIR "${PROJECT_BINARY_DIR}/${CM_CURRENT_LIB_LC}" )
-message( STATUS "    - UI include file output dir: ${OUT_DIR}" )
+message( STATUS "    - UI / RC include file output dir: ${OUT_DIR}" )
 
 set( CM_GENERATED_UI_FILES "" )
 set( CM_GENERATE_UI_CMD    "" )
@@ -48,6 +50,23 @@ foreach( I IN LISTS UI_FILE_LIST )
   string( APPEND CM_GENERATE_UI_CMD "  OUTPUT ${OUTFILE}\n" )
   string( APPEND CM_GENERATE_UI_CMD "  COMMAND ${Qt5Widgets_UIC_EXECUTABLE}\n" )
   string( APPEND CM_GENERATE_UI_CMD "  ARGS -o ${OUTFILE} ${I}\n" )
+  string( APPEND CM_GENERATE_UI_CMD "  MAIN_DEPENDENCY ${I} VERBATIM\n)\n\n" )
+
+  string( APPEND CM_GENERATED_UI_FILES "\n   ${OUTFILE}" )
+endforeach( I IN LISTS UI_FILE_LIST )
+
+foreach( I IN LISTS RC_FILE_LIST )
+  file( RELATIVE_PATH UI_FILE_NAME "${QRC_DIR}" "${I}" )
+  string( REGEX REPLACE "^([^\.]+)\.qrc" "rcc_\\1.cpp" INC_NAME "${UI_FILE_NAME}" )
+  string( REGEX REPLACE "\.qrc" "" RES_NAME "${UI_FILE_NAME}" )
+
+  set( OUTFILE "${OUT_DIR}/${INC_NAME}" )
+  set( infile  "${I}" )
+
+  string( APPEND CM_GENERATE_UI_CMD "add_custom_command(\n" )
+  string( APPEND CM_GENERATE_UI_CMD "  OUTPUT ${OUTFILE}\n" )
+  string( APPEND CM_GENERATE_UI_CMD "  COMMAND Qt5::rcc\n" )
+  string( APPEND CM_GENERATE_UI_CMD "  ARGS --name ${RES_NAME} -o ${OUTFILE} ${I}\n" )
   string( APPEND CM_GENERATE_UI_CMD "  MAIN_DEPENDENCY ${I} VERBATIM\n)\n\n" )
 
   string( APPEND CM_GENERATED_UI_FILES "\n   ${OUTFILE}" )

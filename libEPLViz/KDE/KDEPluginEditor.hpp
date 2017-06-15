@@ -54,7 +54,7 @@ class KDEPluginEditor : public PluginEditorBase {
 
  public:
   void updateStatusBar(bool enabled) override;
-  void openConfig();
+  void openConfig() override;
 
   void selectDocument(QString document) override;
   void closeDocument(QString name) override;

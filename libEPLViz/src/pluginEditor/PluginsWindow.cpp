@@ -94,7 +94,7 @@ void PluginsWindow::closeFile() {
     if (name.endsWith('*'))
       name.chop(1);
 
-    ui->editor->closeDocument(name);
+    ui->editor->closeFile(name);
     delete ui->pluginList->takeItem(ui->pluginList->row(item));
   }
 }

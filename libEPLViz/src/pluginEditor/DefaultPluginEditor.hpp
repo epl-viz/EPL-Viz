@@ -23,54 +23,64 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 /*!
- * \file PluginEditorWidget.hpp
- * \brief The hosting widget for the plugin code editor widget.
- *
- * The PluginEditorWidget selects and hosts the plugin code editor.
+ * \file DefaultPluginEditor.hpp
  */
 
 #pragma once
-#include "EPLVizDefines.hpp"
-#include <QDebug>
+
+#include "PluginEditorBase.hpp"
+#include <QFile>
+#include <QFileDialog>
+#include <QFileInfo>
 #include <QGridLayout>
-#include <QMainWindow>
+#include <QMap>
+#include <QMessageBox>
+#include <QPlainTextEdit>
+#include <QPushButton>
+#include <QString>
+#include <QTextStream>
+#include <QUrl>
 #include <QWidget>
 
-class PluginEditorBase;
-
-class PluginEditorWidget : public QWidget {
-  Q_OBJECT
+class DefaultPluginEditor : public PluginEditorBase {
 
  private:
-  PluginEditorBase *editor = nullptr;
-  QGridLayout *     layout = nullptr;
+  QMap<QString, QString> files;    // File-Name Keys, File-Path as values
+  QMap<QString, QString> contents; // File-Name Keys, Current content of the file in workspace as values
+
+  QList<QString> dirtyFiles; // Files that have unsaved changes
+
+  QString         current;          // Current file name
+  QPlainTextEdit *widget = nullptr; // The text edit widget
+
+  QGridLayout *layout = nullptr;
+
+  size_t newCounter = 1;
 
  public:
-  PluginEditorWidget(QWidget *parent = nullptr);
-  ~PluginEditorWidget();
+  DefaultPluginEditor(PluginEditorWidget *parent);
+  ~DefaultPluginEditor();
 
- signals:
-  void nameChanged(QString newName);
-  void urlChanged(QString newUrl);
-  void modifiedStateChanged(bool modifiedState);
-  void filesSaved(QMap<QString, QString> savedFiles);
+ public:
+  void updateStatusBar(bool enabled) override;
+  void openConfig() override;
+
+  void selectDocument(QString doc) override;
+  void closeDocument(QString name) override;
+  void openDocument(QUrl file) override;
+  void newDocument() override;
+
+  void cleanUp() override;
+  void save() override;
+  void saveAs() override;
+
+ private:
+  void loadDocument(QUrl fileName = QUrl());
+  void createWidget();
+  void writeToFile(QString filePath);
 
  private slots:
-  void modifiedChange(bool modified);
-  void nameChange(QString newName);
-  void urlChange(QString newUrl);
-  void filesSave(QMap<QString, QString> savedFiles);
-
- public slots:
-  void toggleStatusBar(bool enabled);
-  void configureEditor();
-
-  void selectFile(QString file);
-
-  void openFile(QUrl file);
-  void cleanUp();
-  void save();
-  void saveAs();
-  void newFile();
-  void closeFile(QString name);
+  void modified() override;
+  void nameChange() override;
+  void urlChange() override;
 };

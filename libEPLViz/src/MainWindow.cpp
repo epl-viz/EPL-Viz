@@ -111,7 +111,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
 
   // Connect the signal that the plugins were correctly saved in the editor to the plugin selector
   connect(pluginWin->getEditor(),
-          SIGNAL(pluginsSaved(QMap<QString, QString>)),
+          SIGNAL(filesSaved(QMap<QString, QString>)),
           ui->pluginSelectorWidget,
           SLOT(setPlugins(QMap<QString, QString>)));
 

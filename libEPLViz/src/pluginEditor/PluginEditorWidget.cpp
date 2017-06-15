@@ -28,276 +28,51 @@
  */
 
 #include "PluginEditorWidget.hpp"
-#include <QAbstractButton>
-#include <QPushButton>
-
-
-PluginEditorWidget::PluginEditorWidget(QWidget *parent) : QWidget(parent) { layout = new QGridLayout(this); }
-
-PluginEditorWidget::~PluginEditorWidget() {}
+#include "PluginEditorBase.hpp"
 
 #if USE_KTEXTEDITOR
-
-void PluginEditorWidget::selectPlugin(QString plugin) {
-  // Find the specified document for the given plugin
-  for (auto d : KTextEditor::Editor::instance()->documents()) {
-    if (d->documentName() == plugin) {
-      doc = d;
-      break;
-    }
-  }
-
-  createWidget();
-}
-
-void PluginEditorWidget::loadDocument(QUrl fileName) {
-  // Retrieve editor singleton
-  KTextEditor::Editor *editor = KTextEditor::Editor::instance();
-
-  // Create a new document
-  doc = editor->createDocument(this);
-
-  // Connect the signal of the editor buffer being changed to the modified() slot
-  QObject::connect(doc, SIGNAL(modifiedChanged(KTextEditor::Document *)), this, SLOT(modified()));
-  QObject::connect(doc, SIGNAL(documentNameChanged(KTextEditor::Document *)), this, SLOT(nameChange()));
-  QObject::connect(doc, SIGNAL(documentUrlChanged(KTextEditor::Document *)), this, SLOT(urlChange()));
-
-
-
-  // Load the file if specified
-  if (fileName != QUrl()) {
-    if (!doc->openUrl(fileName)) {
-      qDebug() << "Failed to open " << fileName.toLocalFile();
-      return;
-    }
-  }
-
-  // Set syntax to python
-  doc->setHighlightingMode("Python");
-  emit doc->highlightingModeChanged(doc);
-
-  createWidget();
-}
-
-void PluginEditorWidget::createWidget() {
-  if (!doc)
-    return;
-
-  // Check if there is a widget already
-  if (view) {
-    // Remove the old widget
-    layout->removeWidget(view);
-    delete view;
-  }
-
-  // Create a widget to display the document
-  view = doc->createView(this);
-
-  // Set status bar
-  view->setStatusBarEnabled(showStatusBar); // TODO: Add a variable for this to the global user profile
-
-  // Add the widget to the layout
-  layout->addWidget(view);
-}
-
-void PluginEditorWidget::modified() {
-  if (doc)
-    emit modifiedChanged(doc->isModified());
-}
-
-void PluginEditorWidget::statusBarToggled(bool enabled) {
-  if (!view)
-    return;
-
-  if (view->isStatusBarEnabled() != enabled) {
-    showStatusBar = enabled;
-
-    // Update the widget if it exists
-    view->setStatusBarEnabled(enabled);
-    emit view->statusBarEnabledChanged(view, enabled);
-  }
-}
-
-void PluginEditorWidget::closeDocument(QString name) {
-  KTextEditor::Document *d = nullptr;
-
-  auto list = KTextEditor::Editor::instance()->documents();
-
-  // Try to locate the document to close
-  for (auto cur : list) {
-    if (cur->documentName() == name) {
-      d = cur;
-      break;
-    }
-  }
-
-  // Document not found
-  if (!d)
-    return;
-
-  if (d->isModified()) {
-    QMessageBox  msg(this);
-    QPushButton *saveButton = msg.addButton("Save", QMessageBox::ActionRole);
-    msg.addButton("Discard", QMessageBox::ActionRole);
-
-    msg.setText("The current file has unsaved changes.");
-    msg.setInformativeText("Would you like to save them?");
-    msg.setDefaultButton(saveButton);
-
-    msg.exec();
-
-    QPushButton *clicked = dynamic_cast<QPushButton *>(msg.clickedButton());
-
-    if (clicked == saveButton) {
-      // Save the changes to this document
-      d->documentSave();
-    }
-  }
-
-  if (view && doc == d) {
-    delete view;
-    view = nullptr;
-    doc  = nullptr;
-  }
-
-  delete d;
-}
-
-void PluginEditorWidget::configEditor() { KTextEditor::Editor::instance()->configDialog(this); }
-
-void PluginEditorWidget::nameChange() { emit nameChanged(doc->documentName()); }
-
-void PluginEditorWidget::urlChange() { emit urlChanged(doc->url().toString()); }
-
-void PluginEditorWidget::save() {
-  if (!doc)
-    return;
-
-  doc->documentSave();
-}
-
-void PluginEditorWidget::saveAs() {
-  if (!doc)
-    return;
-
-  doc->documentSaveAs();
-}
-
-void PluginEditorWidget::newFile() { loadDocument(); }
-
-void PluginEditorWidget::openFile(QUrl file) { loadDocument(file); }
-
-void PluginEditorWidget::cleanUp() {
-  QMessageBox  msg(this);
-  QPushButton *saveButton       = msg.addButton("Save", QMessageBox::ActionRole);
-  QPushButton *saveAllButton    = msg.addButton("Save All", QMessageBox::ActionRole);
-  QPushButton *discardButton    = msg.addButton("Discard", QMessageBox::ActionRole);
-  QPushButton *discardAllButton = msg.addButton("Discard All", QMessageBox::ActionRole);
-
-
-  msg.setInformativeText("Would you like to save them?");
-  msg.setDefaultButton(saveAllButton);
-
-  bool saveAll = false;
-
-  auto list = KTextEditor::Editor::instance()->documents();
-
-  for (auto d : list) {
-    if (d->isModified()) {
-
-      if (saveAll) {
-        d->documentSave();
-        continue;
-      }
-
-      msg.setText("The plugin '" + d->documentName() + "' has unsaved changes.");
-
-      msg.exec();
-
-      QPushButton *clicked = dynamic_cast<QPushButton *>(msg.clickedButton());
-
-      if (clicked == saveButton) {
-        // Save the changes to this document
-        d->documentSave();
-        continue;
-      } else if (clicked == saveAllButton) {
-        // Save the changes to this document and remember the choice
-        d->documentSave();
-        saveAll = true;
-        continue;
-      } else if (clicked == discardButton) {
-        // Discard changes for current document
-        continue;
-      } else if (clicked == discardAllButton) {
-        // Discard all changes
-        break;
-      }
-    }
-  }
-
-  QMap<QString, QString> savedPlugins;
-
-  // Destroy all documents and add them to the map of saved plugins
-  for (auto d : list) {
-    QString localFile = d->url().toLocalFile();
-
-    if (QFile::exists(localFile)) {
-      savedPlugins.insert(d->documentName(), localFile);
-    }
-
-    if (view && doc == d) {
-      delete view;
-      view = nullptr;
-      doc  = nullptr;
-    }
-
-    delete d;
-  }
-
-  emit pluginsSaved(savedPlugins);
-  emit cleanupDone();
-}
+#include "KDEPluginEditor.hpp"
 #else
-// KTextEditor is not in use, create a simple replacement
-// TODO Add code for a simple editor
-
-void PluginEditorWidget::closeDocument(QString name) { files.remove(name); }
-
-void PluginEditorWidget::loadDocument(QUrl fileName) { (void)fileName; }
-
-void PluginEditorWidget::createWidget() {}
-
-void PluginEditorWidget::statusBarToggled(bool enabled) { (void)enabled; }
-
-void PluginEditorWidget::configEditor() {
-  QMessageBox::information(0, "Info", tr("There is currently no configuration for this editor"));
-}
-
-void PluginEditorWidget::selectPlugin(QString plugin) { (void)plugin; }
-
-void PluginEditorWidget::openFile(QUrl file) {
-  QFileInfo fileInfo(file.toLocalFile());
-
-  if (fileInfo.exists() && fileInfo.isFile())
-    files.insert(fileInfo.fileName(), fileInfo.filePath());
-}
-
-void PluginEditorWidget::cleanUp() {
-  emit pluginsSaved(files);
-  files.clear();
-  emit cleanupDone();
-}
-
-void PluginEditorWidget::save() {}
-
-void PluginEditorWidget::saveAs() {}
-
-void PluginEditorWidget::newFile() {}
-
-void PluginEditorWidget::modified() {}
-
-void PluginEditorWidget::nameChange() {}
-
-void PluginEditorWidget::urlChange() {}
-
+#include "DefaultPluginEditor.hpp"
 #endif
+
+
+PluginEditorWidget::PluginEditorWidget(QWidget *parent) : QWidget(parent) {
+  layout = new QGridLayout(this);
+#if USE_KTEXTEDITOR
+  editor = new KDEPluginEditor(this);
+#else
+  editor = new DefaultPluginEditor(this);
+#endif
+  layout->addWidget(editor);
+
+  connect(editor, SIGNAL(nameChanged(QString)), this, SLOT(nameChange(QString)));
+  connect(editor, SIGNAL(urlChanged(QString)), this, SLOT(urlChange(QString)));
+  connect(editor, SIGNAL(modifiedChanged(bool)), this, SLOT(modifiedChange(bool)));
+  connect(editor, SIGNAL(pluginsSaved(QMap<QString, QString>)), this, SLOT(filesSave(QMap<QString, QString>)));
+}
+
+PluginEditorWidget::~PluginEditorWidget() {
+  layout->removeWidget(editor);
+  delete editor;
+  delete layout;
+}
+
+void PluginEditorWidget::modifiedChange(bool modified) { emit modifiedStateChanged(modified); }
+void PluginEditorWidget::nameChange(QString newName) { emit nameChanged(newName); }
+void PluginEditorWidget::urlChange(QString newUrl) { emit urlChanged(newUrl); }
+void PluginEditorWidget::filesSave(QMap<QString, QString> savedFiles) { emit filesSaved(savedFiles); }
+
+void PluginEditorWidget::toggleStatusBar(bool enabled) { editor->updateStatusBar(enabled); }
+
+void PluginEditorWidget::configureEditor() { editor->openConfig(); }
+
+void PluginEditorWidget::selectFile(QString file) { editor->selectDocument(file); }
+void PluginEditorWidget::openFile(QUrl file) { editor->openDocument(file); }
+void PluginEditorWidget::closeFile(QString name) { editor->closeDocument(name); }
+
+void PluginEditorWidget::save() { editor->save(); }
+void PluginEditorWidget::saveAs() { editor->saveAs(); }
+void PluginEditorWidget::newFile() { editor->newDocument(); }
+
+void PluginEditorWidget::cleanUp() { editor->cleanUp(); }

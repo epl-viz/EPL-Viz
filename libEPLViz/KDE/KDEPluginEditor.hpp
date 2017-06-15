@@ -23,54 +23,54 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 /*!
- * \file PluginEditorWidget.hpp
- * \brief The hosting widget for the plugin code editor widget.
- *
- * The PluginEditorWidget selects and hosts the plugin code editor.
+ * \file KDEPluginEditor.hpp
  */
 
 #pragma once
-#include "EPLVizDefines.hpp"
-#include <QDebug>
+#include "PluginEditorBase.hpp"
+#include <KTextEditor/Document>
+#include <KTextEditor/Editor>
+#include <KTextEditor/View>
+#include <QFile>
+#include <QFileInfo>
 #include <QGridLayout>
-#include <QMainWindow>
+#include <QMessageBox>
+#include <QUrl>
 #include <QWidget>
 
-class PluginEditorBase;
-
-class PluginEditorWidget : public QWidget {
-  Q_OBJECT
+class KDEPluginEditor : public PluginEditorBase {
 
  private:
-  PluginEditorBase *editor = nullptr;
-  QGridLayout *     layout = nullptr;
+  KTextEditor::Document *doc  = nullptr;
+  KTextEditor::View *    view = nullptr;
+
+  QGridLayout *layout = nullptr;
+
+  bool showStatusBar = false;
 
  public:
-  PluginEditorWidget(QWidget *parent = nullptr);
-  ~PluginEditorWidget();
+  KDEPluginEditor(PluginEditorWidget *parent);
+  ~KDEPluginEditor();
 
- signals:
-  void nameChanged(QString newName);
-  void urlChanged(QString newUrl);
-  void modifiedStateChanged(bool modifiedState);
-  void filesSaved(QMap<QString, QString> savedFiles);
+ public:
+  void updateStatusBar(bool enabled) override;
+  void openConfig();
+
+  void selectDocument(QString document) override;
+  void closeDocument(QString name) override;
+  void openDocument(QUrl file) override;
+
+  void cleanUp() override;
+  void save() override;
+  void saveAs() override;
+  void newDocument() override;
+
+ private:
+  void loadDocument(QUrl fileName = QUrl());
+  void createWidget();
 
  private slots:
-  void modifiedChange(bool modified);
-  void nameChange(QString newName);
-  void urlChange(QString newUrl);
-  void filesSave(QMap<QString, QString> savedFiles);
-
- public slots:
-  void toggleStatusBar(bool enabled);
-  void configureEditor();
-
-  void selectFile(QString file);
-
-  void openFile(QUrl file);
-  void cleanUp();
-  void save();
-  void saveAs();
-  void newFile();
-  void closeFile(QString name);
+  void modified() override;
+  void nameChange() override;
+  void urlChange() override;
 };

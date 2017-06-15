@@ -23,54 +23,42 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 /*!
- * \file PluginEditorWidget.hpp
- * \brief The hosting widget for the plugin code editor widget.
- *
- * The PluginEditorWidget selects and hosts the plugin code editor.
+ * \file PluginEditorBase.hpp
  */
 
 #pragma once
-#include "EPLVizDefines.hpp"
-#include <QDebug>
-#include <QGridLayout>
-#include <QMainWindow>
+
+#include "PluginEditorWidget.hpp"
 #include <QWidget>
 
-class PluginEditorBase;
-
-class PluginEditorWidget : public QWidget {
+class PluginEditorBase : public QWidget {
   Q_OBJECT
 
- private:
-  PluginEditorBase *editor = nullptr;
-  QGridLayout *     layout = nullptr;
+ public:
+  PluginEditorBase(PluginEditorWidget *parent) : QWidget(parent) {}
+  ~PluginEditorBase() = default;
 
  public:
-  PluginEditorWidget(QWidget *parent = nullptr);
-  ~PluginEditorWidget();
+  virtual void updateStatusBar(bool enabled) = 0;
+  virtual void openConfig()                  = 0;
+
+  virtual void selectDocument(QString doc) = 0;
+  virtual void closeDocument(QString name) = 0;
+  virtual void openDocument(QUrl file)     = 0;
+  virtual void newDocument()               = 0;
+
+  virtual void cleanUp() = 0;
+  virtual void save()    = 0;
+  virtual void saveAs()  = 0;
 
  signals:
-  void nameChanged(QString newName);
-  void urlChanged(QString newUrl);
-  void modifiedStateChanged(bool modifiedState);
-  void filesSaved(QMap<QString, QString> savedFiles);
+  void nameChanged(QString name);
+  void urlChanged(QString url);
+  void modifiedChanged(bool modified);
+  void pluginsSaved(QMap<QString, QString> savedPlugins);
 
  private slots:
-  void modifiedChange(bool modified);
-  void nameChange(QString newName);
-  void urlChange(QString newUrl);
-  void filesSave(QMap<QString, QString> savedFiles);
-
- public slots:
-  void toggleStatusBar(bool enabled);
-  void configureEditor();
-
-  void selectFile(QString file);
-
-  void openFile(QUrl file);
-  void cleanUp();
-  void save();
-  void saveAs();
-  void newFile();
-  void closeFile(QString name);
+  virtual void modified()   = 0;
+  virtual void nameChange() = 0;
+  virtual void urlChange()  = 0;
 };

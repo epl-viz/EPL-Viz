@@ -179,16 +179,17 @@
    <container>1</container>
    <slots>
     <signal>nameChanged(QString)</signal>
-    <signal>modifiedChanged(bool)</signal>
-    <signal>cleanupDone()</signal>
+    <signal>modifiedStateChanged(bool)</signal>
     <signal>urlChanged(QString)</signal>
     <slot>newFile()</slot>
     <slot>save()</slot>
     <slot>saveAs()</slot>
-    <slot>selectPlugin(QString)</slot>
-    <slot>urlChange()</slot>
+    <slot>selectFile(QString)</slot>
     <slot>cleanUp()</slot>
     <slot>openFile(QUrl)</slot>
+    <slot>toggleStatusBar(bool)</slot>
+    <slot>configureEditor()</slot>
+    <slot>closeFile(QString)</slot>
    </slots>
   </customwidget>
   <customwidget>
@@ -245,7 +246,7 @@
    <sender>actionConfigure_Editor</sender>
    <signal>triggered()</signal>
    <receiver>editor</receiver>
-   <slot>configEditor()</slot>
+   <slot>configureEditor()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>-1</x>
@@ -261,7 +262,7 @@
    <sender>actionShow_Status_Bar</sender>
    <signal>toggled(bool)</signal>
    <receiver>editor</receiver>
-   <slot>statusBarToggled(bool)</slot>
+   <slot>toggleStatusBar(bool)</slot>
    <hints>
     <hint type="sourcelabel">
      <x>-1</x>
@@ -341,7 +342,7 @@
    <sender>pluginList</sender>
    <signal>pluginSelected(QString)</signal>
    <receiver>editor</receiver>
-   <slot>selectPlugin(QString)</slot>
+   <slot>selectFile(QString)</slot>
    <hints>
     <hint type="sourcelabel">
      <x>146</x>
@@ -403,7 +404,7 @@
   </connection>
   <connection>
    <sender>editor</sender>
-   <signal>modifiedChanged(bool)</signal>
+   <signal>modifiedStateChanged(bool)</signal>
    <receiver>pluginList</receiver>
    <slot>fileModified(bool)</slot>
    <hints>
@@ -430,22 +431,6 @@
     <hint type="destinationlabel">
      <x>694</x>
      <y>344</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>editor</sender>
-   <signal>cleanupDone()</signal>
-   <receiver>PluginsWindow</receiver>
-   <slot>hide()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>694</x>
-     <y>344</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>555</x>
-     <y>330</y>
     </hint>
    </hints>
   </connection>

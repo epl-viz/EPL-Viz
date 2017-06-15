@@ -73,10 +73,31 @@ void DefaultPluginEditor::closeDocument(QString name) {
   if (!widget)
     return;
 
-  if (dirtyFiles.contains(name)) {
-    // TODO Add notification to make sure the user keeps his changes
+  // Check if file is dirty
+  if (dirtyFiles.contains(name) || (name == current && widget->document()->isModified())) {
+    // Ask user for further input
+    QMessageBox msg(this);
 
-    dirtyFiles.removeOne(name);
+    QPushButton *saveButton = msg.addButton("Save", QMessageBox::ActionRole);
+    msg.addButton("Discard", QMessageBox::ActionRole);
+
+
+    msg.setText("The file '" + name + "' has unsaved changes.");
+    msg.setInformativeText("Would you like to save them?");
+    msg.setDefaultButton(saveButton);
+
+    // Open message box
+    msg.exec();
+
+    QPushButton *clicked = dynamic_cast<QPushButton *>(msg.clickedButton());
+
+    if (clicked == saveButton) {
+      // Save the changes to this document
+      save();
+    } else {
+      // Discard button was pressed, remove from dirty files
+      dirtyFiles.removeOne(name);
+    }
   }
 
   files.remove(name);

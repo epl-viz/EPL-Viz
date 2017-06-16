@@ -95,9 +95,10 @@ class BaseModel {
   static std::mutex               updateLocker;
   MainWindow *                    mainWindow;
 
-
+#if ! defined(WIN32) && ! defined(_WIN32) && ! defined(__WIN32)
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wunused-local-typedef"
+#endif
 
   template <typename F>
   static void postToThread(F &&fun, QObject *obj) {
@@ -111,7 +112,9 @@ class BaseModel {
     QCoreApplication::postEvent(obj, new Event(std::forward<F>(fun)));
   }
 
+#if ! defined(WIN32) && ! defined(_WIN32) && ! defined(__WIN32)
 #pragma clang diagnostic push
+#endif
 
  public:
   BaseModel(MainWindow *mw, QWidget *widget);

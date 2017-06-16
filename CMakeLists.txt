@@ -54,6 +54,7 @@ set( CMAKE_POSITION_INDEPENDENT_CODE ON )
 option( ENABLE_CODE_COVERAGE "Enables code coverage tests"                   OFF )
 option( USE_SYSTEM_PACKETS   "Use the EPL DataCollect version of the system" ON )
 option( USE_KTEXTEDITOR      "Use the KF5 Texteditor"                        ON )
+option( ENABLE_PACK          "Enables code section used for MSI packaging"   OFF )
 
 list( APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake" )
 
@@ -75,7 +76,7 @@ set( CPACK_PACKAGE_EXECUTABLES         "eplviz;EPL-Viz" )
 set( CPACK_RESOURCE_FILE_LICENSE       "${PROJECT_SOURCE_DIR}/LICENCE.txt" )
 set( CPACK_PACKAGE_ICON                "${PROJECT_SOURCE_DIR}/libEPLViz/resources/logo.ico" )
 set( CPACK_WIX_PRODUCT_ICON            "${PROJECT_SOURCE_DIR}/libEPLViz/resources/logo.ico" )
-#set( CPACK_WIX_UPGRADE_GUID            "E78571A3-B852-42FB-82A4-3D0C3DE459E3" )
+set( CPACK_WIX_UPGRADE_GUID            "E78571A3-B852-42FB-82A4-3D0C3DE459E3" )
 
 ##############################################
 # Tell the great Windows compiler what to do #
@@ -86,7 +87,7 @@ set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 if(WIN32)
   set(WIRESHARK_TARGET_PLATFORM win64)
   set(PROCESSOR_ARCHITECTURE amd64)
-  set(CMAKE_WIN32_EXECUTABLE ON)
+  #set(CMAKE_WIN32_EXECUTABLE ON)
   set(EPL_VIZ_ICO "${PROJECT_SOURCE_DIR}/libEPLViz/resources/logo.ico")
   set(EPLV_WINDOWS_ICON "${PROJECT_BINARY_DIR}/epl-viz.rc")
 endif(WIN32)
@@ -367,7 +368,7 @@ install(
   DESTINATION include/eplViz
 )
 
-if( WIN32 )
+if( WIN32 AND ENABLE_PACK )
   # Some stuff for CPack
   file( GLOB DLLS "${CMAKE_INSTALL_PREFIX}/bin/*.dll" )
   set( DLLS ${DLLS} ${CMAKE_INSTALL_PREFIX}/bin/dumpcap.exe )
@@ -378,7 +379,15 @@ if( WIN32 )
     file( GLOB DLLS "${CMAKE_INSTALL_PREFIX}/bin/${I}/*.dll" )
     install( FILES ${DLLS} DESTINATION bin/${I} )
   endforeach( I IN LISTS DLL_DIRS )
-endif( WIN32 )
+
+  if( NOT EXISTS "${PTHON_BINARY_DIR}" )
+    message( FATAL_ERROR "PTHON_BINARY_DIR ${PTHON_BINARY_DIR} does not exist!" )
+  endif( NOT EXISTS "${PTHON_BINARY_DIR}" )
+  file( GLOB PYTHON_BIN "${PTHON_BINARY_DIR}/*" )
+  install( FILES ${PYTHON_BIN} DESTINATION bin )
+
+  install( DIRECTORY "${CMAKE_INSTALL_PREFIX}/share/eplViz" DESTINATION share/eplViz )
+endif( WIN32 AND ENABLE_PACK )
 
 generate_format_command( format 3.9.1 )
 

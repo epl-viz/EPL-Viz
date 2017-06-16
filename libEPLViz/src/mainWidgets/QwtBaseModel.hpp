@@ -86,8 +86,10 @@ class QwtBaseModel : public QObject, public BaseModel {
   uint32_t calcXMaximum();
 
 
+#if ! defined(WIN32) && ! defined(_WIN32) && ! defined(__WIN32)
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wunused-local-typedef"
+#endif
 
   template <typename F>
   static void postToThread(F &&fun, QObject *obj) {
@@ -101,7 +103,9 @@ class QwtBaseModel : public QObject, public BaseModel {
     QCoreApplication::postEvent(obj, new Event(std::forward<F>(fun)));
   }
 
+#if ! defined(WIN32) && ! defined(_WIN32) && ! defined(__WIN32)
 #pragma clang diagnostic push
+#endif
 
  signals:
   void requestRedraw();

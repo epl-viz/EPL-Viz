@@ -282,7 +282,7 @@
     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Gives a historical overview of the network over time.&lt;/p&gt;&lt;p&gt;Clicking inside the Timeline will jump to the selected cycle.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
    </property>
    <property name="windowTitle">
-    <string>Ti&amp;meline</string>
+    <string>Timeline</string>
    </property>
    <attribute name="dockWidgetArea">
     <number>4</number>
@@ -338,7 +338,7 @@
     <string>Allows plugins to be enabled to run during a playback/recording.</string>
    </property>
    <property name="windowTitle">
-    <string>Pl&amp;ugins</string>
+    <string>Plugins</string>
    </property>
    <attribute name="dockWidgetArea">
     <number>1</number>
@@ -373,7 +373,7 @@
     <string>Shows the Object Dictionary of the node currently selected via the Network Graph.</string>
    </property>
    <property name="windowTitle">
-    <string>&amp;Node OD</string>
+    <string>Node OD</string>
    </property>
    <attribute name="dockWidgetArea">
     <number>2</number>
@@ -395,7 +395,7 @@
     <string>Shows the Object Dictionary Descriptions that are currently provided by the loaded profiles.</string>
    </property>
    <property name="windowTitle">
-    <string>OD Desc&amp;riptions</string>
+    <string>OD Descriptions</string>
    </property>
    <attribute name="dockWidgetArea">
     <number>2</number>
@@ -417,7 +417,7 @@
     <string>Shows the packets of the cycle selected via the Timeline.</string>
    </property>
    <property name="windowTitle">
-    <string>&amp;Cycle Viewer</string>
+    <string>Cycle Viewer</string>
    </property>
    <attribute name="dockWidgetArea">
     <number>2</number>
@@ -442,7 +442,7 @@
     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Shows the output of the text events of plugins.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
    </property>
    <property name="windowTitle">
-    <string>Plu&amp;gin Log</string>
+    <string>Plugin Log</string>
    </property>
    <attribute name="dockWidgetArea">
     <number>8</number>
@@ -478,7 +478,7 @@
     <string>Displays the wireshark string of the packet selected via the Cycle Viewer.</string>
    </property>
    <property name="windowTitle">
-    <string>Pac&amp;ket Viewer</string>
+    <string>Packet Viewer</string>
    </property>
    <attribute name="dockWidgetArea">
     <number>8</number>
@@ -517,7 +517,7 @@
   </widget>
   <widget class="QDockWidget" name="dockPacketViz">
    <property name="windowTitle">
-    <string>Packet Vi&amp;zualizer (time in μs)</string>
+    <string>Packet Vizualizer (time in μs)</string>
    </property>
    <attribute name="dockWidgetArea">
     <number>8</number>

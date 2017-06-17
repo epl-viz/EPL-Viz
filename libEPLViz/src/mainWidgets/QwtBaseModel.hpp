@@ -86,7 +86,7 @@ class QwtBaseModel : public QObject, public BaseModel {
   uint32_t calcXMaximum();
 
 
-#if ! defined(WIN32) && ! defined(_WIN32) && ! defined(__WIN32)
+#if !defined(WIN32) && !defined(_WIN32) && !defined(__WIN32)
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wunused-local-typedef"
 #endif
@@ -103,7 +103,7 @@ class QwtBaseModel : public QObject, public BaseModel {
     QCoreApplication::postEvent(obj, new Event(std::forward<F>(fun)));
   }
 
-#if ! defined(WIN32) && ! defined(_WIN32) && ! defined(__WIN32)
+#if !defined(WIN32) && !defined(_WIN32) && !defined(__WIN32)
 #pragma clang diagnostic push
 #endif
 

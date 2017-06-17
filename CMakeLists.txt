@@ -371,7 +371,8 @@ install(
 if( WIN32 AND ENABLE_PACK )
   # Some stuff for CPack
   file( GLOB DLLS "${CMAKE_INSTALL_PREFIX}/bin/*.dll" )
-  set( DLLS ${DLLS} ${CMAKE_INSTALL_PREFIX}/bin/dumpcap.exe )
+  file( GLOB PYDS "${CMAKE_INSTALL_PREFIX}/bin/*.pyd" )
+  set( DLLS ${DLLS} ${PYDS} ${CMAKE_INSTALL_PREFIX}/bin/dumpcap.exe )
   install( FILES ${DLLS} DESTINATION bin )
 
   set( DLL_DIRS audio bearer iconengines imageformats mediaservice platforms playlistformats plugins printsupport )
@@ -386,7 +387,7 @@ if( WIN32 AND ENABLE_PACK )
   file( GLOB PYTHON_BIN "${PTHON_BINARY_DIR}/*" )
   install( FILES ${PYTHON_BIN} DESTINATION bin )
 
-  install( DIRECTORY "${CMAKE_INSTALL_PREFIX}/share/eplViz" DESTINATION share/eplViz )
+  install( DIRECTORY "${CMAKE_INSTALL_PREFIX}/share/eplViz" DESTINATION share )
 endif( WIN32 AND ENABLE_PACK )
 
 generate_format_command( format 3.9.1 )

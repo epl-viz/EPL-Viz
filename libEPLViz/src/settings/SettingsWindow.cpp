@@ -36,6 +36,18 @@
 
 #include "MainWindow.hpp"
 
+#if __cplusplus <= 201402L
+#include <experimental/filesystem>
+namespace fs = std::experimental::filesystem;
+#else
+#include <filesystem>
+namespace fs = std::filesystem;
+#endif
+
+#if defined(WIN32) || !defined(_WIN32) || !defined(__WIN32)
+#include <windows.h>
+#endif
+
 using namespace EPL_Viz;
 using namespace EPL_Viz::constants;
 using namespace std::chrono;
@@ -92,15 +104,27 @@ SettingsWindow::SettingsWindow(QWidget *parent, ProfileManager *settings)
   startCFG.currentNode = -1;
   startCFG.backConf    = mainWindow->getCaptureInstance()->getConfig();
 
-  char *appImageDir = nullptr;
+  char *      appImageDir = nullptr;
+  std::string windowsPath;
 #if !defined(WIN32) && !defined(_WIN32) && !defined(__WIN32)
   appImageDir = getenv("APPDIR");
+#elif defined(WIN32) || defined(_WIN32) || defined(__WIN32)
+  TCHAR exePathCSTR[MAX_PATH];
+  GetModuleFileName(NULL, exePathCSTR, MAX_PATH);
+  fs::path tempExePath(exePathCSTR);
+  windowsPath = tempExePath.remove_filename().remove_filename().string();
 #endif
-  if (!appImageDir) {
-    startCFG.backConf.xddDir = std::string(EPL_VIZ_INSTALL_PREFIX) + "/share/eplViz/xdd";
-  } else {
+  if (appImageDir) {
     startCFG.backConf.xddDir = std::string(appImageDir) + "/usr/share/eplViz/xdd";
+  } else if (!windowsPath.empty()) {
+    startCFG.backConf.xddDir = windowsPath + "/share/eplViz/xdd";
+  } else {
+    startCFG.backConf.xddDir = std::string(EPL_VIZ_INSTALL_PREFIX) + "/share/eplViz/xdd";
   }
+
+  // Convert the path to a native path
+  fs::path helperPath(startCFG.backConf.xddDir);
+  startCFG.backConf.xddDir = helperPath.string();
 
   currentProfile            = "Default";
   SettingsProfileItem *prof = profiles[currentProfile].get();

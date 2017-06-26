@@ -33,6 +33,19 @@
 #include "ui_pluginswindow.h"
 #include <QCloseEvent>
 
+#if __cplusplus <= 201402L
+#include <experimental/filesystem>
+namespace fs = std::experimental::filesystem;
+#else
+#include <filesystem>
+namespace fs = std::filesystem;
+#endif
+
+#if defined(WIN32) || !defined(_WIN32) || !defined(__WIN32)
+#include <windows.h>
+#endif
+
+
 using namespace EPL_Viz;
 using namespace EPL_DataCollect::constants;
 
@@ -68,14 +81,27 @@ void PluginsWindow::closeEvent(QCloseEvent *event) {
 }
 
 void PluginsWindow::open() {
-  char *appImageDir = nullptr;
+  char *      appImageDir = nullptr;
+  std::string windowsPath;
+  fs::path    pOpen;
 #if !defined(WIN32) && !defined(_WIN32) && !defined(__WIN32)
   appImageDir = getenv("APPDIR");
+#elif defined(WIN32) || defined(_WIN32) || defined(__WIN32)
+  TCHAR exePathCSTR[MAX_PATH];
+  GetModuleFileName(NULL, exePathCSTR, MAX_PATH);
+  fs::path tempExePath(exePathCSTR);
+  windowsPath = tempExePath.remove_filename().remove_filename().string();
 #endif
-  QString defaultPath = QString(EPL_DC_INSTALL_PREFIX.c_str()) + "/share/eplViz/plugins/samples";
+  std::string defaultPathSTR = EPL_DC_INSTALL_PREFIX + "/share/eplViz/plugins/samples";
   if (appImageDir) {
-    defaultPath = QString(appImageDir) + "/usr/share/eplViz/plugins/samples";
+    defaultPathSTR = std::string(appImageDir) + "/usr/share/eplViz/plugins/samples";
+  } else if (!windowsPath.empty()) {
+    defaultPathSTR = windowsPath + "/share/eplViz/plugins/samples";
   }
+
+  pOpen = defaultPathSTR;
+
+  QString defaultPath = pOpen.string().c_str();
 
   QUrl file = QFileDialog::getOpenFileUrl(
         0, "Open Python file", QUrl::fromLocalFile(defaultPath), "Python files (*.py);;All Files (*)");

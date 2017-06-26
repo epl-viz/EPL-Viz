@@ -10,6 +10,14 @@
 #include <stdlib.h>
 #endif
 
+#if __cplusplus <= 201402L
+#include <experimental/filesystem>
+namespace fs = std::experimental::filesystem;
+#else
+#include <filesystem>
+namespace fs = std::filesystem;
+#endif
+
 using namespace EPL_DataCollect;
 using namespace EPL_DataCollect::constants;
 using namespace EPL_Viz;
@@ -28,6 +36,9 @@ int main(int argc, char *argv[]) {
     installPrefix = appImageDir;
     installPrefix += "/usr";
   }
+#elif defined(WIN32) || !defined(_WIN32) || !defined(__WIN32)
+  fs::path rootDir(argv[0]);
+  installPrefix = rootDir.remove_filename().remove_filename().string();
 #endif
 
   Init                init;

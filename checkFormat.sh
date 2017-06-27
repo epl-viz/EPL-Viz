@@ -107,8 +107,7 @@ checkFormat() {
 
   for I in "${SOURCE_LIST[@]}"; do
     for J in "${EXTENSIONS[@]}"; do
-      echo "$I" | grep -E "\.$J$" &> /dev/null
-      (( $? != 0 )) && continue
+      [[ ! "$I" =~ \.$J$ ]] && continue
 
       (( NUM_FILES++ ))
 

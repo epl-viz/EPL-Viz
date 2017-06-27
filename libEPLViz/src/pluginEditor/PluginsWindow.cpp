@@ -41,7 +41,7 @@ namespace fs = std::experimental::filesystem;
 namespace fs = std::filesystem;
 #endif
 
-#if defined(WIN32) || !defined(_WIN32) || !defined(__WIN32)
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32)
 #include <windows.h>
 #endif
 

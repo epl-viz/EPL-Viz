@@ -36,7 +36,7 @@ int main(int argc, char *argv[]) {
     installPrefix = appImageDir;
     installPrefix += "/usr";
   }
-#elif defined(WIN32) || !defined(_WIN32) || !defined(__WIN32)
+#elif defined(WIN32) || defined(_WIN32) || defined(__WIN32)
   fs::path rootDir(argv[0]);
   installPrefix = rootDir.remove_filename().remove_filename().string();
 #endif

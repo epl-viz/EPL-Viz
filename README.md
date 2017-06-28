@@ -33,4 +33,4 @@ To enable Pre SoC Cycles check the box in Settings --> Backend --> Input Handler
   https://wiki.wireshark.org/CaptureSetup/CapturePrivileges#Other_Linux_based_systems_or_other_installation_methods
 
 
-[sc1]: https://raw.githubusercontent.com/epl-viz/EPL-Viz/master/libEPLViz/resources/screenshot1.png
+[sc1]: https://raw.githubusercontent.com/epl-viz/EPL-Viz/master/libEPLViz/resources/screenshot2.png

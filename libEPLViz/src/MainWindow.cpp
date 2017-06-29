@@ -129,6 +129,15 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
   qRegisterMetaType<std::string>("std::string");
 
   showedPlotSetupMsg = false;
+
+
+  // Create View-->docks
+  QList<QDockWidget *> dockWidgetsList = findChildren<QDockWidget *>();
+  for (auto *i : dockWidgetsList) {
+    ui->menuDocks->addAction(i->toggleViewAction());
+  }
+
+  ui->menuView->addAction(ui->toolBar->toggleViewAction());
 }
 
 MainWindow::~MainWindow() {

@@ -59,5 +59,5 @@ bool TimelineWidget::event(QEvent *event) {
       qDebug() << "PlotTimeline not found, this is ok";
     }
   }
-  return QWidget::event(event);
+  return QDockWidget::event(event);
 }

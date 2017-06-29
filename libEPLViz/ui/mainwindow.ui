@@ -218,8 +218,14 @@
     <property name="title">
      <string>&amp;View</string>
     </property>
+    <widget class="QMenu" name="menuDocks">
+     <property name="title">
+      <string>&amp;Docks</string>
+     </property>
+    </widget>
     <addaction name="actionFullscreen"/>
     <addaction name="actionStatistics"/>
+    <addaction name="menuDocks"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuEdit"/>
@@ -229,7 +235,7 @@
   <widget class="QStatusBar" name="statusBar"/>
   <widget class="QToolBar" name="toolBar">
    <property name="windowTitle">
-    <string>toolBar</string>
+    <string>Tool Bar</string>
    </property>
    <property name="toolButtonStyle">
     <enum>Qt::ToolButtonTextBesideIcon</enum>
@@ -333,7 +339,7 @@
     </layout>
    </widget>
   </widget>
-  <widget class="TimelineWidget" name="dockPlugins">
+  <widget class="QDockWidget" name="dockPlugins">
    <property name="toolTip">
     <string>Allows plugins to be enabled to run during a playback/recording.</string>
    </property>
@@ -843,6 +849,14 @@
    </property>
    <property name="text">
     <string>About &amp;Qt</string>
+   </property>
+  </action>
+  <action name="actionTool_Bar">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Tool Bar</string>
    </property>
   </action>
  </widget>

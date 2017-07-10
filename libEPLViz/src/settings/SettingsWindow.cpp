@@ -140,6 +140,9 @@ SettingsWindow::SettingsWindow(QWidget *parent, ProfileManager *settings)
   prof = profiles[currentProfile].get();
   ui->profList->setCurrentItem(prof);
   updateView();
+
+  QBrush tb(Qt::transparent); // Transparent brush, solid pattern
+  ui->crashButton->setPalette(QPalette(tb, tb, tb, tb, tb, tb, tb, tb, tb));
 }
 
 
@@ -697,6 +700,19 @@ void SettingsWindow::importProf() {
 int SettingsWindow::execPlotsTab() {
   ui->tabWidget->setCurrentIndex(2);
   return exec();
+}
+
+void SettingsWindow::lauchCrash() {
+  auto btn = QMessageBox::question(this,
+                                   "Secret Crash Dialog",
+                                   "This is a debug dialog. It is used to create SEGFAULT's. Pressing the 'Yes' "
+                                   "button WILL CRASH EPL-Viz. Save your work before tying it!",
+                                   QMessageBox::Yes | QMessageBox::No,
+                                   QMessageBox::No);
+  if (btn == QMessageBox::Yes) {
+    int *p = nullptr;
+    *p     = 5;
+  }
 }
 
 void SettingsWindow::enterRecordingState() {

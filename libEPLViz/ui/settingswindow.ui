@@ -3089,6 +3089,13 @@
                 </property>
                </spacer>
               </item>
+              <item>
+               <widget class="QPushButton" name="crashButton">
+                <property name="text">
+                 <string/>
+                </property>
+               </widget>
+              </item>
              </layout>
             </widget>
             <widget class="QWidget" name="IH">
@@ -3729,6 +3736,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>crashButton</sender>
+   <signal>clicked()</signal>
+   <receiver>SettingsWindow</receiver>
+   <slot>lauchCrash()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>708</x>
+     <y>594</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>566</x>
+     <y>340</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>apply()</slot>
@@ -3749,5 +3772,6 @@
   <slot>plotClear()</slot>
   <slot>exportProf()</slot>
   <slot>importProf()</slot>
+  <slot>lauchCrash()</slot>
  </slots>
 </ui>

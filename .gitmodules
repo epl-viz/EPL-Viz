@@ -4,3 +4,6 @@
 [submodule "external/EPL_DataCollect"]
 	path = external/EPL_DataCollect
 	url = https://github.com/epl-viz/EPL_DataCollect.git
+[submodule "external/tracer"]
+	path = external/tracer
+	url = https://github.com/mensinda/tracer.git

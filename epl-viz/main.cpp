@@ -1,10 +1,13 @@
+#include "CrashDialog.hpp"
 #include "EPLVizDefines.hpp"
 #include "Init.hpp"
 #include "MainWindow.hpp"
 #include "PythonInit.hpp"
+#include "TracerHandler.hpp"
 #include <QApplication>
 #include <QIcon>
 #include <QMessageBox>
+#include <QtGlobal>
 
 #if !defined(WIN32) && !defined(_WIN32) && !defined(__WIN32)
 #include <stdlib.h>
@@ -24,6 +27,15 @@ using namespace EPL_Viz;
 using namespace EPL_Viz::constants;
 using namespace std;
 using namespace std::chrono;
+using namespace tracer;
+
+void handler(Tracer *t, AbstractPrinter *p, void *ctx) {
+  (void)t;
+  (void)ctx;
+  string      outStr = p->generateString();
+  CrashDialog diag(QString::fromStdString(outStr));
+  diag.exec();
+}
 
 int main(int argc, char *argv[]) {
   std::string installPrefix = EPL_DC_INSTALL_PREFIX;
@@ -55,6 +67,29 @@ int main(int argc, char *argv[]) {
   pyInit.addPath(installPrefix + "/lib/eplViz");
 
   QApplication a(argc, argv);
+
+  auto *th              = TracerHandler::getTracer();
+  auto  cfg             = th->getConfig();
+  cfg.callback          = handler;
+  cfg.autoPrintToStdErr = true;
+  th->setConfig(cfg);
+
+  auto          pc    = PrinterContainer::fancy();
+  FancyPrinter *fP    = dynamic_cast<FancyPrinter *>(pc());
+  auto          Pcfg  = fP->getConfig();
+  Pcfg.shortenFiles   = true;
+  Pcfg.shortenModules = true;
+  fP->setConfig(Pcfg);
+  fP->addSystemEntry({"Qt", qVersion()});
+  fP->addSystemEntry({"EPL-Viz",
+                      string("v") + to_string(EPL_VIZ_VERSION_MAJOR) + "." + to_string(EPL_VIZ_VERSION_MINOR) + "." +
+                            to_string(EPL_VIZ_VERSION_SUBMINOR) + " +" + to_string(EPL_VIZ_GIT_LAST_TAG_DIFF) + " -- " +
+                            EPL_VIZ_VERSION_GIT});
+  fP->addSystemEntry({"EPL_DataCollect",
+                      string("v") + to_string(EPL_DC_VERSION_MAJOR) + "." + to_string(EPL_DC_VERSION_MINOR) + "." +
+                            to_string(EPL_DC_VERSION_SUBMINOR) + " +" + to_string(EPL_DC_GIT_LAST_TAG_DIFF) + " -- " +
+                            EPL_DC_VERSION_GIT});
+  th->setup(move(pc));
 
   if (QIcon::fromTheme("application-exit").isNull()) {
     QWidget temp;

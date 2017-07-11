@@ -31,7 +31,7 @@ endif( NOT IS_DIRECTORY "${UI_DIR}" )
 
 file( GLOB UI_FILE_LIST "${UI_DIR}/*.ui" )
 
-set( OUT_DIR "${PROJECT_BINARY_DIR}/${CM_CURRENT_EXE_LC}" )
+set( OUT_DIR "${PROJECT_BINARY_DIR}/epl-viz" )
 message( STATUS "    - UI / RC include file output dir: ${OUT_DIR}" )
 
 set( CM_GENERATED_UI_FILES "" )

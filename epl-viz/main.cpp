@@ -29,6 +29,7 @@ using namespace std;
 using namespace std::chrono;
 using namespace tracer;
 
+void handler(Tracer *t, AbstractPrinter *p, void *ctx);
 void handler(Tracer *t, AbstractPrinter *p, void *ctx) {
   (void)t;
   (void)ctx;

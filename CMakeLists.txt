@@ -136,7 +136,7 @@ add_compiler(
              "-Wno-c++98-compat -Wno-c++98-compat-pedantic -Wno-padded"
              "-Wno-gnu-anonymous-struct -Wno-nested-anon-types -Wno-exit-time-destructors"
              "-Wno-global-constructors -Wno-switch-enum -Wno-reserved-id-macro"
-             "-Wno-documentation-unknown-command"
+             "-Wno-documentation-unknown-command -Wno-undef"
              "-Wno-undefined-reinterpret-cast" # For some reason QMOC produces code generating this warning
   DEBUG      "-Werror"
   RELEASE    "-O3"

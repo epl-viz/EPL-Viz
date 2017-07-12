@@ -3089,22 +3089,6 @@
                 </property>
                </spacer>
               </item>
-              <item>
-               <widget class="QPushButton" name="crashButton">
-                <property name="minimumSize">
-                 <size>
-                  <width>0</width>
-                  <height>75</height>
-                 </size>
-                </property>
-                <property name="styleSheet">
-                 <string notr="true">border: 0px</string>
-                </property>
-                <property name="text">
-                 <string/>
-                </property>
-               </widget>
-              </item>
              </layout>
             </widget>
             <widget class="QWidget" name="IH">
@@ -3738,22 +3722,6 @@
     <hint type="sourcelabel">
      <x>598</x>
      <y>645</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>566</x>
-     <y>340</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>crashButton</sender>
-   <signal>clicked()</signal>
-   <receiver>SettingsWindow</receiver>
-   <slot>lauchCrash()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>708</x>
-     <y>594</y>
     </hint>
     <hint type="destinationlabel">
      <x>566</x>

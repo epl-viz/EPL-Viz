@@ -261,31 +261,7 @@ else( USE_SYSTEM_PACKETS )
   )
 endif( USE_SYSTEM_PACKETS )
 
-set( TRACER_PREFIX         "${PROJECT_BINARY_DIR}/tracer" )
-set( TRACER_BUILD_DIR      "${TRACER_PREFIX}/build" )
-set( TRACER_INSTALL_DIR    "${TRACER_PREFIX}/install_dir" )
-set( TRACER_LIB_DIR        "${TRACER_INSTALL_DIR}/lib" )
-
-ExternalProject_Add( tracer
-  SOURCE_DIR        "${PROJECT_SOURCE_DIR}/external/tracer"
-  BINARY_DIR        "${TRACER_BUILD_DIR}"
-  PREFIX            "${TRACER_PREFIX}"
-  CMAKE_ARGS
-    "-DCMAKE_C_COMPILER=${CMAKE_C_COMPILER}"
-    "-DCMAKE_C_FLAGS=${CMAKE_C_FLAGS}"
-    "-DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}"
-    "-DCMAKE_CXX_FLAGS=${CMAKE_CXX_FLAGS}"
-    "-DCMAKE_INSTALL_PREFIX=${TRACER_INSTALL_DIR}"
-    -DCMAKE_INSTALL_MESSAGE=NEVER
-   BUILD_BYPRODUCTS "${TRACER_LIB_DIR}/${CMAKE_SHARED_LIBRARY_PREFIX}tracer${CMAKE_SHARED_LIBRARY_SUFFIX}"
-)
-
-add_library( Tracer::tracer SHARED IMPORTED )
-set_target_properties(
-  Tracer::tracer
-  PROPERTIES
-    IMPORTED_LOCATION "${TRACER_LIB_DIR}/${CMAKE_SHARED_LIBRARY_PREFIX}tracer${CMAKE_SHARED_LIBRARY_SUFFIX}"
-)
+add_subdirectory( "${PROJECT_SOURCE_DIR}/external/tracer" )
 
 ####################
 # Generate subdirs #
@@ -313,7 +289,7 @@ new_project_executable(
   PATH         "${PROJECT_SOURCE_DIR}/epl-viz"
   NAME         "eplviz"
   TEMPLATE     "${EPL_VIZ_TEMPLATES_DIR}/CMakeLists.exe.txt"
-  DEPENDENCIES libEPLViz Tracer::tracer
+  DEPENDENCIES libEPLViz tracer
 )
 
 ##############################
@@ -323,7 +299,6 @@ new_project_executable(
 include_directories(
   ${EPL-Viz_LIB_INCLUDE_DIRECTORIES}
   ${EPL_VIZ_INCLUDES_DIR}
-  ${PROJECT_BINARY_DIR}/eplviz
 )
 
 include_directories( SYSTEM
@@ -336,7 +311,6 @@ include_directories( SYSTEM
   ${QWT_INCLUDE_DIRS}
   ${PLF_COLONY_DIR}
   ${PCAP_INCLUDE_DIRS}
-  ${TRACER_INSTALL_DIR}/include/tracer
 )
 
 link_directories( ${Wireshark_LIB_DIR} ${EPL_DC_LIB_WS_LIB_DIR} )
@@ -361,8 +335,6 @@ endforeach( I IN LISTS EPL-Viz_SUBDIR_LIST )
 if( NOT USE_SYSTEM_PACKETS )
   add_dependencies( libEPLViz EPL_DataCollect )
 endif( NOT USE_SYSTEM_PACKETS )
-
-add_dependencies( eplviz tracer )
 
 ##################
 # Generate Files #

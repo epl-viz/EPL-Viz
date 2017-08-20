@@ -51,6 +51,7 @@ QString SettingsProfileItem::getName() { return name; }
 
 bool SettingsProfileItem::writeCfg(AbstractWriter *writer) {
   writer->setValue("EPL_DC/xddDir", cfg.backConf.xddDir.c_str());
+  writer->setValue("EPL_DC/enableHardwareTimestamps", cfg.backConf.enableHardwareTimestamps);
   writer->setValue("pauseWhilePlayingFile", cfg.pauseWhilePlayingFile);
   writer->setValue("immidiateCycleChange", cfg.immidiateCycleChange);
   writer->setValue("invertTimeLineZoom", cfg.invertTimeLineZoom);
@@ -141,6 +142,7 @@ bool SettingsProfileItem::writeCfg(AbstractWriter *writer) {
 
 bool SettingsProfileItem::readCfg(AbstractWriter *writer) {
   cfg.backConf.xddDir                      = writer->value("EPL_DC/xddDir").toString().toStdString();
+  cfg.backConf.enableHardwareTimestamps    = writer->value("EPL_DC/enableHardwareTimestamps").toBool();
   cfg.pauseWhilePlayingFile                = writer->value("pauseWhilePlayingFile").toBool();
   cfg.immidiateCycleChange                 = writer->value("immidiateCycleChange").toBool();
   cfg.invertTimeLineZoom                   = writer->value("invertTimeLineZoom").toBool();

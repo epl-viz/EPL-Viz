@@ -153,6 +153,7 @@ SettingsWindow::~SettingsWindow() {
 void SettingsWindow::updateView(bool updateNodes) {
   SettingsProfileItem *prof = profiles[currentProfile].get();
   ui->G_XDDDir->setText(prof->cfg.backConf.xddDir.c_str());
+  ui->G_EnableHWTs->setCheckState(prof->cfg.backConf.enableHardwareTimestamps ? Qt::Checked : Qt::Unchecked);
   ui->G_PausePlay->setCheckState(prof->cfg.pauseWhilePlayingFile ? Qt::Checked : Qt::Unchecked);
   ui->TL_ChancheCycleImm->setCheckState(prof->cfg.immidiateCycleChange ? Qt::Checked : Qt::Unchecked);
   ui->TL_Invert->setCheckState(prof->cfg.invertTimeLineZoom ? Qt::Checked : Qt::Unchecked);
@@ -237,6 +238,7 @@ void SettingsWindow::updateView(bool updateNodes) {
 void SettingsWindow::saveIntoProfiles() {
   SettingsProfileItem *prof                      = profiles[currentProfile].get();
   prof->cfg.backConf.xddDir                      = ui->G_XDDDir->text().toStdString();
+  prof->cfg.backConf.enableHardwareTimestamps    = ui->G_EnableHWTs->checkState() == Qt::Checked;
   prof->cfg.pauseWhilePlayingFile                = ui->G_PausePlay->checkState() == Qt::Checked;
   prof->cfg.immidiateCycleChange                 = ui->TL_ChancheCycleImm->checkState() == Qt::Checked;
   prof->cfg.invertTimeLineZoom                   = ui->TL_Invert->checkState() == Qt::Checked;

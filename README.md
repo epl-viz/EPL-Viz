@@ -18,6 +18,12 @@ See INSTALL.md for instructions
 
 ## Features
 
+### Hardware timestamps
+
+Hardware timestamps (if supported) can offer more accurate timestamps.
+
+To enable hardware timestamps check the box in Settings --> Backend --> General --> Enable Hardware timestamps.
+
 ### Pre SoC Cycles
 
 In some scenarios debugging the network traffic that came before

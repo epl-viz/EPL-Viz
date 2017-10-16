@@ -5,6 +5,14 @@ EPL-Viz is a visualizer for ethernetPOWERLINK setups.
 
 ![EPL-Viz Screenshot][sc1]
 
+## Downloads
+
+| OS | Dowbload link | Version |
+|----|------|---------|
+| Linux   | https://github.com/epl-viz/EPL-Viz/releases/download/v1.3.2/EPLViz-x86_64.AppImage | v1.3.2 |
+| Windows | https://github.com/epl-viz/EPL-Viz/releases/download/v1.3.1/EPL-Viz-1.3.1-win64.msi | v1.3.1 |
+| Source  | https://github.com/epl-viz/EPL-Viz/archive/v1.3.2.tar.gz | v1.3.2 |
+
 ## Initial Setup
 See INSTALL.md for instructions
 
